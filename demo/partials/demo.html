@@ -1,0 +1,91 @@
+<div data-ng-include src="'partials/templates/navi.html'"></div>
+
+<div class="container">
+
+<form class="form-horizontal ">
+    <fieldset>
+        <legend><a class="btn-link" ng-click="isCollapsed = !isCollapsed">Federated Knowledge Extraction Framework</a></legend>
+<div collapse="isCollapsed">
+        <div class="row-fluid">
+        <div class="control-group span4">
+            <label class="control-label">Input Format</label>
+            <div class="controls">
+                <select class="input-block-level" data-ng-model="foxRequest.type"  id="type">
+                    <option value="text">text/html</option>
+                    <option value="url">url</option>
+                </select>
+            </div>    
+        </div>
+        <div class="control-group span4">
+            <label class="control-label">Extraction Type</label>
+            <div class="controls">
+                <select class="input-block-level" id="task" data-ng-model="foxRequest.task">
+                    <option value="ner">ner</option>
+<!--                     <option value="ke">ke</option>
+                    <option value="keandner">ner and ke</option>
+                    <option value="all">ner, ke and re</option>  -->
+                </select>
+        </div>
+        </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Input</label>
+            <div class="controls">
+                <textarea class="span6" id="input" data-ng-model="foxRequest.input" rows="7" cols="50" wrap="soft"> </textarea>
+            </div> 
+        </div>
+        <div class="row-fluid">
+	        <div class="control-group span4">
+                <label class="control-label">Output Format</label>
+                <div class="controls">
+                    <select class="input-block-level" id="output" data-ng-model="foxRequest.output">
+                        <option>JSONLD</option>
+                        <option>N3</option>
+                        <option>N-TRIPLE</option>
+                        <option>RDF/JSON</option>
+                        <option>RDF/XML</option>
+                        <option>RDF/XML-ABBREV</option>
+                        <option>TURTLE</option>
+                    </select>
+                </div>    
+            </div>
+            
+	<!--         <div class="control-group span1">
+	            <label class="control-label">NIF-draft</label>
+	            <div class="controls">
+	               <input type="checkbox" id="nif" data-ng-model="foxRequest.nif" data-ng-checked="foxRequest.nif">
+	           </div>
+            </div> -->
+            
+        </div>
+        <hr>
+        <div class="row-fluid">
+            <div class="span4"> </div>
+            <div class="control-group span3">
+	               <label class="control-label">Examples</label>
+	               <div class="controls">
+	                   <input type="radio" id="e1" name="defaults" value="0" data-ng-model="foxRequest.defaults">
+	                   <input type="radio" id="e2" name="defaults" value="1" data-ng-model="foxRequest.defaults">
+	                   <input type="radio" id="e3" name="defaults" value="2" data-ng-model="foxRequest.defaults">
+	               </div>
+	         </div>  
+	         <div class="span1">
+                <button type="submit" data-ng-click="foxRequest.send()" data-ng-disabled="foxRequest.state!='done'" class="btn btn-custom">Submit</button>     
+             </div>
+        </div> </div>
+    </fieldset>
+</form>
+<br>
+</div>
+
+<div collapse="!isCollapsed">
+	<div class="container">
+	    <div class="input" data-ng-bind-html-unsafe="foxResponse.input"></div>
+	</div>
+	
+	<br>
+	
+	<div class="container">
+	    <pre class="output">{{foxResponse.output}}</pre>
+	</div>
+</div>
