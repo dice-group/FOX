@@ -1,0 +1,133 @@
+liters
+foot
+feet
+yard
+yards
+furlong
+furlongs
+mile
+miles
+nautical mile
+nautical miles
+gallons
+gallon
+peck
+pecks
+pound
+pounds
+bushel
+bushels
+quarter
+quarters
+fluild ounce
+fluild ounces
+pint
+pints
+drams
+ounce
+ounces
+stone
+ton
+fathom
+sea mile
+grains
+square inch
+square inches
+square mile
+square miles
+square feet
+square foot
+square yard
+square yards
+acre
+acres
+cubic inches
+cubic inch
+cubic foot
+cubic feet
+cubic yard
+cubic yards
+quart
+quarts
+gills
+millimeters
+millimetres
+meter
+metre
+centimeters
+centimetres
+kilometer
+kilometer per hour
+kph
+k.p.h
+KPH
+kilometres
+kilometers
+kilometres
+square meters
+square metres
+square meter
+square metre
+Richter scale
+richter scale
+hectare
+litre
+liter
+litres
+grams
+gram
+milligrams
+milligram
+centigram
+centigrams
+kilograms
+kilogram
+kilo
+cent.
+deg.
+doz.
+Fahr.
+ft.
+fur.
+gal.
+gr.
+in.
+kg.
+km.
+kw.
+l.
+lat.
+lb.
+lb
+lb per sq in.
+lb. per sq in.
+lb per square inch
+long.
+mg.
+mm.
+m.p.g.
+m.p.h.
+cc
+cc.
+MPH
+mph
+miles per hour
+miles per gallon
+pH
+ph
+qr.
+qt.
+sec.
+sq.
+t.
+vol.
+w.
+kV
+kW
+volt
+kilovolt
+kilo volt
+watt
+kilowatt
+kilo watt
+wt.

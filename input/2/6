@@ -1,0 +1,151 @@
+<TEXT>
+<ENAMEX TYPE="PERSON"> Ron Fedkiw  </ENAMEX>  
+Associate Professor
+<ENAMEX TYPE="MISCELLANEOUS"> Stanford Computer Science  </ENAMEX> 
+Ph.D. <ENAMEX TYPE="MISCELLANEOUS">  Applied Mathematics  </ENAMEX>  , <ENAMEX TYPE="ORGANIZATION"> UCLA  </ENAMEX> 
+
+		
+
+<ENAMEX TYPE="MISCELLANEOUS"> Computer Science Department  </ENAMEX> 
+<ENAMEX TYPE="ORGANIZATION"> Stanford University  </ENAMEX> 
+<ENAMEX TYPE="LOCATION"> Gates Computer Science Bldg., Room 207  </ENAMEX> 
+<ENAMEX TYPE="LOCATION"> Stanford, CA 94305-9020  </ENAMEX>  
+fedkiw@cs.stanford.edu  
+Phone: (650) xxx-xxxx  
+directions to <ENAMEX TYPE="LOCATION"> Stanford  </ENAMEX> 
+directions to the <ENAMEX TYPE="LOCATION"> Gates building  </ENAMEX> 
+CS Broad Area Colloquium
+<ENAMEX TYPE="MISCELLANEOUS"> Institute for Computational and Mathematical Engineering  </ENAMEX> 
+Brief Bio
+<ENAMEX TYPE="PERSON"> Fedkiw  </ENAMEX>  received his Ph.D. in <ENAMEX TYPE="MISCELLANEOUS"> Mathematics  </ENAMEX>  from <ENAMEX TYPE="ORGANIZATION"> UCLA  </ENAMEX>  in 1996 and did postdoctoral studies both at <ENAMEX TYPE="ORGANIZATION"> UCLA  </ENAMEX>  in <ENAMEX TYPE="MISCELLANEOUS"> Mathematics  </ENAMEX>  and at  <ENAMEX TYPE="ORGANIZATION"> Caltech  </ENAMEX>  in <ENAMEX TYPE="MISCELLANEOUS"> Aeronautics  </ENAMEX>  before joining the <ENAMEX TYPE="ORGANIZATION"> Stanford Computer Science Department  </ENAMEX>  . He was awarded an <ENAMEX TYPE="MISCELLANEOUS"> Academy Award  </ENAMEX>  from <ENAMEX TYPE="ORGANIZATION"> The Academy of Motion Picture Arts and Sciences  </ENAMEX>  , the <ENAMEX TYPE="ORGANIZATION"> National Academy of Science Award for Initiatives in Research  </ENAMEX> , a <ENAMEX TYPE="MISCELLANEOUS"> Packard Foundation Fellowship  </ENAMEX>  , a <ENAMEX TYPE="MISCELLANEOUS"> Presidential Early Career Award for Scientists and Engineers (PECASE)  </ENAMEX>  , a <ENAMEX TYPE="MISCELLANEOUS"> Sloan Research Fellowship  </ENAMEX>  , the <ENAMEX TYPE="MISCELLANEOUS"> ACM Siggraph Significant New Researcher Award  </ENAMEX>  , an <ENAMEX TYPE="MISCELLANEOUS"> Office of Naval Research Young Investigator Program Award (ONR YIP)  </ENAMEX>  , the <ENAMEX TYPE="MISCELLANEOUS"> Okawa Foundation Research Grant  </ENAMEX>  , the <ENAMEX TYPE="MISCELLANEOUS"> Robert Bosch Faculty Scholarship  </ENAMEX>  , the <ENAMEX TYPE="MISCELLANEOUS"> Robert N. Noyce Family Faculty Scholarship  </ENAMEX>  , two distinguished teaching awards, etc. Currently he is on the editorial board of the <ENAMEX TYPE="MISCELLANEOUS"> Journal of Computational Physics  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> Journal of Scientific Computing  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> SIAM Journal on Imaging Sciences  </ENAMEX>  , and <ENAMEX TYPE="MISCELLANEOUS"> Communications in Mathematical Sciences  </ENAMEX>  , and he participates in the reviewing process of a number of journals and funding agencies. He has published over 80 research papers in computational physics, computer graphics and vision, as well as a book on level set methods. For the past seven years, he has been a consultant with <ENAMEX TYPE="ORGANIZATION"> Industrial Light + Magic  </ENAMEX>  . He received screen credits for his work on <ENAMEX TYPE="MISCELLANEOUS"> "Terminator 3: Rise of the Machines"  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> "Star Wars: Episode III - Revenge of the Sith"  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> "Poseidon"  </ENAMEX>  and <ENAMEX TYPE="MISCELLANEOUS"> "Evan Almighty"  </ENAMEX>  .
+
+Research
+My research is focused on the design of new computational algorithms for a variety of applications including computational fluid dynamics and solid mechanics, computer graphics, computer vision and computational biomechanics.
+
+    * <ENAMEX TYPE="MISCELLANEOUS"> Two way coupled SPH and particle level set fluid simulation  </ENAMEX>  (with <ENAMEX TYPE="PERSON"> Frank Losasso  </ENAMEX> , <ENAMEX TYPE="PERSON"> Jerry Talton  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Nipun Kwatra  </ENAMEX> ).
+    * <ENAMEX TYPE="MISCELLANEOUS"> Hybrid simulation of embedded deformable solids and rigid bodies  </ENAMEX>  (with <ENAMEX TYPE="PERSON"> Eftychios Sifakis  </ENAMEX> , <ENAMEX TYPE="PERSON"> Tamar Shinar  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Geoffrey Irving  </ENAMEX> ).
+    * <ENAMEX TYPE="MISCELLANEOUS"> Arbitrary cutting of tetrahedral meshes  </ENAMEX>  (with <ENAMEX TYPE="PERSON"> Eftychios Sifakis  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Kevin Der  </ENAMEX>  ).
+    * <ENAMEX TYPE="MISCELLANEOUS"> Fire with cellular patterns  </ENAMEX>  (with <ENAMEX TYPE="PERSON"> Jeong-Mo Hong  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Tamar Shinar  </ENAMEX>  ).
+    * <ENAMEX TYPE="MISCELLANEOUS"> Incompressible solids  </ENAMEX>  (with <ENAMEX TYPE="PERSON"> Geoffrey Irving  </ENAMEX>  and <ENAMEX TYPE="PERSON">  Craig Schroeder  </ENAMEX>  ).
+    * <ENAMEX TYPE="MISCELLANEOUS"> Fracturing rigid bodies  </ENAMEX>  (with <ENAMEX TYPE="PERSON">  Josh Bao  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Jeong-Mo Hong  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Joey Teran  </ENAMEX> ).
+    * <ENAMEX TYPE="MISCELLANEOUS"> Thin shell rigid bodies  </ENAMEX>  (with <ENAMEX TYPE="PERSON">  Josh Bao  </ENAMEX>  , <ENAMEX TYPE="PERSON">  Jeong-Mo Hong  </ENAMEX>  and <ENAMEX TYPE="PERSON">  Joey Teran  </ENAMEX> ).
+    * <ENAMEX TYPE="MISCELLANEOUS"> Multiple Interacting Liquids  </ENAMEX>  (with <ENAMEX TYPE="PERSON">  Frank Losasso  </ENAMEX>  , <ENAMEX TYPE="PERSON">  Tamar Shinar  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Andrew Selle  </ENAMEX>  ).
+
+
+MANTASUIT
+The goal is to design an underwater diving suit that provides a diver with an exoskeleton for enhanced locomotion, as well as augmented reality enhancements for underwater vision and directional sound detection. Concept art by <ENAMEX TYPE="PERSON">  Wilson Tang  </ENAMEX>  .
+
+
+<ENAMEX TYPE="ORGANIZATION"> Academy of Motion Picture Arts and Sciences </ENAMEX> 
+<ENAMEX TYPE="MISCELLANEOUS"> Scientific and Technical Awards  </ENAMEX>  - Since 1930/31 the <ENAMEX TYPE="ORGANIZATION"> Academy of Motion Picture Arts and Sciences  </ENAMEX>  has conducted a program for honoring the artisans whose contributions have made it possible for an industry known as "The Movies" to exist. Recognition of ingenuity, efficiency and economy toward achieving the end result is the basic purpose of the Scientific and Technical Awards.
+
+<ENAMEX TYPE="ORGANIZATION"> National Academy of Sciences  </ENAMEX> 
+<ENAMEX TYPE="MISCELLANEOUS"> NAS Award for Initiatives in Research  </ENAMEX>  - awarded to recognize innovative young scientists and to encourage research likely to lead toward new capabilities for human benefit. The award is to be given to a citizen of the <ENAMEX TYPE="LOCATION"> United States  </ENAMEX> , preferably no older than 35 years of age. The field of presentation rotates among the physical sciences, engineering, and mathematics.
+
+<ENAMEX TYPE="ORGANIZATION"> The David and Lucille Packard Foundation  </ENAMEX> 
+<ENAMEX TYPE="MISCELLANEOUS"> Fellowships for Science and Engineering  </ENAMEX>  - The Foundation has a long-standing interest in strengthening both university-based research and graduate education. Each year, they generously(!) select 20 Fellows to receive individual grants of $625,000 over five years. The <ENAMEX TYPE="MISCELLANEOUS"> Fellowship Program  </ENAMEX>  was established in 1988.
+
+<ENAMEX TYPE="MISCELLANEOUS"> Presidential Early Career Award for Scientists and Engineers  </ENAMEX> 
+<ENAMEX TYPE="MISCELLANEOUS"> PECASE  </ENAMEX>  - I went to the <ENAMEX TYPE="LOCATION"> White House  </ENAMEX>  for the <ENAMEX TYPE="MISCELLANEOUS"> PECASE  </ENAMEX>  awards ceremony (thank you <ENAMEX TYPE="PERSON"> Wen  </ENAMEX>  & <ENAMEX TYPE="ORGANIZATION"> ONR  </ENAMEX>  !) which included a wonderful speech by <ENAMEX TYPE="PERSON"> President George W. Bush  </ENAMEX> .
+
+<ENAMEX TYPE="ORGANIZATION"> The Alfred P. Sloan Foundation  </ENAMEX> 
+<ENAMEX TYPE="MISCELLANEOUS"> Sloan Research Fellowships  </ENAMEX>  - Currently a total of 116 fellowships are awarded annually in seven fields: chemistry, computational and evolutionary molecular biology, computer science, economics, mathematics, neuroscience, and physics.
+
+<ENAMEX TYPE="ORGANIZATION"> ACM SIGGRAPH  </ENAMEX> 
+<ENAMEX TYPE="MISCELLANEOUS"> ACM SIGGRAPH Awards Program  </ENAMEX>  - The <ENAMEX TYPE="MISCELLANEOUS"> ACM SIGGRAPH Awards  </ENAMEX>  program recognizes individuals who have made a significant contribution to the computer graphics community through their research, teaching, service, or writing.
+
+<ENAMEX TYPE="ORGANIZATION"> The Okawa Foundation  </ENAMEX> 
+<ENAMEX TYPE="MISCELLANEOUS"> The Okawa Foundation Research Grant  </ENAMEX> - The <ENAMEX TYPE="ORGANIZATION"> Foundation  </ENAMEX>  was established in 1986 as an authorized non-profit organization to promote the growth and development of the information and telecommunications fields, through donations from the late <ENAMEX TYPE="PERSON"> Mr. Isao Okawa  </ENAMEX>  .
+
+Publications
+
+<ENAMEX TYPE="MISCELLANEOUS"> Computational Physics  </ENAMEX>  ...
+
+    * <ENAMEX TYPE="PERSON"> Selle, A.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Fedkiw, R.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Kim, B.-M.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Liu, Y.  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Rossignac, J.  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> "An Unconditionally Stable MacCormack Method"  </ENAMEX> , <ENAMEX TYPE="MISCELLANEOUS"> J. Sci. Comput.  </ENAMEX>  , (in press).
+    * <ENAMEX TYPE="PERSON"> Hong, J.-M.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Shinar, T.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Kang, M.  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Fedkiw, R.  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> "On Boundary Condition Capturing for Multiphase Interfaces"  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> J. Sci. Comput.  </ENAMEX>  31, 99-125 (2007).
+    * <ENAMEX TYPE="PERSON"> Losasso, F.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Fedkiw, R.  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Osher  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> "Spatially Adaptive Techniques for Level Set Methods and Incompressible Flow" </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> Computers and Fluids  </ENAMEX>  35, 995-1010 (2006).
+    * <ENAMEX TYPE="PERSON"> Bridson, R.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Teran, J.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Molino, N.  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Fedkiw, R.  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> "Adaptive Physics Based Tetrahedral Mesh Generation Using Level Sets"  </ENAMEX> , <ENAMEX TYPE="MISCELLANEOUS"> Engineering with Computers  </ENAMEX>  21, 2-18 (2005).
+    * <ENAMEX TYPE="PERSON"> Enright, D.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Losasso, F.  </ENAMEX>   and <ENAMEX TYPE="PERSON"> Fedkiw, R.  </ENAMEX> , <ENAMEX TYPE="MISCELLANEOUS"> "A Fast and Accurate Semi-Lagrangian Particle Level Set Method"  </ENAMEX>  , <ENAMEX TYPE="ORGANIZATION"> Computers and Structures  </ENAMEX>  83, 479-490 (2005).
+ 
+Ph.D. thesis...
+
+    * <ENAMEX TYPE="PERSON"> Fedkiw, R.  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> "A Survey of Chemically Reacting, Compressible Flow"  </ENAMEX>  , Ph.D. Thesis, <ENAMEX TYPE="ORGANIZATION"> UCLA Mathematics Department  </ENAMEX>  , June 1996. 
+
+<ENAMEX TYPE="MISCELLANEOUS"> Computer Graphics  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> Vision & Biomechanics  </ENAMEX>  ...
+
+    * <ENAMEX TYPE="PERSON"> Losasso, F.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Talton, J.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Kwatra, N.  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Fedkiw, R.  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> "Two-way Coupled SPH and Particle Level Set Fluid Simulation"  </ENAMEX>  , IEEE TVCG (in press).
+    * <ENAMEX TYPE="PERSON"> Sifakis, E.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Der, K.  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Fedkiw, R.  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> "Arbitrary Cutting of Deformable Tetrahedralized Objects"  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> ACM SIGGRAPH/Eurographics Symposium on Computer Animation (SCA)  </ENAMEX>  , edited by <ENAMEX TYPE="PERSON"> D. Metaxas  </ENAMEX>  and <ENAMEX TYPE="PERSON">  J. Popovic  </ENAMEX>  , pp. 73-80 (2007).
+    * <ENAMEX TYPE="PERSON"> Sifakis, E.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Shinar, T.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Irving, G.  </ENAMEX>  and <ENAMEX TYPE="PERSON">  Fedkiw, R.  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> "Hybrid Simulation of Deformable Solids"  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> ACM SIGGRAPH/Eurographics Symposium on Computer Animation (SCA)  </ENAMEX>  , edited by <ENAMEX TYPE="PERSON"> D. Metaxas </ENAMEX> and <ENAMEX TYPE="PERSON"> J. Popovic  </ENAMEX>  pp. 81-90 (2007).
+    * <ENAMEX TYPE="PERSON"> Hong, J.-M.  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Shinar, T.  </ENAMEX>   and <ENAMEX TYPE="PERSON"> Fedkiw, R.  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> "Wrinkled Flames and Cellular Patterns"  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> SIGGRAPH 2007  </ENAMEX>  , <ENAMEX TYPE="MISCELLANEOUS"> ACM TOG   </ENAMEX>  26, 47.1-47.6 (2007).
+ 
+Students
+
+Ph.D. Students
+
+    * <ENAMEX TYPE="PERSON"> Andrew Selle  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Tamar Shinar  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Avi Robinson-Mosher  </ENAMEX>  
+      Stanford Graduate Fellow
+    * <ENAMEX TYPE="PERSON"> Jonathan Su  </ENAMEX> 
+      NSF Graduate Research Fellow
+    * <ENAMEX TYPE="PERSON"> Kevin Der  </ENAMEX>  
+      NSF Graduate Research Fellow
+    * <ENAMEX TYPE="PERSON"> Nipun Kwatra  </ENAMEX>  
+    * <ENAMEX TYPE="PERSON"> Craig Schroeder  </ENAMEX>  
+    * <ENAMEX TYPE="PERSON"> Jon Gretarsson  </ENAMEX>  
+    * <ENAMEX TYPE="PERSON"> Michael Lentine  </ENAMEX>  
+
+Former Ph.D. Students
+
+    * <ENAMEX TYPE="PERSON"> Douglas Enright   </ENAMEX>   Ph.D. 2002 - <ENAMEX TYPE="ORGANIZATION"> Aerospace Corporation  </ENAMEX>  
+    * <ENAMEX TYPE="PERSON"> Ian Mitchell  </ENAMEX>   Ph.D. 2002 co-advisor (primary advisor - <ENAMEX TYPE="PERSON"> Claire Tomlin  </ENAMEX>  ) - Assistant Professor at the <ENAMEX TYPE="ORGANIZATION"> University of British Columbia  </ENAMEX>  
+    * <ENAMEX TYPE="PERSON"> Robert Bridson  </ENAMEX>  Ph.D. 2003 - Assistant Professor at the <ENAMEX TYPE="ORGANIZATION">  University of British Columbia  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Neil Molino  </ENAMEX>   Ph.D. 2004 - <ENAMEX TYPE="ORGANIZATION">  Morgan Stanley  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Igor Neverov  </ENAMEX>  Ph.D. 2005 - <ENAMEX TYPE="ORGANIZATION">  Insomniac Games  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Joseph Teran  </ENAMEX>  Ph.D. 2005 - Assistant Professor at <ENAMEX TYPE="ORGANIZATION">  UCLA  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Eran Guendelman  </ENAMEX>  Ph.D. 2006 - Postdoctoral Scholar at <ENAMEX TYPE="ORGANIZATION"> Stanford  </ENAMEX>  in <ENAMEX TYPE="MISCELLANEOUS"> Bioengineering  </ENAMEX>  (also at <ENAMEX TYPE="ORGANIZATION"> UCLA  </ENAMEX> )
+    * <ENAMEX TYPE="PERSON"> Zhaosheng Bao  </ENAMEX>  Ph.D. 2006 - <ENAMEX TYPE="ORGANIZATION">  Microsoft Research Asia  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Rachel Weinstein  </ENAMEX>   Ph.D. 2007 - <ENAMEX TYPE="ORGANIZATION">  Industrial Light + Magic  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Eftychios Sifakis  </ENAMEX>  Ph.D. 2007 - <ENAMEX TYPE="ORGANIZATION">  UCLA  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Frank Losasso  </ENAMEX>  Ph.D. 2007 - <ENAMEX TYPE="ORGANIZATION"> Industrial Light + Magic  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Geoffrey Irving  </ENAMEX>  Ph.D. 2007 - <ENAMEX TYPE="ORGANIZATION">  Pixar Animation Studios  </ENAMEX>  
+
+Former Postdoctoral Scholars
+
+    * <ENAMEX TYPE="PERSON"> Duc Nguyen  </ENAMEX>  2001-2004 - <ENAMEX TYPE="ORGANIZATION">  Lockheed Martin  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Frederic Gibou  </ENAMEX>  2001-2004 - Assistant Professor at the <ENAMEX TYPE="ORGANIZATION">  University of California, Santa Barbara  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Ian Mitchell  </ENAMEX>  2002-2003 - Assistant Professor at the <ENAMEX TYPE="ORGANIZATION"> University of British Columbia  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Jeong-Mo Hong  </ENAMEX>  2005-2007 - <ENAMEX TYPE="ORGANIZATION"> Korea University  </ENAMEX> 
+    * <ENAMEX TYPE="PERSON"> Robert Strzodka  </ENAMEX>  2005-2007 - Independent Junior Research Group Leader (i.e. Assistant Professor) at the <ENAMEX TYPE="ORGANIZATION">  Max Planck Institute  </ENAMEX>  
+
+<ENAMEX TYPE="MISCELLANEOUS"> G-number  </ENAMEX> 
+
+A <ENAMEX TYPE="MISCELLANEOUS"> (G)raphics researcher's G-number  </ENAMEX>  is calculated as the number of papers/books/citations on <ENAMEX TYPE="MISCELLANEOUS"> (G)oogle Scholar  </ENAMEX>  that contain more than 200 cites. Note that the best way to search <ENAMEX TYPE="MISCELLANEOUS"> Google scholar  </ENAMEX>  seems to be by using the first initial of the first name, e.g. " <ENAMEX TYPE="PERSON"> r fedkiw  </ENAMEX>  ". (G)eez, there are so many citation indexes out there, I just felt like we needed another one. Note that G comes before H (as in h-humber), and that G also stands Graphics, Google, and even Goober. This is only a partial list that I put together when I was bored one day. No omissions or errors are intentional, but rather an indication of my competence. Please feel free to email me corrections, additions... or even a complete list. Since this has been posted, I have received emails about a few people who collaborate with graphics folks (applied math, computer vision and robotics researchers) and have added some suggested names to the list - just for fun... NOTE: I will periodically update the names on this list to the best of my ability, but finding new names to add to the list is more difficult - emails pertaining to this are greatly appreciated!
+
+# <ENAMEX TYPE="PERSON"> Takeo Kanade  </ENAMEX>  (27);
+# <ENAMEX TYPE="PERSON"> David Donoho  </ENAMEX>  (20); <ENAMEX TYPE="PERSON"> Stan Osher  </ENAMEX>  (20);
+# <ENAMEX TYPE="PERSON"> Pierre-Louis Lions  </ENAMEX>  (18); <ENAMEX TYPE="PERSON"> Benoit Mandelbrot  </ENAMEX>  (18); <ENAMEX TYPE="PERSON"> Sebastian Thrun  </ENAMEX>  (18);
+# <ENAMEX TYPE="PERSON"> Olivier Faugeras  </ENAMEX>  (17); <ENAMEX TYPE="PERSON"> Richard Szeliski  </ENAMEX>  (17); <ENAMEX TYPE="PERSON"> Demetri Terzopoulos  </ENAMEX>  (17);
+# <ENAMEX TYPE="PERSON"> Wim Sweldens  </ENAMEX>  (16);
+
+Teaching
+
+    * Spring quarter 2008 - CS 205B - <ENAMEX TYPE="MISCELLANEOUS"> Mathematical Methods for Fluids, Solids and Interfaces  </ENAMEX> 
+      Overview of numerical methods for the simulation of problems involving solid mechanics and fluid dynamics. The focus is on practical tools needed for simulation, as well as the necessary continuous mathematics involving nonlinear hyperbolic partial differential equations. Possible topics: finite element method, highly deformable elastic bodies, plasticity, fracture, level set method, <ENAMEX TYPE="PERSON"> Burgers  </ENAMEX>  ' equation, compressible and incompressible Navier-Stokes equations, smoke, water, fire, solid-fluid coupling. Prerequisites: 205A or equivalents. 3 units.
+
+    * Fall quarter 2007 - CS 205A - <ENAMEX TYPE="MISCELLANEOUS"> Mathematical Methods for Robotics, Vision and Graphics  </ENAMEX> 
+      Overview of some of the continuous mathematics background necessary for research in robotics, vision, and graphics. Possible topics: linear algebra; the conjugate gradient method; ordinary and partial differential equations; vector and tensor calculus; calculus of variations. Prerequisites: 106B or 106X; MATH 51 and 113; or equivalents. 3 units.
+
+    * Spring quarter 2007 - CS 237C - <ENAMEX TYPE="MISCELLANEOUS"> Numerical Solution of Partial Differential Equations II  </ENAMEX> 
+      Hyperbolic partial differential equations: stability, convergence and qualitative properties. Nonlinear hyperbolic equations and systems. Combined solution methods from elliptic, parabolic, and hyperbolic problems. Examples include: <ENAMEX TYPE="PERSON"> Burgers  </ENAMEX>  equation, <ENAMEX TYPE="PERSON"> Euler  </ENAMEX>  equations for compressible flow, <ENAMEX TYPE="PERSON"> Navier Stokes  </ENAMEX>  equations for incompressible flow. Prerequisites: 205 or both 237A and 237B; MATH 130, 131; or equivalents. 3 units.
+
+Personal Stuff
+
+    * <ENAMEX TYPE="PERSON"> Brittany  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Briana  </ENAMEX>  ...
+
+
+    * Some scuba diving photos... octopus, octopus2, turtle
+
+    * I used to be a competitive weightlifter with a personal best squat of 800 pounds, bench press of 555 pounds and deadlift of 735 pounds, all in the 198 pound weight class...
+      squatting 775 pounds, incline dumbell press with 170 pound dumbells, deadlifting 661 pounds, front, back, side, torso, arms
+</TEXT>

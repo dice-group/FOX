@@ -1,0 +1,46 @@
+<TEXT>
+<ENAMEX TYPE="PERSON">Karl Crary</ENAMEX>,
+<ENAMEX TYPE="LOCATION">8127 Wean Hall</ENAMEX>,
+<ENAMEX TYPE="ORGANIZATION">School of Computer Science Carnegie Mellon University</ENAMEX>,
+<ENAMEX TYPE="LOCATION">5000 Forbes Avenue</ENAMEX>  <ENAMEX TYPE="LOCATION">Pittsburgh, PA 15213</ENAMEX>,
+Phone: (412) 268-7687  Fax: (412) 268-5576 crary@cs.cmu.edu 
+Research Interests
+My research interests are in applying programming language technology to improve the 
+development, maintenance, and performance of software systems. I am particularly 
+interested in mechanization of the metatheory of programming languages, type-oriented
+compilation strategies, in type-based certification of machine code, and in the design 
+of practical, high- or low-level programming languages.
+
+Publications
+Most of my publications are available online.
+
+Teaching
+
+    * This Spring, I am teaching <ENAMEX TYPE="MISCELLANEOUS"> HOT Compilation (15-501)  </ENAMEX> , an 
+    undergraduate course on the implementation of compilers for higher-order, typed languages. 
+
+Current Students
+
+    * <ENAMEX TYPE="PERSON"> Aleksey Kliger </ENAMEX>,
+    * <ENAMEX TYPE="PERSON"> Daniel Lee </ENAMEX>,
+    * <ENAMEX TYPE="PERSON"> Susmit Sarkar </ENAMEX> ,
+
+Former Students
+
+    * <ENAMEX TYPE="PERSON"> Derek Dreyer </ENAMEX>,
+    * <ENAMEX TYPE="PERSON"> Tom Murphy </ENAMEX>,
+    * <ENAMEX TYPE="PERSON"> Leaf Petersen </ENAMEX>,
+    * <ENAMEX TYPE="PERSON"> Joe Vanderwaart </ENAMEX> ,
+
+Current Events
+
+    "Of all the commandments, which is the most important?"
+
+    "The most important one," answered <ENAMEX TYPE="PERSON"> Jesus </ENAMEX> , "is this: 'Hear, O 
+    <ENAMEX TYPE="LOCATION"> Israel </ENAMEX> , the <ENAMEX TYPE="PERSON"> Lord </ENAMEX> our God, the <ENAMEX TYPE="PERSON"> Lord </ENAMEX> is one. Love the 
+    <ENAMEX TYPE="PERSON"> Lord </ENAMEX> your God with all your heart and with all your soul and with 
+    all your mind and with all your strength.' The second is this: 
+    'Love your neighbor as yourself.' There is no commandment greater than these."
+
+   
+</TEXT>
