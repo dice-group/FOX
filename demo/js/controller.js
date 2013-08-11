@@ -42,7 +42,7 @@ Fox.DemoCtrl = function($routeParams, $scope,$http) {
     });
     
    
-    $scope.foxResponse = {input : "", output:""};
+    $scope.foxResponse = {input : "", output : "", log : ""};
     
     $scope.foxRequest.send = function() {
         $scope.foxRequest.state = "sending";
@@ -51,11 +51,13 @@ Fox.DemoCtrl = function($routeParams, $scope,$http) {
         var foxRequest = angular.copy($scope.foxRequest);
         foxRequest.input  = encodeURIComponent(foxRequest.input);
         
+        // set fox parameter that we always use in the web demo
         foxRequest.returnHtml = true;
         
         // clear old data
         $scope.foxResponse.input = "";
         $scope.foxResponse.output = "";
+        $scope.foxResponse.log = "";
         
         var method ='POST';
         //var url = 'http://' + $scope.host + ':' + $scope.port + '/api'; 
@@ -65,8 +67,11 @@ Fox.DemoCtrl = function($routeParams, $scope,$http) {
         
         $http({method: method, url: url, data : data}).
         success(function(data, status, headers, config) {
+            
             $scope.foxResponse.input  = decodeURIComponent(data[0].input);
             $scope.foxResponse.output = decodeURIComponent(data[0].output);
+            $scope.foxResponse.log = decodeURIComponent(data[0].log);
+            
             $scope.foxRequest.state = "done";
             $scope.isCollapsed = true;
         }).

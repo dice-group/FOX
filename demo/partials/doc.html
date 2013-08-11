@@ -3,25 +3,43 @@
 <div class="container">
     <h2>How to use</h2>
 	<h5>web API</h5>
-	FOX web API accepts HTTP POST requests also in json format to: <a ng-href="http://{{host}}/api">http://{{host}}/api</a><br>
+	FOX web API accepts HTTP POST requests also in json format to: <a data-ng-href="http://{{host}}/api">http://{{host}}/api</a><br>
 
 	<br>
     <h5>parameter</h5>
+    <p>Optional parameters and there default values are marked.</p>
 	<ul>
 		<li>input : text or an url</li>
 		<li>type : { text | url }</li>
 		<li>task : { NER } </li>
 		<li>output : { JSONLD | N3 | N-TRIPLE | RDF/{ JSON | XML | XML-ABBREV} | TURTLE } </li>
-		<li>nif : { true | false } </li>
+		<li>nif : { <b>true</b> | false } </li>
+		<li>returnHtml : { true | <b>false</b> } </li>
+		<li>foxlight : { true | <b>false</b> } </li>
 	</ul>
    
     <br>
+     <h2>Response</h2>
+     Each value is urlencoded.
+<pre>[{
+    "input"  : "", 
+    "output" : "",
+    "log"    : ""
+}]</pre>
+     
+      <br>
     <h2>Example requests with curl</h2>
     <h5>Content-Type: application/x-www-form-urlencoded</h5>
-    <pre>curl -d type=text -d task=NER -d output=JSONLD --data-urlencode "input=The foundation of the University of Leipzig in 1409 initiated the city's development into a centre of German law and the publishing industry, and towards being a location of the Reichsgericht (High Court), and the German National Library (founded in 1912). The philosopher and mathematician Gottfried Leibniz was born in Leipzig in 1646, and attended the university from 1661-1666." --header "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api</pre>
-    <pre>curl -d type=url -d task=NER -d output=TURTLE --data-urlencode "input=http://en.wikipedia.org/wiki/Leipzig_University" --header "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api</pre>
+    <pre>
+curl -d type=text -d task=NER -d output=JSONLD --data-urlencode "input=The foundation of the University of Leipzig in 1409 initiated the city's development into a centre of German law and the publishing industry, and towards being a location of the Reichsgericht (High Court), and the German National Library (founded in 1912). The philosopher and mathematician Gottfried Leibniz was born in Leipzig in 1646, and attended the university from 1661-1666." --header "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api
+</pre>
+    <pre>
+curl -d type=url -d task=NER -d output=TURTLE -d foxlight=true --data-urlencode "input=http://en.wikipedia.org/wiki/Leipzig_University" --header "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api > response.txt
+</pre>
     
     <br>
     <h5>Content-Type: application/json</h5>
-    <pre>curl -d "{\"input\":\"Cologne%20German%3A%20K%C3%B6ln%2C%20K%C3%B6lsch%3A%20K%C3%B6lle%20is%20Germany's%20fourth-largest%20city%20(after%20Berlin%2C%20Hamburg%2C%20and%20Munich)%2C%20and%20is%20the%20largest%20city%20both%20in%20the%20German%20Federal%20State%20of%20North%20Rhine-Westphalia%20%23and%20within%20the%20Rhine-Ruhr%20Metropolitan%20Area%2C%20one%20of%20the%20major%20European%20metropolitan%20areas%20with%20more%20than%20ten%20million%20inhabitants.%20Cologne%20is%20located%20on%20both%20sides%20of%20the%20Rhine%20River.%20The%20city's%20famous%20Cologne%20Cathedral%20(K%C3%B6lner%20Dom)%20is%20the%20seat%20of%20the%20Catholic%20%23Archbishop%20of%20Cologne.%20The%20University%20of%20Cologne%20(Universit%C3%A4t%20zu%20K%C3%B6ln)%20is%20one%20of%20Europe's%20oldest%20and%20largest%20universities.\", \"type\" : \"text\", \"task\":\"ner\", \"output\":\"TURTLE\"}" --header "Content-Type: application/json" http://{{host}}/api</pre>
+    <pre>
+curl -d "{\"input\":\"Cologne%20German%3A%20K%C3%B6ln%2C%20K%C3%B6lsch%3A%20K%C3%B6lle%20is%20Germany's%20fourth-largest%20city%20(after%20Berlin%2C%20Hamburg%2C%20and%20Munich)%2C%20and%20is%20the%20largest%20city%20both%20in%20the%20German%20Federal%20State%20of%20North%20Rhine-Westphalia%20%23and%20within%20the%20Rhine-Ruhr%20Metropolitan%20Area%2C%20one%20of%20the%20major%20European%20metropolitan%20areas%20with%20more%20than%20ten%20million%20inhabitants.%20Cologne%20is%20located%20on%20both%20sides%20of%20the%20Rhine%20River.%20The%20city's%20famous%20Cologne%20Cathedral%20(K%C3%B6lner%20Dom)%20is%20the%20seat%20of%20the%20Catholic%20%23Archbishop%20of%20Cologne.%20The%20University%20of%20Cologne%20(Universit%C3%A4t%20zu%20K%C3%B6ln)%20is%20one%20of%20Europe's%20oldest%20and%20largest%20universities.\", \"type\" : \"text\", \"task\":\"ner\", \"output\":\"TURTLE\"}" --header "Content-Type: application/json" http://{{host}}/api
+</pre>
 </div>
