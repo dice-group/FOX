@@ -10,7 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -216,10 +218,10 @@ public class FoxTextUtil {
         return in.split(tokenSpliter);
     }
 
-    public static synchronized List<Integer> getIndex(String token, String tokenInput) {
+    public static synchronized Set<Integer> getIndex(String token, String tokenInput) {
 
         token = Pattern.quote(" " + token.trim() + " ");
-        List<Integer> indices = new ArrayList<>();
+        Set<Integer> indices = new HashSet<>();
         Matcher matcher = Pattern.compile(token).matcher(" " + tokenInput + " ");
         while (matcher.find())
             indices.add(matcher.start() + 1 - 1);

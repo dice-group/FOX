@@ -32,7 +32,7 @@ public class AGDISTISLookup implements InterfaceURI {
 
     @Override
     public void setUris(Set<Entity> entities, String input) {
-
+        logger.info("AGDISTISLookup ...");
         if (logger.isDebugEnabled())
             logger.debug("makeInput ...");
 
@@ -43,7 +43,7 @@ public class AGDISTISLookup implements InterfaceURI {
 
         if (logger.isDebugEnabled())
             logger.debug("send ...");
-
+        logger.info("AGDISTISLookup sending...");
         String agdistis_output = "";
         try {
             agdistis_output = send(agdistis_input);
@@ -51,6 +51,7 @@ public class AGDISTISLookup implements InterfaceURI {
         } catch (Exception e) {
             logger.error("\n", e);
         }
+        logger.info("AGDISTISLookup sending done.");
         if (logger.isDebugEnabled())
             logger.debug(agdistis_output);
 
@@ -62,6 +63,7 @@ public class AGDISTISLookup implements InterfaceURI {
         if (logger.isDebugEnabled())
             logger.debug("done.");
 
+        logger.info("AGDISTISLookup done..");
         indexMap.clear();
     }
 
@@ -69,10 +71,15 @@ public class AGDISTISLookup implements InterfaceURI {
 
         Map<Integer, Entity> indexEntityMap = new HashMap<>();
         for (Entity entity : entities) {
-            for (Integer startIndex : entity.getIndices()) {
-                // TODO : check contains
-                indexEntityMap.put(startIndex, entity);
-            }
+
+            Set<Integer> startIndices = entity.getIndices();
+            if (startIndices == null) {
+                throw new NullPointerException("Entity without indexices.");
+            } else
+                for (Integer startIndex : startIndices) {
+                    // TODO : check contains
+                    indexEntityMap.put(startIndex, entity);
+                }
         }
 
         Set<Integer> startIndices = new TreeSet<>(indexEntityMap.keySet());

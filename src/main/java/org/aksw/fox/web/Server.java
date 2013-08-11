@@ -23,13 +23,6 @@ public class Server {
      */
     public Server(int port) {
 
-        // try {
-        // host = InetAddress.getLocalHost().getHostAddress();
-        // } catch (UnknownHostException e) {
-        // logger.error("\n", e);
-        // host = "localhost";
-        // }
-
         server.addListener(new NetworkListener("FoxNetworkListener", NetworkListener.DEFAULT_NETWORK_HOST, port));
 
         StaticHttpHandler shl = new StaticHttpHandler("demo");

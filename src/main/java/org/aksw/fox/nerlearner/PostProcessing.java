@@ -234,10 +234,11 @@ public class PostProcessing implements PostProcessingInterface {
     // label an entity
     protected Map<String, String> labeledEntry(Entry<String, String> entity, Map<String, String> labeledMap) {
 
+        // token of an entity
         String[] entityToken = FoxTextUtil.getToken(entity.getKey());
 
-        // for all entity occurrence
-        List<Integer> occurrence = FoxTextUtil.getIndex(entity.getKey(), tokenManager.getTokenInput());
+        // all entity occurrence
+        Set<Integer> occurrence = FoxTextUtil.getIndex(entity.getKey(), tokenManager.getTokenInput());
         if (occurrence.size() == 0) {
             logger.error("entity not found:" + entity.getKey());
         }

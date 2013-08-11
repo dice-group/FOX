@@ -38,4 +38,11 @@ public interface InterfaceRunnableFox extends Runnable {
      * @return results
      */
     public String getResults();
+
+    /**
+     * Returns log messages.
+     * 
+     * @return log
+     */
+    public String getLog();
 }

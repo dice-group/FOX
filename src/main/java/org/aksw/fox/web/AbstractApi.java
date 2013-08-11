@@ -97,6 +97,12 @@ public abstract class AbstractApi extends HttpHandler {
         else
             formData.put("nif", "true");
 
+        String foxlight = formData.get("foxlight");
+        if (foxlight == null || !foxlight.equalsIgnoreCase("true"))
+            formData.put("foxlight", "false");
+        else
+            formData.put("foxlight", "true");
+
         logger.info("ok.");
         return true;
     }

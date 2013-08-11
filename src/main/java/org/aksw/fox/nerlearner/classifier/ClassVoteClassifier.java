@@ -76,7 +76,7 @@ public class ClassVoteClassifier extends Classifier {
         // DEBUG
         if (attributeF1.size() == (instances.numAttributes() - 1))
             for (Entry<String, Double> e : attributeF1.entrySet())
-                logger.debug(e.getKey() + " \t" + e.getValue());
+                logger.info(e.getKey() + " \t" + e.getValue());
         // DEBUG
 
         /* 2. we are done, so find tool for cat */

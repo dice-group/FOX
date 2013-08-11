@@ -1,7 +1,12 @@
 package org.aksw.fox;
 
+import gnu.getopt.Getopt;
+
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -12,6 +17,7 @@ import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.reader.TrainingInputReader;
 import org.aksw.fox.nertools.FoxNERTools;
 import org.aksw.fox.utils.FoxCfg;
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import weka.classifiers.meta.Vote;
@@ -23,32 +29,83 @@ import weka.core.SelectedTag;
  * @author rspeck
  * 
  */
+
 public class MainFox {
+
+    public static Logger logger = Logger.getLogger(MainFox.class);
+
     /**
-     * The main method.
      * 
-     * @param a
-     *            not used
-     * @throws Exception
+     * @param args
+     *            <p>
+     *            -i for an input file or all files in a given directory (sub
+     *            directories aren't included),<br>
+     *            -a for an action {train|retrieve}
+     *            </p>
+     * 
+     * @exception Exception
+     *                if something wrong
      */
-    public static void main(String[] a) throws Exception {
+    public static void main(String[] args) throws Exception {
 
         PropertyConfigurator.configure("log4j.properties");
-        /*
-         * { // input 2 int max = 20; String[] files = new String[max]; for (int
-         * i = 1; i <= max; i++) files[i - 1] = "input/2/" + i;
-         * 
-         * MainFox.training(files); // MainFox.retrieve(files); }
-         */
-        { // input 1
-            int max = 4;
-            String[] files = new String[max];
-            for (int i = 1; i <= max; i++)
-                files[i - 1] = "input/1/" + i;
 
-            MainFox.training(new String[] { "input/1/2" });
-            // MainFox.training(files);
-            // MainFox.retrieve(new String[] { "input/2/2" });
+        final Getopt getopt = new Getopt("Fox", args, "i:x a:x");
+
+        int arg;
+        String in = "", a = "";
+        while ((arg = getopt.getopt()) != -1) {
+            switch (arg) {
+            case 'i':
+                in = String.valueOf(getopt.getOptarg());
+                break;
+            case 'a':
+                a = String.valueOf(getopt.getOptarg());
+                if (a.toLowerCase().startsWith("tr")) {
+                    a = "train";
+                    if (FoxCfg.get("tainFox").toLowerCase().startsWith("false")) {
+                        throw new Exception("You need to change the fox.properties file and set tainFox to true. Also you should set an output file for the new model.");
+                    }
+                } else if (a.toLowerCase().startsWith("re")) {
+                    a = "retrieve";
+                } else {
+                    throw new IOException("Wrong action value.");
+                }
+                break;
+            }
+        }
+        List<String> files = new ArrayList<>();
+
+        File file = new File(in);
+        if (!file.exists()) {
+            throw new IOException("Can't find file or directory.");
+        } else {
+            if (file.isDirectory()) {
+                // read all files in a directory
+                for (File fileEntry : file.listFiles()) {
+                    if (fileEntry.isFile() && !fileEntry.isHidden()) {
+                        files.add(fileEntry.getAbsolutePath());
+                    }
+                }
+            } else if (file.isFile()) {
+                files.add(file.getAbsolutePath());
+            } else {
+                throw new IOException("Input isn't a valid file or directory.");
+            }
+        }
+
+        String[] files_array = files.toArray(new String[files.size()]);
+
+        if (a.equals("train")) {
+            MainFox.logger.info(files.toString());
+            MainFox.training(files_array);
+
+        } else if (a.equals("retrieve")) {
+
+            MainFox.retrieve(files_array);
+
+        } else {
+            throw new IOException("Don't know what to do. Please set the action parameter");
         }
     }
 
@@ -79,7 +136,7 @@ public class MainFox {
      *            files
      * @throws Exception
      */
-    public static void training(String[] inputFiles) throws Exception {
+    public static void training(String[] inputFiles) throws IOException {
 
         FoxNERTools foxNERTools = new FoxNERTools();
         FoxClassifier foxClassifier = new FoxClassifier();
@@ -134,8 +191,12 @@ public class MainFox {
         foxNERTools.setTraining(true);
         foxNERTools.getNER(input);
 
-        foxClassifier.training(input, foxNERTools.getToolResult(), oracle);
-        foxClassifier.writeClassifier();
-        foxClassifier.eva();
+        try {
+            foxClassifier.training(input, foxNERTools.getToolResult(), oracle);
+            foxClassifier.writeClassifier();
+            foxClassifier.eva();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

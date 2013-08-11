@@ -2,7 +2,6 @@ package org.aksw.fox.data;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -97,7 +96,7 @@ public class TokenManager {
 
     private void repairEntity(Entity entity) {
 
-        List<Integer> occurrence = FoxTextUtil.getIndex(entity.getText(), tokenInput);
+        Set<Integer> occurrence = FoxTextUtil.getIndex(entity.getText(), tokenInput);
         if (occurrence.size() != 0) {
 
         } else {

@@ -84,17 +84,20 @@ public class Api extends AbstractApi {
             // TODO
             // output
         }
+        String in = null, out = null, log = null;
+        if (fox != null) {
+            // set response
 
-        // set response
-        String in = null, out = null;
-        try {
-            in = encodeURLComponent(parameter.get("input"));
-            out = encodeURLComponent(output);
-        } catch (UnsupportedEncodingException e) {
-            logger.error("\n", e);
+            try {
+                in = encodeURLComponent(parameter.get("input"));
+                out = encodeURLComponent(output);
+                log = encodeURLComponent(fox.getLog());
+            } catch (UnsupportedEncodingException e) {
+                logger.error("\n", e);
+            }
         }
 
-        setResponse(response, "[{\"input\" : \" " + in + "\" , \"output\" : \"" + out + "\"}]", HttpURLConnection.HTTP_OK, "text/plain");
+        setResponse(response, "[{\"input\" : \" " + in + "\" , \"output\" : \"" + out + "\", \"log\" : \"" + log + "\" }]", HttpURLConnection.HTTP_OK, "text/plain");
     }
 
     public String encodeURLComponent(String in) throws UnsupportedEncodingException {
