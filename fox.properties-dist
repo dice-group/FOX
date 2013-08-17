@@ -2,20 +2,20 @@
 serializedClassifier : data/stanford/english.all.3class.distsim.crf.ser.gz
 
 # fox pool instances
-poolCount : 1
+poolCount : 5
 
 # max time in min. for fox
-foxLifeTime: 5
+foxLifeTime : 5
 
 # max time in min. for all ner tools
-foxNERLifeTime: 2
+foxNERLifeTime : 2
 
-# `true` to train fox. tainFox: { true | false } 
-tainFox: false
+# `true` to train fox. tainFox: { true | false }
+tainFox : false
 
 # path to read / write trained model
 modelPath : data/fox
 
 # which learner we use. learner : { mp | result_vote | class_vote }
-learner mp
+learner : mp
 
