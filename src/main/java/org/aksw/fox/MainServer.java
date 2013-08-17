@@ -2,6 +2,7 @@ package org.aksw.fox;
 
 import gnu.getopt.Getopt;
 
+import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxServerUtil;
 import org.aksw.fox.web.Server;
 import org.apache.log4j.PropertyConfigurator;
@@ -21,6 +22,13 @@ public class MainServer {
     public static void main(String[] args) {
 
         PropertyConfigurator.configure("log4j.properties");
+
+        // test config"
+        String poolCount = FoxCfg.get("poolCount");
+        if (poolCount == null) {
+            Server.logger.error("Can't read poolCount key in `fox.properties` file.");
+            System.exit(0);
+        }
 
         final Getopt getopt = new Getopt("Fox", args, "p:x");
 

@@ -23,16 +23,19 @@ public class FoxCfg {
         } catch (FileNotFoundException e) {
             logger.error("file: " + CFG_FILE + " not found!");
         }
-        try {
-            if (in != null)
+        if (in != null) {
+            try {
                 FoxProperties.load(in);
-        } catch (IOException e) {
-            logger.error("can't read cfg file.");
-        }
-        try {
-            in.close();
-        } catch (Exception e) {
-            logger.error("something went wrong.\n", e);
+            } catch (IOException e) {
+                logger.error("Can't read `fox.properties` file.");
+            }
+            try {
+                in.close();
+            } catch (Exception e) {
+                logger.error("Something went wrong.\n", e);
+            }
+        } else {
+            logger.error("Can't read `fox.properties` file.");
         }
     }
 
