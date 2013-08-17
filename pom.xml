@@ -243,9 +243,10 @@
 									<fileset dir="scripts" />
 								</copy>
 								<copy file="log4j.properties" tofile="${project.build.directory}/log4j.properties" />
-								<copy file="fox.properties" tofile="${project.build.directory}/fox.properties" />
+								<copy file="fox.properties-dist" tofile="${project.build.directory}/fox.properties-dist" />
 
-								<chmod dir="${project.build.directory}" perm="700" includes="**/*.sh" />
+								<chmod dir="${project.build.directory}" perm="700"
+									includes="**/*.sh" />
 							</target>
 						</configuration>
 						<goals>
