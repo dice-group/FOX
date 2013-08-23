@@ -5,14 +5,9 @@ import gnu.getopt.Getopt;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.reader.TrainingInputReader;
 import org.aksw.fox.nertools.FoxNERTools;
@@ -164,28 +159,6 @@ public class MainFox {
         TrainingInputReader trainingInputReader = new TrainingInputReader(inputFiles);
         String input = trainingInputReader.getInput();
         Map<String, String> oracle = trainingInputReader.getEntities();
-
-        // TODO:
-        // move to ...?
-        {
-            // TODO:
-            // remove Entity dependency? implement a new method
-            // repairEntities for maps
-
-            // remove oracle entities aren't in input
-            Set<Entity> set = new HashSet<>();
-            for (Entry<String, String> oracleEntry : oracle.entrySet())
-                set.add(new Entity(oracleEntry.getKey(), oracleEntry.getValue()));
-
-            // repair entities (use fox token)
-            TokenManager tokenManager = new TokenManager(input);
-            tokenManager.repairEntities(set);
-
-            // use
-            oracle.clear();
-            for (Entity e : set)
-                oracle.put(e.getText(), e.getType());
-        }
 
         // retrieve entities (tool results)
         foxNERTools.setTraining(true);

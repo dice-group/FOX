@@ -6,9 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -83,13 +87,31 @@ public class TrainingInputReader {
     }
 
     public HashMap<String, String> getEntities() throws IOException {
-        // Debug
-        if (logger.isDebugEnabled()) {
-            logger.debug("getEntities ...");
-            for (Entry<String, String> e : entities.entrySet())
-                logger.debug(e.getKey() + " -> " + e.getValue());
-        }
-        // Debug
+        {// Debug
+            if (logger.isDebugEnabled()) {
+                logger.debug("getEntities ...");
+                for (Entry<String, String> e : entities.entrySet())
+                    logger.debug(e.getKey() + " -> " + e.getValue());
+            }
+
+        }// Debug
+
+        {// remove oracle entities aren't in input
+            Set<Entity> set = new HashSet<>();
+
+            for (Entry<String, String> oracleEntry : entities.entrySet())
+                set.add(new Entity(oracleEntry.getKey(), oracleEntry.getValue()));
+
+            // TODO remove dependency?
+            // repair entities (use fox token)
+            TokenManager tokenManager = new TokenManager(input);
+            tokenManager.repairEntities(set);
+
+            // use
+            entities.clear();
+            for (Entity e : set)
+                entities.put(e.getText(), e.getType());
+        }//
 
         return entities;
     }
