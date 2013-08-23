@@ -45,13 +45,15 @@ public class TokenCategoryMatrix {
 
         String[] split = entity.text.split(splitregText);
         for (String s : split) {
-            int tokenIndex = token.indexOf(s.trim());
-            if (tokenIndex >= 0) {
-                for (int i = 0; i < categories.size(); i++)
-                    values[tokenIndex][i] = false;
-                values[tokenIndex][categories.indexOf(entity.type)] = true;
-            } else {
-                logger.error("token not found: " + s.trim());
+            if (!s.trim().isEmpty()) {
+                int tokenIndex = token.indexOf(s.trim());
+                if (tokenIndex >= 0) {
+                    for (int i = 0; i < categories.size(); i++)
+                        values[tokenIndex][i] = false;
+                    values[tokenIndex][categories.indexOf(entity.type)] = true;
+                } else {
+                    logger.error("token not found: " + s.trim());
+                }
             }
         }
     }
