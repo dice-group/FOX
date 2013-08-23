@@ -10,14 +10,12 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.TokenManager;
-import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.nerlearner.PostProcessingInterface;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.nerlearner.reader.TrainingInputReader;
 import org.aksw.fox.nertools.FoxNERTools;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -31,30 +29,9 @@ import weka.core.Utils;
  */
 public class CrossValidation {
 
-    /**
-     * 
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) {
-
-        // TODO: remove FoxClassifier dependency?
-        FoxClassifier fc = new FoxClassifier();
-        fc.setClassifierMultilayerPerceptron();
-        Classifier cls = fc.getClassifier();
-
-        try {
-            CrossValidation.crossValidation(cls, new String[] { "input/small_test" });
-        } catch (Exception e) {
-            logger.error("\n", e);
-        }
-    }
-
     public static Logger logger = Logger.getLogger(CrossValidation.class);
-    static {
-        PropertyConfigurator.configure("log4j.properties");
-    }
 
+    public static FoxNERTools foxNERTools = new FoxNERTools();
     static int seed = 1, folds = 10;
     static Map<Integer, Map<String, List<Double>>> kMap = new HashMap<>();
 
@@ -67,7 +44,7 @@ public class CrossValidation {
         // prepare data
         PostProcessingInterface pp = null;
         {
-            FoxNERTools foxNERTools = new FoxNERTools();
+
             foxNERTools.setTraining(true);
             foxNERTools.getNER(tokenManager.getInput());
 
@@ -97,6 +74,7 @@ public class CrossValidation {
         // perform cross-validation
         Evaluation eval = new Evaluation(randInstances);
         for (int n = 0; n < folds; n++) {
+            logger.info("Validation fold k = " + (n + 1));
             Instances train = randInstances.trainCV(folds, n);
             Instances test = randInstances.testCV(folds, n);
 
