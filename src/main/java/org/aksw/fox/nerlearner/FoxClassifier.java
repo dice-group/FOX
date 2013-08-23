@@ -38,6 +38,10 @@ public class FoxClassifier {
     protected FoxInstances foxInstances = null;
     private boolean isTrained = false;
 
+    public Classifier getClassifier() {
+        return classifier;
+    }
+
     /**
      * FoxClassifier.
      */
