@@ -29,7 +29,7 @@ public class ResultVoteClassifier extends Classifier {
     public void buildClassifier(Instances instances) throws Exception {
         getCapabilities().testWithFail(instances);
         logger.info("buildClassifier ...");
-        logger.info(instances);
+        logger.debug(instances);
         // we wrapped a learned classifier. So nothing to do here.
     }
 
