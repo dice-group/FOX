@@ -81,7 +81,7 @@ public class ClassVoteClassifier extends Classifier {
 
         /* 2. we are done, so find tool for cat */
 
-        // do it when finished 1.
+        // do it after last build
         if (attributeF1.size() == (instances.numAttributes() - 1)) {
             // do it just by one tool
             if (catTool.size() == 0) {
@@ -108,7 +108,7 @@ public class ClassVoteClassifier extends Classifier {
             }
 
             // don't serialize this
-            attributeF1 = null;
+            attributeF1 = new HashMap<>();
             // DEBUG
             logger.debug(catTool.toString());
             // DEBUG
