@@ -19,10 +19,6 @@ import weka.core.Instances;
  * @author rspeck
  * 
  */
-/**
- * @author rspeck
- * 
- */
 public class ClassVoteClassifier extends Classifier {
 
     private static final long serialVersionUID = 708839473310297945L;

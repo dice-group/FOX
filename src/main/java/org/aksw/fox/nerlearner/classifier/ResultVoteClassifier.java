@@ -45,13 +45,11 @@ public class ResultVoteClassifier extends Classifier {
 
         for (int i = 0; i < cols; i++) {
 
-            if (instance.attribute(i).name().startsWith(attributePrefix)) {
-                if (instance.value(i) > 0) {
-                    cl = i % toolSize;// TODO: That is tools size, remove magic
-                                      // number
-                    break;
-                }
+            if (instance.attribute(i).name().startsWith(attributePrefix) && instance.value(i) > 0) {
+                cl = i % toolSize;
+                break;
             }
+
         }
         if (cl != -1)
             return Double.valueOf(cl + "");

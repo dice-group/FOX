@@ -86,7 +86,7 @@ public class CrossValidation {
             printConfusionMatrix(eval);
             printMeasures(eval);
         }
-        print(cls, eval, randInstances);
+        printSetup(cls, eval, randInstances);
         printOverall();
     }
 
@@ -132,7 +132,7 @@ public class CrossValidation {
         }
     }
 
-    public static void print(Classifier cls, Evaluation eval, Instances instances) {
+    public static void printSetup(Classifier cls, Evaluation eval, Instances instances) {
         logger.info("=== setup ===");
         logger.info("Classifier: " + cls.getClass().getName() + " " + Utils.joinOptions(cls.getOptions()));
         logger.info("Dataset: " + instances.relationName());

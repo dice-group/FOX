@@ -14,6 +14,11 @@ import org.apache.log4j.PropertyConfigurator;
  * 
  */
 public class MainServer {
+
+    static {
+        PropertyConfigurator.configure("log4j.properties");
+    }
+
     /**
      * The main method.
      * 
@@ -21,9 +26,7 @@ public class MainServer {
      */
     public static void main(String[] args) {
 
-        PropertyConfigurator.configure("log4j.properties");
-
-        // test config"
+        // test config
         String poolCount = FoxCfg.get("poolCount");
         if (poolCount == null) {
             Server.logger.error("Can't read poolCount key in `fox.properties` file.");
