@@ -238,7 +238,7 @@ public class FoxClassifier {
      *            combination rule
      */
     public void setClassifierResultVote(String[] prefix, SelectedTag rule) {
-        setClassifierVote("class", prefix, rule);
+        setClassifierVote("result", prefix, rule);
     }
 
     /**
@@ -250,7 +250,7 @@ public class FoxClassifier {
      *            combination rule
      */
     public void setClassifierClassVote(String[] prefix, SelectedTag rule) {
-        setClassifierVote("result", prefix, rule);
+        setClassifierVote("class", prefix, rule);
     }
 
     private void setClassifierVote(String type, String[] prefix, SelectedTag rule) {
