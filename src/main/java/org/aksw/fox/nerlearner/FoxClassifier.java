@@ -230,7 +230,7 @@ public class FoxClassifier {
     }
 
     /**
-     * Sets Vote as classifier with a combination rule.
+     * Sets ResultVote as classifier with a combination rule.
      * 
      * @param prefix
      *            tool attribute prefixes
@@ -238,36 +238,41 @@ public class FoxClassifier {
      *            combination rule
      */
     public void setClassifierResultVote(String[] prefix, SelectedTag rule) {
-        isTrained = true;
-
-        // a classifier as wrapper for each uesed tool
-        Classifier[] classifier = new Classifier[prefix.length];
-        for (int i = 0; i < prefix.length; i++)
-            classifier[i] = new ResultVoteClassifier(prefix[i]);
-
-        this.classifier = new Vote();
-        ((Vote) this.classifier).setClassifiers(classifier);
-        ((Vote) this.classifier).setCombinationRule(rule);
+        setClassifierVote("class", prefix, rule);
     }
 
     /**
+     * Sets ClassVote as classifier with a combination rule.
+     * 
+     * @param prefix
+     *            tool attribute prefixes
+     * @param rule
+     *            combination rule
      */
     public void setClassifierClassVote(String[] prefix, SelectedTag rule) {
+        setClassifierVote("result", prefix, rule);
+    }
+
+    private void setClassifierVote(String type, String[] prefix, SelectedTag rule) {
+
         isTrained = true;
 
         Classifier[] classifier = new Classifier[prefix.length];
-        for (int i = 0; i < prefix.length; i++)
-            classifier[i] = new ClassVoteClassifier(prefix[i]);
+        for (int i = 0; i < prefix.length; i++) {
+            switch (type) {
+            case "class":
+                classifier[i] = new ClassVoteClassifier(prefix[i]);
+                break;
+            case "result":
+                classifier[i] = new ResultVoteClassifier(prefix[i]);
+                break;
+            }
+        }
 
         this.classifier = new Vote();
         ((Vote) this.classifier).setClassifiers(classifier);
         ((Vote) this.classifier).setCombinationRule(rule);
-
     }
-
-    // public void setClassifierVote() {
-    // this.classifier = new Vote();
-    // }
 
     /**
      * Sets MultilayerPerceptron as classifier.
