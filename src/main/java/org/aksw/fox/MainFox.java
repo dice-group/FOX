@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.reader.TrainingInputReader;
@@ -15,19 +16,23 @@ import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import weka.classifiers.Classifier;
 import weka.classifiers.meta.Vote;
 import weka.core.SelectedTag;
 
 /**
- * A class with a main method to start or train FOX programmatically.
+ * Main class for cli support.
  * 
  * @author rspeck
  * 
  */
-
 public class MainFox {
 
     public static Logger logger = Logger.getLogger(MainFox.class);
+
+    static {
+        PropertyConfigurator.configure("log4j.properties");
+    }
 
     /**
      * 
@@ -35,15 +40,13 @@ public class MainFox {
      *            <p>
      *            -i for an input file or all files in a given directory (sub
      *            directories aren't included),<br>
-     *            -a for an action {train|retrieve}
+     *            -a for an action {train | retrieve | validate}
      *            </p>
      * 
      * @exception Exception
      *                if something wrong
      */
     public static void main(String[] args) throws Exception {
-
-        PropertyConfigurator.configure("log4j.properties");
 
         final Getopt getopt = new Getopt("Fox", args, "i:x a:x");
 
@@ -63,8 +66,17 @@ public class MainFox {
                     }
                 } else if (a.toLowerCase().startsWith("re")) {
                     a = "retrieve";
+                    if (FoxCfg.get("tainFox").toLowerCase().startsWith("tr")) {
+                        throw new Exception("You need to change the fox.properties file and set tainFox to false. Also you should set file for a trained model.");
+                    }
+                }
+                if (a.toLowerCase().startsWith("va")) {
+                    a = "validate";
+                    if (FoxCfg.get("tainFox").toLowerCase().startsWith("true")) {
+                        throw new Exception("You need to change the fox.properties file and set tainFox to false.");
+                    }
                 } else {
-                    throw new IOException("Wrong action value.");
+                    throw new Exception("Wrong action value.");
                 }
                 break;
             }
@@ -90,17 +102,56 @@ public class MainFox {
         }
 
         String[] files_array = files.toArray(new String[files.size()]);
+        logger.info(files.toString());
 
-        if (a.equals("train")) {
-            MainFox.logger.info(files.toString());
+        switch (a) {
+        case "train": {
             MainFox.training(files_array);
-
-        } else if (a.equals("retrieve")) {
-
+            break;
+        }
+        case "retrieve": {
             MainFox.retrieve(files_array);
-
-        } else {
+            break;
+        }
+        case "validate": {
+            MainFox.validate(files_array);
+            break;
+        }
+        default:
             throw new IOException("Don't know what to do. Please set the action parameter");
+        }
+    }
+
+    public static void validate(String[] inputFiles) {
+        // TODO: remove FoxClassifier dependency?
+        FoxClassifier foxClassifier = new FoxClassifier();
+
+        Set<String> toolResultKeySet = CrossValidation.foxNERTools.getToolResult().keySet();
+        String[] prefix = toolResultKeySet.toArray(new String[toolResultKeySet.size()]);
+
+        logger.info("tools used: " + toolResultKeySet);
+
+        switch (FoxCfg.get("learner").trim()) {
+        case "result_vote": {
+
+            foxClassifier.setClassifierResultVote(prefix, new SelectedTag(Vote.AVERAGE_RULE, Vote.TAGS_RULES));
+            break;
+        }
+        case "class_vote": {
+            foxClassifier.setClassifierClassVote(prefix, new SelectedTag(Vote.MAX_RULE, Vote.TAGS_RULES));
+            break;
+        }
+        default:
+        case "mp":
+            foxClassifier.setClassifierMultilayerPerceptron();
+        }
+
+        Classifier cls = foxClassifier.getClassifier();
+
+        try {
+            CrossValidation.crossValidation(cls, inputFiles);
+        } catch (Exception e) {
+            logger.error("\n", e);
         }
     }
 
@@ -121,7 +172,7 @@ public class MainFox {
         para.put("input", input);
         fox.setParameter(para);
         fox.run();
-        // Fox.logger.info(fox.getResults());
+        // logger.info(fox.getResults());
     }
 
     /**
