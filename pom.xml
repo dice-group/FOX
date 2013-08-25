@@ -230,6 +230,9 @@
 						<phase> package</phase>
 						<configuration>
 							<target>
+								<copy todir="${project.build.directory}/input">
+									<fileset dir="input" />
+								</copy>
 								<copy todir="${project.build.directory}/lib">
 									<fileset dir="lib" />
 								</copy>
