@@ -17,8 +17,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import weka.classifiers.Classifier;
-import weka.classifiers.meta.Vote;
-import weka.core.SelectedTag;
 
 /**
  * Main class for cli support.
@@ -134,13 +132,25 @@ public class MainFox {
         switch (FoxCfg.get("learner").trim()) {
         case "result_vote": {
 
-            foxClassifier.setClassifierResultVote(prefix, new SelectedTag(Vote.AVERAGE_RULE, Vote.TAGS_RULES));
+            foxClassifier.setClassifierResultVote(prefix);
             break;
         }
         case "class_vote": {
-            foxClassifier.setClassifierClassVote(prefix, new SelectedTag(Vote.MAX_RULE, Vote.TAGS_RULES));
+            foxClassifier.setClassifierClassVote(prefix);
             break;
         }
+        // case "stackingC": {
+        // foxClassifier.setClassifierStackingC(prefix);
+        // break;
+        // }
+        case "j48": {
+            foxClassifier.setClassifierJ48();
+            break;
+        }
+        // case "adtree": {
+        // foxClassifier.setClassifierADTree();
+        // break;
+        // }
         default:
         case "mp":
             foxClassifier.setClassifierMultilayerPerceptron();
@@ -187,18 +197,18 @@ public class MainFox {
         FoxNERTools foxNERTools = new FoxNERTools();
         FoxClassifier foxClassifier = new FoxClassifier();
 
+        Set<String> toolResultKeySet = foxNERTools.getToolResult().keySet();
+        String[] prefix = toolResultKeySet.toArray(new String[toolResultKeySet.size()]);
+
+        logger.info("tools used: " + toolResultKeySet);
         switch (FoxCfg.get("learner").trim()) {
         case "result_vote": {
-            SelectedTag st = new SelectedTag(Vote.AVERAGE_RULE, Vote.TAGS_RULES);
-            String[] prefix = foxNERTools.getToolResult().keySet().toArray(new String[foxNERTools.getToolResult().size()]);
 
-            foxClassifier.setClassifierResultVote(prefix, st);
+            foxClassifier.setClassifierResultVote(prefix);
             break;
         }
         case "class_vote": {
-            SelectedTag st = new SelectedTag(Vote.MAX_RULE, Vote.TAGS_RULES);
-            String[] prefix = foxNERTools.getToolResult().keySet().toArray(new String[foxNERTools.getToolResult().size()]);
-            foxClassifier.setClassifierClassVote(prefix, st);
+            foxClassifier.setClassifierClassVote(prefix);
             break;
         }
         default:

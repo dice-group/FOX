@@ -16,6 +16,6 @@ tainFox : false
 # path to read / write trained model
 modelPath : data/fox
 
-# which learner we use. learner : { mp | result_vote | class_vote }
+# which learner we use. learner : { mp | result_vote | class_vote | j48}
 learner : mp
 

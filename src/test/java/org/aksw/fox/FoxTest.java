@@ -25,9 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import weka.classifiers.meta.Vote;
-import weka.core.SelectedTag;
-
 @RunWith(JUnit4.class)
 public class FoxTest {
 
@@ -79,9 +76,8 @@ public class FoxTest {
         switch (FoxCfg.get("learner").trim()) {
 
         case "vote":
-            SelectedTag selectedTag = new SelectedTag(Vote.AVERAGE_RULE, Vote.TAGS_RULES);
             String[] prefix = foxNERTools.getToolResult().keySet().toArray(new String[foxNERTools.getToolResult().size()]);
-            foxClassifier.setClassifierResultVote(prefix, selectedTag);
+            foxClassifier.setClassifierResultVote(prefix);
             break;
 
         default:

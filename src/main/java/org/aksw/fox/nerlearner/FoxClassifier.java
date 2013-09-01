@@ -19,6 +19,7 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.meta.Vote;
+import weka.classifiers.trees.J48;
 import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.core.SerializationHelper;
@@ -234,11 +235,9 @@ public class FoxClassifier {
      * 
      * @param prefix
      *            tool attribute prefixes
-     * @param rule
-     *            combination rule
      */
-    public void setClassifierResultVote(String[] prefix, SelectedTag rule) {
-        setClassifierVote("result", prefix, rule);
+    public Classifier setClassifierResultVote(String[] prefix) {
+        return setClassifierVote("result", prefix, new SelectedTag(Vote.AVERAGE_RULE, Vote.TAGS_RULES));
     }
 
     /**
@@ -246,14 +245,12 @@ public class FoxClassifier {
      * 
      * @param prefix
      *            tool attribute prefixes
-     * @param rule
-     *            combination rule
      */
-    public void setClassifierClassVote(String[] prefix, SelectedTag rule) {
-        setClassifierVote("class", prefix, rule);
+    public Classifier setClassifierClassVote(String[] prefix) {
+        return setClassifierVote("class", prefix, new SelectedTag(Vote.MAX_RULE, Vote.TAGS_RULES));
     }
 
-    private void setClassifierVote(String type, String[] prefix, SelectedTag rule) {
+    private Classifier setClassifierVote(String type, String[] prefix, SelectedTag rule) {
 
         isTrained = true;
 
@@ -269,16 +266,19 @@ public class FoxClassifier {
             }
         }
 
-        this.classifier = new Vote();
-        ((Vote) this.classifier).setClassifiers(classifier);
-        ((Vote) this.classifier).setCombinationRule(rule);
+        Vote vote = new Vote();
+        vote.setClassifiers(classifier);
+        vote.setCombinationRule(rule);
+
+        this.classifier = vote;
+        return vote;
     }
 
     /**
      * Sets MultilayerPerceptron as classifier.
      */
-    public void setClassifierMultilayerPerceptron() {
-        Classifier classifier = new MultilayerPerceptron();
+    public Classifier setClassifierMultilayerPerceptron() {
+        MultilayerPerceptron multilayerPerceptron = new MultilayerPerceptron();
         /*
          * 'a' = (attribs + classes) / 2, 'i' = attribs, 'o' = classes , 't' =
          * attribs + classes so "a, 6", which would give you (attribs + classes)
@@ -286,6 +286,35 @@ public class FoxClassifier {
          */
 
         // mp.setHiddenLayers(hidden);
-        this.classifier = classifier;
+        this.classifier = multilayerPerceptron;
+        return multilayerPerceptron;
     }
+
+    /**
+     */
+    // public Classifier setClassifierStackingC(String[] prefix) {
+    // Stacking stacking = new Stacking();
+    // // stacking.setMetaClassifier(stacking);
+    //
+    // stacking.setClassifiers(new Classifier[] {
+    // setClassifierMultilayerPerceptron() });
+    // this.classifier = stacking;
+    // return stacking;
+    // }
+
+    /**
+     */
+    public Classifier setClassifierJ48() {
+        J48 j48 = new J48();
+
+        this.classifier = j48;
+        return j48;
+    }
+
+    // public Classifier setClassifierADTree() {
+    // ADTree adtree = new ADTree();
+    //
+    // this.classifier = adtree;
+    // return adtree;
+    // }
 }
