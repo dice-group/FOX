@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.fox.nerlearner.FoxClassifier;
+import org.aksw.fox.nerlearner.FoxClassifierFactory;
 import org.aksw.fox.nerlearner.reader.TrainingInputReader;
 import org.aksw.fox.nertools.FoxNERTools;
 import org.aksw.fox.utils.FoxCfg;
@@ -67,8 +68,7 @@ public class MainFox {
                     if (FoxCfg.get("tainFox").toLowerCase().startsWith("tr")) {
                         throw new Exception("You need to change the fox.properties file and set tainFox to false. Also you should set file for a trained model.");
                     }
-                }
-                if (a.toLowerCase().startsWith("va")) {
+                } else if (a.toLowerCase().startsWith("va")) {
                     a = "validate";
                     if (FoxCfg.get("tainFox").toLowerCase().startsWith("true")) {
                         throw new Exception("You need to change the fox.properties file and set tainFox to false.");
@@ -128,33 +128,7 @@ public class MainFox {
         String[] prefix = toolResultKeySet.toArray(new String[toolResultKeySet.size()]);
 
         logger.info("tools used: " + toolResultKeySet);
-
-        switch (FoxCfg.get("learner").trim()) {
-        case "result_vote": {
-
-            foxClassifier.setClassifierResultVote(prefix);
-            break;
-        }
-        case "class_vote": {
-            foxClassifier.setClassifierClassVote(prefix);
-            break;
-        }
-        // case "stackingC": {
-        // foxClassifier.setClassifierStackingC(prefix);
-        // break;
-        // }
-        case "j48": {
-            foxClassifier.setClassifierJ48();
-            break;
-        }
-        // case "adtree": {
-        // foxClassifier.setClassifierADTree();
-        // break;
-        // }
-        default:
-        case "mp":
-            foxClassifier.setClassifierMultilayerPerceptron();
-        }
+        setClassifier(foxClassifier, prefix);
 
         Classifier cls = foxClassifier.getClassifier();
 
@@ -201,20 +175,7 @@ public class MainFox {
         String[] prefix = toolResultKeySet.toArray(new String[toolResultKeySet.size()]);
 
         logger.info("tools used: " + toolResultKeySet);
-        switch (FoxCfg.get("learner").trim()) {
-        case "result_vote": {
-
-            foxClassifier.setClassifierResultVote(prefix);
-            break;
-        }
-        case "class_vote": {
-            foxClassifier.setClassifierClassVote(prefix);
-            break;
-        }
-        default:
-        case "mp":
-            foxClassifier.setClassifierMultilayerPerceptron();
-        }
+        setClassifier(foxClassifier, prefix);
 
         // read training data
         TrainingInputReader trainingInputReader = new TrainingInputReader(inputFiles);
@@ -231,6 +192,36 @@ public class MainFox {
             foxClassifier.eva();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void setClassifier(FoxClassifier foxClassifier, String[] prefix) {
+        switch (FoxCfg.get("learner").trim()) {
+        case "result_vote": {
+            foxClassifier.setIsTrained(true);
+            foxClassifier.setClassifier(FoxClassifierFactory.getClassifierResultVote(prefix));
+            break;
+        }
+        case "class_vote": {
+            foxClassifier.setIsTrained(true);
+            foxClassifier.setClassifier(FoxClassifierFactory.getClassifierClassVote(prefix));
+            break;
+        }
+        // case "stackingC": {
+        // foxClassifier.setClassifierStackingC(prefix);
+        // break;
+        // }
+        case "j48": {
+            foxClassifier.setClassifier(FoxClassifierFactory.getJ48());
+            break;
+        }
+        // case "adtree": {
+        // foxClassifier.setClassifierADTree();
+        // break;
+        // }
+        default:
+        case "mp":
+            foxClassifier.setClassifier(FoxClassifierFactory.getClassifierMultilayerPerceptron());
         }
     }
 }

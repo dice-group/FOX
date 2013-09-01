@@ -91,7 +91,7 @@ public class TokenManager {
     public void repairEntities(Set<Entity> entities) {
         for (Entity entity : entities)
             repairEntity(entity);
-        entities = new HashSet<Entity>(entities);
+        entities = new HashSet<>(entities);
     }
 
     private void repairEntity(Entity entity) {
