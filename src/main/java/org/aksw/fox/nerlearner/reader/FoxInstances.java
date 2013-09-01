@@ -173,9 +173,8 @@ public class FoxInstances {
         // prints arff file from input data
         PropertyConfigurator.configure("log4j.properties");
 
-        TrainingInputReader trainingInputReader = new TrainingInputReader(new String[] { "input/2/3" });
+        TrainingInputReader trainingInputReader = new TrainingInputReader(new String[] { "input/1/1" });
         String input = trainingInputReader.getInput();
-
         Map<String, String> oracle = trainingInputReader.getEntities();
 
         Map<String, Set<Entity>> map = new HashMap<>();
@@ -189,6 +188,7 @@ public class FoxInstances {
         String[] tokenSplit = FoxTextUtil.getSentencesToken(input);
         List<String> token = Arrays.asList(tokenSplit);
         Set<String> tokenSet = new HashSet<>();
+        // TODO: replace token with index as we use right now
         tokenSet.addAll(token);
 
         FoxInstances foxinstances = new FoxInstances();

@@ -33,14 +33,14 @@ public class TrainingInputReader {
     public static void main(String[] aa) throws Exception {
         PropertyConfigurator.configure("log4j.properties");
 
-        String[] a = { "input/1/2" };
+        String[] a = { "input/1/1" };
 
         TrainingInputReader trainingInputReader = new TrainingInputReader(a);
-        TrainingInputReader.logger.debug("======================");
-        trainingInputReader.getInput();
-        TrainingInputReader.logger.debug("======================");
-        trainingInputReader.getEntities();
-        TrainingInputReader.logger.debug("======================");
+        TrainingInputReader.logger.info("======================");
+        TrainingInputReader.logger.info(trainingInputReader.getInput());
+        TrainingInputReader.logger.info("======================");
+        TrainingInputReader.logger.info(trainingInputReader.getEntities());
+        TrainingInputReader.logger.info("======================");
     }
 
     protected File[] inputFiles;
