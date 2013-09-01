@@ -8,8 +8,6 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.TokenManager;
-import org.aksw.fox.nerlearner.classifier.ClassVoteClassifier;
-import org.aksw.fox.nerlearner.classifier.ResultVoteClassifier;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxFileUtil;
@@ -17,11 +15,7 @@ import org.apache.log4j.Logger;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.functions.MultilayerPerceptron;
-import weka.classifiers.meta.Vote;
-import weka.classifiers.trees.J48;
 import weka.core.Instances;
-import weka.core.SelectedTag;
 import weka.core.SerializationHelper;
 
 /**
@@ -81,6 +75,7 @@ public class FoxClassifier {
         logger.info("initInstances ...");
 
         instances = (oracle == null) ? foxInstances.getInstances(input, toolResults) : foxInstances.getInstances(input, toolResults, oracle);
+        logger.debug(instances);
     }
 
     /**
@@ -230,91 +225,12 @@ public class FoxClassifier {
         }
     }
 
-    /**
-     * Sets ResultVote as classifier with a combination rule.
-     * 
-     * @param prefix
-     *            tool attribute prefixes
-     */
-    public Classifier setClassifierResultVote(String[] prefix) {
-        return setClassifierVote("result", prefix, new SelectedTag(Vote.AVERAGE_RULE, Vote.TAGS_RULES));
+    public void setIsTrained(boolean bool) {
+        this.isTrained = bool;
     }
 
-    /**
-     * Sets ClassVote as classifier with a combination rule.
-     * 
-     * @param prefix
-     *            tool attribute prefixes
-     */
-    public Classifier setClassifierClassVote(String[] prefix) {
-        return setClassifierVote("class", prefix, new SelectedTag(Vote.MAX_RULE, Vote.TAGS_RULES));
+    public void setClassifier(Classifier classifier) {
+        this.classifier = classifier;
     }
 
-    private Classifier setClassifierVote(String type, String[] prefix, SelectedTag rule) {
-
-        isTrained = true;
-
-        Classifier[] classifier = new Classifier[prefix.length];
-        for (int i = 0; i < prefix.length; i++) {
-            switch (type) {
-            case "class":
-                classifier[i] = new ClassVoteClassifier(prefix[i]);
-                break;
-            case "result":
-                classifier[i] = new ResultVoteClassifier(prefix[i]);
-                break;
-            }
-        }
-
-        Vote vote = new Vote();
-        vote.setClassifiers(classifier);
-        vote.setCombinationRule(rule);
-
-        this.classifier = vote;
-        return vote;
-    }
-
-    /**
-     * Sets MultilayerPerceptron as classifier.
-     */
-    public Classifier setClassifierMultilayerPerceptron() {
-        MultilayerPerceptron multilayerPerceptron = new MultilayerPerceptron();
-        /*
-         * 'a' = (attribs + classes) / 2, 'i' = attribs, 'o' = classes , 't' =
-         * attribs + classes so "a, 6", which would give you (attribs + classes)
-         * / 2 nodes in the first hidden layer and 6 in the second.
-         */
-
-        // mp.setHiddenLayers(hidden);
-        this.classifier = multilayerPerceptron;
-        return multilayerPerceptron;
-    }
-
-    /**
-     */
-    // public Classifier setClassifierStackingC(String[] prefix) {
-    // Stacking stacking = new Stacking();
-    // // stacking.setMetaClassifier(stacking);
-    //
-    // stacking.setClassifiers(new Classifier[] {
-    // setClassifierMultilayerPerceptron() });
-    // this.classifier = stacking;
-    // return stacking;
-    // }
-
-    /**
-     */
-    public Classifier setClassifierJ48() {
-        J48 j48 = new J48();
-
-        this.classifier = j48;
-        return j48;
-    }
-
-    // public Classifier setClassifierADTree() {
-    // ADTree adtree = new ADTree();
-    //
-    // this.classifier = adtree;
-    // return adtree;
-    // }
 }
