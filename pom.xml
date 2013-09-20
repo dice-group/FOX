@@ -7,6 +7,7 @@
 	<name>FOX</name>
 	<packaging>jar</packaging>
 
+
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
@@ -16,19 +17,18 @@
 		<system.libs>${basedir}/lib</system.libs>
 		<!-- configure this path -->
 		<system.data>${basedir}/data</system.data>
+
 	</properties>
 
 	<repositories>
-        <repository>
-            <id>maven.aksw.internal</id>
-            <name>University Leipzig, AKSW Maven2 Repository</name>
-            <url>http://maven.aksw.org/archiva/repository/internal</url>
-        </repository>
-        <!-- <repository>
-            <id>maven.aksw.snapshots</id>
-            <name>University Leipzig, AKSW Maven2 Repository</name>
-            <url>http://maven.aksw.org/archiva/repository/snapshots</url>
-        </repository> -->
+		<repository>
+			<id>maven.aksw.internal</id>
+			<name>University Leipzig, AKSW Maven2 Repository</name>
+			<url>http://maven.aksw.org/archiva/repository/internal</url>
+		</repository>
+		<!-- <repository> <id>maven.aksw.snapshots</id> <name>University Leipzig, 
+			AKSW Maven2 Repository</name> <url>http://maven.aksw.org/archiva/repository/snapshots</url> 
+			</repository> -->
 	</repositories>
 
 	<dependencies>
@@ -221,17 +221,19 @@
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		<!--
+		<!-- <dependency> <groupId>org.nlp2rdf.software</groupId> <artifactId>jena</artifactId> 
+			<version>2.0.1-SNAPSHOT</version> </dependency> -->
 		<dependency>
-		      <groupId>org.nlp2rdf.software</groupId>
-		      <artifactId>jena</artifactId>
-		      <version>2.0.1-SNAPSHOT</version>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>3.7.2</version>
 		</dependency>
-		-->
 	</dependencies>
 
 	<!-- copy files -->
 	<build>
+		<!-- <resources> <resource> <directory>scrpits</directory> <filtering>true</filtering> 
+			</resource> </resources> -->
 		<plugins>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -282,7 +284,8 @@
 							<!-- <classpathPrefix>lib/</classpathPrefix> -->
 						</manifest>
 						<manifestEntries>
-							<Class-Path>lib/balie/Balie.jar lib/illinois/LBJ2.jar lib/illinois/LBJ2Library.jar lib/illinois/LbjNerTagger.jar</Class-Path>
+							<Class-Path>lib/balie/Balie.jar lib/illinois/LBJ2.jar
+								lib/illinois/LBJ2Library.jar lib/illinois/LbjNerTagger.jar</Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -303,7 +306,8 @@
 							<addClasspath>true</addClasspath>
 						</manifest>
 						<manifestEntries>
-							<Class-Path>lib/balie/Balie.jar lib/illinois/LBJ2.jar lib/illinois/LBJ2Library.jar lib/illinois/LbjNerTagger.jar</Class-Path>
+							<Class-Path>lib/balie/Balie.jar lib/illinois/LBJ2.jar
+								lib/illinois/LBJ2Library.jar lib/illinois/LbjNerTagger.jar</Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>
