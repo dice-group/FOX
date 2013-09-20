@@ -23,16 +23,13 @@ import org.aksw.fox.utils.FoxWebLog;
 import org.apache.log4j.Logger;
 
 /**
- * An implementation of FoxInterface and Runnable.
+ * An implementation of {@link org.aksw.fox.InterfaceRunnableFox}.
  * 
  * @author rspeck
  * 
  */
 public class Fox implements InterfaceRunnableFox {
 
-    /**
-     * 
-     */
     public static Logger logger = Logger.getLogger(Fox.class);
 
     /**
@@ -73,10 +70,16 @@ public class Fox implements InterfaceRunnableFox {
      * 
      */
     public Fox() {
-        uriLookup = new AGDISTISLookup();
-        nerTools = new FoxNERTools();
-        ner = new NERStanford();
+        this(new AGDISTISLookup(), new NERStanford());
+    }
 
+    /**
+     *
+     */
+    public Fox(InterfaceURI uriLookup, InterfaceRunnableNER ner) {
+        this.uriLookup = uriLookup;
+        this.ner = ner;
+        this.nerTools = new FoxNERTools();
     }
 
     /**
@@ -193,10 +196,8 @@ public class Fox implements InterfaceRunnableFox {
                 }
             }
 
-            // TODO
             if (entities != null) {
-
-                // TODO move loop to uri tool i.e. interface for list
+                // TODO
                 // 4. set URIs
                 foxWebLog.setMessage("Start looking up uri ...");
                 uriLookup.setUris(entities, input);
@@ -207,15 +208,12 @@ public class Fox implements InterfaceRunnableFox {
                 final boolean useNIF = Boolean.parseBoolean(parameter.get("nif"));
 
                 String out = parameter.get("output");
-                if (useNIF) {
-                    // TODO
-                } else {
-                    foxWebLog.setMessage("Preparing output format ...");
-                    foxJena.clearGraph();
-                    foxJena.setAnnotations(entities);
-                    response = foxJena.print(out, false, input);
-                    foxWebLog.setMessage("Preparing output format done.");
-                }
+                foxWebLog.setMessage("Preparing output format ...");
+
+                foxJena.clearGraph();
+                foxJena.setAnnotations(entities);
+                response = foxJena.print(out, useNIF, input);
+                foxWebLog.setMessage("Preparing output format done.");
 
                 if (parameter.get("returnHtml") != null && parameter.get("returnHtml").toLowerCase().endsWith("true")) {
 
@@ -250,11 +248,9 @@ public class Fox implements InterfaceRunnableFox {
         }
 
         // done
+        foxWebLog.setMessage("Running Fox done.");
         if (countDownLatch != null)
             countDownLatch.countDown();
-
-        foxWebLog.setMessage("Running Fox done.");
-
     }
 
     @Override

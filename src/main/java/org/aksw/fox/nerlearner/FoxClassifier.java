@@ -1,5 +1,7 @@
 package org.aksw.fox.nerlearner;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,7 +12,8 @@ import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.utils.FoxCfg;
-import org.aksw.fox.utils.FoxFileUtil;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import weka.classifiers.Classifier;
@@ -33,10 +36,6 @@ public class FoxClassifier {
     protected FoxInstances foxInstances = null;
     private boolean isTrained = false;
 
-    public Classifier getClassifier() {
-        return classifier;
-    }
-
     /**
      * FoxClassifier.
      */
@@ -44,7 +43,6 @@ public class FoxClassifier {
         logger.info("FoxClassifier ...");
 
         this.foxInstances = new FoxInstances();
-
     }
 
     /**
@@ -75,11 +73,12 @@ public class FoxClassifier {
         logger.info("initInstances ...");
 
         instances = (oracle == null) ? foxInstances.getInstances(input, toolResults) : foxInstances.getInstances(input, toolResults, oracle);
-        logger.debug(instances);
+
+        if (logger.isDebugEnabled())
+            logger.debug(instances);
     }
 
     /**
-     * Writes the MultilayerPerceptron model to file.
      * 
      * @param classifier
      * @param file
@@ -87,20 +86,18 @@ public class FoxClassifier {
     public void writeClassifier(String file) {
         logger.info("writeClassifier ...");
 
-        FoxFileUtil.createFileStructure(file);
+        String path = FilenameUtils.getPath(file);
+        try {
+            FileUtils.forceMkdir(new File(path));
+        } catch (IOException e) {
+            logger.error("\n", e);
+        }
+
         try {
             SerializationHelper.write(file, classifier);
         } catch (Exception e) {
             logger.error("\n", e);
         }
-    }
-
-    /**
-     * Writes the MultilayerPerceptron model to a file that is specified in the
-     * fox properties.
-     */
-    public void writeClassifier() {
-        writeClassifier(FoxCfg.get("modelPath") + System.getProperty("file.separator") + FoxCfg.get("learner").trim());
     }
 
     /**
@@ -233,4 +230,7 @@ public class FoxClassifier {
         this.classifier = classifier;
     }
 
+    public Classifier getClassifier() {
+        return classifier;
+    }
 }

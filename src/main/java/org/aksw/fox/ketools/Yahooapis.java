@@ -11,7 +11,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.PropertyConfigurator;
 
-public class Test {
+public class Yahooapis {
     public static void main(String[] a) throws Exception {
         PropertyConfigurator.configure("log4j.properties");
 

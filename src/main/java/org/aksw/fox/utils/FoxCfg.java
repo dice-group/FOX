@@ -7,16 +7,22 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+/**
+ * Gets FOX properties stored in the {@link #CFG_FILE} file.
+ * 
+ * @author rspeck
+ * 
+ */
 public class FoxCfg {
 
     public static Logger logger = Logger.getLogger(FoxCfg.class);;
-    public static Properties FoxProperties = new Properties();
-    public static String CFG_FILE = "fox.properties";
+    protected static Properties FoxProperties = new Properties();
+    public static final String CFG_FILE = "fox.properties";
 
     // loads CFG_FILE to FoxProperties
     static {
-
         logger.info("Loads cfg ...");
+
         FileInputStream in = null;
         try {
             in = new FileInputStream(CFG_FILE);

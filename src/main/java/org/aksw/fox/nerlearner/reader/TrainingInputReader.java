@@ -49,6 +49,7 @@ public class TrainingInputReader {
     protected HashMap<String, String> entities = new HashMap<>();
 
     /**
+     * http://www-nlpir.nist.gov/related_projects/muc/proceedings/ne_task.html
      * 
      * @param inputPaths
      * @throws IOException

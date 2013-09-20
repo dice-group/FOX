@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * An interface for the use of FOX.
+ * FOX interface that extends {@link java.lang.Runnable}.
  * 
  * @author rspeck
  * 
@@ -12,7 +12,9 @@ import java.util.concurrent.CountDownLatch;
 public interface InterfaceRunnableFox extends Runnable {
 
     /**
-     * Sets a CountDownLatch object.
+     * Sets an optional {@link java.util.concurrent.CountDownLatch} object. FOX
+     * counts it down {@link java.util.concurrent.CountDownLatch#countDown()}
+     * when the thread is finished.
      * 
      * @param cdl
      */

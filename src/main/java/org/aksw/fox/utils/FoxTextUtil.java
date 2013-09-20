@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
+ * Static class to provide general 'text' functionality.
  * 
  * @author rspeck
  * 
@@ -34,7 +35,9 @@ import org.apache.log4j.Logger;
 public class FoxTextUtil {
 
     public static Logger logger = Logger.getLogger(FoxTextUtil.class);
-
+    /**
+     * Defines token.
+     */
     public static final String tokenSpliter = "[\\p{Punct}&&[^-\\_/&+.]]| |\\t|\\n";
 
     private FoxTextUtil() {
@@ -86,9 +89,14 @@ public class FoxTextUtil {
     public static synchronized String htmlToText(String html) {
         logger.info("extractFromHTML ... ");
 
-        // TODO: make linebreaks, we can use a cfg for html parser?
+        // Adds line breaks to keep structure
         html = html.replaceAll("<li>", "<li>, ");
-        html = html.replaceAll("</dd>", ",</dd>");
+        html = html.replaceAll("</li>", ", </li>");
+        html = html.replaceAll("<dd>", "<dd>, ");
+        html = html.replaceAll("</dd>", ", </dd>");
+        // TODO
+        // add all possible cases
+
         Source src = new Source(html);
         return new TextExtractor(new Segment(src, src.getBegin(), src.getEnd())).setConvertNonBreakingSpaces(false).toString();
     }
