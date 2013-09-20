@@ -80,27 +80,84 @@ public class Api extends AbstractApi {
 
             fox = null;
             pool.add();
-
             // TODO
             // output
         }
         String in = null, out = null, log = null;
         if (fox != null) {
             // set response
-
-            try {
-                in = encodeURLComponent(parameter.get("input"));
-                out = encodeURLComponent(output);
-                log = encodeURLComponent(fox.getLog());
-            } catch (UnsupportedEncodingException e) {
-                logger.error("\n", e);
-            }
+            in = encodeURLComponent(parameter.get("input"));
+            out = encodeURLComponent(output);
+            log = encodeURLComponent(fox.getLog());
         }
-
         setResponse(response, "[{\"input\" : \" " + in + "\" , \"output\" : \"" + out + "\", \"log\" : \"" + log + "\" }]", HttpURLConnection.HTTP_OK, "text/plain");
     }
 
-    public String encodeURLComponent(String in) throws UnsupportedEncodingException {
-        return URLEncoder.encode(in, "UTF-8").replaceAll("\\+", "%20").replaceAll("\\%21", "!").replaceAll("\\%27", "'").replaceAll("\\%28", "(").replaceAll("\\%29", ")").replaceAll("\\%7E", "~");
+    /**
+     * Checks POST parameter.
+     * 
+     * type: url | text
+     * 
+     * task: ke | ner | keandner | re | all
+     * 
+     * output: rdf | turtle | html
+     * 
+     * nif: true : false
+     * 
+     * input : plain text | url
+     */
+    @Override
+    protected boolean checkParameter(Map<String, String> formData) {
+
+        logger.info("checking form parameter ...");
+
+        String type = formData.get("type");
+        if (type == null || !(type.equalsIgnoreCase("url") || type.equalsIgnoreCase("text")))
+            return false;
+
+        String text = formData.get("input");
+        if (text == null || text.trim().isEmpty())
+            return false;
+
+        String task = formData.get("task");
+        if (task == null || !(task.equalsIgnoreCase("ke") || task.equalsIgnoreCase("ner") || task.equalsIgnoreCase("keandner") || task.equalsIgnoreCase("re") || task.equalsIgnoreCase("all")))
+            return false;
+
+        String output = formData.get("output");
+
+        if (!output.equalsIgnoreCase("JSONLD") && !output.equalsIgnoreCase("RDF/JSON") && !output.equalsIgnoreCase("RDF/XML") && !output.equalsIgnoreCase("RDF/XML-ABBREV") && !output.equalsIgnoreCase("TURTLE") && !output.equalsIgnoreCase("N-TRIPLE") && !output.equalsIgnoreCase("N3"))
+            return false;
+
+        String nif = formData.get("nif");
+        if (nif == null || !nif.equalsIgnoreCase("true"))
+            formData.put("nif", "false");
+        else
+            formData.put("nif", "true");
+
+        String foxlight = formData.get("foxlight");
+        if (foxlight == null || !foxlight.equalsIgnoreCase("true"))
+            formData.put("foxlight", "false");
+        else
+            formData.put("foxlight", "true");
+
+        logger.info("ok.");
+        return true;
+    }
+
+    public String encodeURLComponent(String in) {
+        // try {
+        // return new
+        // ScriptEngineManager().getEngineByName("JavaScript").eval("encodeURIComponent('"
+        // + in + "')").toString();
+        // } catch (ScriptException e) {
+        // logger.error("\n", e);
+        // return "";
+        // }
+        try {
+            return URLEncoder.encode(in, "UTF-8").replaceAll("\\+", "%20").replaceAll("\\%21", "!").replaceAll("\\%27", "'").replaceAll("\\%28", "(").replaceAll("\\%29", ")").replaceAll("\\%7E", "~");
+        } catch (UnsupportedEncodingException e) {
+            logger.error("\n", e);
+            return "";
+        }
     }
 }
