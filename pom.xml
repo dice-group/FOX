@@ -4,7 +4,7 @@
 	<groupId>org.aksw</groupId>
 	<artifactId>fox</artifactId>
 	<version>2.0.0</version>
-	<name>main</name>
+	<name>FOX</name>
 	<packaging>jar</packaging>
 
 	<properties>
@@ -18,13 +18,17 @@
 		<system.data>${basedir}/data</system.data>
 	</properties>
 
-	<!-- thats for uk.ac.shef.wit:simmetrics:jar dependency -->
 	<repositories>
-		<repository>
-			<id>maven.aksw.internal</id>
-			<name>University Leipzig, AKSW Maven2 Repository</name>
-			<url>http://prod1.aksw.org:8081/archiva/repository/internal</url>
-		</repository>
+        <repository>
+            <id>maven.aksw.internal</id>
+            <name>University Leipzig, AKSW Maven2 Repository</name>
+            <url>http://maven.aksw.org/archiva/repository/internal</url>
+        </repository>
+        <!-- <repository>
+            <id>maven.aksw.snapshots</id>
+            <name>University Leipzig, AKSW Maven2 Repository</name>
+            <url>http://maven.aksw.org/archiva/repository/snapshots</url>
+        </repository> -->
 	</repositories>
 
 	<dependencies>
@@ -217,6 +221,13 @@
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
 		</dependency>
+		<!--
+		<dependency>
+		      <groupId>org.nlp2rdf.software</groupId>
+		      <artifactId>jena</artifactId>
+		      <version>2.0.1-SNAPSHOT</version>
+		</dependency>
+		-->
 	</dependencies>
 
 	<!-- copy files -->
