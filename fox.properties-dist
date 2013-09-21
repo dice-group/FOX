@@ -1,3 +1,9 @@
+####################
+# Feedback API access.
+# You need to change both, name and password, since the code is open.
+name : foobar
+password : foobar
+####################
 #stanford ner
 serializedClassifier : data/stanford/english.all.3class.distsim.crf.ser.gz
 
@@ -18,4 +24,4 @@ modelPath : data/fox
 
 # which learner we use. learner : { mp | result_vote | class_vote | j48}
 learner : mp
-
+####################
