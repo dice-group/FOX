@@ -34,7 +34,7 @@ public class FeedbackStore {
     }
 
     public FeedbackStore() {
-        creatTable();
+        createTable();
     }
 
     // TODO check input
@@ -103,7 +103,7 @@ public class FeedbackStore {
      * Creates a table with the name: {@link #tableName} if not exists.
      * 
      */
-    public void creatTable() {
+    public void createTable() {
         Statement statement = connect();
         try {
             statement.executeUpdate(
