@@ -23,16 +23,16 @@ import com.google.gson.JsonParser;
  * @author rspeck
  * 
  */
-public abstract class AbstractApi extends HttpHandler {
+public abstract class AbstractFoxHttpHandler extends HttpHandler {
 
-    public static Logger logger = Logger.getLogger(AbstractApi.class);
+    public static Logger logger = Logger.getLogger(AbstractFoxHttpHandler.class);
 
     /**
      * 
      * @param request
      * @param response
      */
-    protected abstract void service(Request request, Response response, Map<String, String> parameter);
+    protected abstract void postService(Request request, Response response, Map<String, String> parameter);
 
     /**
      * 
@@ -47,7 +47,7 @@ public abstract class AbstractApi extends HttpHandler {
             Map<String, String> parameter = getPostParameter(request);
             if (checkParameter(parameter)) {
 
-                service(request, response, parameter);
+                postService(request, response, parameter);
 
             } else {
                 setResponse(response, "Wrong parameter.", HttpURLConnection.HTTP_BAD_REQUEST, "text/plain");
