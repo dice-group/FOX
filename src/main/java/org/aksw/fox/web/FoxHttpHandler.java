@@ -20,7 +20,7 @@ import org.jetlang.fibers.ThreadFiber;
  * @author rspeck
  * 
  */
-public class Api extends AbstractApi {
+public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
     protected Pool pool = new Pool(Integer.parseInt(FoxCfg.get("poolCount")));
 
@@ -28,7 +28,7 @@ public class Api extends AbstractApi {
      * 
      */
     @Override
-    protected void service(Request request, Response response, Map<String, String> parameter) {
+    protected void postService(Request request, Response response, Map<String, String> parameter) {
 
         // get a fox instance
         InterfaceRunnableFox fox = pool.poll();
@@ -94,17 +94,14 @@ public class Api extends AbstractApi {
     }
 
     /**
-     * Checks POST parameter.
-     * 
-     * type: url | text
-     * 
-     * task: ke | ner | keandner | re | all
-     * 
-     * output: rdf | turtle | html
-     * 
-     * nif: true : false
-     * 
+     * Checks parameter.
+     * <p>
+     * type: url | text<br>
+     * task: ke | ner | keandner | re | all<br>
+     * output: rdf | turtle | html<br>
+     * nif: true : false<br>
      * input : plain text | url
+     * </p>
      */
     @Override
     protected boolean checkParameter(Map<String, String> formData) {
