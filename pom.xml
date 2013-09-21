@@ -284,8 +284,7 @@
 							<!-- <classpathPrefix>lib/</classpathPrefix> -->
 						</manifest>
 						<manifestEntries>
-							<Class-Path>lib/balie/Balie.jar lib/illinois/LBJ2.jar
-								lib/illinois/LBJ2Library.jar lib/illinois/LbjNerTagger.jar</Class-Path>
+							<Class-Path>lib/balie/Balie.jar lib/illinois/LBJ2.jar lib/illinois/LBJ2Library.jar lib/illinois/LbjNerTagger.jar</Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -306,8 +305,7 @@
 							<addClasspath>true</addClasspath>
 						</manifest>
 						<manifestEntries>
-							<Class-Path>lib/balie/Balie.jar lib/illinois/LBJ2.jar
-								lib/illinois/LBJ2Library.jar lib/illinois/LbjNerTagger.jar</Class-Path>
+							<Class-Path>lib/balie/Balie.jar lib/illinois/LBJ2.jar lib/illinois/LBJ2Library.jar lib/illinois/LbjNerTagger.jar</Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>
