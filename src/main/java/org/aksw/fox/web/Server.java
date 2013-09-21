@@ -1,6 +1,7 @@
 package org.aksw.fox.web;
 
 import org.aksw.fox.utils.FoxServerUtil;
+import org.aksw.fox.web.feedback.FeedbackHttpHandler;
 import org.apache.log4j.Logger;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
@@ -30,7 +31,8 @@ public class Server {
 
         server.getServerConfiguration().addHttpHandler(shl, "/");
         server.getServerConfiguration().addHttpHandler(shl, "/demo");
-        server.getServerConfiguration().addHttpHandler(new Api(), "/api");
+        server.getServerConfiguration().addHttpHandler(new FoxHttpHandler(), "/api");
+        server.getServerConfiguration().addHttpHandler(new FeedbackHttpHandler(), "/feedback");
     }
 
     /**
