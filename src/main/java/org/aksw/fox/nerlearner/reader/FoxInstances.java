@@ -1,5 +1,6 @@
 package org.aksw.fox.nerlearner.reader;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
@@ -16,6 +19,8 @@ import org.aksw.fox.data.TokenCategoryMatrix;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.jetlang.fibers.Fiber;
+import org.jetlang.fibers.ThreadFiber;
 
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -129,22 +134,38 @@ public class FoxInstances {
         if (logger.isDebugEnabled())
             logger.debug("getTokenCategoryMatrix ...");
 
-        Set<String> entityClasses = new LinkedHashSet<>();
-        entityClasses.addAll(EntityClassMap.entityClasses);
+        final Set<String> entityClasses = new LinkedHashSet<>(EntityClassMap.entityClasses);
+        final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = new LinkedHashMap<>();
 
-        String nullCategory = EntityClassMap.getNullCategory();
-        String tokenSpliter = FoxTextUtil.tokenSpliter;
+        List<Fiber> fibers = new ArrayList<>();
+        final CountDownLatch latch = new CountDownLatch(toolResults.entrySet().size());
+        for (final Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
+            Fiber fiber = new ThreadFiber();
+            fiber.start();
+            fiber.execute(new Runnable() {
+                public void run() {
+                    toolTokenCategoryMatrix.put(
+                            entry.getKey(),
+                            new TokenCategoryMatrix(
+                                    token, entityClasses, EntityClassMap.getNullCategory(), entry.getValue(), FoxTextUtil.tokenSpliter
+                            )
+                            );
+                    latch.countDown();
+                }
+            });
+            fibers.add(fiber);
+        }
 
-        // TODO: parallel build of TokenCategoryMatrix
-        // each tool init. TokenCategoryMatrix
-        Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = new LinkedHashMap<>();
-        for (Entry<String, Set<Entity>> e : toolResults.entrySet())
-            toolTokenCategoryMatrix.put(e.getKey(), new TokenCategoryMatrix(token, entityClasses, nullCategory, e.getValue(), tokenSpliter));
+        // TODO: time?
+        try {
+            latch.await(Long.MAX_VALUE, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            logger.error("\n", e);
+        }
 
-        // if (logger.isDebugEnabled())
-        // for (Entry<String, TokenCategoryMatrix> e :
-        // toolTokenCategoryMatrix.entrySet())
-        // logger.debug(e.getKey() + ":\n" + e.getValue().toString());
+        // shutdown threads
+        for (Fiber fiber : fibers)
+            fiber.dispose();
 
         return toolTokenCategoryMatrix;
     }
@@ -153,14 +174,14 @@ public class FoxInstances {
         if (logger.isDebugEnabled())
             logger.debug("getFeatureVector ...");
 
-        // Declare the feature vector
-        // Declare numeric attribute along with its values
+        // declare the feature vector
+        // declare numeric attribute along with its values
         FastVector featureVector = new FastVector();
         for (String toolname : toolTokenCategoryMatrix.keySet()) {
             for (String cl : EntityClassMap.entityClasses)
                 featureVector.addElement(new Attribute(toolname + cl));
         }
-        // Declare the class attribute along with its values
+        // declare the class attribute along with its values
         FastVector attVals = new FastVector();
         for (String cl : EntityClassMap.entityClasses)
             attVals.addElement(cl);
