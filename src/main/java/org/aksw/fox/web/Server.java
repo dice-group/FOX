@@ -32,7 +32,7 @@ public class Server {
         server.getServerConfiguration().addHttpHandler(shl, "/");
         server.getServerConfiguration().addHttpHandler(shl, "/demo");
         server.getServerConfiguration().addHttpHandler(new FoxHttpHandler(), "/api");
-        server.getServerConfiguration().addHttpHandler(new FeedbackHttpHandler(), "/feedback");
+        server.getServerConfiguration().addHttpHandler(new FeedbackHttpHandler(), "/api/ner/feedback");
     }
 
     /**

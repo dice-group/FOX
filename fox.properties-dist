@@ -1,7 +1,6 @@
 ####################
 # Feedback API access.
-# You need to change both, name and password, since the code is open.
-name : foobar
+# You need to change password
 password : foobar
 ####################
 #stanford ner

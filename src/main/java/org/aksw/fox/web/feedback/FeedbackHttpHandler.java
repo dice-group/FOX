@@ -1,6 +1,7 @@
 package org.aksw.fox.web.feedback;
 
 import java.net.HttpURLConnection;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.aksw.fox.utils.FoxCfg;
@@ -34,9 +35,8 @@ public class FeedbackHttpHandler extends AbstractFoxHttpHandler {
 
     @Override
     protected void postService(Request request, Response response, Map<String, String> parameter) {
-        String input = parameter.get("input");
 
-        insert(input);
+        insert(parameter);
 
         setResponse(response, "ok", HttpURLConnection.HTTP_OK, "text/plain");
     }
@@ -45,25 +45,23 @@ public class FeedbackHttpHandler extends AbstractFoxHttpHandler {
      * Checks access and parameter.
      * 
      * <p>
-     * name: the name in fox properties <br>
      * password: the password in fox properties <br>
-     * input: a feedback text to save
+     * ...
      * </p>
      */
     @Override
     protected boolean checkParameter(Map<String, String> formData) {
         logger.info("checking form parameter ...");
 
-        String name = formData.get("name");
-        if (name == null || !name.equalsIgnoreCase(FoxCfg.get("name")))
-            return false;
+        for (String parameter : Arrays.asList(new String[] {
+                "password", "text", "entityUri", "surfaceForm", "offset", "feedback", "context", "feedbackType", "system", "annotation"
+        })) {
+            if (formData.get(parameter) == null || formData.get(parameter).trim().isEmpty())
+                return false;
+            formData.put(parameter, formData.get(parameter).trim());
+        }
 
-        String pass = formData.get("password");
-        if (pass == null || !pass.equalsIgnoreCase(FoxCfg.get("password")))
-            return false;
-
-        String input = formData.get("input");
-        if (input == null || input.trim().isEmpty())
+        if (!formData.get("password").equals(FoxCfg.get("password")))
             return false;
 
         logger.info("ok.");
@@ -75,7 +73,7 @@ public class FeedbackHttpHandler extends AbstractFoxHttpHandler {
      * 
      * @param in
      */
-    protected void insert(String in) {
-        this.feedbackStore.insert(in);
+    protected void insert(Map<String, String> parameter) {
+        this.feedbackStore.insert(parameter);
     }
 }

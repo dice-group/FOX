@@ -32,13 +32,6 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
      * @param request
      * @param response
      */
-    protected abstract void postService(Request request, Response response, Map<String, String> parameter);
-
-    /**
-     * 
-     * @param request
-     * @param response
-     */
     @Override
     public void service(Request request, Response response) throws Exception {
         logger.info("service ...");
@@ -64,8 +57,15 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
     abstract protected boolean checkParameter(Map<String, String> formData);
 
     /**
-     * Get request POST parameter to formMap. The Map key holds the parameter
-     * name and the Map value the parameter value.
+     * 
+     * @param request
+     * @param response
+     */
+    protected abstract void postService(Request request, Response response, Map<String, String> parameter);
+
+    /**
+     * Gets request POST parameters. The Map key holds the parameter name and
+     * the Map value the parameter value.
      * 
      */
     protected Map<String, String> getPostParameter(Request request) {
