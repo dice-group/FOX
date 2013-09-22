@@ -1,15 +1,20 @@
 package org.aksw.fox.nerlearner;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import org.aksw.fox.nerlearner.classifier.ClassVoteClassifier;
 import org.aksw.fox.nerlearner.classifier.ResultVoteClassifier;
+import org.apache.log4j.Logger;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.meta.Vote;
-import weka.classifiers.trees.J48;
 import weka.core.SelectedTag;
 
 public class FoxClassifierFactory {
+    public static Logger logger = Logger.getLogger(FoxClassifierFactory.class);
+
     /**
      * Sets ResultVote as classifier with a combination rule.
      * 
@@ -66,28 +71,34 @@ public class FoxClassifierFactory {
         return multilayerPerceptron;
     }
 
-    public static Classifier getJ48() {
-        return new J48();
+    public static Classifier get(String wekaClassifier, String[] options) {
+        Classifier classifier = get(wekaClassifier);
+        if (classifier != null && classifier instanceof Classifier)
+            try {
+                classifier.setOptions(options);
+            } catch (Exception e) {
+                logger.error("\n", e);
+            }
+        return classifier;
     }
-    /**
-     */
-    // public Classifier setClassifierStackingC(String[] prefix) {
-    // Stacking stacking = new Stacking();
-    // // stacking.setMetaClassifier(stacking);
-    //
-    // stacking.setClassifiers(new Classifier[] {
-    // setClassifierMultilayerPerceptron() });
-    // this.classifier = stacking;
-    // return stacking;
-    // }
 
-    /**
-     */
+    public static Classifier get(String wekaClassifier) {
+        Class<?> clazz = null;
+        Classifier classifier = null;
+        try {
+            clazz = Class.forName(wekaClassifier);
+            if (clazz != null) {
+                Constructor<?> constructor = clazz.getConstructor();
+                classifier = (Classifier) constructor.newInstance();
+            }
+        } catch (ClassNotFoundException e) {
+            logger.error("\n", e);
+        } catch (NoSuchMethodException | SecurityException e) {
+            logger.error("\n", e);
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            logger.error("\n", e);
+        }
 
-    // public Classifier setClassifierADTree() {
-    // ADTree adtree = new ADTree();
-    //
-    // this.classifier = adtree;
-    // return adtree;
-    // }
+        return classifier;
+    }
 }
