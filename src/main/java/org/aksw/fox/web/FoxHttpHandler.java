@@ -3,6 +3,8 @@ package org.aksw.fox.web;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -156,5 +158,12 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
             logger.error("\n", e);
             return "";
         }
+    }
+
+    @Override
+    public List<String> getMappings() {
+        List<String> l = new ArrayList<>();
+        l.add("/api");
+        return l;
     }
 }

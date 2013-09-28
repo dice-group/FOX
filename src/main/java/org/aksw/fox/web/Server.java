@@ -38,17 +38,23 @@ public class Server {
                 on = false;
             }
             shl.setFileCacheEnabled(on);
+            server.getServerConfiguration().addHttpHandler(shl, "/", "/demo");
 
-            server.getServerConfiguration().addHttpHandler(shl, "/");
-            server.getServerConfiguration().addHttpHandler(shl, "/demo");
         }
         state = FoxCfg.get("apiHttpHandler");
         if (state != null && state.equalsIgnoreCase("true")) {
-            server.getServerConfiguration().addHttpHandler(new FoxHttpHandler(), "/api");
+            FoxHttpHandler foxhttp = new FoxHttpHandler();
+            server.getServerConfiguration().addHttpHandler(
+                    foxhttp,
+                    foxhttp.getMappings().toArray(new String[foxhttp.getMappings().size() - 1]));
         }
         state = FoxCfg.get("feedbackHttpHandler");
         if (state != null && state.equalsIgnoreCase("true")) {
-            server.getServerConfiguration().addHttpHandler(new FeedbackHttpHandler(), "/api/ner/feedback");
+            FeedbackHttpHandler fb = new FeedbackHttpHandler();
+
+            server.getServerConfiguration().addHttpHandler(
+                    fb,
+                    fb.getMappings().toArray(new String[fb.getMappings().size() - 1]));
         }
 
         if (server.getServerConfiguration().getHttpHandlers().size() == 0) {

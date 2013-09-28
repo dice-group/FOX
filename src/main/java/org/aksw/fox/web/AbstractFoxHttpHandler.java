@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -27,6 +28,8 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
 
     public static Logger logger = Logger.getLogger(AbstractFoxHttpHandler.class);
 
+    abstract public List<String> getMappings();
+
     /**
      * 
      * @param request
@@ -35,18 +38,27 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
     @Override
     public void service(Request request, Response response) throws Exception {
         logger.info("service ...");
-        if (request.getMethod().getMethodString().equalsIgnoreCase("POST")) {
-            logger.info("service post ...");
-            Map<String, String> parameter = getPostParameter(request);
-            if (checkParameter(parameter)) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("mapping list: " + getMappings());
+            logger.debug("requested path: " + request.getContextPath() + request.getHttpHandlerPath());
+        }
+        if (getMappings().contains(request.getContextPath() + request.getHttpHandlerPath())) {
+            if (request.getMethod().getMethodString().equalsIgnoreCase("POST")) {
+                logger.info("service post ...");
+                Map<String, String> parameter = getPostParameter(request);
+                if (checkParameter(parameter)) {
 
-                postService(request, response, parameter);
+                    postService(request, response, parameter);
 
+                } else {
+                    setResponse(response, "Wrong parameter.", HttpURLConnection.HTTP_BAD_REQUEST, "text/plain");
+                }
             } else {
-                setResponse(response, "Wrong parameter.", HttpURLConnection.HTTP_BAD_REQUEST, "text/plain");
+                setResponse(response, "Please use HTTP POST method.", HttpURLConnection.HTTP_BAD_METHOD, "text/plain");
             }
         } else {
-            setResponse(response, "Please use HTTP POST method.", HttpURLConnection.HTTP_BAD_METHOD, "text/plain");
+            setResponse(response, "404", HttpURLConnection.HTTP_NOT_FOUND, "text/plain");
+
         }
     }
 

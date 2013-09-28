@@ -1,7 +1,9 @@
 package org.aksw.fox.web.feedback;
 
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.aksw.fox.utils.FoxCfg;
@@ -30,7 +32,6 @@ public class FeedbackHttpHandler extends AbstractFoxHttpHandler {
      */
     public FeedbackHttpHandler(FeedbackStore feedbackStore) {
         this.feedbackStore = feedbackStore;
-
     }
 
     @Override
@@ -75,5 +76,12 @@ public class FeedbackHttpHandler extends AbstractFoxHttpHandler {
      */
     protected void insert(Map<String, String> parameter) {
         this.feedbackStore.insert(parameter);
+    }
+
+    @Override
+    public List<String> getMappings() {
+        List<String> l = new ArrayList<>();
+        l.add("/api/ner/feedback");
+        return l;
     }
 }
