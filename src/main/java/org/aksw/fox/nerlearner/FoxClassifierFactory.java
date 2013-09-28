@@ -1,10 +1,8 @@
 package org.aksw.fox.nerlearner;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import org.aksw.fox.nerlearner.classifier.ClassVoteClassifier;
 import org.aksw.fox.nerlearner.classifier.ResultVoteClassifier;
+import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.Logger;
 
 import weka.classifiers.Classifier;
@@ -71,34 +69,21 @@ public class FoxClassifierFactory {
         return multilayerPerceptron;
     }
 
+    public static Classifier get(String wekaClassifier) {
+        return get(wekaClassifier, null);
+    }
+
     public static Classifier get(String wekaClassifier, String[] options) {
-        Classifier classifier = get(wekaClassifier);
-        if (classifier != null && classifier instanceof Classifier)
+        Object object = FoxCfg.getClass(wekaClassifier);
+        Classifier classifier = null;
+        if (object != null && object instanceof Classifier)
             try {
-                classifier.setOptions(options);
+                classifier = (Classifier) object;
+                if (options != null)
+                    classifier.setOptions(options);
             } catch (Exception e) {
                 logger.error("\n", e);
             }
-        return classifier;
-    }
-
-    public static Classifier get(String wekaClassifier) {
-        Class<?> clazz = null;
-        Classifier classifier = null;
-        try {
-            clazz = Class.forName(wekaClassifier);
-            if (clazz != null) {
-                Constructor<?> constructor = clazz.getConstructor();
-                classifier = (Classifier) constructor.newInstance();
-            }
-        } catch (ClassNotFoundException e) {
-            logger.error("\n", e);
-        } catch (NoSuchMethodException | SecurityException e) {
-            logger.error("\n", e);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            logger.error("\n", e);
-        }
-
         return classifier;
     }
 }

@@ -1,7 +1,5 @@
 package org.aksw.fox.nertools;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,24 +45,8 @@ public class FoxNERTools {
         if (FoxCfg.get("nerTools") != null) {
             String[] classes = FoxCfg.get("nerTools").split(",");
             for (String cl : classes) {
-                Class<?> clazz = null;
-                InterfaceRunnableNER ir = null;
-                try {
-                    clazz = Class.forName(cl.trim());
-                    if (clazz != null) {
-                        Constructor<?> constructor = clazz.getConstructor();
-                        ir = (InterfaceRunnableNER) constructor.newInstance();
-                        nerTools.add(ir);
-                    }
-                } catch (ClassNotFoundException e) {
-                    logger.error("\n", e);
-                } catch (NoSuchMethodException | SecurityException e) {
-                    logger.error("\n", e);
-                } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                    logger.error("\n", e);
-                }
+                nerTools.add((InterfaceRunnableNER) FoxCfg.getClass(cl));
             }
-
         }
         for (InterfaceRunnableNER nerTool : nerTools)
             toolResults.put(nerTool.getToolName(), null);

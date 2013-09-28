@@ -3,6 +3,8 @@ package org.aksw.fox.utils;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -47,5 +49,23 @@ public class FoxCfg {
 
     public static String get(String key) {
         return FoxProperties.getProperty(key);
+    }
+
+    public synchronized static Object getClass(String classPath) {
+        Class<?> clazz = null;
+        try {
+            clazz = Class.forName(classPath.trim());
+            if (clazz != null) {
+                Constructor<?> constructor = clazz.getConstructor();
+                return constructor.newInstance();
+            }
+        } catch (ClassNotFoundException e) {
+            logger.error("\n", e);
+        } catch (NoSuchMethodException | SecurityException e) {
+            logger.error("\n", e);
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            logger.error("\n", e);
+        }
+        return null;
     }
 }
