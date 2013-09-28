@@ -26,9 +26,11 @@
 			<name>University Leipzig, AKSW Maven2 Repository</name>
 			<url>http://maven.aksw.org/archiva/repository/internal</url>
 		</repository>
-		<!-- <repository> <id>maven.aksw.snapshots</id> <name>University Leipzig, 
+		<!--  
+		 <repository> <id>maven.aksw.snapshots</id> <name>University Leipzig, 
 			AKSW Maven2 Repository</name> <url>http://maven.aksw.org/archiva/repository/snapshots</url> 
-			</repository> -->
+		</repository>
+		-->
 	</repositories>
 
 	<dependencies>
@@ -221,8 +223,13 @@
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.nlp2rdf.software</groupId> <artifactId>jena</artifactId> 
-			<version>2.0.1-SNAPSHOT</version> </dependency> -->
+
+<!-- 		<dependency>
+			<groupId>org.nlp2rdf.software</groupId>
+			<artifactId>jena</artifactId>
+			<version>2.0.1-SNAPSHOT</version>
+		</dependency> -->
+
 		<dependency>
 			<groupId>org.xerial</groupId>
 			<artifactId>sqlite-jdbc</artifactId>
