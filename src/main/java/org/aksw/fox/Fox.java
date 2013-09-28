@@ -17,6 +17,7 @@ import org.aksw.fox.nertools.InterfaceRunnableNER;
 import org.aksw.fox.nertools.NERStanford;
 import org.aksw.fox.uri.AGDISTISLookup;
 import org.aksw.fox.uri.InterfaceURI;
+import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.aksw.fox.utils.FoxWebLog;
@@ -55,7 +56,7 @@ public class Fox implements InterfaceRunnableFox {
     /**
      * Holds a tool for fox's light version.
      */
-    protected InterfaceRunnableNER ner = null;
+    protected InterfaceRunnableNER nerLight = null;
 
     /**
      * 
@@ -70,15 +71,39 @@ public class Fox implements InterfaceRunnableFox {
      * 
      */
     public Fox() {
-        this(new AGDISTISLookup(), new NERStanford());
+
+        // load class in fox.properties file
+        if (FoxCfg.get("urilookup") != null) {
+            try {
+                uriLookup = (InterfaceURI) FoxCfg.getClass(FoxCfg.get("urilookup").trim());
+            } catch (Exception e) {
+                logger.error("InterfaceURI not found. Check your fox.properties file.");
+            }
+        }
+        if (uriLookup == null)
+            uriLookup = new AGDISTISLookup();
+
+        // load class in fox.properties file
+        if (FoxCfg.get("nerLight") != null) {
+            try {
+                nerLight = (InterfaceRunnableNER) FoxCfg.getClass(FoxCfg.get("nerLight").trim());
+            } catch (Exception e) {
+                logger.error("InterfaceRunnableNER not found. Check your fox.properties file.");
+            }
+        }
+        if (nerLight == null)
+            nerLight = new NERStanford();
+
+        //
+        this.nerTools = new FoxNERTools();
     }
 
     /**
      *
      */
-    public Fox(InterfaceURI uriLookup, InterfaceRunnableNER ner) {
+    public Fox(InterfaceURI uriLookup, InterfaceRunnableNER nerLight) {
         this.uriLookup = uriLookup;
-        this.ner = ner;
+        this.nerLight = nerLight;
         this.nerTools = new FoxNERTools();
     }
 
@@ -123,7 +148,7 @@ public class Fox implements InterfaceRunnableFox {
                         logger.info("starting foxlight ner ...");
 
                         foxWebLog.setMessage("Fox-Light start retrieving ner ...");
-                        entities = ner.retrieve(input);
+                        entities = nerLight.retrieve(input);
                         foxWebLog.setMessage("Fox-Light start retrieving ner done.");
 
                         tokenManager.repairEntities(entities);
@@ -271,7 +296,9 @@ public class Fox implements InterfaceRunnableFox {
     @Override
     public Map<String, String> getDefaultParameter() {
         Map<String, String> map = new HashMap<>();
-        map.put("input", "Leipzig was first documented in 1015 in the chronicles of Bishop Thietmar of Merseburg and endowed with city and market privileges in 1165 by Otto the Rich. Leipzig has fundamentally shaped the history of Saxony and of Germany and has always been known as a place of commerce. The Leipzig Trade Fair, started in the Middle Ages, became an event of international importance and is the oldest remaining trade fair in the world.");
+        map.put(
+                "input",
+                    "Leipzig was first documented in 1015 in the chronicles of Bishop Thietmar of Merseburg and endowed with city and market privileges in 1165 by Otto the Rich. Leipzig has fundamentally shaped the history of Saxony and of Germany and has always been known as a place of commerce. The Leipzig Trade Fair, started in the Middle Ages, became an event of international importance and is the oldest remaining trade fair in the world.");
         map.put("task", "ner");
         map.put("output", "rdf");
         map.put("nif", "false");
