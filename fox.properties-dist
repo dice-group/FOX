@@ -1,26 +1,43 @@
-####################
-# Feedback API access.
-# You need to change password
+#
+# feedback API access
+######################
 password : foobar
-####################
-#stanford ner
+#
+# ner settings
+######################
+#
+#stanford
 serializedClassifier : data/stanford/english.all.3class.distsim.crf.ser.gz
-
-# fox pool instances
-poolCount : 5
-
-# max time in min. for fox
-foxLifeTime : 5
-
-# max time in min. for all ner tools
-foxNERLifeTime : 2
-
-# `true` to train fox. tainFox: { true | false }
-tainFox : false
-
+#
 # path to read / write trained model
 modelPath : data/fox
-
-# which learner we use. learner : { mp | result_vote | class_vote | j48}
+#
+# which learner we use. 
+# values are: { mp | result_vote | class_vote | j48}
 learner : mp
-####################
+#
+# `true` to train fox. tainFox: { true | false }
+tainFox : false
+#
+# max time in min. for all ner tools
+foxNERLifeTime : 2
+#
+# web service settings
+######################
+#
+# fox pool instances
+poolCount : 5
+#
+# static file cache
+staticFileCacheEnabled : false
+#
+# http handler: 'true' to enable
+demoHttpHandler : x
+apiHttpHandler : x
+feedbackHttpHandler : true
+#
+# fox settings
+######################
+# max time in min. for fox
+foxLifeTime : 5
+#

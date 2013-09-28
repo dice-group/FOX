@@ -1,5 +1,6 @@
 package org.aksw.fox.web;
 
+import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxServerUtil;
 import org.aksw.fox.web.feedback.FeedbackHttpHandler;
 import org.apache.log4j.Logger;
@@ -19,24 +20,44 @@ public class Server {
     protected final HttpServer server = new HttpServer();
 
     /**
+     * Adds HttpHandler.
      * 
      * @param port
      */
     public Server(int port) {
 
         server.addListener(new NetworkListener("FoxNetworkListener", NetworkListener.DEFAULT_NETWORK_HOST, port));
+        String state = null;
+        state = FoxCfg.get("demoHttpHandler");
+        if (state != null && state.equalsIgnoreCase("true")) {
+            StaticHttpHandler shl = new StaticHttpHandler("demo");
+            boolean on = false;
+            try {
+                on = Boolean.valueOf(FoxCfg.get("staticFileCacheEnabled"));
+            } catch (Exception e) {
+                on = false;
+            }
+            shl.setFileCacheEnabled(on);
 
-        StaticHttpHandler shl = new StaticHttpHandler("demo");
-        shl.setFileCacheEnabled(false);
+            server.getServerConfiguration().addHttpHandler(shl, "/");
+            server.getServerConfiguration().addHttpHandler(shl, "/demo");
+        }
+        state = FoxCfg.get("apiHttpHandler");
+        if (state != null && state.equalsIgnoreCase("true")) {
+            server.getServerConfiguration().addHttpHandler(new FoxHttpHandler(), "/api");
+        }
+        state = FoxCfg.get("feedbackHttpHandler");
+        if (state != null && state.equalsIgnoreCase("true")) {
+            server.getServerConfiguration().addHttpHandler(new FeedbackHttpHandler(), "/api/ner/feedback");
+        }
 
-        server.getServerConfiguration().addHttpHandler(shl, "/");
-        server.getServerConfiguration().addHttpHandler(shl, "/demo");
-        server.getServerConfiguration().addHttpHandler(new FoxHttpHandler(), "/api");
-        server.getServerConfiguration().addHttpHandler(new FeedbackHttpHandler(), "/api/ner/feedback");
+        if (server.getServerConfiguration().getHttpHandlers().size() == 0) {
+            logger.warn("No HttpHandler found. No available path for the server.");
+        }
     }
 
     /**
-     *  
+     * Starts the server and write a shut down file.
      */
     public void start() {
 
@@ -49,6 +70,7 @@ public class Server {
 
             FoxServerUtil.writeShutDownFile("fox_close");
             logger.info("http://" + host + ":" + port + "/api");
+            logger.info("http://" + host + ":" + port + "/api/ner/feedback");
             logger.info("http://" + host + ":" + port + "/demo/index.html");
             logger.info("----------------------------------------------------------\n");
 
