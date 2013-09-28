@@ -10,6 +10,7 @@ Fox.HomeCtrl = function($routeParams, $scope) {
  * 
  */
 Fox.DemoCtrl = function($routeParams, $scope,$http) {
+
     $scope.currentCtrl = 'DemoCtrl';
     $scope.isCollapsed = false;
     $scope.foxRequest = {type :'',task:'',input:'',output:'',nif:''};
@@ -87,8 +88,15 @@ Fox.DemoCtrl = function($routeParams, $scope,$http) {
 /**
  * 
  */
-Fox.DocCtrl = function($routeParams, $scope) {
+Fox.DocCtrl = function($routeParams, $scope, JsonService) {
     $scope.currentCtrl = 'DocCtrl';
+    
+	JsonService.nerExp(function(data){
+	    $scope.nerExp = data;
+	  });
+	JsonService.feedbackExp(function(data){
+	    $scope.feedbackExp = data;
+	  });
 }
 
 Fox.controller('HomeCtrl', Fox.HomeCtrl);
