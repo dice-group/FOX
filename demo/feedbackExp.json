@@ -1,0 +1,12 @@
+{
+    "system": "User_12",
+    "password": "foobar",
+    "feedbackType": "manual",
+    "text": "Berlin ist ...",
+    "context": "http://de.wikipedia.org/wiki/Berlin_(Band)",
+    "entityUri": "http://de.dbpedia.org/page/Berlin_(Band)",
+    "surfaceForm": "Berlin",
+    "offset": 1,
+    "feedback": 0,
+    "annotation": "http://de.dbpedia.org/ontology/Organisation"
+}
