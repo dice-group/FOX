@@ -1,5 +1,5 @@
 #
-# feedback API access
+# feedback settings
 ######################
 password : foobar
 #
@@ -11,7 +11,8 @@ serializedClassifier : data/stanford/english.all.3class.distsim.crf.ser.gz
 #
 # path to read / write trained model
 modelPath : data/fox
-#
+#tools to use
+nerTools: org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford, org.aksw.fox.nertools.NERIllinois, org.aksw.fox.nertools.NERBalie
 # which learner we use. 
 # values are: { mp | result_vote | class_vote | j48}
 learner : mp
@@ -32,12 +33,11 @@ poolCount : 5
 staticFileCacheEnabled : false
 #
 # http handler: 'true' to enable
-demoHttpHandler : x
-apiHttpHandler : x
+demoHttpHandler : true
+apiHttpHandler : true
 feedbackHttpHandler : true
 #
 # fox settings
 ######################
 # max time in min. for fox
 foxLifeTime : 5
-#
