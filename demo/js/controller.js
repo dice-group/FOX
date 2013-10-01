@@ -15,11 +15,19 @@ Fox.DemoCtrl = function($routeParams, $scope,$http) {
     $scope.isCollapsed = false;
     $scope.foxRequest = {type :'',task:'',input:'',output:'',nif:''};
     $scope.foxRequest.defaults = 0;
-    $scope.foxRequest.state = "done";
+    $scope.foxRequest.state = 'done';
     
     $scope.$watch('foxRequest.defaults', function(newValue, oldValue) {
-   
-       if(newValue == 2){
+
+    if(newValue == 3){
+            $scope.foxRequest.type ='text';
+            $scope.foxRequest.task='ner';
+            $scope.foxRequest.input="Berlin is an American New Wave band. Despite its name, Berlin did not have any known major connections with Germany, but instead was formed in Los Angeles, California in 1978.";
+            $scope.foxRequest.output='TURTLE';
+            $scope.foxRequest.nif=0;
+            $scope.foxRequest.foxlight=true;
+
+    }else if(newValue == 2){
            $scope.foxRequest.type ='url';
            $scope.foxRequest.task='ner';
            $scope.foxRequest.input="http://en.wikipedia.org/wiki/Leipzig_University";
@@ -46,10 +54,10 @@ Fox.DemoCtrl = function($routeParams, $scope,$http) {
     });
     
    
-    $scope.foxResponse = {input : "", output : "", log : ""};
+    $scope.foxResponse = {input : '', output : '', log : ''};
     
     $scope.foxRequest.send = function() {
-        $scope.foxRequest.state = "sending";
+        $scope.foxRequest.state = 'sending';
         
         // prepare request
         var foxRequest = angular.copy($scope.foxRequest);
@@ -59,9 +67,9 @@ Fox.DemoCtrl = function($routeParams, $scope,$http) {
         foxRequest.returnHtml = true;
         
         // clear old data
-        $scope.foxResponse.input = "";
-        $scope.foxResponse.output = "";
-        $scope.foxResponse.log = "";
+        $scope.foxResponse.input = '';
+        $scope.foxResponse.output = '';
+        $scope.foxResponse.log = '';
         
         var method ='POST';
         //var url = 'http://' + $scope.host + ':' + $scope.port + '/api'; 
@@ -76,11 +84,11 @@ Fox.DemoCtrl = function($routeParams, $scope,$http) {
             $scope.foxResponse.output = decodeURIComponent(data[0].output);
             $scope.foxResponse.log = decodeURIComponent(data[0].log);
             
-            $scope.foxRequest.state = "done";
+            $scope.foxRequest.state = 'done';
             $scope.isCollapsed = true;
         }).
         error(function(data, status, headers, config) {
-            $scope.foxRequest.state = "done";
+            $scope.foxRequest.state = 'done';
         });
     }
 }
