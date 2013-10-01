@@ -57,6 +57,7 @@ public class NERIllinois extends AbstractNER {
                 try {
                     Thread.currentThread();
                     Thread.sleep(500);
+                    logger.warn("\n\nWaiting ...");
                 } catch (InterruptedException e) {
                     logger.error("\n", e);
                 }
@@ -74,9 +75,11 @@ public class NERIllinois extends AbstractNER {
                 for (int j = 0; j < vector.size(); j++) {
                     predictions[j] = bilou2bio(((NEWord) vector.get(j)).neTypeLevel2);
                     words[j] = ((NEWord) vector.get(j)).form;
-
-                    // if(log.isDebugEnabled())log.debug(predictions[j]);
-                    // if(log.isDebugEnabled())log.debug(words[j]);
+                    // DEBUG
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(predictions[j]);
+                        logger.debug(words[j]);
+                    }// DEBUG
                 }
                 String word = "";
                 String tag = "";
@@ -106,12 +109,10 @@ public class NERIllinois extends AbstractNER {
                             open = false;
                             if (EntityClassMap.illinois(tag) != EntityClassMap.getNullCategory())
                                 set.add(getEntiy(word, EntityClassMap.illinois(tag), Entity.DEFAULT_RELEVANCE, getToolName()));
-
                         }
                     }
                 }
             }
-
         } catch (Exception e) {
             logger.error("\n", e);
         }
