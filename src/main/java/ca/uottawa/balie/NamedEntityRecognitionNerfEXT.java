@@ -23,8 +23,10 @@ package ca.uottawa.balie;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * NER extended with NERF disambiguation rules. <br>
@@ -47,6 +49,8 @@ import java.util.Iterator;
  * @author David Nadeau (pythonner@gmail.com)
  */
 public class NamedEntityRecognitionNerfEXT extends NamedEntityRecognition {
+
+    public Map<Integer, Double> map = null;
 
     private DisambiguationRulesI m_Rules;
     private PriorCorrectionI m_Prior;
@@ -104,7 +108,7 @@ public class NamedEntityRecognitionNerfEXT extends NamedEntityRecognition {
     }
 
     protected void ApplyDisambiguation() {
-
+        map = new HashMap<>();
         NamedEntityTypeEnumI[] intermediateTagSet = m_TokenList.NETagSet();
 
         if (m_TokenList.Size() > 1) {
@@ -552,6 +556,7 @@ public class NamedEntityRecognitionNerfEXT extends NamedEntityRecognition {
                             ForceEntityTypeExt(i, new NamedEntityType(hLabel2NEType.get("month"), NETagSet.length, new NamedEntityExplanation(NamedEntityExplanation.ExplanationType.CLASSIFIER, new Object[] { curTok.Raw(), hLabel2NEType.get("month").Label(), 0.9, hPriorMap })));
                             if (m_FullDebug)
                                 System.out.println("--> classified as: month (special rule)");
+                            map.put(i, 0.9); // TODO: remove magic!
                         }
 
                         else if (curTypes.TypeCount() == 2) {
@@ -570,6 +575,7 @@ public class NamedEntityRecognitionNerfEXT extends NamedEntityRecognition {
                                 System.out.println("--> classified as: " + outcome.Class() + " (" + outcome.Likelihood() + ")");
                             ForceEntityTypeExt(i, new NamedEntityType(hLabel2NEType.get(outcome.Class()), NETagSet.length, new NamedEntityExplanation(NamedEntityExplanation.ExplanationType.CLASSIFIER, new Object[] { curTok.Raw(), hLabel2NEType.get(outcome.Class()).Label(), outcome.Likelihood(),
                                     hPriorMap })));
+                            map.put(i, outcome.Likelihood());
 
                         } else {
                             // use Round Robin Classification if more than 2
@@ -614,6 +620,7 @@ public class NamedEntityRecognitionNerfEXT extends NamedEntityRecognition {
                                 System.out.println("--> classified as: " + strTypes[nWinner] + " (Probability sum = " + fMaxVote + ")");
                             ForceEntityTypeExt(i, new NamedEntityType(hLabel2NEType.get(strTypes[nWinner]), NETagSet.length, new NamedEntityExplanation(NamedEntityExplanation.ExplanationType.CLASSIFIER_VOTE, new Object[] { curTok.Raw(), hLabel2NEType.get(strTypes[nWinner]).Label(), fMaxVote, fSum,
                                     hPriorMap })));
+                            map.put(i, fSum / strTypes.length);
                         }
                     }
                 }
