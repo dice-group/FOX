@@ -48,6 +48,25 @@ import java.util.Iterator;
  */
 public class NamedEntityRecognitionNerfEXT extends NamedEntityRecognition {
 
+    private DisambiguationRulesI m_Rules;
+    private PriorCorrectionI m_Prior;
+    private NamedEntityTypeEnumI[] m_Mapping;
+    private boolean m_FullDebug;
+
+    private Hashtable<String, ArrayList<Integer>> m_CapWord2Index; // all
+                                                                   // indexes of
+                                                                   // capitalized
+                                                                   // form of a
+                                                                   // word
+
+    private Hashtable<String, UnlistedWordInfo> m_UnlistedWords; // lookup of
+                                                                 // words that
+                                                                 // are part of
+                                                                 // entities but
+                                                                 // are not
+                                                                 // lexicon
+                                                                 // entries
+
     private class UnlistedWordInfo {
         public UnlistedWordInfo(NamedEntityType pi_Type, int pi_Group) {
             m_Type = pi_Type;
@@ -551,6 +570,7 @@ public class NamedEntityRecognitionNerfEXT extends NamedEntityRecognition {
                                 System.out.println("--> classified as: " + outcome.Class() + " (" + outcome.Likelihood() + ")");
                             ForceEntityTypeExt(i, new NamedEntityType(hLabel2NEType.get(outcome.Class()), NETagSet.length, new NamedEntityExplanation(NamedEntityExplanation.ExplanationType.CLASSIFIER, new Object[] { curTok.Raw(), hLabel2NEType.get(outcome.Class()).Label(), outcome.Likelihood(),
                                     hPriorMap })));
+
                         } else {
                             // use Round Robin Classification if more than 2
                             // Johannes F�rnkranz 2002 Round Robin
@@ -892,23 +912,5 @@ public class NamedEntityRecognitionNerfEXT extends NamedEntityRecognition {
     protected boolean IsEntityCounterExample(NamedEntityType pi_EntityType) {
         return false;
     }
-
-    private DisambiguationRulesI m_Rules;
-    private PriorCorrectionI m_Prior;
-    private NamedEntityTypeEnumI[] m_Mapping;
-    private boolean m_FullDebug;
-
-    private Hashtable<String, ArrayList<Integer>> m_CapWord2Index; // all
-                                                                   // indexes of
-                                                                   // capitalized
-                                                                   // form of a
-                                                                   // word
-    private Hashtable<String, UnlistedWordInfo> m_UnlistedWords; // lookup of
-                                                                 // words that
-                                                                 // are part of
-                                                                 // entities but
-                                                                 // are not
-                                                                 // lexicon
-                                                                 // entries
 
 }
