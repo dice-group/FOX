@@ -1,9 +1,7 @@
 package org.aksw.fox.nertools;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
@@ -24,7 +22,7 @@ import ca.uottawa.balie.Tokenizer;
 public class NERBalie extends AbstractNER {
 
     @Override
-    public Set<Entity> retrieve(String input) {
+    public List<Entity> retrieve(String input) {
         logger.info("retrieve ...");
 
         Tokenizer tokenizer = new Tokenizer(Balie.LANGUAGE_ENGLISH, true);
@@ -64,16 +62,17 @@ public class NERBalie extends AbstractNER {
                 lastType = type;
             }
         }
-
-        return new HashSet<Entity>(list);
+        // TRACE
+        if (logger.isTraceEnabled()) {
+            logger.trace(list);
+        } // TRACE
+        return list;
     }
 
     public static void main(String[] a) {
         PropertyConfigurator.configure("log4j.properties");
         for (Entity e : new NERBalie()
-                .retrieve("Stanford University is located in California. It is a great university."
-                        +
-                        "The Leipzig region was the arena of the 1813 Battle of Leipzig between Napoleonic France and an allied coalition of Prussia, Russia, Austria, and Sweden. It was the largest battle in Europe prior to World War I and ended Napoleon's presence in Germany and would ultimately lead to his first exile on Elba. In 1913 the Monument to the Battle of the Nations monument celebrating the centenary of this event was completed."))
+                .retrieve("Berlin is an American New Wave band. Despite its name, Berlin did not have any known major connections with Germany, but instead was formed in Los Angeles, California in 1978."))
             NERBalie.logger.info(e);
     }
 }

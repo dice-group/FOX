@@ -2,10 +2,8 @@ package org.aksw.fox.nertools;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
@@ -57,7 +55,7 @@ public class NERStanford extends AbstractNER {
     }
 
     @Override
-    public Set<Entity> retrieve(String input) {
+    public List<Entity> retrieve(String input) {
 
         logger.info("retrieve ...");
         List<Entity> list = new ArrayList<Entity>();
@@ -124,7 +122,11 @@ public class NERStanford extends AbstractNER {
                 }
             }
         }
-        return new HashSet<Entity>(list);
+        // TRACE
+        if (logger.isTraceEnabled()) {
+            logger.trace(list);
+        } // TRACE
+        return list;
     }
 
     public static void main(String[] a) {

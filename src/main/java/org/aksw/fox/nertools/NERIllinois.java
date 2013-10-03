@@ -1,7 +1,7 @@
 package org.aksw.fox.nertools;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import lbj.NETaggerLevel1;
@@ -98,9 +98,9 @@ public class NERIllinois extends AbstractNER {
     // }
 
     @Override
-    public Set<Entity> retrieve(String input) {
+    public List<Entity> retrieve(String input) {
         logger.info("retrieve ...");
-        Set<Entity> set = new HashSet<>();
+        List<Entity> list = new ArrayList<>();
         try {
             Vector<LinkedVector> data = BracketFileManager.parseText(input);
 
@@ -187,7 +187,7 @@ public class NERIllinois extends AbstractNER {
                                 if (FoxCfg.get("illinoisDefaultRelevance") == null || Boolean.valueOf(FoxCfg.get("illinoisDefaultRelevance"))) {
                                     prob = Entity.DEFAULT_RELEVANCE;
                                 }
-                                set.add(getEntity(word, EntityClassMap.illinois(tag), prob, getToolName()));
+                                list.add(getEntity(word, EntityClassMap.illinois(tag), prob, getToolName()));
                             }
                         }
                     }
@@ -196,8 +196,11 @@ public class NERIllinois extends AbstractNER {
         } catch (Exception e) {
             logger.error("\n", e);
         }
-
-        return set;
+        // TRACE
+        if (logger.isTraceEnabled()) {
+            logger.trace(list);
+        } // TRACE
+        return list;
     }
 
     protected double shapePred(NEWord w, String tag) {

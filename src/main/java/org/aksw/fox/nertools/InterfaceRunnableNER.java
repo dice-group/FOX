@@ -1,6 +1,6 @@
 package org.aksw.fox.nertools;
 
-import java.util.Set;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import org.aksw.fox.data.Entity;
@@ -24,7 +24,7 @@ public interface InterfaceRunnableNER extends Runnable {
      *            sentences as plain text
      * @return list entities
      */
-    public Set<Entity> retrieve(String input);
+    public List<Entity> retrieve(String input);
 
     /**
      * Returns the tools name.
@@ -53,5 +53,5 @@ public interface InterfaceRunnableNER extends Runnable {
      * 
      * @return results
      */
-    public Set<Entity> getResults();
+    public List<Entity> getResults();
 }

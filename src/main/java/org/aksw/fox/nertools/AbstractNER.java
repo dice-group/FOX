@@ -1,7 +1,7 @@
 package org.aksw.fox.nertools;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import org.aksw.fox.data.Entity;
@@ -11,13 +11,13 @@ import org.apache.log4j.Logger;
 public class AbstractNER implements InterfaceRunnableNER {
 
     public static Logger logger = Logger.getLogger(AbstractNER.class);
-    protected Set<Entity> entitySet = null;
+    protected List<Entity> entitySet = null;
     protected CountDownLatch cdl = null;
     protected String input = null;
 
     @Override
-    public Set<Entity> retrieve(String input) {
-        return new HashSet<>();
+    public List<Entity> retrieve(String input) {
+        return new ArrayList<>();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class AbstractNER implements InterfaceRunnableNER {
     }
 
     @Override
-    public Set<Entity> getResults() {
+    public List<Entity> getResults() {
         return entitySet;
     }
 
@@ -73,7 +73,7 @@ public class AbstractNER implements InterfaceRunnableNER {
      * @param set
      * @return
      */
-    protected Set<Entity> clean(Set<Entity> set) {
+    protected List<Entity> clean(List<Entity> set) {
         logger.info("clean entities ...");
 
         // clean token with the tokenizer
@@ -84,7 +84,7 @@ public class AbstractNER implements InterfaceRunnableNER {
                     cleanText += token + " ";
             entity.setText(cleanText.trim());
         }
-        set = new HashSet<Entity>(set);
+        set = new ArrayList<Entity>(set);
 
         // TRACE
         if (logger.isTraceEnabled()) {

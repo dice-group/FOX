@@ -3,8 +3,8 @@ package org.aksw.fox.nertools;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
@@ -50,10 +50,10 @@ public class NEROpenNLP extends AbstractNER {
 
     // TODO: do parallel for each model
     @Override
-    public Set<Entity> retrieve(String input) {
+    public List<Entity> retrieve(String input) {
         logger.info("retrieve ...");
 
-        Set<Entity> set = new HashSet<>();
+        List<Entity> list = new ArrayList<>();
         String[] sentences = FoxTextUtil.getSentences(input);
 
         for (int i = 0; i < tokenNameFinderModels.length; i++) {
@@ -83,13 +83,17 @@ public class NEROpenNLP extends AbstractNER {
                             p = Double.valueOf(probs[ii]).floatValue();
                         String cl = EntityClassMap.openNLP(span.getType());
                         if (cl != EntityClassMap.getNullCategory())
-                            set.add(getEntity(word, cl, p, getToolName()));
+                            list.add(getEntity(word, cl, p, getToolName()));
                     }
                 }
                 nameFinder.clearAdaptiveData();
             }
         }
-        return set;
+        // TRACE
+        if (logger.isTraceEnabled()) {
+            logger.trace(list);
+        } // TRACE
+        return list;
     }
 
     public static void main(String[] a) {
