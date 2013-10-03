@@ -9,6 +9,7 @@ import lbj.NETaggerLevel2;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.utils.FoxCfg;
 
 import LBJ2.classify.Classifier;
 import LBJ2.parse.LinkedVector;
@@ -37,6 +38,65 @@ public class NERIllinois extends AbstractNER {
         return prediction;
     }
 
+    // NERTester.clearPredictions(...)
+    // public static void clearPredictions(Vector<LinkedVector> data) {
+    // for (int k = 0; k < data.size(); k++) {
+    // for (int i = 0; i < data.elementAt(k).size(); i++) {
+    // ((NEWord) data.elementAt(k).get(i)).neTypeLevel1 = null;
+    // ((NEWord) data.elementAt(k).get(i)).neTypeLevel2 = null;
+    // }
+    // }
+    // }
+
+    // NERTester.annotateBothLevels(...)
+    /*
+     * 
+     * use taggerLevel2=null if you want to use only one level of inference
+     */
+    // public static void annotateBothLevels(Vector<LinkedVector> data,
+    // SparseNetworkLearner taggerLevel1, SparseNetworkLearner taggerLevel2) {
+    // clearPredictions(data);
+    // NETaggerLevel1.isTraining = false;
+    // NETaggerLevel2.isTraining = false;
+    // for (int k = 0; k < data.size(); k++) {
+    // for (int i = 0; i < data.elementAt(k).size(); ++i)
+    // {
+    // NEWord w = (NEWord) data.elementAt(k).get(i);
+    // w.neTypeLevel1 = taggerLevel1.discreteValue(w);
+    // }
+    // }
+    //
+    // if (taggerLevel2 != null &&
+    // (Parameters.featuresToUse.containsKey("PatternFeatures") ||
+    // Parameters.featuresToUse.containsKey("PredictionsLevel1"))) {
+    // // annotate with patterns
+    // if (Parameters.featuresToUse.containsKey("PatternFeatures"))
+    // PatternExtractor.annotate(data, false, false);
+    // if (Parameters.featuresToUse.containsKey("PredictionsLevel1")) {
+    // GlobalFeatures.aggregateLevel1Predictions(data);
+    // GlobalFeatures.aggregateEntityLevelPredictions(data);
+    // }
+    // for (int k = 0; k < data.size(); k++)
+    // for (int i = 0; i < data.elementAt(k).size(); ++i) {
+    // ((NEWord) data.elementAt(k).get(i)).neTypeLevel2 =
+    // taggerLevel2.discreteValue(data.elementAt(k).get(i));
+    // }
+    // }
+    // else
+    // {
+    // for (int k = 0; k < data.size(); k++)
+    // for (int i = 0; i < data.elementAt(k).size(); i++) {
+    // NEWord w = (NEWord) data.elementAt(k).get(i);
+    // w.neTypeLevel2 = w.neTypeLevel1;
+    // }
+    // }
+    //
+    // if (Parameters.taggingScheme.equalsIgnoreCase(Parameters.BILOU)) {
+    // Bio2Bilou.bilou2BioPredictionsLevel1(data);
+    // Bio2Bilou.Bilou2BioPredictionsLevel2(data);
+    // }
+    // }
+
     @Override
     public Set<Entity> retrieve(String input) {
         logger.info("retrieve ...");
@@ -45,12 +105,8 @@ public class NERIllinois extends AbstractNER {
             Vector<LinkedVector> data = BracketFileManager.parseText(input);
 
             NETaggerLevel1 tagger1 = new NETaggerLevel1();
-            // System.out.println("Reading model file : "+
-            // Parameters.pathToModelFile+".level1");
             tagger1 = (NETaggerLevel1) Classifier.binaryRead(ParametersForLbjCode.pathToModelFile + ".level1");
             NETaggerLevel2 tagger2 = new NETaggerLevel2();
-            // System.out.println("Reading model file : "+
-            // Parameters.pathToModelFile+".level2");
             tagger2 = (NETaggerLevel2) Classifier.binaryRead(ParametersForLbjCode.pathToModelFile + ".level2");
 
             while (inUse) {
@@ -65,34 +121,54 @@ public class NERIllinois extends AbstractNER {
             inUse = true;
             NETester.annotateBothLevels(data, tagger1, tagger2);
             inUse = false;
+
             for (int i = 0; i < data.size(); i++) {
                 LinkedVector vector = data.elementAt(i);
+                // DEBUG
+                // for (int j = 0; j < vector.size(); j++) {
+                // NEWord w = (NEWord) vector.get(j);
+                // logger.debug(w.shapePredLoc);
+                // logger.debug(w.shapePredOrg);
+                // logger.debug(w.shapePredPer);
+                // }
+                // DEBUG
 
                 boolean open = false;
                 String[] predictions = new String[vector.size()];
                 String[] words = new String[vector.size()];
-
                 for (int j = 0; j < vector.size(); j++) {
                     predictions[j] = bilou2bio(((NEWord) vector.get(j)).neTypeLevel2);
                     words[j] = ((NEWord) vector.get(j)).form;
                     // DEBUG
-                    if (logger.isDebugEnabled()) {
-                        logger.debug(predictions[j]);
-                        logger.debug(words[j]);
+                    if (logger.isTraceEnabled()) {
+                        logger.trace(predictions[j]);
+                        logger.trace(words[j]);
                     }// DEBUG
                 }
                 String word = "";
                 String tag = "";
+                float prob = 0f;
+                NEWord w = null;
                 for (int j = 0; j < vector.size(); j++) {
-
-                    if (predictions[j].startsWith("B-") || (j > 0 && predictions[j].startsWith("I-") && (!predictions[j - 1].endsWith(predictions[j].substring(2))))) {
+                    w = (NEWord) vector.get(j);
+                    if (predictions[j].startsWith("B-") ||
+                            (j > 0 && predictions[j].startsWith("I-") &&
+                            (!predictions[j - 1].endsWith(predictions[j].substring(2))))) {
 
                         tag = predictions[j].substring(2);
+                        prob = 0f;
                         word = new String();
                         open = true;
                     }
-                    if (open)
+                    if (open) {
                         word += words[j] + " ";
+                        prob += shapePred(w, tag);
+                        // System.out.println(pro(w, tag) + " " + tag);
+                        // first one
+                        if (prob != Double.valueOf(shapePred(w, tag)).floatValue()) {
+                            prob = prob / 2f;
+                        }
+                    }
                     if (open) {
                         boolean close = false;
                         if (j == vector.size() - 1)
@@ -107,8 +183,12 @@ public class NERIllinois extends AbstractNER {
                         }
                         if (close) {
                             open = false;
-                            if (EntityClassMap.illinois(tag) != EntityClassMap.getNullCategory())
-                                set.add(getEntiy(word, EntityClassMap.illinois(tag), Entity.DEFAULT_RELEVANCE, getToolName()));
+                            if (EntityClassMap.illinois(tag) != EntityClassMap.getNullCategory()) {
+                                if (FoxCfg.get("illinoisDefaultRelevance") == null || Boolean.valueOf(FoxCfg.get("illinoisDefaultRelevance"))) {
+                                    prob = Entity.DEFAULT_RELEVANCE;
+                                }
+                                set.add(getEntiy(word, EntityClassMap.illinois(tag), prob, getToolName()));
+                            }
                         }
                     }
                 }
@@ -118,5 +198,17 @@ public class NERIllinois extends AbstractNER {
         }
 
         return post(set);
+    }
+
+    protected double shapePred(NEWord w, String tag) {
+        switch (EntityClassMap.illinois(tag)) {
+        case EntityClassMap.L:
+            return w.shapePredLoc;
+        case EntityClassMap.P:
+            return w.shapePredPer;
+        case EntityClassMap.O:
+            return w.shapePredOrg;
+        }
+        return -1;
     }
 }
