@@ -5,7 +5,11 @@ password : foobar
 #
 # ner settings
 ######################
-#
+# 'true' to turn on bin. mode and use default value
+stanfordDefaultRelevance : x
+openNLPDefaultRelevance : x
+balieDefaultRelevance : x
+illinoisDefaultRelevance : x
 #stanford
 serializedClassifier : data/stanford/english.all.3class.distsim.crf.ser.gz
 #
@@ -13,6 +17,7 @@ serializedClassifier : data/stanford/english.all.3class.distsim.crf.ser.gz
 modelPath : data/fox
 #tools to use
 nerTools: org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford, org.aksw.fox.nertools.NERIllinois, org.aksw.fox.nertools.NERBalie
+#nerTools: org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford
 # which learner we use. 
 # values are: { mp | result_vote | class_vote | j48}
 learner : mp
@@ -41,3 +46,8 @@ feedbackHttpHandler : true
 ######################
 # max time in min. for fox
 foxLifeTime : 5
+
+# uri lookup
+urilookup: org.aksw.fox.uri.NullLookup
+#nerLight
+nerLight: org.aksw.fox.nertools.NERStanford
