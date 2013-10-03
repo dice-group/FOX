@@ -2,9 +2,9 @@ package org.aksw.fox.nerlearner.reader;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +40,7 @@ public class FoxInstances {
     protected Set<String> token = null;
 
     /**
-     * Gets training instances.
+     * Gets instances from the given toolResults and oracle.
      * 
      * @param input
      *            plain text
@@ -68,6 +68,7 @@ public class FoxInstances {
             }
         }
 
+        //
         this.token = token;
 
         // toolResults to make TokenCategory for each tool
@@ -77,18 +78,19 @@ public class FoxInstances {
         FastVector featureVector = getFeatureVector(toolTokenCategoryMatrix);
 
         // train data
-        Instances isTrainingSet = new Instances("train data", featureVector, token.size());
-        isTrainingSet.setClassIndex(featureVector.size() - 1);
+        Instances instances = new Instances(oracle != null ? "train data" : "test data", featureVector, token.size());
+        instances.setClassIndex(featureVector.size() - 1);
 
         // fill values
-        Instance row = new Instance(isTrainingSet.numAttributes());
+        Instance row = new Instance(instances.numAttributes());
 
         // each row
         int diffNull = 0;
         for (String tok : token) {
             int i = 0; // tool index
-            // each tool
-            for (String toolname : toolTokenCategoryMatrix.keySet()) {
+            List<String> sortedToolNames = new ArrayList<>(toolTokenCategoryMatrix.keySet());
+            Collections.sort(sortedToolNames);
+            for (String toolname : sortedToolNames) {
                 int c = 0; // category index
                 int start = EntityClassMap.entityClasses.size();
                 for (int j = i * start; j < i * start + start; j++) {
@@ -101,23 +103,26 @@ public class FoxInstances {
                 i++;
             }
             if (oracle != null) {
-                row.setValue((Attribute) featureVector.elementAt(isTrainingSet.numAttributes() - 1), EntityClassMap.oracel(oracelToken.get(tok)));
+                row.setValue((Attribute) featureVector.elementAt(instances.numAttributes() - 1), EntityClassMap.oracel(oracelToken.get(tok)));
                 if (EntityClassMap.oracel(oracelToken.get(tok)) != EntityClassMap.getNullCategory())
                     diffNull++;
             }
 
-            isTrainingSet.add(row);
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug("found all: " + (diffNull == oracelToken.size()));
-            logger.trace("\n" + isTrainingSet);
+            instances.add(row);
         }
 
-        return isTrainingSet;
+        // DEBUG TRACE
+        if (logger.isDebugEnabled()) {
+            logger.debug("found all: " + (diffNull == oracelToken.size()));
+            logger.trace("\n" + instances);
+        }
+        // DEBUG TRACE
+
+        return instances;
     }
 
     /**
-     * Gets instances.
+     * Gets instances from the given toolResults.
      * 
      * @param input
      *            plain text
@@ -135,7 +140,7 @@ public class FoxInstances {
             logger.debug("getTokenCategoryMatrix ...");
 
         final Set<String> entityClasses = new LinkedHashSet<>(EntityClassMap.entityClasses);
-        final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = new LinkedHashMap<>();
+        final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = new HashMap<>();
 
         List<Fiber> fibers = new ArrayList<>();
         final CountDownLatch latch = new CountDownLatch(toolResults.entrySet().size());
@@ -177,7 +182,9 @@ public class FoxInstances {
         // declare the feature vector
         // declare numeric attribute along with its values
         FastVector featureVector = new FastVector();
-        for (String toolname : toolTokenCategoryMatrix.keySet()) {
+        List<String> sortedToolNames = new ArrayList<>(toolTokenCategoryMatrix.keySet());
+        Collections.sort(sortedToolNames);
+        for (String toolname : sortedToolNames) {
             for (String cl : EntityClassMap.entityClasses)
                 featureVector.addElement(new Attribute(toolname + cl));
         }

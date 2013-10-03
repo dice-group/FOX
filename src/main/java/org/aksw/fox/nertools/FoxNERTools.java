@@ -1,7 +1,7 @@
 package org.aksw.fox.nertools;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +31,7 @@ public class FoxNERTools {
      * Contains all tools to be used to retrieve entities.
      */
     protected List<InterfaceRunnableNER> nerTools = new ArrayList<>();
-    protected Map<String, Set<Entity>> toolResults = new LinkedHashMap<>();
+    protected Map<String, Set<Entity>> toolResults = new HashMap<>();
     private boolean doTraining = false;
 
     // use learner and merge
@@ -127,12 +127,8 @@ public class FoxNERTools {
             // } catch (Exception e) {
             // logger.error("\n", e);
             // }
-            // TODO
-            for (Entity e : results) {
-                logger.debug(e.getText() + " " + e.getType());
-            }
-
         }
+        logger.info("get entities done.");
         return results;
     }
 
