@@ -7,7 +7,6 @@
 	<name>FOX</name>
 	<packaging>jar</packaging>
 
-
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
@@ -17,7 +16,6 @@
 		<system.libs>${basedir}/lib</system.libs>
 		<!-- configure this path -->
 		<system.data>${basedir}/data</system.data>
-
 	</properties>
 
 	<repositories>
@@ -43,6 +41,7 @@
 			<scope>system</scope>
 			<systemPath>${system.libs}/stanford-corenlp-3.2.0-models.jar</systemPath>
 		</dependency>
+
 		<!-- http://cogcomp.cs.illinois.edu/download/software/28 -->
 		<dependency>
 			<groupId>illinois</groupId>
@@ -62,15 +61,29 @@
 		</dependency>
 
 		<!-- http://cogcomp.cs.illinois.edu/download/software/28 -->
-		<dependency>
+<!-- 		<dependency>
+			<groupId>illinois</groupId>
+			<artifactId>LBJnertagger_src</artifactId>
+			<version>1.11</version>
+			<scope>system</scope>
+			<systemPath>${system.libs}/illinois/LbjNerTagger_src.jar</systemPath>
+		</dependency> -->
+ 		<dependency>
 			<groupId>illinois</groupId>
 			<artifactId>LBJnertagger</artifactId>
-			<version>0</version>
+			<version>1.11</version>
 			<scope>system</scope>
 			<systemPath>${system.libs}/illinois/LbjNerTagger.jar</systemPath>
-		</dependency>
+		</dependency> 
 
 		<!-- http://sourceforge.net/projects/balie -->
+<!-- 		<dependency>
+			<groupId>ca.uottawa</groupId>
+			<artifactId>balie_src</artifactId>
+			<version>1.81</version>
+			<scope>system</scope>
+			<systemPath>${system.libs}/balie/Balie_src.jar</systemPath>
+		</dependency> -->
 		<dependency>
 			<groupId>ca.uottawa</groupId>
 			<artifactId>balie</artifactId>
