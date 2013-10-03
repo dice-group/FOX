@@ -73,9 +73,6 @@ public class FoxClassifier {
         logger.info("initInstances ...");
 
         instances = (oracle == null) ? foxInstances.getInstances(input, toolResults) : foxInstances.getInstances(input, toolResults, oracle);
-
-        if (logger.isDebugEnabled())
-            logger.debug(instances);
     }
 
     /**
@@ -114,6 +111,7 @@ public class FoxClassifier {
         } catch (Exception e) {
             logger.error("\n", e);
         }
+        logger.info("readClassifier done.");
     }
 
     /**
@@ -133,11 +131,11 @@ public class FoxClassifier {
      * @return classified token
      */
     public Set<Entity> classify(PostProcessingInterface pp) {
+        logger.info("classify ...");
 
         // rewrite to use labels
         initInstances(pp.getLabeledInput(), pp.getLabeledToolResults(), null);
 
-        //
         Instances classified = new Instances(instances);
         for (int i = 0; i < instances.numInstances(); i++) {
             try {
@@ -146,7 +144,13 @@ public class FoxClassifier {
                 logger.error("\n", e);
             }
         }
-        return pp.instancesToEntities(classified);
+        // TRACE
+        if (logger.isTraceEnabled())
+            logger.trace("\n" + classified);
+        // TRACE
+        Set<Entity> set = pp.instancesToEntities(classified);
+        logger.info("classify done, size: " + set.size());
+        return set;
     }
 
     /**

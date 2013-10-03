@@ -268,13 +268,9 @@ public class Fox implements InterfaceRunnableFox {
                     html += input.substring(last);
                     parameter.put("input", html);
 
-                    // INFO
-                    logger.info("Entities:");
-                    for (String toolname : this.nerTools.getToolResult().keySet()) {
-                        logger.info(toolname + ": " + this.nerTools.getToolResult().get(toolname).size());
-                    }
-                    logger.info("fox" + ": " + entities.size());
-                    // INFO
+                    // INFO TRACE
+                    infotrace(entities);
+                    // INFO TRACE
                 }
             }
         }
@@ -283,6 +279,23 @@ public class Fox implements InterfaceRunnableFox {
         foxWebLog.setMessage("Running Fox done.");
         if (countDownLatch != null)
             countDownLatch.countDown();
+    }
+
+    // debug infos
+    private void infotrace(Set<Entity> entities) {
+        // INFO TRACE
+        logger.info("Entities:");
+        for (String toolname : this.nerTools.getToolResult().keySet()) {
+            logger.info(toolname + ": " + this.nerTools.getToolResult().get(toolname).size());
+            if (logger.isTraceEnabled())
+                for (Entity e : this.nerTools.getToolResult().get(toolname))
+                    logger.trace(e);
+        }
+        logger.info("fox" + ": " + entities.size());
+        if (logger.isTraceEnabled())
+            for (Entity e : entities)
+                logger.trace(e);
+        // INFO TRACE
     }
 
     @Override
