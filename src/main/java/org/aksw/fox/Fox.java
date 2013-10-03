@@ -147,7 +147,8 @@ public class Fox implements InterfaceRunnableFox {
                         logger.info("starting foxlight ner ...");
 
                         foxWebLog.setMessage("Fox-Light start retrieving ner ...");
-                        entities = nerLight.retrieve(input);
+                        // TODO
+                        entities = new HashSet<Entity>(nerLight.retrieve(input));
                         foxWebLog.setMessage("Fox-Light start retrieving ner done.");
 
                         tokenManager.repairEntities(entities);

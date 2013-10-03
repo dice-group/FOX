@@ -2,6 +2,7 @@ package org.aksw.fox.nertools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -97,9 +98,9 @@ public class FoxNERTools {
 
         // get results
         if (latch.getCount() == 0) {
-
+            // TODO
             for (InterfaceRunnableNER nerTool : nerTools)
-                toolResults.put(nerTool.getToolName(), nerTool.getResults());
+                toolResults.put(nerTool.getToolName(), new HashSet<Entity>(nerTool.getResults()));
 
         } else {
             if (logger.isDebugEnabled())
