@@ -118,13 +118,13 @@ public class NERStanford extends AbstractNER {
                             float p = Entity.DEFAULT_RELEVANCE;
                             if (FoxCfg.get("stanfordDefaultRelevance") != null && !Boolean.valueOf(FoxCfg.get("stanfordDefaultRelevance")))
                                 p = prob.second().floatValue();
-                            list.add(getEntiy(currentToken, type, p, getToolName()));
+                            list.add(getEntity(currentToken, type, p, getToolName()));
                         }
                     }
                 }
             }
         }
-        return post(new HashSet<Entity>(list));
+        return new HashSet<Entity>(list);
     }
 
     public static void main(String[] a) {

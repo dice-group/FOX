@@ -65,8 +65,7 @@ public class CrossValidation {
         {
 
             foxNERTools.setTraining(true);
-            foxNERTools.getNER(tokenManager.getInput());
-
+            foxNERTools.getEntities(tokenManager.getInput());
             pp = new PostProcessing(tokenManager, foxNERTools.getToolResult());
         }
 

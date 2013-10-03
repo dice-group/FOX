@@ -17,7 +17,7 @@ public class AbstractNER implements InterfaceRunnableNER {
 
     @Override
     public Set<Entity> retrieve(String input) {
-        return null;
+        return new HashSet<>();
     }
 
     @Override
@@ -28,7 +28,7 @@ public class AbstractNER implements InterfaceRunnableNER {
     @Override
     public void run() {
         if (input != null)
-            entitySet = retrieve(input);
+            entitySet = clean(retrieve(input));
         else
             logger.error("Input not set!");
 
@@ -53,35 +53,48 @@ public class AbstractNER implements InterfaceRunnableNER {
         this.input = input;
     }
 
-    protected Entity getEntiy(String text, String type, float relevance, String tool) {
+    /**
+     * Creates a new Entity object.
+     * 
+     * @param text
+     * @param type
+     * @param relevance
+     * @param tool
+     * @return
+     */
+    protected Entity getEntity(String text, String type, float relevance, String tool) {
         return new Entity(text, type, relevance, tool);
     }
 
-    protected Set<Entity> post(Set<Entity> set) {
+    /**
+     * Cleans the entities, uses a tokenizer to tokenize all entities with the
+     * same algorithm.
+     * 
+     * @param set
+     * @return
+     */
+    protected Set<Entity> clean(Set<Entity> set) {
+        logger.info("clean entities ...");
 
-        // clean token
+        // clean token with the tokenizer
         for (Entity entity : set) {
-
             String cleanText = "";
             for (String token : FoxTextUtil.getSentenceToken(entity.getText() + "."))
                 if (!token.trim().isEmpty())
                     cleanText += token + " ";
-
             entity.setText(cleanText.trim());
         }
         set = new HashSet<Entity>(set);
 
-        if (set.size() > 0)
-            logger.info(set.size() + "(" + set.iterator().next().getTool() + ")");
-
-        // DEBUG
-        if (logger.isDebugEnabled()) {
+        // TRACE
+        if (logger.isTraceEnabled()) {
+            if (set.size() > 0)
+                logger.trace(set.size() + "(" + set.iterator().next().getTool() + ")");
             for (Entity entity : set)
-                logger.debug(entity.getText() + "=>" + entity.getType() + "(" + entity.getTool() + ")");
+                logger.trace(entity.getText() + "=>" + entity.getType() + "(" + entity.getTool() + ")");
         }
-        // DEBUG
-
-        logger.info("done.");
+        // TRACE
+        logger.info("clean entities done.");
         return set;
     }
 }

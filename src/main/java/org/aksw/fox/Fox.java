@@ -117,7 +117,6 @@ public class Fox implements InterfaceRunnableFox {
         foxWebLog.setMessage("Running Fox...");
 
         if (parameter == null) {
-
             logger.error("Parameter not set.");
 
         } else {
@@ -125,8 +124,8 @@ public class Fox implements InterfaceRunnableFox {
             Set<Entity> entities = null;
 
             if (parameter.get("input") == null || parameter.get("task") == null) {
-                input = null;
                 logger.error("Input or task parameter not set.");
+                input = null;
 
             } else {
                 String task = parameter.get("task");
@@ -200,7 +199,7 @@ public class Fox implements InterfaceRunnableFox {
                     case "ner":
                         logger.info("starting ner ...");
                         foxWebLog.setMessage("Start retrieving ner ...");
-                        entities = nerTools.getNER(input);
+                        entities = nerTools.getEntities(input);
                         foxWebLog.setMessage("Start retrieving ner done.");
 
                         // remove duplicate annotations
@@ -268,6 +267,14 @@ public class Fox implements InterfaceRunnableFox {
 
                     html += input.substring(last);
                     parameter.put("input", html);
+
+                    // INFO
+                    logger.info("Entities:");
+                    for (String toolname : this.nerTools.getToolResult().keySet()) {
+                        logger.info(toolname + ": " + this.nerTools.getToolResult().get(toolname).size());
+                    }
+                    logger.info("fox" + ": " + entities.size());
+                    // INFO
                 }
             }
         }

@@ -36,7 +36,7 @@ public class NERBalie extends AbstractNER {
                 new LexiconOnDisk(LexiconOnDisk.Lexicon.OPEN_SOURCE_LEXICON), DisambiguationRulesNerf.Load(),
                 pcn,
                 NamedEntityTypeEnumMappingNerf.values(),
-                logger.isDebugEnabled());
+                logger.isTraceEnabled());
 
         ner.RecognizeEntities();
         TokenList tokenList = ner.GetTokenList();
@@ -60,12 +60,12 @@ public class NERBalie extends AbstractNER {
 
             } else {
                 if (EntityClassMap.balie(type) != EntityClassMap.getNullCategory())
-                    list.add(getEntiy(token.Raw(), EntityClassMap.balie(type), re, getToolName()));
+                    list.add(getEntity(token.Raw(), EntityClassMap.balie(type), re, getToolName()));
                 lastType = type;
             }
         }
 
-        return post(new HashSet<Entity>(list));
+        return new HashSet<Entity>(list);
     }
 
     public static void main(String[] a) {

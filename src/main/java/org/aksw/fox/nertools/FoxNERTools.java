@@ -48,6 +48,10 @@ public class FoxNERTools {
                 nerTools.add((InterfaceRunnableNER) FoxCfg.getClass(cl));
             }
         }
+        initToolResults();
+    }
+
+    private void initToolResults() {
         for (InterfaceRunnableNER nerTool : nerTools)
             toolResults.put(nerTool.getToolName(), null);
     }
@@ -57,8 +61,8 @@ public class FoxNERTools {
      * @param input
      * @return entities
      */
-    public Set<Entity> getNER(String input) {
-        logger.info("getNER ...");
+    public Set<Entity> getEntities(String input) {
+        logger.info("get entities ...");
 
         Set<Entity> results = null;
 
@@ -76,7 +80,7 @@ public class FoxNERTools {
             fiber.execute(nerTool);
             fibers.add(fiber);
         }
-
+        // TODO: if nerTools.size() == 0 we wait for ever here?
         // wait x min for finish
         int min = Integer.parseInt(FoxCfg.get("foxNERLifeTime"));
         try {

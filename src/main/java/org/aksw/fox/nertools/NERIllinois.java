@@ -187,7 +187,7 @@ public class NERIllinois extends AbstractNER {
                                 if (FoxCfg.get("illinoisDefaultRelevance") == null || Boolean.valueOf(FoxCfg.get("illinoisDefaultRelevance"))) {
                                     prob = Entity.DEFAULT_RELEVANCE;
                                 }
-                                set.add(getEntiy(word, EntityClassMap.illinois(tag), prob, getToolName()));
+                                set.add(getEntity(word, EntityClassMap.illinois(tag), prob, getToolName()));
                             }
                         }
                     }
@@ -197,7 +197,7 @@ public class NERIllinois extends AbstractNER {
             logger.error("\n", e);
         }
 
-        return post(set);
+        return set;
     }
 
     protected double shapePred(NEWord w, String tag) {

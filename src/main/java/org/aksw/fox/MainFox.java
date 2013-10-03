@@ -184,7 +184,7 @@ public class MainFox {
 
         // retrieve entities (tool results)
         foxNERTools.setTraining(true);
-        foxNERTools.getNER(input);
+        foxNERTools.getEntities(input);
 
         try {
             foxClassifier.training(input, foxNERTools.getToolResult(), oracle);

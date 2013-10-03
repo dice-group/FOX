@@ -83,13 +83,13 @@ public class NEROpenNLP extends AbstractNER {
                             p = Double.valueOf(probs[ii]).floatValue();
                         String cl = EntityClassMap.openNLP(span.getType());
                         if (cl != EntityClassMap.getNullCategory())
-                            set.add(getEntiy(word, cl, p, getToolName()));
+                            set.add(getEntity(word, cl, p, getToolName()));
                     }
                 }
                 nameFinder.clearAdaptiveData();
             }
         }
-        return post(set);
+        return set;
     }
 
     public static void main(String[] a) {
