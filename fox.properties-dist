@@ -11,6 +11,7 @@ openNLPDefaultRelevance : x
 balieDefaultRelevance : x
 illinoisDefaultRelevance : x
 #stanford
+#serializedClassifier : edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz
 serializedClassifier : data/stanford/english.all.3class.distsim.crf.ser.gz
 #
 # path to read / write trained model
@@ -19,8 +20,9 @@ modelPath : data/fox
 nerTools: org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford, org.aksw.fox.nertools.NERIllinois, org.aksw.fox.nertools.NERBalie
 #nerTools: org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford
 # which learner we use. 
-# values are: { mp | result_vote | class_vote | j48}
-learner : mp
+# values are: {  result_vote | class_vote | weka.classifiers.functions.MultilayerPerceptron | weka.classifiers.trees.J48 | ...}
+learner : weka.classifiers.bayes.NaiveBayes
+#learneroptions: -C 0.25 -M 2
 #
 # `true` to train fox. tainFox: { true | false }
 tainFox : false
@@ -48,6 +50,6 @@ feedbackHttpHandler : true
 foxLifeTime : 5
 
 # uri lookup
-urilookup: org.aksw.fox.uri.NullLookup
+urilookup: org.aksw.fox.uri.AGDISTISLookup
 #nerLight
 nerLight: org.aksw.fox.nertools.NERStanford
