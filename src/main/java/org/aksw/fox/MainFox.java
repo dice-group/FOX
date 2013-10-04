@@ -208,14 +208,8 @@ public class MainFox {
             foxClassifier.setClassifier(FoxClassifierFactory.getClassifierClassVote(prefix));
             break;
         }
-
-        case "j48": {
-            foxClassifier.setClassifier(FoxClassifierFactory.get("weka.classifiers.trees.J48"));
-            break;
-        }
         default:
-        case "mp":
-            foxClassifier.setClassifier(FoxClassifierFactory.getClassifierMultilayerPerceptron());
+            foxClassifier.setClassifier(FoxClassifierFactory.get(FoxCfg.get("learner"), FoxCfg.get("learneroptions")));
         }
     }
 }
