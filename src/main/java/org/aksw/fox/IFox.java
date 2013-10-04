@@ -9,7 +9,7 @@ import java.util.concurrent.CountDownLatch;
  * @author rspeck
  * 
  */
-public interface InterfaceRunnableFox extends Runnable {
+public interface IFox extends Runnable {
 
     /**
      * Sets an optional {@link java.util.concurrent.CountDownLatch} object. FOX

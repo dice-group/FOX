@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.aksw.fox.InterfaceRunnableFox;
+import org.aksw.fox.IFox;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.glassfish.grizzly.http.server.Request;
@@ -33,7 +33,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
     protected void postService(Request request, Response response, Map<String, String> parameter) {
 
         // get a fox instance
-        InterfaceRunnableFox fox = pool.poll();
+        IFox fox = pool.poll();
 
         // init. thread
         Fiber fiber = new ThreadFiber();

@@ -8,7 +8,7 @@ import org.aksw.fox.data.Entity;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.Logger;
 
-public class AbstractNER implements InterfaceRunnableNER {
+public class AbstractNER implements INER {
 
     public static Logger logger = Logger.getLogger(AbstractNER.class);
     protected List<Entity> entitySet = null;

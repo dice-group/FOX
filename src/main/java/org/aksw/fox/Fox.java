@@ -13,10 +13,10 @@ import java.util.concurrent.CountDownLatch;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.nertools.FoxNERTools;
-import org.aksw.fox.nertools.InterfaceRunnableNER;
+import org.aksw.fox.nertools.INER;
 import org.aksw.fox.nertools.NERStanford;
 import org.aksw.fox.uri.AGDISTISLookup;
-import org.aksw.fox.uri.InterfaceURI;
+import org.aksw.fox.uri.ILookup;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxTextUtil;
@@ -24,19 +24,19 @@ import org.aksw.fox.utils.FoxWebLog;
 import org.apache.log4j.Logger;
 
 /**
- * An implementation of {@link org.aksw.fox.InterfaceRunnableFox}.
+ * An implementation of {@link org.aksw.fox.IFox}.
  * 
  * @author rspeck
  * 
  */
-public class Fox implements InterfaceRunnableFox {
+public class Fox implements IFox {
 
     public static Logger logger = Logger.getLogger(Fox.class);
 
     /**
      * 
      */
-    protected InterfaceURI uriLookup = null;
+    protected ILookup uriLookup = null;
 
     /**
      * 
@@ -56,7 +56,7 @@ public class Fox implements InterfaceRunnableFox {
     /**
      * Holds a tool for fox's light version.
      */
-    protected InterfaceRunnableNER nerLight = null;
+    protected INER nerLight = null;
 
     /**
      * 
@@ -75,7 +75,7 @@ public class Fox implements InterfaceRunnableFox {
         // load class in fox.properties file
         if (FoxCfg.get("urilookup") != null) {
             try {
-                uriLookup = (InterfaceURI) FoxCfg.getClass(FoxCfg.get("urilookup").trim());
+                uriLookup = (ILookup) FoxCfg.getClass(FoxCfg.get("urilookup").trim());
             } catch (Exception e) {
                 logger.error("InterfaceURI not found. Check your fox.properties file.");
             }
@@ -86,7 +86,7 @@ public class Fox implements InterfaceRunnableFox {
         // load class in fox.properties file
         if (FoxCfg.get("nerLight") != null) {
             try {
-                nerLight = (InterfaceRunnableNER) FoxCfg.getClass(FoxCfg.get("nerLight").trim());
+                nerLight = (INER) FoxCfg.getClass(FoxCfg.get("nerLight").trim());
             } catch (Exception e) {
                 logger.error("InterfaceRunnableNER not found. Check your fox.properties file.");
             }
@@ -101,7 +101,7 @@ public class Fox implements InterfaceRunnableFox {
     /**
      *
      */
-    public Fox(InterfaceURI uriLookup, InterfaceRunnableNER nerLight) {
+    public Fox(ILookup uriLookup, INER nerLight) {
         this.uriLookup = uriLookup;
         this.nerLight = nerLight;
         this.nerTools = new FoxNERTools();

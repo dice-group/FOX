@@ -14,7 +14,7 @@ import org.aksw.fox.data.Entity;
  * @author rspeck
  * 
  */
-public interface InterfaceRunnableNER extends Runnable {
+public interface INER extends Runnable {
 
     /**
      * Retrieves Entity objects from the give input String with sentences as

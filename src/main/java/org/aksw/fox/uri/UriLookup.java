@@ -24,7 +24,7 @@ import com.hp.hpl.jena.query.ResultSet;
  * @author ngonga, rspeck
  * 
  */
-public class UriLookup implements InterfaceURI {
+public class UriLookup implements ILookup {
 
     public static double SIM_THRESHOLD = 0.9;
 

@@ -24,7 +24,7 @@ import weka.core.Instances;
  * @author rspeck
  * 
  */
-public class PostProcessing implements PostProcessingInterface {
+public class PostProcessing implements IPostProcessing {
 
     public static Logger logger = Logger.getLogger(PostProcessing.class);
 

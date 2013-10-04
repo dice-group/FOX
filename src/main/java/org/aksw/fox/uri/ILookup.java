@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 
-public interface InterfaceURI {
+public interface ILookup {
 
     public void setUris(Set<Entity> entities, String input);
 

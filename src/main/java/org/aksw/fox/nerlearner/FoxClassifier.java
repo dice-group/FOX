@@ -130,7 +130,7 @@ public class FoxClassifier {
      * @param toolResults
      * @return classified token
      */
-    public Set<Entity> classify(PostProcessingInterface pp) {
+    public Set<Entity> classify(IPostProcessing pp) {
         logger.info("classify ...");
 
         // rewrite to use labels
@@ -150,6 +150,7 @@ public class FoxClassifier {
         // TRACE
         Set<Entity> set = pp.instancesToEntities(classified);
         logger.info("classify done, size: " + set.size());
+        logger.info(classifier);
         return set;
     }
 
@@ -163,7 +164,7 @@ public class FoxClassifier {
         logger.info("training ...");
 
         // init. training data
-        PostProcessingInterface pp = new PostProcessing(new TokenManager(input), toolResults);
+        IPostProcessing pp = new PostProcessing(new TokenManager(input), toolResults);
         Map<String, String> labeledOracle = pp.getLabeledMap(oracle);
         Map<String, Set<Entity>> labledToolResults = pp.getLabeledToolResults();
 

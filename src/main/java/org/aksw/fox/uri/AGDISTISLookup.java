@@ -18,7 +18,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-public class AGDISTISLookup implements InterfaceURI {
+public class AGDISTISLookup implements ILookup {
 
     private final String parameter = "text=";
     private final int indexOffset = parameter.length();

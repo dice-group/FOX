@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 
-public class NullLookup implements InterfaceURI {
+public class NullLookup implements ILookup {
 
     @Override
     public void setUris(Set<Entity> entities, String input) {

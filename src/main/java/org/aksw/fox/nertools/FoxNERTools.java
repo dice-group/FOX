@@ -13,7 +13,7 @@ import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.PostProcessing;
-import org.aksw.fox.nerlearner.PostProcessingInterface;
+import org.aksw.fox.nerlearner.IPostProcessing;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.Logger;
 import org.jetlang.fibers.Fiber;
@@ -31,7 +31,7 @@ public class FoxNERTools {
     /**
      * Contains all tools to be used to retrieve entities.
      */
-    protected List<InterfaceRunnableNER> nerTools = new ArrayList<>();
+    protected List<INER> nerTools = new ArrayList<>();
     protected Map<String, Set<Entity>> toolResults = new HashMap<>();
     private boolean doTraining = false;
 
@@ -46,14 +46,14 @@ public class FoxNERTools {
         if (FoxCfg.get("nerTools") != null) {
             String[] classes = FoxCfg.get("nerTools").split(",");
             for (String cl : classes) {
-                nerTools.add((InterfaceRunnableNER) FoxCfg.getClass(cl));
+                nerTools.add((INER) FoxCfg.getClass(cl));
             }
         }
         initToolResults();
     }
 
     private void initToolResults() {
-        for (InterfaceRunnableNER nerTool : nerTools)
+        for (INER nerTool : nerTools)
             toolResults.put(nerTool.getToolName(), null);
     }
 
@@ -71,7 +71,7 @@ public class FoxNERTools {
         // start all threads
         List<Fiber> fibers = new ArrayList<>();
         final CountDownLatch latch = new CountDownLatch(nerTools.size());
-        for (InterfaceRunnableNER nerTool : nerTools) {
+        for (INER nerTool : nerTools) {
 
             nerTool.setCountDownLatch(latch);
             nerTool.setInput(input);
@@ -99,7 +99,7 @@ public class FoxNERTools {
         // get results
         if (latch.getCount() == 0) {
             // TODO: relevance list
-            for (InterfaceRunnableNER nerTool : nerTools)
+            for (INER nerTool : nerTools)
                 toolResults.put(nerTool.getToolName(), new HashSet<Entity>(nerTool.getResults()));
 
         } else {
@@ -116,7 +116,7 @@ public class FoxNERTools {
         } else {
             foxClassifier.readClassifier();
             // post
-            PostProcessingInterface pp = new PostProcessing(new TokenManager(input), toolResults);
+            IPostProcessing pp = new PostProcessing(new TokenManager(input), toolResults);
             // cleaned tool results
             toolResults = pp.getToolResults();
 
