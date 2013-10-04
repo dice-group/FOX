@@ -1,8 +1,9 @@
 package org.aksw.fox.uri;
 
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -139,29 +140,21 @@ public class AGDISTISLookup implements InterfaceURI {
                         Entity entity = indexMap.get(start);
 
                         if (disambiguatedURL == null) {
-                            // TODO?
+                            URI uri;
                             try {
-                                entity.uri = "http://scms.eu/" + URLEncoder.encode(entity.getText(), "UTF-8");
-                            } catch (UnsupportedEncodingException e) {
+                                uri = new URI(
+                                        "http",
+                                        "scms.eu",
+                                        "/" + entity.getText().replaceAll(" ", "_"),
+                                        null);
+                                entity.uri = uri.toASCIIString();
+                            } catch (URISyntaxException e) {
                                 entity.uri = "http://scms.eu/" + entity.getText();
                                 logger.error(entity.uri + "\n", e);
                             }
+
                         } else {
-
-                            if (entity.uri != null && !entity.uri.isEmpty()) {
-
-                                if (entity.uri.equals(urlencode(disambiguatedURL))) {
-                                    logger.debug("we have this uri.");
-                                } else {
-                                    // TODO
-                                    // do we really reach this line?
-                                    // make new entity with the current index
-                                    // and uri
-                                    logger.error("disambiguation faild: " + entity.uri + " : " + urlencode(disambiguatedURL));
-                                }
-                            } else {
-                                entity.uri = urlencode(disambiguatedURL);
-                            }
+                            entity.uri = urlencode(disambiguatedURL);
                         }
                     }
                 }
