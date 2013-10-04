@@ -120,7 +120,7 @@ public class PostProcessing implements IPostProcessing {
     public Map<String, Set<Entity>> getLabeledToolResults() {
 
         Map<String, Set<Entity>> labeledToolResults = new HashMap<>();
-
+        // TODO: parallel build of getLabeledMap ...
         // tool * result set size
         for (Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
 
@@ -238,7 +238,7 @@ public class PostProcessing implements IPostProcessing {
         String[] entityToken = FoxTextUtil.getToken(entity.getKey());
 
         // all entity occurrence
-        Set<Integer> occurrence = FoxTextUtil.getIndex(entity.getKey(), tokenManager.getTokenInput());
+        Set<Integer> occurrence = FoxTextUtil.getIndices(entity.getKey(), tokenManager.getTokenInput());
         if (occurrence.size() == 0) {
             logger.error("entity not found:" + entity.getKey());
         }
@@ -252,14 +252,16 @@ public class PostProcessing implements IPostProcessing {
                 String label = tokenManager.getLabel(index);
                 if (label != null) {
                     labeledToken.append(label);
+
+                    if (entityToken[entityToken.length - 1] != label)
+                        labeledToken.append(" ");
                 }
-                labeledToken.append(" ");
 
                 index += entityToken[i].length() + 1;
             }
 
             // add labeled entity
-            labeledMap.put(labeledToken.toString().trim(), entity.getValue());
+            labeledMap.put(labeledToken.toString(), entity.getValue());
         }
         return labeledMap;
     }

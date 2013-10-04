@@ -97,21 +97,21 @@ public class TokenManager {
 
     private void repairEntity(Entity entity) {
 
-        Set<Integer> occurrence = FoxTextUtil.getIndex(entity.getText(), tokenInput);
+        Set<Integer> occurrence = FoxTextUtil.getIndices(entity.getText(), tokenInput);
         if (occurrence.size() != 0) {
 
         } else {
             logger.debug("can't find entity:" + entity.getText() + "(" + entity.getTool() + "), try to fix ...");
 
             String fix = entity.getText().replaceAll("([\\p{Punct}&&[^\")\\]}.]])(\\s+)", "$1");
-            occurrence = FoxTextUtil.getIndex(fix, tokenInput);
+            occurrence = FoxTextUtil.getIndices(fix, tokenInput);
 
             if (occurrence.size() != 0) {
                 entity.setText(fix);
                 logger.debug("fixed.");
             } else {
                 fix = fix.replaceAll("(\\s+)([\\p{Punct}&&[^\"(\\[{]])", "$2");
-                occurrence = FoxTextUtil.getIndex(fix, tokenInput);
+                occurrence = FoxTextUtil.getIndices(fix, tokenInput);
 
                 if (occurrence.size() != 0) {
                     entity.setText(fix);
@@ -123,7 +123,7 @@ public class TokenManager {
                     else
                         fix = entity.getText() + ".";
 
-                    occurrence = FoxTextUtil.getIndex(fix, tokenInput);
+                    occurrence = FoxTextUtil.getIndices(fix, tokenInput);
                     if (occurrence.size() != 0) {
                         entity.setText(fix);
                         logger.debug("fixed.");

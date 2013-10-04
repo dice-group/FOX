@@ -225,14 +225,19 @@ public class FoxTextUtil {
         return in.split(tokenSpliter);
     }
 
-    public static synchronized Set<Integer> getIndex(String token, String tokenInput) {
-
-        token = Pattern.quote(" " + token.trim() + " ");
+    public static synchronized Set<Integer> getIndices(String token, String tokenInput) {
         Set<Integer> indices = new HashSet<>();
-        Matcher matcher = Pattern.compile(token).matcher(" " + tokenInput + " ");
-        while (matcher.find())
-            indices.add(matcher.start() + 1 - 1);
+        if (token != null && tokenInput != null && token.length() < tokenInput.length()) {
+            token =
+                    new StringBuilder().append(" ").append(token.trim()).append(" ").toString();
+            tokenInput =
+                    new StringBuilder().append(" ").append(tokenInput.trim()).append(" ").toString();
 
+            token = Pattern.quote(token);
+            Matcher matcher = Pattern.compile(token).matcher(tokenInput);
+            while (matcher.find())
+                indices.add(matcher.start() + 1 - 1);
+        }
         return indices;
     }
 }

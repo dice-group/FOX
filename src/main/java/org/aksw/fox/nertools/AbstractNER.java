@@ -70,31 +70,35 @@ public class AbstractNER implements INER {
      * Cleans the entities, uses a tokenizer to tokenize all entities with the
      * same algorithm.
      * 
-     * @param set
+     * @param list
      * @return
      */
-    protected List<Entity> clean(List<Entity> set) {
+    protected List<Entity> clean(List<Entity> list) {
         logger.info("clean entities ...");
-
+        // TODO: cache use
         // clean token with the tokenizer
-        for (Entity entity : set) {
-            String cleanText = "";
-            for (String token : FoxTextUtil.getSentenceToken(entity.getText() + "."))
+        for (Entity entity : list) {
+            StringBuilder cleanText = new StringBuilder();
+            String[] tokens = FoxTextUtil.getSentenceToken(entity.getText() + ".");
+            for (String token : tokens) {
                 if (!token.trim().isEmpty())
-                    cleanText += token + " ";
-            entity.setText(cleanText.trim());
+                    cleanText.append(token);
+                if (tokens[tokens.length - 1] != token)
+                    cleanText.append(" ");
+            }
+            entity.setText(cleanText.toString());
         }
-        set = new ArrayList<Entity>(set);
+        list = new ArrayList<Entity>(list);
 
         // TRACE
         if (logger.isTraceEnabled()) {
-            if (set.size() > 0)
-                logger.trace(set.size() + "(" + set.iterator().next().getTool() + ")");
-            for (Entity entity : set)
+            if (list.size() > 0)
+                logger.trace(list.size() + "(" + list.iterator().next().getTool() + ")");
+            for (Entity entity : list)
                 logger.trace(entity.getText() + "=>" + entity.getType() + "(" + entity.getTool() + ")");
         }
         // TRACE
         logger.info("clean entities done.");
-        return set;
+        return list;
     }
 }

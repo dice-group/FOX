@@ -158,7 +158,7 @@ public class Fox implements IFox {
                         // make index map
                         Map<Integer, Entity> indexMap = new HashMap<>();
                         for (Entity entity : entities) {
-                            for (Integer i : FoxTextUtil.getIndex(entity.getText(), input)) {
+                            for (Integer i : FoxTextUtil.getIndices(entity.getText(), input)) {
                                 indexMap.put(i, entity);
                             }
                         }
