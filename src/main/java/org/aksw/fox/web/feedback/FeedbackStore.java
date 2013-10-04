@@ -104,7 +104,7 @@ public class FeedbackStore {
             }
     }
 
-    // TODO
+    // TODO: update select method
     public void select() {
         if (connect())
             try {

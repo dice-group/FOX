@@ -89,6 +89,7 @@ public class TokenManager {
     }
 
     public void repairEntities(Set<Entity> entities) {
+
         for (Entity entity : entities)
             repairEntity(entity);
         entities = new HashSet<>(entities);
@@ -129,8 +130,7 @@ public class TokenManager {
                     } else {
                         logger.debug("can't fix it.");
 
-                        // TODO
-                        // remove it (as it is) or how to handle?
+                        // TODO: remove this
                         entity.setText("");
                     }
                 }

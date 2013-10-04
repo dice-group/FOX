@@ -103,7 +103,7 @@ public class TrainingInputReader {
             for (Entry<String, String> oracleEntry : entities.entrySet())
                 set.add(new Entity(oracleEntry.getKey(), oracleEntry.getValue()));
 
-            // TODO remove dependency?
+            // TODO: remove dependency?
             // repair entities (use fox token)
             TokenManager tokenManager = new TokenManager(input);
             tokenManager.repairEntities(set);

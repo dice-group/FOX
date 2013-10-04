@@ -94,8 +94,7 @@ public class FoxTextUtil {
         html = html.replaceAll("</li>", ", </li>");
         html = html.replaceAll("<dd>", "<dd>, ");
         html = html.replaceAll("</dd>", ", </dd>");
-        // TODO
-        // add all possible cases
+        // TODO:add all possible cases
 
         Source src = new Source(html);
         return new TextExtractor(new Segment(src, src.getBegin(), src.getEnd())).setConvertNonBreakingSpaces(false).toString();

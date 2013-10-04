@@ -82,8 +82,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
             fox = null;
             pool.add();
-            // TODO
-            // output
+            // TODO : error output
         }
         String in = null, out = null, log = null;
         if (fox != null) {

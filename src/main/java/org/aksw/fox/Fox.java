@@ -140,14 +140,14 @@ public class Fox implements InterfaceRunnableFox {
 
                     case "ke":
                         logger.info("starting foxlight ke ...");
-                        // TODO
+                        // TODO: ke foxlight
                         break;
 
                     case "ner":
                         logger.info("starting foxlight ner ...");
 
                         foxWebLog.setMessage("Fox-Light start retrieving ner ...");
-                        // TODO
+                        // TODO: relevance list
                         entities = new HashSet<Entity>(nerLight.retrieve(input));
                         foxWebLog.setMessage("Fox-Light start retrieving ner done.");
 
@@ -194,7 +194,7 @@ public class Fox implements InterfaceRunnableFox {
 
                     case "ke":
                         logger.info("starting ke ...");
-                        // TODO
+                        // TODO: ke fox
                         break;
 
                     case "ner":
@@ -222,7 +222,7 @@ public class Fox implements InterfaceRunnableFox {
             }
 
             if (entities != null) {
-                // TODO
+                // TODO: use interface for all tools
                 // 4. set URIs
                 foxWebLog.setMessage("Start looking up uri ...");
                 uriLookup.setUris(entities, input);

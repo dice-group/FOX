@@ -109,8 +109,7 @@ public class NERStanford extends AbstractNER {
                     }
                     if (contains && equalTypes) {
                         lastEntity.addText(currentToken);
-                        // TODO:
-                        // UPDATE relevance!
+                        // TODO: relevance update
                     } else {
                         if (type != EntityClassMap.getNullCategory()) {
                             float p = Entity.DEFAULT_RELEVANCE;

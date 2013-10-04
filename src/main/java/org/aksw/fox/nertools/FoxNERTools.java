@@ -98,7 +98,7 @@ public class FoxNERTools {
 
         // get results
         if (latch.getCount() == 0) {
-            // TODO
+            // TODO: relevance list
             for (InterfaceRunnableNER nerTool : nerTools)
                 toolResults.put(nerTool.getToolName(), new HashSet<Entity>(nerTool.getResults()));
 
@@ -106,8 +106,7 @@ public class FoxNERTools {
             if (logger.isDebugEnabled())
                 logger.debug("timeout after " + min + "min.");
 
-            // TODO:
-            // timeout handle
+            // TODO: handle timeout
         }
 
         if (doTraining) {
