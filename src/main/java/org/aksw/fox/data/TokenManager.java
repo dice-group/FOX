@@ -24,7 +24,7 @@ public class TokenManager {
     protected String tokenInput = "";
     protected String[] tokenSplit = null;
 
-    public static final String SEP = "...FOX...";// don't contain entity splits
+    public static final String SEP = "FOXFOXFOX";
 
     protected Map<Integer, String> indexToken = new LinkedHashMap<>();
     protected Map<Integer, String> indexLabel = new LinkedHashMap<>();
