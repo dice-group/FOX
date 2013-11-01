@@ -270,7 +270,8 @@ public class Fox implements IFox {
                     parameter.put("input", html);
 
                     // INFO TRACE
-                    infotrace(entities);
+                    if (logger.isTraceEnabled())
+                        infotrace(entities);
                     // INFO TRACE
                 }
             }

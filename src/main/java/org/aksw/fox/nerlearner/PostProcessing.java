@@ -70,21 +70,18 @@ public class PostProcessing implements IPostProcessing {
      */
     @Override
     public Map<String, String> getLabeledMap(Map<String, String> map) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("getLabeledMap ...");
-            // logger.debug("map:\n" + map);
-        }
 
         Map<String, String> labeledMap = new HashMap<>();
+
         // 1. label MWU
+        // remember token entities
         List<Entry<String, String>> tokenEntry = new ArrayList<>();
-        // for all oracle entries
+
         for (Entry<String, String> entry : map.entrySet()) {
             // mwu entities 1st
             if (entry.getKey().contains(" "))
                 labeledMap = labeledEntry(entry, labeledMap);
             else
-                // remember token entities
                 tokenEntry.add(entry);
         }
 
@@ -106,9 +103,6 @@ public class PostProcessing implements IPostProcessing {
         for (String r : remove)
             labeledMap.remove(r);
 
-        // if (logger.isDebugEnabled())
-        // logger.debug("labeled map\n" + labeledMap);
-
         return labeledMap;
     }
 
@@ -120,7 +114,7 @@ public class PostProcessing implements IPostProcessing {
     public Map<String, Set<Entity>> getLabeledToolResults() {
 
         Map<String, Set<Entity>> labeledToolResults = new HashMap<>();
-        // TODO: parallel build of getLabeledMap ...
+
         // tool * result set size
         for (Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
 
@@ -134,20 +128,21 @@ public class PostProcessing implements IPostProcessing {
 
             // label to entity
             Set<Entity> labeledEntities = new HashSet<>();
-            for (Entry<String, String> e : resutlsMap.entrySet())
-                labeledEntities.add(new Entity(e.getKey(), e.getValue()));
+            for (Entry<String, String> e : resutlsMap.entrySet()) {
+                labeledEntities.add(new Entity(e.getKey(), e.getValue(), Entity.DEFAULT_RELEVANCE, entry.getKey()));
+            }
 
             // add to labeled result map
             String toolName = entry.getKey();
             labeledToolResults.put(toolName, labeledEntities);
 
         }
+
         return labeledToolResults;
     }
 
     @Override
     public Map<String, Set<Entity>> getToolResults() {
-
         return toolResults;
     }
 

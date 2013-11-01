@@ -55,6 +55,8 @@ public class FoxInstances {
         if (logger.isDebugEnabled())
             logger.debug("getInstances ...");
 
+        if (logger.isTraceEnabled())
+            logger.trace(toolResults);
         // read oracle
         Map<String, String> oracelToken = new HashMap<>();
         if (oracle != null) {
@@ -84,21 +86,32 @@ public class FoxInstances {
         // fill values
         Instance row = new Instance(instances.numAttributes());
 
+        List<String> sortedToolNames = new ArrayList<>(toolTokenCategoryMatrix.keySet());
+        Collections.sort(sortedToolNames);
+
         // each row
         int diffNull = 0;
         for (String tok : token) {
             int i = 0; // tool index
-            List<String> sortedToolNames = new ArrayList<>(toolTokenCategoryMatrix.keySet());
-            Collections.sort(sortedToolNames);
+
+            if (logger.isTraceEnabled())
+                logger.trace("token: " + tok);
+
             for (String toolname : sortedToolNames) {
+                if (logger.isTraceEnabled())
+                    logger.trace("toolname: " + toolname);
                 int c = 0; // category index
                 int start = EntityClassMap.entityClasses.size();
                 for (int j = i * start; j < i * start + start; j++) {
 
                     TokenCategoryMatrix tcm = toolTokenCategoryMatrix.get(toolname);
-                    double v = tcm.getValue(tok, EntityClassMap.entityClasses.get(c++)) ? 1.0 : 0.0;
+                    double v = tcm.getValue(tok, EntityClassMap.entityClasses.get(c)) ? 1.0 : 0.0;
 
+                    if (logger.isTraceEnabled())
+                        logger.trace(j + ": " + c + ": " + v);
                     row.setValue((Attribute) featureVector.elementAt(j), v);
+
+                    c++;
                 }
                 i++;
             }

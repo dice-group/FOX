@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.nerlearner.FoxClassifier;
-import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.nerlearner.IPostProcessing;
+import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.Logger;
 import org.jetlang.fibers.Fiber;
@@ -100,7 +100,14 @@ public class FoxNERTools {
         if (latch.getCount() == 0) {
             // TODO: relevance list
             for (INER nerTool : nerTools)
-                toolResults.put(nerTool.getToolName(), new HashSet<Entity>(nerTool.getResults()));
+                toolResults.put(
+                        nerTool.getToolName(),
+                        new HashSet<Entity>(nerTool.getResults())
+                        );
+
+            if (logger.isTraceEnabled()) {
+                logger.trace(toolResults);
+            }
 
         } else {
             if (logger.isDebugEnabled())
