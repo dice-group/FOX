@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -27,7 +28,7 @@ public class AGDISTISLookup implements ILookup {
     // maps AGDISTIS index to real index
     Map<Integer, Entity> indexMap = new HashMap<>();
 
-    public static final String endpoint = "http://139.18.2.164:8080/AGDISTIS/";
+    public static final String endpoint = "http://139.18.2.164:8080/AGDISTIS";
 
     public static Logger logger = Logger.getLogger(AGDISTISLookup.class);
 
@@ -90,12 +91,13 @@ public class AGDISTISLookup implements ILookup {
             Entity entity = indexEntityMap.get(index);
 
             agdistis_input += input.substring(last, index);
-            int fakeindex = agdistis_input.length() + "<entity>".length();
+            // int fakeindex = agdistis_input.length() + "<entity>".length();
 
             agdistis_input += "<entity>" + entity.getText() + "</entity>";
 
             last = index + entity.getText().length();
-            indexMap.put(fakeindex + indexOffset, entity);
+            // indexMap.put(fakeindex + indexOffset, entity);
+            indexMap.put(index, entity);
         }
         agdistis_input += input.substring(last);
 
@@ -104,7 +106,8 @@ public class AGDISTISLookup implements ILookup {
 
     private String send(String agdistis_input) throws Exception {
 
-        String data = parameter + agdistis_input;
+        // String data = parameter + agdistis_input;
+        String urlParameters = "text=" + URLEncoder.encode(agdistis_input, "UTF-8") + "&type=agdistis";
 
         URL url = new URL(endpoint);
 
@@ -114,10 +117,12 @@ public class AGDISTISLookup implements ILookup {
         http.setDoInput(true);
         http.setDoOutput(true);
         http.setUseCaches(false);
-        http.setRequestProperty("Content-Length", String.valueOf(data.length()));
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        http.setRequestProperty("Content-Length", Integer.toString(urlParameters.getBytes().length));
+        // http.setRequestProperty("Content-Length", String.valueOf(data.length()));
 
         OutputStreamWriter writer = new OutputStreamWriter(http.getOutputStream());
-        writer.write(data);
+        writer.write(urlParameters);
         writer.flush();
 
         return IOUtils.toString(http.getInputStream(), "UTF-8");
@@ -175,23 +180,21 @@ public class AGDISTISLookup implements ILookup {
         return "http://dbpedia.org/resource/" + encode;
     }
 
-    // public static void main(String[] a) {
-    //
-    // AGDISTISLookup aa = new AGDISTISLookup();
-    // String in = null;
-    // try {
-    // in =
-    // aa.send("<entity>Barack Obama</entity>  meets <entity>Angela Merkel</entity>  in <entity>Berlin</entity>  to discuss a <entity>new world order</entity>");
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    // if (in != null) {
-    // JSONArray array = (JSONArray) JSONValue.parse(in);
-    // for (int i = 0; i < array.size(); i++) {
-    // System.out.println(((JSONObject) array.get(i)).get("namedEntity"));
-    // System.out.println(((JSONObject) array.get(i)).get("disambiguatedURL"));
-    // System.out.println(((JSONObject) array.get(i)).get("start"));
-    // }
-    // }
-    // }
+    public static void main(String[] a) {
+
+        AGDISTISLookup aa = new AGDISTISLookup();
+
+        Entity e = new Entity("Uni of Lpz", "LOCATION");
+        e.addIndicies(0);
+        Entity ee = new Entity("Lpz", "LOCATION");
+        ee.addIndicies(18);
+
+        Set<Entity> s = new HashSet<Entity>();
+        s.add(e);
+        s.add(ee);
+        aa.setUris(s, "Uni of Lpz in Lpz Lpz's.");
+
+        System.out.println(e);
+        System.out.println(ee);
+    }
 }
