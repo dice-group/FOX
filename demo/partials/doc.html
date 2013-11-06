@@ -5,7 +5,7 @@
 <p>FOX accepts HTTP POST requests to: 
 <a data-ng-href="http://{{host}}/api">http://{{host}}/api</a> 
 and 
-<a data-ng-href="http://{{host}}/api/ner/feedback">http://{{host}}/api/ner/feedback</a><p>
+<a data-ng-href="http://{{host}}/api/ner/feedback">http://{{host}}/api/ner/feedback</a>.<p>
 
 <h3>Parameter /api</h3>
 <p>Optional parameters and there default values are marked.</p>
@@ -14,9 +14,9 @@ and
     <li>type : { text | url }</li>
     <li>task : { NER } </li>
     <li>output : { JSONLD | N3 | N-TRIPLE | RDF/{ JSON | XML | XML-ABBREV} | TURTLE } </li>
-    <li>nif : { true | <b>false</b> } </li>
+   <!-- <li>nif : { true | <b>false</b> } </li> --> 
     <li>returnHtml : { true | <b>false</b> } </li>
-    <li>foxlight : { true | <b>false</b> } </li>
+    <li>foxlight : an implemented <a href="http://{{host}}/demo/doc/org/aksw/fox/nertools/INER.html">INER</a> class name (e.g. `org.aksw.fox.nertools.NEROpenNLP`) or `OFF`. <br>Is this parameter given with a wrong value, Stanfords NER will be used.</li>
 </ul>
 <h3>Response /api</h3>
 Each value is urlencoded.
@@ -41,7 +41,7 @@ todo..
 curl -d type=text -d task=NER -d output=JSONLD --data-urlencode "input=The foundation of the University of Leipzig in 1409 initiated the city's development into a centre of German law and the publishing industry, and towards being a location of the Reichsgericht (High Court), and the German National Library (founded in 1912). The philosopher and mathematician Gottfried Leibniz was born in Leipzig in 1646, and attended the university from 1661-1666." -H "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api > response.txt
 </pre>
 <pre>
-curl -d type=url -d task=NER -d output=TURTLE -d foxlight=true --data-urlencode "input=http://en.wikipedia.org/wiki/Leipzig_University" -H "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api > response.txt
+curl -d type=url -d task=NER -d output=TURTLE -d foxlight=org.aksw.fox.nertools.NEROpenNLP --data-urlencode "input=http://en.wikipedia.org/wiki/Leipzig_University" -H "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api > response.txt
 </pre>
 <br>
 <h5>Content-Type: application/json</h5>
