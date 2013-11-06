@@ -1,21 +1,55 @@
-#stanford ner
+#
+# feedback settings
+######################
+password : foobar
+#
+# ner settings
+######################
+# 'true' to turn on bin. mode and use default value
+stanfordDefaultRelevance : x
+openNLPDefaultRelevance : x
+balieDefaultRelevance : x
+illinoisDefaultRelevance : x
+#stanford
+#serializedClassifier : edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz
 serializedClassifier : data/stanford/english.all.3class.distsim.crf.ser.gz
-
+#
+# path to read / write trained model
+modelPath : data/fox
+#tools to use
+nerTools: org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford, org.aksw.fox.nertools.NERIllinois, org.aksw.fox.nertools.NERBalie
+#nerTools: org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford
+# which learner we use. 
+# values are: {  result_vote | class_vote | weka.classifiers.functions.MultilayerPerceptron | weka.classifiers.trees.J48 | ...}
+learner : weka.classifiers.bayes.NaiveBayes
+#learneroptions: -C 0.25 -M 2
+#
+# `true` to train fox. tainFox: { true | false }
+tainFox : false
+#
+# max time in min. for all ner tools
+foxNERLifeTime : 2
+#
+# web service settings
+######################
+#
 # fox pool instances
 poolCount : 5
-
+#
+# static file cache
+staticFileCacheEnabled : false
+#
+# http handler: 'true' to enable
+demoHttpHandler : true
+apiHttpHandler : true
+feedbackHttpHandler : true
+#
+# fox settings
+######################
 # max time in min. for fox
 foxLifeTime : 5
 
-# max time in min. for all ner tools
-foxNERLifeTime : 2
-
-# `true` to train fox. tainFox: { true | false }
-tainFox : false
-
-# path to read / write trained model
-modelPath : data/fox
-
-# which learner we use. learner : { mp | result_vote | class_vote | j48}
-learner : mp
-
+# uri lookup
+urilookup: org.aksw.fox.uri.AGDISTISLookup
+#nerLight
+nerLight: org.aksw.fox.nertools.NERStanford

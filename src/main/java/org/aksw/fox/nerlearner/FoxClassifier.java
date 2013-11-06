@@ -1,5 +1,7 @@
 package org.aksw.fox.nerlearner;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,7 +12,8 @@ import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.utils.FoxCfg;
-import org.aksw.fox.utils.FoxFileUtil;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import weka.classifiers.Classifier;
@@ -33,10 +36,6 @@ public class FoxClassifier {
     protected FoxInstances foxInstances = null;
     private boolean isTrained = false;
 
-    public Classifier getClassifier() {
-        return classifier;
-    }
-
     /**
      * FoxClassifier.
      */
@@ -44,7 +43,6 @@ public class FoxClassifier {
         logger.info("FoxClassifier ...");
 
         this.foxInstances = new FoxInstances();
-
     }
 
     /**
@@ -75,11 +73,9 @@ public class FoxClassifier {
         logger.info("initInstances ...");
 
         instances = (oracle == null) ? foxInstances.getInstances(input, toolResults) : foxInstances.getInstances(input, toolResults, oracle);
-        logger.debug(instances);
     }
 
     /**
-     * Writes the MultilayerPerceptron model to file.
      * 
      * @param classifier
      * @param file
@@ -87,20 +83,18 @@ public class FoxClassifier {
     public void writeClassifier(String file) {
         logger.info("writeClassifier ...");
 
-        FoxFileUtil.createFileStructure(file);
+        String path = FilenameUtils.getPath(file);
+        try {
+            FileUtils.forceMkdir(new File(path));
+        } catch (IOException e) {
+            logger.error("\n", e);
+        }
+
         try {
             SerializationHelper.write(file, classifier);
         } catch (Exception e) {
             logger.error("\n", e);
         }
-    }
-
-    /**
-     * Writes the MultilayerPerceptron model to a file that is specified in the
-     * fox properties.
-     */
-    public void writeClassifier() {
-        writeClassifier(FoxCfg.get("modelPath") + System.getProperty("file.separator") + FoxCfg.get("learner").trim());
     }
 
     /**
@@ -117,6 +111,7 @@ public class FoxClassifier {
         } catch (Exception e) {
             logger.error("\n", e);
         }
+        logger.info("readClassifier done.");
     }
 
     /**
@@ -135,12 +130,12 @@ public class FoxClassifier {
      * @param toolResults
      * @return classified token
      */
-    public Set<Entity> classify(PostProcessingInterface pp) {
+    public Set<Entity> classify(IPostProcessing pp) {
+        logger.info("classify ...");
 
         // rewrite to use labels
         initInstances(pp.getLabeledInput(), pp.getLabeledToolResults(), null);
 
-        //
         Instances classified = new Instances(instances);
         for (int i = 0; i < instances.numInstances(); i++) {
             try {
@@ -149,7 +144,14 @@ public class FoxClassifier {
                 logger.error("\n", e);
             }
         }
-        return pp.instancesToEntities(classified);
+        // TRACE
+        if (logger.isTraceEnabled())
+            logger.trace("\n" + classified);
+        // TRACE
+        Set<Entity> set = pp.instancesToEntities(classified);
+        logger.info("classify done, size: " + set.size());
+        logger.info(classifier);
+        return set;
     }
 
     /**
@@ -162,7 +164,7 @@ public class FoxClassifier {
         logger.info("training ...");
 
         // init. training data
-        PostProcessingInterface pp = new PostProcessing(new TokenManager(input), toolResults);
+        IPostProcessing pp = new PostProcessing(new TokenManager(input), toolResults);
         Map<String, String> labeledOracle = pp.getLabeledMap(oracle);
         Map<String, Set<Entity>> labledToolResults = pp.getLabeledToolResults();
 
@@ -233,4 +235,7 @@ public class FoxClassifier {
         this.classifier = classifier;
     }
 
+    public Classifier getClassifier() {
+        return classifier;
+    }
 }

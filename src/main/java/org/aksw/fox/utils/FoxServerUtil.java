@@ -12,6 +12,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 
 /**
+ * Static class to provide general 'server' functionality.
  * 
  * @author rspeck
  * 

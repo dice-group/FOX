@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -23,16 +24,11 @@ import com.google.gson.JsonParser;
  * @author rspeck
  * 
  */
-public abstract class AbstractApi extends HttpHandler {
+public abstract class AbstractFoxHttpHandler extends HttpHandler {
 
-    public static Logger logger = Logger.getLogger(AbstractApi.class);
+    public static Logger logger = Logger.getLogger(AbstractFoxHttpHandler.class);
 
-    /**
-     * 
-     * @param request
-     * @param response
-     */
-    protected abstract void service(Request request, Response response, Map<String, String> parameter);
+    abstract public List<String> getMappings();
 
     /**
      * 
@@ -42,74 +38,46 @@ public abstract class AbstractApi extends HttpHandler {
     @Override
     public void service(Request request, Response response) throws Exception {
         logger.info("service ...");
-        if (request.getMethod().getMethodString().equalsIgnoreCase("POST")) {
-            logger.info("service post ...");
-            Map<String, String> parameter = getPostParameter(request);
-            if (checkPostParameter(parameter)) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("mapping list: " + getMappings());
+            logger.debug("requested path: " + request.getContextPath() + request.getHttpHandlerPath());
+        }
+        if (getMappings().contains(request.getContextPath() + request.getHttpHandlerPath())) {
+            if (request.getMethod().getMethodString().equalsIgnoreCase("POST")) {
+                logger.info("service post ...");
+                Map<String, String> parameter = getPostParameter(request);
+                if (checkParameter(parameter)) {
 
-                service(request, response, parameter);
+                    postService(request, response, parameter);
 
+                } else {
+                    setResponse(response, "Wrong parameter.", HttpURLConnection.HTTP_BAD_REQUEST, "text/plain");
+                }
             } else {
-                setResponse(response, "Wrong parameter.", HttpURLConnection.HTTP_BAD_REQUEST, "text/plain");
+                setResponse(response, "Please use HTTP POST method.", HttpURLConnection.HTTP_BAD_METHOD, "text/plain");
             }
         } else {
-            setResponse(response, "Please use HTTP POST method.", HttpURLConnection.HTTP_BAD_METHOD, "text/plain");
+            setResponse(response, "404", HttpURLConnection.HTTP_NOT_FOUND, "text/plain");
+
         }
     }
 
     /**
      * Checks POST parameter.
      * 
-     * type: url | text
-     * 
-     * task: ke | ner | keandner | re | all
-     * 
-     * output: rdf | turtle | html
-     * 
-     * nif: true : false
-     * 
-     * input : plain text | url
      */
-    protected boolean checkPostParameter(Map<String, String> formData) {
-
-        logger.info("checking form parameter ...");
-
-        String type = formData.get("type");
-        if (type == null || !(type.equalsIgnoreCase("url") || type.equalsIgnoreCase("text")))
-            return false;
-
-        String text = formData.get("input");
-        if (text == null || text.trim().isEmpty())
-            return false;
-
-        String task = formData.get("task");
-        if (task == null || !(task.equalsIgnoreCase("ke") || task.equalsIgnoreCase("ner") || task.equalsIgnoreCase("keandner") || task.equalsIgnoreCase("re") || task.equalsIgnoreCase("all")))
-            return false;
-
-        String output = formData.get("output");
-
-        if (!output.equalsIgnoreCase("JSONLD") && !output.equalsIgnoreCase("RDF/JSON") && !output.equalsIgnoreCase("RDF/XML") && !output.equalsIgnoreCase("RDF/XML-ABBREV") && !output.equalsIgnoreCase("TURTLE") && !output.equalsIgnoreCase("N-TRIPLE") && !output.equalsIgnoreCase("N3"))
-            return false;
-
-        String nif = formData.get("nif");
-        if (nif == null || !nif.equalsIgnoreCase("true"))
-            formData.put("nif", "false");
-        else
-            formData.put("nif", "true");
-
-        String foxlight = formData.get("foxlight");
-        if (foxlight == null || !foxlight.equalsIgnoreCase("true"))
-            formData.put("foxlight", "false");
-        else
-            formData.put("foxlight", "true");
-
-        logger.info("ok.");
-        return true;
-    }
+    abstract protected boolean checkParameter(Map<String, String> formData);
 
     /**
-     * Get request POST parameter to formMap. The Map key holds the parameter
-     * name and the Map value the parameter value.
+     * 
+     * @param request
+     * @param response
+     */
+    protected abstract void postService(Request request, Response response, Map<String, String> parameter);
+
+    /**
+     * Gets request POST parameters. The Map key holds the parameter name and
+     * the Map value the parameter value.
      * 
      */
     protected Map<String, String> getPostParameter(Request request) {

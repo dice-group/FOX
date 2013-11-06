@@ -3,8 +3,8 @@ package org.aksw.fox.nertools;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
@@ -12,7 +12,9 @@ import opennlp.tools.util.Span;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxTextUtil;
+import org.apache.log4j.PropertyConfigurator;
 
 public class NEROpenNLP extends AbstractNER {
 
@@ -40,6 +42,7 @@ public class NEROpenNLP extends AbstractNER {
                     if (modelIn[i] != null)
                         modelIn[i].close();
                 } catch (IOException e) {
+                    logger.error("\n", e);
                 }
             }
         }
@@ -47,10 +50,10 @@ public class NEROpenNLP extends AbstractNER {
 
     // TODO: do parallel for each model
     @Override
-    public Set<Entity> retrieve(String input) {
+    public List<Entity> retrieve(String input) {
         logger.info("retrieve ...");
 
-        Set<Entity> set = new HashSet<>();
+        List<Entity> list = new ArrayList<>();
         String[] sentences = FoxTextUtil.getSentences(input);
 
         for (int i = 0; i < tokenNameFinderModels.length; i++) {
@@ -66,24 +69,36 @@ public class NEROpenNLP extends AbstractNER {
                     // logger.debug("token: " + t);
 
                     Span[] nameSpans = nameFinder.find(tokens);
-
-                    for (Span span : nameSpans) {
+                    double[] probs = nameFinder.probs(nameSpans);
+                    for (int ii = 0; ii < nameSpans.length; ii++) {
+                        Span span = nameSpans[ii];
 
                         String word = "";
                         for (int j = 0; j < span.getEnd() - span.getStart(); j++)
                             word += tokens[span.getStart() + j] + " ";
-
                         word = word.trim();
+
+                        float p = Entity.DEFAULT_RELEVANCE;
+                        if (FoxCfg.get("openNLPDefaultRelevance") != null && !Boolean.valueOf(FoxCfg.get("openNLPDefaultRelevance")))
+                            p = Double.valueOf(probs[ii]).floatValue();
                         String cl = EntityClassMap.openNLP(span.getType());
                         if (cl != EntityClassMap.getNullCategory())
-                            set.add(getEntiy(word, cl, Entity.DEFAULT_RELEVANCE, getToolName()));
-
+                            list.add(getEntity(word, cl, p, getToolName()));
                     }
                 }
                 nameFinder.clearAdaptiveData();
             }
         }
+        // TRACE
+        if (logger.isTraceEnabled()) {
+            logger.trace(list);
+        } // TRACE
+        return list;
+    }
 
-        return post(set);
+    public static void main(String[] a) {
+        PropertyConfigurator.configure("log4j.properties");
+        for (Entity e : new NEROpenNLP().retrieve("Stanford University is located in California. It is a great university."))
+            NEROpenNLP.logger.info(e);
     }
 }

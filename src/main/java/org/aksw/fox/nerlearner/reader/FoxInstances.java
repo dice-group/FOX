@@ -1,14 +1,17 @@
 package org.aksw.fox.nerlearner.reader;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
@@ -16,6 +19,8 @@ import org.aksw.fox.data.TokenCategoryMatrix;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.jetlang.fibers.Fiber;
+import org.jetlang.fibers.ThreadFiber;
 
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -35,7 +40,7 @@ public class FoxInstances {
     protected Set<String> token = null;
 
     /**
-     * Gets training instances.
+     * Gets instances from the given toolResults and oracle.
      * 
      * @param input
      *            plain text
@@ -50,6 +55,8 @@ public class FoxInstances {
         if (logger.isDebugEnabled())
             logger.debug("getInstances ...");
 
+        if (logger.isTraceEnabled())
+            logger.trace(toolResults);
         // read oracle
         Map<String, String> oracelToken = new HashMap<>();
         if (oracle != null) {
@@ -63,6 +70,7 @@ public class FoxInstances {
             }
         }
 
+        //
         this.token = token;
 
         // toolResults to make TokenCategory for each tool
@@ -72,47 +80,62 @@ public class FoxInstances {
         FastVector featureVector = getFeatureVector(toolTokenCategoryMatrix);
 
         // train data
-        Instances isTrainingSet = new Instances("train data", featureVector, token.size());
-        isTrainingSet.setClassIndex(featureVector.size() - 1);
+        Instances instances = new Instances(oracle != null ? "train data" : "test data", featureVector, token.size());
+        instances.setClassIndex(featureVector.size() - 1);
 
         // fill values
-        Instance row = new Instance(isTrainingSet.numAttributes());
+        Instance row = new Instance(instances.numAttributes());
+
+        List<String> sortedToolNames = new ArrayList<>(toolTokenCategoryMatrix.keySet());
+        Collections.sort(sortedToolNames);
 
         // each row
         int diffNull = 0;
         for (String tok : token) {
             int i = 0; // tool index
-            // each tool
-            for (String toolname : toolTokenCategoryMatrix.keySet()) {
+
+            if (logger.isTraceEnabled())
+                logger.trace("token: " + tok);
+
+            for (String toolname : sortedToolNames) {
+                if (logger.isTraceEnabled())
+                    logger.trace("toolname: " + toolname);
                 int c = 0; // category index
                 int start = EntityClassMap.entityClasses.size();
                 for (int j = i * start; j < i * start + start; j++) {
 
                     TokenCategoryMatrix tcm = toolTokenCategoryMatrix.get(toolname);
-                    double v = tcm.getValue(tok, EntityClassMap.entityClasses.get(c++)) ? 1.0 : 0.0;
+                    double v = tcm.getValue(tok, EntityClassMap.entityClasses.get(c)) ? 1.0 : 0.0;
 
+                    if (logger.isTraceEnabled())
+                        logger.trace(j + ": " + c + ": " + v);
                     row.setValue((Attribute) featureVector.elementAt(j), v);
+
+                    c++;
                 }
                 i++;
             }
             if (oracle != null) {
-                row.setValue((Attribute) featureVector.elementAt(isTrainingSet.numAttributes() - 1), EntityClassMap.oracel(oracelToken.get(tok)));
+                row.setValue((Attribute) featureVector.elementAt(instances.numAttributes() - 1), EntityClassMap.oracel(oracelToken.get(tok)));
                 if (EntityClassMap.oracel(oracelToken.get(tok)) != EntityClassMap.getNullCategory())
                     diffNull++;
             }
 
-            isTrainingSet.add(row);
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug("found all: " + (diffNull == oracelToken.size()));
-            logger.trace("\n" + isTrainingSet);
+            instances.add(row);
         }
 
-        return isTrainingSet;
+        // DEBUG TRACE
+        if (logger.isDebugEnabled()) {
+            logger.debug("found all: " + (diffNull == oracelToken.size()));
+            logger.trace("\n" + instances);
+        }
+        // DEBUG TRACE
+
+        return instances;
     }
 
     /**
-     * Gets instances.
+     * Gets instances from the given toolResults.
      * 
      * @param input
      *            plain text
@@ -129,22 +152,38 @@ public class FoxInstances {
         if (logger.isDebugEnabled())
             logger.debug("getTokenCategoryMatrix ...");
 
-        Set<String> entityClasses = new LinkedHashSet<>();
-        entityClasses.addAll(EntityClassMap.entityClasses);
+        final Set<String> entityClasses = new LinkedHashSet<>(EntityClassMap.entityClasses);
+        final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = new HashMap<>();
 
-        String nullCategory = EntityClassMap.getNullCategory();
-        String tokenSpliter = FoxTextUtil.tokenSpliter;
+        List<Fiber> fibers = new ArrayList<>();
+        final CountDownLatch latch = new CountDownLatch(toolResults.entrySet().size());
+        for (final Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
+            Fiber fiber = new ThreadFiber();
+            fiber.start();
+            fiber.execute(new Runnable() {
+                public void run() {
+                    toolTokenCategoryMatrix.put(
+                            entry.getKey(),
+                            new TokenCategoryMatrix(
+                                    token, entityClasses, EntityClassMap.getNullCategory(), entry.getValue(), FoxTextUtil.tokenSpliter
+                            )
+                            );
+                    latch.countDown();
+                }
+            });
+            fibers.add(fiber);
+        }
 
-        // TODO: parallel build of TokenCategoryMatrix
-        // each tool init. TokenCategoryMatrix
-        Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = new LinkedHashMap<>();
-        for (Entry<String, Set<Entity>> e : toolResults.entrySet())
-            toolTokenCategoryMatrix.put(e.getKey(), new TokenCategoryMatrix(token, entityClasses, nullCategory, e.getValue(), tokenSpliter));
+        // TODO: time?
+        try {
+            latch.await(Long.MAX_VALUE, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            logger.error("\n", e);
+        }
 
-        // if (logger.isDebugEnabled())
-        // for (Entry<String, TokenCategoryMatrix> e :
-        // toolTokenCategoryMatrix.entrySet())
-        // logger.debug(e.getKey() + ":\n" + e.getValue().toString());
+        // shutdown threads
+        for (Fiber fiber : fibers)
+            fiber.dispose();
 
         return toolTokenCategoryMatrix;
     }
@@ -153,14 +192,16 @@ public class FoxInstances {
         if (logger.isDebugEnabled())
             logger.debug("getFeatureVector ...");
 
-        // Declare the feature vector
-        // Declare numeric attribute along with its values
+        // declare the feature vector
+        // declare numeric attribute along with its values
         FastVector featureVector = new FastVector();
-        for (String toolname : toolTokenCategoryMatrix.keySet()) {
+        List<String> sortedToolNames = new ArrayList<>(toolTokenCategoryMatrix.keySet());
+        Collections.sort(sortedToolNames);
+        for (String toolname : sortedToolNames) {
             for (String cl : EntityClassMap.entityClasses)
                 featureVector.addElement(new Attribute(toolname + cl));
         }
-        // Declare the class attribute along with its values
+        // declare the class attribute along with its values
         FastVector attVals = new FastVector();
         for (String cl : EntityClassMap.entityClasses)
             attVals.addElement(cl);

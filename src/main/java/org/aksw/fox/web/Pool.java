@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import org.aksw.fox.Fox;
-import org.aksw.fox.InterfaceRunnableFox;
+import org.aksw.fox.IFox;
 import org.apache.log4j.Logger;
 
 /**
@@ -19,7 +19,7 @@ public class Pool {
     /**
      * Holds implementations of FoxInterface to use.
      */
-    protected final Queue<InterfaceRunnableFox> foxQueue = new LinkedList<InterfaceRunnableFox>();
+    protected final Queue<IFox> foxQueue = new LinkedList<IFox>();
 
     /**
      * Max. count of FoxInterface implementations in foxQueue.
@@ -66,7 +66,7 @@ public class Pool {
      * 
      * @param fox
      */
-    public void push(InterfaceRunnableFox fox) {
+    public void push(IFox fox) {
         if (foxQueue.size() < max) {
             foxQueue.add(fox);
         } else {
@@ -78,8 +78,8 @@ public class Pool {
      * 
      * @return
      */
-    public InterfaceRunnableFox poll() {
-        InterfaceRunnableFox fox = null;
+    public IFox poll() {
+        IFox fox = null;
         while ((fox = foxQueue.poll()) == null) {
             try {
                 logger.debug("pool queue empty, sleep 10s ...");
@@ -95,7 +95,7 @@ public class Pool {
      * 
      * @return
      */
-    public InterfaceRunnableFox getFox() {
+    public IFox getFox() {
         return getFox(className);
     }
 
@@ -106,10 +106,10 @@ public class Pool {
      * @param className
      * @return new instance
      */
-    public InterfaceRunnableFox getFox(String className) {
-        InterfaceRunnableFox fox = null;
+    public IFox getFox(String className) {
+        IFox fox = null;
         try {
-            fox = (InterfaceRunnableFox) Class.forName(className).newInstance();
+            fox = (IFox) Class.forName(className).newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             logger.error("\n", e);
         }

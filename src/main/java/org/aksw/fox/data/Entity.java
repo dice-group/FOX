@@ -113,6 +113,6 @@ public class Entity {
 
     @Override
     public String toString() {
-        return "Entity [text=" + text + ", type=" + type + ", tool=" + tool + ", relevance=" + relevance + (indicies != null ? "indicies=" + indicies : "") + "]";
+        return "Entity [text=" + text + ", type=" + type + ", tool=" + tool + ", relevance=" + relevance + (indicies != null ? ", indicies=" + indicies : "") + "]";
     }
 }

@@ -8,7 +8,7 @@ import org.aksw.fox.web.Server;
 import org.apache.log4j.PropertyConfigurator;
 
 /**
- * A class with a main method to start FOX web service.
+ * Starts FOX web service.
  * 
  * @author rspeck
  * 
@@ -20,9 +20,11 @@ public class MainServer {
     }
 
     /**
-     * The main method.
      * 
      * @param args
+     *            <p>
+     *            -p port
+     *            </p>
      */
     public static void main(String[] args) {
 

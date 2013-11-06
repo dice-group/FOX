@@ -78,44 +78,48 @@
 					   </div>
                     </div> 
                     -->
-                    <div class="span1"></div>
-                    <div class="control-group span2">
-                        <label
-                            class="control-label"
-                            style="width: 190px">Fox Light</label>
-                        <div
-                            class="controls"
-                            style="margin-left: 210px;">
-                            <input
-                                type="checkbox"
+ 
+                <div class="control-group span4">
+                        <label class="control-label">Fox Light</label>
+                        <div class="controls">
+                            <select
+                                class="input-block-level"
                                 id="foxlight"
-                                data-ng-model="foxRequest.foxlight"
-                                data-ng-checked="foxRequest.foxlight">
+                                data-ng-model="foxRequest.foxlight">
+                                <option>OFF</option>
+                                <option>org.aksw.fox.nertools.NERIllinois</option>
+                                <option>org.aksw.fox.nertools.NEROpenNLP</option>
+                                <option>org.aksw.fox.nertools.NERStanford</option>
+                                <option>org.aksw.fox.nertools.NERBalie</option>
+                            </select>
                         </div>
                     </div>
                 </div>
                 <hr>
                 <div class="row-fluid">
-                    <div class="span4"></div>
-                    <div class="control-group span3">
+                    <div class="control-group span7">
                         <label class="control-label">Examples</label>
                         <div class="controls">
                             <input
                                 type="radio"
-                                id="e1"
                                 name="defaults"
                                 value="0"
-                                data-ng-model="foxRequest.defaults"> <input
+                                data-ng-model="foxRequest.defaults"> 
+                            <input
                                 type="radio"
-                                id="e2"
                                 name="defaults"
                                 value="1"
-                                data-ng-model="foxRequest.defaults"> <input
+                                data-ng-model="foxRequest.defaults">
+                            <input
                                 type="radio"
-                                id="e3"
                                 name="defaults"
                                 value="2"
                                 data-ng-model="foxRequest.defaults">
+                          <!--  <input
+                                type="radio"
+                                name="defaults"
+                                value="3"
+                                data-ng-model="foxRequest.defaults"> -->
                         </div>
                     </div>
                     <div class="span1">

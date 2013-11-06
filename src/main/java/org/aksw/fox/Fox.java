@@ -9,36 +9,37 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.nertools.FoxNERTools;
-import org.aksw.fox.nertools.InterfaceRunnableNER;
+import org.aksw.fox.nertools.INER;
 import org.aksw.fox.nertools.NERStanford;
 import org.aksw.fox.uri.AGDISTISLookup;
-import org.aksw.fox.uri.InterfaceURI;
+import org.aksw.fox.uri.ILookup;
+import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.aksw.fox.utils.FoxWebLog;
 import org.apache.log4j.Logger;
+import org.jetlang.fibers.Fiber;
+import org.jetlang.fibers.ThreadFiber;
 
 /**
- * An implementation of FoxInterface and Runnable.
+ * An implementation of {@link org.aksw.fox.IFox}.
  * 
  * @author rspeck
  * 
  */
-public class Fox implements InterfaceRunnableFox {
+public class Fox implements IFox {
 
-    /**
-     * 
-     */
     public static Logger logger = Logger.getLogger(Fox.class);
 
     /**
      * 
      */
-    protected InterfaceURI uriLookup = null;
+    protected ILookup uriLookup = null;
 
     /**
      * 
@@ -58,7 +59,7 @@ public class Fox implements InterfaceRunnableFox {
     /**
      * Holds a tool for fox's light version.
      */
-    protected InterfaceRunnableNER ner = null;
+    protected INER nerLight = null;
 
     /**
      * 
@@ -73,10 +74,28 @@ public class Fox implements InterfaceRunnableFox {
      * 
      */
     public Fox() {
-        uriLookup = new AGDISTISLookup();
-        nerTools = new FoxNERTools();
-        ner = new NERStanford();
 
+        // load class in fox.properties file
+        if (FoxCfg.get("urilookup") != null) {
+            try {
+                uriLookup = (ILookup) FoxCfg.getClass(FoxCfg.get("urilookup").trim());
+            } catch (Exception e) {
+                logger.error("InterfaceURI not found. Check your fox.properties file.");
+            }
+        }
+        if (uriLookup == null)
+            uriLookup = new AGDISTISLookup();
+
+        this.nerTools = new FoxNERTools();
+    }
+
+    /**
+     *
+     */
+    public Fox(ILookup uriLookup, INER nerLight) {
+        this.uriLookup = uriLookup;
+        this.nerLight = nerLight;
+        this.nerTools = new FoxNERTools();
     }
 
     /**
@@ -89,7 +108,6 @@ public class Fox implements InterfaceRunnableFox {
         foxWebLog.setMessage("Running Fox...");
 
         if (parameter == null) {
-
             logger.error("Parameter not set.");
 
         } else {
@@ -97,8 +115,8 @@ public class Fox implements InterfaceRunnableFox {
             Set<Entity> entities = null;
 
             if (parameter.get("input") == null || parameter.get("task") == null) {
-                input = null;
                 logger.error("Input or task parameter not set.");
+                input = null;
 
             } else {
                 String task = parameter.get("task");
@@ -107,20 +125,62 @@ public class Fox implements InterfaceRunnableFox {
                 input = tokenManager.getInput();
                 parameter.put("input", input);
 
-                if (Boolean.valueOf(parameter.get("foxlight")) == true) {
+                if (!parameter.get("foxlight").equals("OFF")) {
                     // switch task
                     switch (task.toLowerCase()) {
 
                     case "ke":
                         logger.info("starting foxlight ke ...");
-                        // TODO
+                        // TODO:
                         break;
 
                     case "ner":
                         logger.info("starting foxlight ner ...");
-
                         foxWebLog.setMessage("Fox-Light start retrieving ner ...");
-                        entities = ner.retrieve(input);
+
+                        // set ner light tool
+                        if (nerLight == null)
+                            for (INER tool : nerTools.getNerTools())
+                                if (parameter.get("foxlight").equals(tool.getClass().getName())) {
+                                    nerLight = tool;
+                                    break;
+                                }
+                        if (nerLight == null)
+                            nerLight = new NERStanford();
+
+                        foxWebLog.setMessage("Fox-Light ner is: " + nerLight.getToolName());
+                        final CountDownLatch latch = new CountDownLatch(1);
+
+                        nerLight.setCountDownLatch(latch);
+                        nerLight.setInput(tokenManager.getInput());
+                        // nerLight.setTokenManager(tokenManager);
+
+                        Fiber fiber = new ThreadFiber();
+                        fiber.start();
+                        fiber.execute(nerLight);
+
+                        int min = Integer.parseInt(FoxCfg.get("foxNERLifeTime"));
+                        try {
+                            latch.await(min, TimeUnit.MINUTES);
+                        } catch (InterruptedException e) {
+                            logger.error("Timeout after " + min + "min.");
+                            logger.error("\n", e);
+                            logger.error("input:\n" + input);
+                        }
+
+                        // shutdown threads
+                        fiber.dispose();
+                        // get results
+                        if (latch.getCount() == 0) {
+                            entities = new HashSet<Entity>(nerLight.getResults());
+
+                        } else {
+                            if (logger.isDebugEnabled())
+                                logger.debug("timeout after " + min + "min.");
+
+                            // TODO: handle timeout
+                        }
+
                         foxWebLog.setMessage("Fox-Light start retrieving ner done.");
 
                         tokenManager.repairEntities(entities);
@@ -130,7 +190,7 @@ public class Fox implements InterfaceRunnableFox {
                         // make index map
                         Map<Integer, Entity> indexMap = new HashMap<>();
                         for (Entity entity : entities) {
-                            for (Integer i : FoxTextUtil.getIndex(entity.getText(), input)) {
+                            for (Integer i : FoxTextUtil.getIndices(entity.getText(), tokenManager.getTokenInput())) {
                                 indexMap.put(i, entity);
                             }
                         }
@@ -157,6 +217,7 @@ public class Fox implements InterfaceRunnableFox {
                             }
                         }
                         entities = cleanEntity;
+                        nerLight = null;
                     }
 
                 } else {
@@ -166,13 +227,13 @@ public class Fox implements InterfaceRunnableFox {
 
                     case "ke":
                         logger.info("starting ke ...");
-                        // TODO
+                        // TODO: ke fox
                         break;
 
                     case "ner":
                         logger.info("starting ner ...");
                         foxWebLog.setMessage("Start retrieving ner ...");
-                        entities = nerTools.getNER(input);
+                        entities = nerTools.getEntities(input);
                         foxWebLog.setMessage("Start retrieving ner done.");
 
                         // remove duplicate annotations
@@ -193,10 +254,8 @@ public class Fox implements InterfaceRunnableFox {
                 }
             }
 
-            // TODO
             if (entities != null) {
-
-                // TODO move loop to uri tool i.e. interface for list
+                // TODO: use interface for all tools
                 // 4. set URIs
                 foxWebLog.setMessage("Start looking up uri ...");
                 uriLookup.setUris(entities, input);
@@ -207,15 +266,12 @@ public class Fox implements InterfaceRunnableFox {
                 final boolean useNIF = Boolean.parseBoolean(parameter.get("nif"));
 
                 String out = parameter.get("output");
-                if (useNIF) {
-                    // TODO
-                } else {
-                    foxWebLog.setMessage("Preparing output format ...");
-                    foxJena.clearGraph();
-                    foxJena.setAnnotations(entities);
-                    response = foxJena.print(out, false, input);
-                    foxWebLog.setMessage("Preparing output format done.");
-                }
+                foxWebLog.setMessage("Preparing output format ...");
+
+                foxJena.clearGraph();
+                foxJena.setAnnotations(entities);
+                response = foxJena.print(out, useNIF, input);
+                foxWebLog.setMessage("Preparing output format done.");
 
                 if (parameter.get("returnHtml") != null && parameter.get("returnHtml").toLowerCase().endsWith("true")) {
 
@@ -245,16 +301,36 @@ public class Fox implements InterfaceRunnableFox {
 
                     html += input.substring(last);
                     parameter.put("input", html);
+
+                    // INFO TRACE
+                    if (logger.isTraceEnabled())
+                        infotrace(entities);
+                    // INFO TRACE
                 }
             }
         }
 
         // done
+        foxWebLog.setMessage("Running Fox done.");
         if (countDownLatch != null)
             countDownLatch.countDown();
+    }
 
-        foxWebLog.setMessage("Running Fox done.");
-
+    // debug infos
+    private void infotrace(Set<Entity> entities) {
+        // INFO TRACE
+        logger.info("Entities:");
+        for (String toolname : this.nerTools.getToolResult().keySet()) {
+            logger.info(toolname + ": " + this.nerTools.getToolResult().get(toolname).size());
+            if (logger.isTraceEnabled())
+                for (Entity e : this.nerTools.getToolResult().get(toolname))
+                    logger.trace(e);
+        }
+        logger.info("fox" + ": " + entities.size());
+        if (logger.isTraceEnabled())
+            for (Entity e : entities)
+                logger.trace(e);
+        // INFO TRACE
     }
 
     @Override
@@ -275,7 +351,9 @@ public class Fox implements InterfaceRunnableFox {
     @Override
     public Map<String, String> getDefaultParameter() {
         Map<String, String> map = new HashMap<>();
-        map.put("input", "Leipzig was first documented in 1015 in the chronicles of Bishop Thietmar of Merseburg and endowed with city and market privileges in 1165 by Otto the Rich. Leipzig has fundamentally shaped the history of Saxony and of Germany and has always been known as a place of commerce. The Leipzig Trade Fair, started in the Middle Ages, became an event of international importance and is the oldest remaining trade fair in the world.");
+        map.put(
+                "input",
+                    "Leipzig was first documented in 1015 in the chronicles of Bishop Thietmar of Merseburg and endowed with city and market privileges in 1165 by Otto the Rich. Leipzig has fundamentally shaped the history of Saxony and of Germany and has always been known as a place of commerce. The Leipzig Trade Fair, started in the Middle Ages, became an event of international importance and is the oldest remaining trade fair in the world.");
         map.put("task", "ner");
         map.put("output", "rdf");
         map.put("nif", "false");

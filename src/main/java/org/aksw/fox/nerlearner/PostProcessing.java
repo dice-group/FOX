@@ -24,7 +24,7 @@ import weka.core.Instances;
  * @author rspeck
  * 
  */
-public class PostProcessing implements PostProcessingInterface {
+public class PostProcessing implements IPostProcessing {
 
     public static Logger logger = Logger.getLogger(PostProcessing.class);
 
@@ -70,21 +70,18 @@ public class PostProcessing implements PostProcessingInterface {
      */
     @Override
     public Map<String, String> getLabeledMap(Map<String, String> map) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("getLabeledMap ...");
-            // logger.debug("map:\n" + map);
-        }
 
         Map<String, String> labeledMap = new HashMap<>();
+
         // 1. label MWU
+        // remember token entities
         List<Entry<String, String>> tokenEntry = new ArrayList<>();
-        // for all oracle entries
+
         for (Entry<String, String> entry : map.entrySet()) {
             // mwu entities 1st
             if (entry.getKey().contains(" "))
                 labeledMap = labeledEntry(entry, labeledMap);
             else
-                // remember token entities
                 tokenEntry.add(entry);
         }
 
@@ -105,9 +102,6 @@ public class PostProcessing implements PostProcessingInterface {
 
         for (String r : remove)
             labeledMap.remove(r);
-
-        // if (logger.isDebugEnabled())
-        // logger.debug("labeled map\n" + labeledMap);
 
         return labeledMap;
     }
@@ -134,20 +128,21 @@ public class PostProcessing implements PostProcessingInterface {
 
             // label to entity
             Set<Entity> labeledEntities = new HashSet<>();
-            for (Entry<String, String> e : resutlsMap.entrySet())
-                labeledEntities.add(new Entity(e.getKey(), e.getValue()));
+            for (Entry<String, String> e : resutlsMap.entrySet()) {
+                labeledEntities.add(new Entity(e.getKey(), e.getValue(), Entity.DEFAULT_RELEVANCE, entry.getKey()));
+            }
 
             // add to labeled result map
             String toolName = entry.getKey();
             labeledToolResults.put(toolName, labeledEntities);
 
         }
+
         return labeledToolResults;
     }
 
     @Override
     public Map<String, Set<Entity>> getToolResults() {
-
         return toolResults;
     }
 
@@ -238,7 +233,7 @@ public class PostProcessing implements PostProcessingInterface {
         String[] entityToken = FoxTextUtil.getToken(entity.getKey());
 
         // all entity occurrence
-        Set<Integer> occurrence = FoxTextUtil.getIndex(entity.getKey(), tokenManager.getTokenInput());
+        Set<Integer> occurrence = FoxTextUtil.getIndices(entity.getKey(), tokenManager.getTokenInput());
         if (occurrence.size() == 0) {
             logger.error("entity not found:" + entity.getKey());
         }
@@ -252,14 +247,16 @@ public class PostProcessing implements PostProcessingInterface {
                 String label = tokenManager.getLabel(index);
                 if (label != null) {
                     labeledToken.append(label);
+
+                    if (entityToken[entityToken.length - 1] != label)
+                        labeledToken.append(" ");
                 }
-                labeledToken.append(" ");
 
                 index += entityToken[i].length() + 1;
             }
 
             // add labeled entity
-            labeledMap.put(labeledToken.toString().trim(), entity.getValue());
+            labeledMap.put(labeledToken.toString(), entity.getValue());
         }
         return labeledMap;
     }

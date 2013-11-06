@@ -7,7 +7,7 @@ import org.aksw.fox.data.Entity;
 
 import weka.core.Instances;
 
-public interface PostProcessingInterface {
+public interface IPostProcessing {
     /**
      * Set of labels that is used to classify.
      * 

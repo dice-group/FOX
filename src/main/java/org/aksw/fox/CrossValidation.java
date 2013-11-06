@@ -9,7 +9,7 @@ import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.nerlearner.PostProcessing;
-import org.aksw.fox.nerlearner.PostProcessingInterface;
+import org.aksw.fox.nerlearner.IPostProcessing;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.nerlearner.reader.TrainingInputReader;
 import org.aksw.fox.nertools.FoxNERTools;
@@ -61,12 +61,11 @@ public class CrossValidation {
         TokenManager tokenManager = new TokenManager(trainingInputReader.getInput());
 
         // prepare data
-        PostProcessingInterface pp = null;
+        IPostProcessing pp = null;
         {
 
             foxNERTools.setTraining(true);
-            foxNERTools.getNER(tokenManager.getInput());
-
+            foxNERTools.getEntities(tokenManager.getInput());
             pp = new PostProcessing(tokenManager, foxNERTools.getToolResult());
         }
 

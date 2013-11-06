@@ -37,11 +37,14 @@ public class TokenCategoryMatrix {
         if (foundEntities != null)
             for (Entity e : foundEntities)
                 setFound(e);
+
+        if (logger.isTraceEnabled())
+            logger.trace(this);
     }
 
     public void setFound(Entity entity) {
-        // if (logger.isDebugEnabled())
-        // logger.debug("setFound: " + entity);
+        if (logger.isDebugEnabled())
+            logger.debug("setFound: " + entity);
 
         String[] split = entity.text.split(splitregText);
         for (String s : split) {

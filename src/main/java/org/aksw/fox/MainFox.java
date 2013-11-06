@@ -27,11 +27,11 @@ import weka.classifiers.Classifier;
  */
 public class MainFox {
 
-    public static Logger logger = Logger.getLogger(MainFox.class);
-
     static {
         PropertyConfigurator.configure("log4j.properties");
     }
+
+    public static Logger logger = Logger.getLogger(MainFox.class);
 
     /**
      * 
@@ -99,8 +99,8 @@ public class MainFox {
             }
         }
 
-        String[] files_array = files.toArray(new String[files.size()]);
         logger.info(files.toString());
+        String[] files_array = files.toArray(new String[files.size()]);
 
         switch (a) {
         case "train": {
@@ -116,7 +116,7 @@ public class MainFox {
             break;
         }
         default:
-            throw new IOException("Don't know what to do. Please set the action parameter");
+            throw new IOException("Don't know what to do. Please set the action parameter.");
         }
     }
 
@@ -184,11 +184,12 @@ public class MainFox {
 
         // retrieve entities (tool results)
         foxNERTools.setTraining(true);
-        foxNERTools.getNER(input);
+        foxNERTools.getEntities(input);
 
         try {
             foxClassifier.training(input, foxNERTools.getToolResult(), oracle);
-            foxClassifier.writeClassifier();
+            String file = FoxCfg.get("modelPath") + System.getProperty("file.separator") + FoxCfg.get("learner").trim();
+            foxClassifier.writeClassifier(file);
             foxClassifier.eva();
         } catch (Exception e) {
             e.printStackTrace();
@@ -207,21 +208,8 @@ public class MainFox {
             foxClassifier.setClassifier(FoxClassifierFactory.getClassifierClassVote(prefix));
             break;
         }
-        // case "stackingC": {
-        // foxClassifier.setClassifierStackingC(prefix);
-        // break;
-        // }
-        case "j48": {
-            foxClassifier.setClassifier(FoxClassifierFactory.getJ48());
-            break;
-        }
-        // case "adtree": {
-        // foxClassifier.setClassifierADTree();
-        // break;
-        // }
         default:
-        case "mp":
-            foxClassifier.setClassifier(FoxClassifierFactory.getClassifierMultilayerPerceptron());
+            foxClassifier.setClassifier(FoxClassifierFactory.get(FoxCfg.get("learner"), FoxCfg.get("learneroptions")));
         }
     }
 }
