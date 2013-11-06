@@ -133,10 +133,9 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
             formData.put("nif", "true");
 
         String foxlight = formData.get("foxlight");
-        if (foxlight == null || !foxlight.equalsIgnoreCase("true"))
-            formData.put("foxlight", "false");
-        else
-            formData.put("foxlight", "true");
+        if (foxlight == null) {
+            formData.put("foxlight", "OFF");
+        }
 
         logger.info("ok.");
         return true;
