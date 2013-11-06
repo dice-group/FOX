@@ -57,6 +57,10 @@ public class FoxNERTools {
             toolResults.put(nerTool.getToolName(), null);
     }
 
+    public List<INER> getNerTools() {
+        return nerTools;
+    }
+
     /**
      * 
      * @param input

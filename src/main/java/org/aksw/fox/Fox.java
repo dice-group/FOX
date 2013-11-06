@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.TokenManager;
@@ -22,6 +23,8 @@ import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.aksw.fox.utils.FoxWebLog;
 import org.apache.log4j.Logger;
+import org.jetlang.fibers.Fiber;
+import org.jetlang.fibers.ThreadFiber;
 
 /**
  * An implementation of {@link org.aksw.fox.IFox}.
@@ -83,18 +86,6 @@ public class Fox implements IFox {
         if (uriLookup == null)
             uriLookup = new AGDISTISLookup();
 
-        // load class in fox.properties file
-        if (FoxCfg.get("nerLight") != null) {
-            try {
-                nerLight = (INER) FoxCfg.getClass(FoxCfg.get("nerLight").trim());
-            } catch (Exception e) {
-                logger.error("InterfaceRunnableNER not found. Check your fox.properties file.");
-            }
-        }
-        if (nerLight == null)
-            nerLight = new NERStanford();
-
-        //
         this.nerTools = new FoxNERTools();
     }
 
@@ -134,21 +125,62 @@ public class Fox implements IFox {
                 input = tokenManager.getInput();
                 parameter.put("input", input);
 
-                if (Boolean.valueOf(parameter.get("foxlight")) == true) {
+                if (!parameter.get("foxlight").equals("OFF")) {
                     // switch task
                     switch (task.toLowerCase()) {
 
                     case "ke":
                         logger.info("starting foxlight ke ...");
-                        // TODO: ke foxlight
+                        // TODO:
                         break;
 
                     case "ner":
                         logger.info("starting foxlight ner ...");
-
                         foxWebLog.setMessage("Fox-Light start retrieving ner ...");
-                        // TODO: relevance list
-                        entities = new HashSet<Entity>(nerLight.retrieve(input));
+
+                        // set ner light tool
+                        if (nerLight == null)
+                            for (INER tool : nerTools.getNerTools())
+                                if (parameter.get("foxlight").equals(tool.getClass().getName())) {
+                                    nerLight = tool;
+                                    break;
+                                }
+                        if (nerLight == null)
+                            nerLight = new NERStanford();
+
+                        foxWebLog.setMessage("Fox-Light ner is: " + nerLight.getToolName());
+                        final CountDownLatch latch = new CountDownLatch(1);
+
+                        nerLight.setCountDownLatch(latch);
+                        nerLight.setInput(tokenManager.getInput());
+                        // nerLight.setTokenManager(tokenManager);
+
+                        Fiber fiber = new ThreadFiber();
+                        fiber.start();
+                        fiber.execute(nerLight);
+
+                        int min = Integer.parseInt(FoxCfg.get("foxNERLifeTime"));
+                        try {
+                            latch.await(min, TimeUnit.MINUTES);
+                        } catch (InterruptedException e) {
+                            logger.error("Timeout after " + min + "min.");
+                            logger.error("\n", e);
+                            logger.error("input:\n" + input);
+                        }
+
+                        // shutdown threads
+                        fiber.dispose();
+                        // get results
+                        if (latch.getCount() == 0) {
+                            entities = new HashSet<Entity>(nerLight.getResults());
+
+                        } else {
+                            if (logger.isDebugEnabled())
+                                logger.debug("timeout after " + min + "min.");
+
+                            // TODO: handle timeout
+                        }
+
                         foxWebLog.setMessage("Fox-Light start retrieving ner done.");
 
                         tokenManager.repairEntities(entities);
@@ -158,7 +190,7 @@ public class Fox implements IFox {
                         // make index map
                         Map<Integer, Entity> indexMap = new HashMap<>();
                         for (Entity entity : entities) {
-                            for (Integer i : FoxTextUtil.getIndices(entity.getText(), input)) {
+                            for (Integer i : FoxTextUtil.getIndices(entity.getText(), tokenManager.getTokenInput())) {
                                 indexMap.put(i, entity);
                             }
                         }
@@ -185,6 +217,7 @@ public class Fox implements IFox {
                             }
                         }
                         entities = cleanEntity;
+                        nerLight = null;
                     }
 
                 } else {
