@@ -70,7 +70,8 @@ public class FoxTextUtil {
                     }
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("\n", e);
+                    return "";
                 }
 
                 html = sb.toString();
@@ -78,6 +79,7 @@ public class FoxTextUtil {
 
         } catch (Exception e) {
             logger.error("\n", e);
+            return "";
         }
 
         return htmlToText(html);
@@ -163,8 +165,7 @@ public class FoxTextUtil {
     }
 
     /**
-     * Gets token of one sentence, token defined by
-     * {@link FoxTextUtil#tokenSpliter}.
+     * Gets token of one sentence, token defined by {@link FoxTextUtil#tokenSpliter}.
      * 
      * @param sentence
      *            (with punctuation mark)
@@ -225,13 +226,14 @@ public class FoxTextUtil {
         return in.split(tokenSpliter);
     }
 
+    // token needs to bound in spaces e.g.: " Leipzig "
     public static synchronized Set<Integer> getIndices(String token, String tokenInput) {
+
         Set<Integer> indices = new HashSet<>();
         if (token != null && tokenInput != null && token.length() < tokenInput.length()) {
-            token =
-                    new StringBuilder().append(" ").append(token.trim()).append(" ").toString();
-            tokenInput =
-                    new StringBuilder().append(" ").append(tokenInput.trim()).append(" ").toString();
+
+            token = new StringBuilder().append(" ").append(token.trim()).append(" ").toString();
+            tokenInput = new StringBuilder().append(" ").append(tokenInput.trim()).append(" ").toString();
 
             token = Pattern.quote(token);
             Matcher matcher = Pattern.compile(token).matcher(tokenInput);

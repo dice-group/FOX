@@ -59,7 +59,8 @@ public class TokenManager {
                     tokenInput += token;
             }
         }
-        tokenInput = tokenInput.substring(1, tokenInput.length());
+        if (tokenInput.length() > 1)
+            tokenInput = tokenInput.substring(1, tokenInput.length());
 
         // remove last char
         // tokenInput = tokenInput.substring(0, tokenInput.length() - 1);
@@ -97,7 +98,7 @@ public class TokenManager {
 
     private void repairEntity(Entity entity) {
 
-        Set<Integer> occurrence = FoxTextUtil.getIndices(entity.getText(), tokenInput);
+        Set<Integer> occurrence = FoxTextUtil.getIndices(entity.getText(), getTokenInput());
         if (occurrence.size() != 0) {
 
         } else {
@@ -136,6 +137,7 @@ public class TokenManager {
                 }
             }
         }
+        entity.setText(entity.getText().trim());
     }
 
     // private
