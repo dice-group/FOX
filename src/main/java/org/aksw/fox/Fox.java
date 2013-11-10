@@ -76,9 +76,9 @@ public class Fox implements IFox {
     public Fox() {
 
         // load class in fox.properties file
-        if (FoxCfg.get("urilookup") != null) {
+        if (FoxCfg.get(FoxCfg.parameter_urilookup) != null) {
             try {
-                uriLookup = (ILookup) FoxCfg.getClass(FoxCfg.get("urilookup").trim());
+                uriLookup = (ILookup) FoxCfg.getClass(FoxCfg.get(FoxCfg.parameter_urilookup).trim());
             } catch (Exception e) {
                 logger.error("InterfaceURI not found. Check your fox.properties file.");
             }
@@ -109,23 +109,21 @@ public class Fox implements IFox {
 
         if (parameter == null) {
             logger.error("Parameter not set.");
-
         } else {
             final String input;
             Set<Entity> entities = null;
 
-            if (parameter.get("input") == null || parameter.get("task") == null) {
+            if (parameter.get(FoxCfg.parameter_input) == null || parameter.get(FoxCfg.parameter_task) == null) {
                 logger.error("Input or task parameter not set.");
                 input = null;
-
             } else {
-                String task = parameter.get("task");
-                tokenManager = new TokenManager(parameter.get("input"));
+                String task = parameter.get(FoxCfg.parameter_task);
+                tokenManager = new TokenManager(parameter.get(FoxCfg.parameter_input));
                 // clean input
                 input = tokenManager.getInput();
-                parameter.put("input", input);
+                parameter.put(FoxCfg.parameter_input, input);
 
-                if (!parameter.get("foxlight").equals("OFF")) {
+                if (!parameter.get(FoxCfg.parameter_foxlight).equals("OFF")) {
                     // switch task
                     switch (task.toLowerCase()) {
 
@@ -141,7 +139,7 @@ public class Fox implements IFox {
                         // set ner light tool
                         if (nerLight == null)
                             for (INER tool : nerTools.getNerTools())
-                                if (parameter.get("foxlight").equals(tool.getClass().getName())) {
+                                if (parameter.get(FoxCfg.parameter_foxlight).equals(tool.getClass().getName())) {
                                     nerLight = tool;
                                     break;
                                 }
@@ -263,9 +261,9 @@ public class Fox implements IFox {
                 // for (Entity e : entities)
                 // e.uri = uriLookup.getUri(e.getText(), e.getType());
                 // switch output
-                final boolean useNIF = Boolean.parseBoolean(parameter.get("nif"));
+                final boolean useNIF = Boolean.parseBoolean(parameter.get(FoxCfg.parameter_nif));
 
-                String out = parameter.get("output");
+                String out = parameter.get(FoxCfg.parameter_output);
                 foxWebLog.setMessage("Preparing output format ...");
 
                 foxJena.clearGraph();
@@ -300,7 +298,7 @@ public class Fox implements IFox {
                     }
 
                     html += input.substring(last);
-                    parameter.put("input", html);
+                    parameter.put(FoxCfg.parameter_input, html);
 
                     // INFO TRACE
                     if (logger.isTraceEnabled())
@@ -352,11 +350,11 @@ public class Fox implements IFox {
     public Map<String, String> getDefaultParameter() {
         Map<String, String> map = new HashMap<>();
         map.put(
-                "input",
+                FoxCfg.parameter_input,
                     "Leipzig was first documented in 1015 in the chronicles of Bishop Thietmar of Merseburg and endowed with city and market privileges in 1165 by Otto the Rich. Leipzig has fundamentally shaped the history of Saxony and of Germany and has always been known as a place of commerce. The Leipzig Trade Fair, started in the Middle Ages, became an event of international importance and is the oldest remaining trade fair in the world.");
-        map.put("task", "ner");
-        map.put("output", "rdf");
-        map.put("nif", "false");
+        map.put(FoxCfg.parameter_task, "ner");
+        map.put(FoxCfg.parameter_output, "rdf");
+        map.put(FoxCfg.parameter_nif, "false");
         return map;
     }
 

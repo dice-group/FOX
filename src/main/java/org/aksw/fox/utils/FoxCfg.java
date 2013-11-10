@@ -17,6 +17,13 @@ import org.apache.log4j.Logger;
  */
 public class FoxCfg {
 
+    public static String parameter_input = "input";
+    public static String parameter_task = "task";
+    public static String parameter_urilookup = "urilookup";
+    public static String parameter_output = "output";
+    public static String parameter_foxlight = "foxlight";
+    public static String parameter_nif = "nif";
+
     public static Logger logger = Logger.getLogger(FoxCfg.class);;
     protected static Properties FoxProperties = new Properties();
     public static final String CFG_FILE = "fox.properties";
