@@ -147,6 +147,30 @@ public class FoxInstances {
         return getInstances(token, toolResults, null);
     }
 
+    // // uses toolResults to make TokenCategoryMatrix object for each tool
+    // private Map<String, TokenCategoryMatrix> getTokenCategoryMatrix(Map<String, Set<Entity>> toolResults) {
+    // if (logger.isDebugEnabled())
+    // logger.debug("getTokenCategoryMatrix ...");
+    //
+    // final Set<String> entityClasses = new LinkedHashSet<>(EntityClassMap.entityClasses);
+    // final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = new HashMap<>();
+    //
+    // for (final Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
+    // toolTokenCategoryMatrix.put(
+    // entry.getKey(),
+    // new TokenCategoryMatrix(
+    // token,
+    // entityClasses,
+    // EntityClassMap.getNullCategory(),
+    // entry.getValue(),
+    // FoxTextUtil.tokenSpliter
+    // )
+    // );
+    // }
+    //
+    // return toolTokenCategoryMatrix;
+    // }
+
     // uses toolResults to make TokenCategoryMatrix object for each tool
     private Map<String, TokenCategoryMatrix> getTokenCategoryMatrix(Map<String, Set<Entity>> toolResults) {
         if (logger.isDebugEnabled())
@@ -154,9 +178,9 @@ public class FoxInstances {
 
         final Set<String> entityClasses = new LinkedHashSet<>(EntityClassMap.entityClasses);
         final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = new HashMap<>();
+        final CountDownLatch latch = new CountDownLatch(toolResults.entrySet().size());
 
         List<Fiber> fibers = new ArrayList<>();
-        final CountDownLatch latch = new CountDownLatch(toolResults.entrySet().size());
         for (final Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
             Fiber fiber = new ThreadFiber();
             fiber.start();
@@ -165,7 +189,11 @@ public class FoxInstances {
                     toolTokenCategoryMatrix.put(
                             entry.getKey(),
                             new TokenCategoryMatrix(
-                                    token, entityClasses, EntityClassMap.getNullCategory(), entry.getValue(), FoxTextUtil.tokenSpliter
+                                    token,
+                                    entityClasses,
+                                    EntityClassMap.getNullCategory(),
+                                    entry.getValue(),
+                                    FoxTextUtil.tokenSpliter
                             )
                             );
                     latch.countDown();
