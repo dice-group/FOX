@@ -319,6 +319,8 @@ public class Fox implements IFox {
         // INFO TRACE
         logger.info("Entities:");
         for (String toolname : this.nerTools.getToolResult().keySet()) {
+            if (this.nerTools.getToolResult().get(toolname) == null)
+                return;
             logger.info(toolname + ": " + this.nerTools.getToolResult().get(toolname).size());
             if (logger.isTraceEnabled())
                 for (Entity e : this.nerTools.getToolResult().get(toolname))
