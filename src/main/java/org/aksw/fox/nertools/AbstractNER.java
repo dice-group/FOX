@@ -67,8 +67,7 @@ public class AbstractNER implements INER {
     }
 
     /**
-     * Cleans the entities, uses a tokenizer to tokenize all entities with the
-     * same algorithm.
+     * Cleans the entities, uses a tokenizer to tokenize all entities with the same algorithm.
      * 
      * @param list
      * @return
@@ -86,7 +85,7 @@ public class AbstractNER implements INER {
                 if (tokens[tokens.length - 1] != token)
                     cleanText.append(" ");
             }
-            entity.setText(cleanText.toString());
+            entity.setText(cleanText.toString().trim());
         }
         list = new ArrayList<Entity>(list);
 
