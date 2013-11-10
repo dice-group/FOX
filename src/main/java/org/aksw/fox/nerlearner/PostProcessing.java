@@ -1,7 +1,7 @@
 package org.aksw.fox.nerlearner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -77,18 +77,17 @@ public class PostProcessing implements IPostProcessing {
         // remember token entities
         List<Entry<String, String>> tokenEntry = new ArrayList<>();
 
-        for (Entry<String, String> entry : map.entrySet()) {
+        for (Entry<String, String> entry : map.entrySet())
             // mwu entities 1st
             if (entry.getKey().contains(" "))
                 labeledMap = labeledEntry(entry, labeledMap);
             else
                 tokenEntry.add(entry);
-        }
 
-        // 2. remember used labels
+        // 2. remember used labels of MWU
         Set<String> usedLabels = new HashSet<>();
         for (String label : labeledMap.keySet())
-            usedLabels.addAll(Arrays.asList(FoxTextUtil.getSentencesToken(label)));
+            Collections.addAll(usedLabels, FoxTextUtil.getSentencesToken(label));
 
         // 3. label token (non MWU)
         for (Entry<String, String> entry : tokenEntry)
@@ -96,9 +95,9 @@ public class PostProcessing implements IPostProcessing {
 
         // 4. remove labels used in mwu
         List<String> remove = new ArrayList<>();
-        for (String token : labeledMap.keySet())
-            if (usedLabels.contains(token))
-                remove.add(token);
+        for (String labeledtoken : labeledMap.keySet())
+            if (usedLabels.contains(labeledtoken))
+                remove.add(labeledtoken);
 
         for (String r : remove)
             labeledMap.remove(r);
@@ -112,10 +111,8 @@ public class PostProcessing implements IPostProcessing {
      */
     @Override
     public Map<String, Set<Entity>> getLabeledToolResults() {
-
         Map<String, Set<Entity>> labeledToolResults = new HashMap<>();
 
-        // tool * result set size
         for (Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
 
             // entities to map
@@ -137,7 +134,6 @@ public class PostProcessing implements IPostProcessing {
             labeledToolResults.put(toolName, labeledEntities);
 
         }
-
         return labeledToolResults;
     }
 
@@ -256,7 +252,7 @@ public class PostProcessing implements IPostProcessing {
             }
 
             // add labeled entity
-            labeledMap.put(labeledToken.toString(), entity.getValue());
+            labeledMap.put(labeledToken.toString().trim(), entity.getValue());
         }
         return labeledMap;
     }
