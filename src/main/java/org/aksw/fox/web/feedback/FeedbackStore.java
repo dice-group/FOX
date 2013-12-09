@@ -1,39 +1,34 @@
 package org.aksw.fox.web.feedback;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Map;
+import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.sqlite.SQLiteConfig;
+//data helper
+class TextEntry {
+    public Integer id = null;
+    public String time = "";
+    public String text = "";
+    public String url = "";
+    public String gender = "";
+    public String language = "";
+}
 
-public class FeedbackStore {
+// data helper
+class FeedbackEntry {
+    public Integer textid = null;
+    public String entity_uri = "";
+    public String surface_form = "";
+    public Integer offset = null;
+    public String feedback = null;
+    public String systems = "";
+    public String annotation = "";
+    public String manual = "";
+    public String time = "";
+}
 
-    static {
-        loadDriver();
-    }
-
-    private static Logger logger = Logger.getLogger(FeedbackStore.class);
-    public static String dbName = "foxFeedback";
-    public static String textTable = "text";
-    public static String feedbackTable = "feedback";
-    public static int queryTimeout = 30; // sec.
-
-    private String db = dbName.concat(".db");
-    private Connection connection = null;
-    private Statement statement = null;
-
-    /**
-     * Test method.
-     * 
-     */
-    public static void main(String[] args) {
-        FeedbackStore fb = new FeedbackStore();
-        fb.select();
-    }
+public class FeedbackStore extends FeedbackDB {
 
     public FeedbackStore() {
         createTable();
@@ -44,162 +39,93 @@ public class FeedbackStore {
     }
 
     private int getTextID(String text) throws SQLException {
-        int id = 0;
-        ResultSet resultSet = statement.executeQuery("select id from " + textTable + " where text='" + text + "'");
+        int id = -1;
+        String sql = "select id from " + textTable + " where text=?";
+        PreparedStatement prep = connection.prepareStatement(sql);
+        prep.setString(1, text);
+        ResultSet resultSet = prep.executeQuery();
         if (resultSet.next()) {
             id = resultSet.getInt("id");
         }
         return id;
     }
 
-    public void insert(Map<String, String> parameter) {
-
+    /**
+     * 
+     * Inserts text and feedback from parameter.
+     * 
+     * @param parameter
+     * @return true if inserted
+     */
+    public boolean insert(TextEntry textEntry, List<FeedbackEntry> feedbackEntries) {
+        boolean done = false;
         if (connect())
             try {
-                long time = getTime();
-                String text = parameter.get("text");
+                logger.info("inserting ...");
+                Long time = getTime();
+                String text = textEntry.text;
                 int textid = getTextID(text);
+                String sql = "";
 
-                if (textid < 1) {
-                    statement.executeUpdate(
-                            "insert into " + textTable +
-                                    " (time, text) values" +
-                                    " ('" + time + "', '" + text + "')"
-                            );
+                if (textid < 0) {
+                    logger.info("inserting text ...");
+
+                    sql = "insert into " + textTable + " (time, text, gender, url, language ) values ( ? ,?, ? ,? ,?  )";
+                    PreparedStatement prep = connection.prepareStatement(sql);
+
+                    prep.setString(1, time.toString());
+                    prep.setString(2, text);
+                    prep.setString(3, textEntry.gender);
+                    prep.setString(4, textEntry.url);
+                    prep.setString(5, textEntry.language);
+                    prep.execute();
+                    prep.close();
                     textid = getTextID(text);
+                } else {
+                    logger.info("known text, nothing todo ...");
                 }
 
-                if (textid > 0) {
-                    statement.executeUpdate(
-                            "insert into " + feedbackTable +
-                                    " (" +
-                                    "textid, " +
-                                    "entityUri, " +
-                                    "surfaceForm, " +
-                                    "offset, " +
-                                    "feedback, " +
-                                    "context, " +
-                                    "feedbackType, " +
-                                    "system, " +
-                                    "annotation,  " +
-                                    "time  " +
-                                    ") values ( '" +
-                                    textid + "', '" +
-                                    parameter.get("entityUri") + "', '" +
-                                    parameter.get("surfaceForm") + "', '" +
-                                    parameter.get("offset") + "', '" +
-                                    parameter.get("feedback") + "', '" +
-                                    parameter.get("context") + "', '" +
-                                    parameter.get("feedbackType") + "', '" +
-                                    parameter.get("system") + "', '" +
-                                    parameter.get("annotation") + "', '" +
-                                    time +
-                                    "')"
-                            );
+                if (textid >= 0) {
+                    logger.info("inserting feedback ...");
+
+                    for (FeedbackEntry fe : feedbackEntries)
+                        insert(textid, time, fe);
+
+                    done = true; // TODO
+
+                    if (!done) {
+                        logger.warn("Couldn't execute statement!");
+                    } else {
+                        logger.info("Inserted a new row into " + feedbackTable + " table");
+                    }
                 }
             } catch (SQLException e) {
-                logger.error("\n", e);
+                logger.warn("\n", e);
             } finally {
                 disconnect();
             }
+        return done;
     }
 
-    // TODO: update select method
-    public void select() {
-        if (connect())
-            try {
-                ResultSet rs = statement.executeQuery("select * from " + textTable);
-
-                while (rs.next()) {
-                    logger.info("id = " + rs.getInt("id") + " text = " + rs.getString("text"));
-                }
-                rs = statement.executeQuery("select * from " + feedbackTable);
-                while (rs.next()) {
-                    logger.info("textid = " + rs.getInt("textid") + " entityUri = " + rs.getString("entityUri"));
-                }
-            } catch (SQLException e) {
-                logger.error("\n", e);
-            } finally {
-                disconnect();
-            }
-    }
-
-    protected void disconnect() {
+    private void insert(int textid, Long time, FeedbackEntry fe) {
+        String sql = "insert into " + feedbackTable +
+                " ( textid, entity_uri, surface_form, offset, feedback," +
+                " systems, annotation, time) values" +
+                " ( ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
-            if (connection != null)
-                connection.close();
+            PreparedStatement prep = connection.prepareStatement(sql);
+            prep.setInt(1, textid);
+            prep.setString(2, fe.entity_uri);
+            prep.setString(3, fe.surface_form);
+            prep.setInt(4, fe.offset);
+            prep.setString(5, fe.feedback);
+            prep.setString(6, fe.systems);
+            prep.setString(7, fe.annotation);
+            prep.setString(8, time.toString());
+            prep.execute();
+            prep.close();
         } catch (SQLException e) {
-            logger.error("\n", e);
-        }
-    }
-
-    protected boolean connect() {
-        SQLiteConfig config = new SQLiteConfig();
-        // config.setEncoding(SQLiteConfig.Encoding.UTF8);
-        return connect(config);
-    }
-
-    protected boolean connect(SQLiteConfig config) {
-        try {
-            connection = DriverManager.getConnection("jdbc:sqlite:".concat(db), config.toProperties());
-            statement = connection.createStatement();
-            statement.setQueryTimeout(queryTimeout);
-        } catch (SQLException e) {
-            logger.error("\n", e);
-            statement = null;
-        }
-        return statement == null ? false : true;
-    }
-
-    /**
-     * Creates the tables: {@link #textTable} and {@link #feedbackTable} if not
-     * exists.
-     * 
-     */
-    public void createTable() {
-        if (connect())
-            try {
-                statement.executeUpdate(
-                        "create table if not exists " + textTable + " (" +
-                                "id integer primary key not null, " +
-                                "time text not null, " +
-                                "text text not null " +
-                                ")"
-                        );
-                statement.executeUpdate(
-                        "create table if not exists " + feedbackTable + " (" +
-                                "id integer primary key autoincrement, " +
-                                "textid integer not null," +
-                                "entityUri text not null," +
-                                "surfaceForm text not null, " +
-                                "offset integer not null," +
-                                "feedback text not null," +
-                                "context text not null," +
-                                "feedbackType text not null," +
-                                "system text not null," +
-                                "annotation text not null," +
-                                "time text not null" +
-                                ")"
-                        );
-            } catch (SQLException e) {
-                logger.error("\n", e);
-            } finally {
-                disconnect();
-            }
-    }
-
-    /**
-     * Loads org.sqlite.JDBC diver.
-     * 
-     * @return true if diver was found.
-     */
-    public static boolean loadDriver() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            return true;
-        } catch (ClassNotFoundException e) {
-            logger.error("\n", e);
-            return false;
+            logger.warn("\n", e);
         }
     }
 }
