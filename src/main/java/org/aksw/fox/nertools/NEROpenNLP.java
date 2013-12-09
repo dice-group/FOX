@@ -61,7 +61,8 @@ public class NEROpenNLP extends AbstractNER {
                 NameFinderME nameFinder = new NameFinderME(tokenNameFinderModels[i]);
                 for (String sentence : sentences) {
                     String[] tokens = FoxTextUtil.getSentenceToken(sentence);
-                    if (tokens[tokens.length - 1].trim().isEmpty())
+
+                    if (tokens.length > 0 && tokens[tokens.length - 1].trim().isEmpty())
                         tokens[tokens.length - 1] = ".";
 
                     // if (logger.isDebugEnabled())

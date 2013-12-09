@@ -172,6 +172,7 @@ public class FoxTextUtil {
      * @return token
      */
     public static synchronized String[] getSentenceToken(String sentence) {
+        System.out.println(sentence);
         // Note: Points won't removed, so we remove punctuation marks to points
         // and handle them later
         char punctuationMark = sentence.trim().charAt(sentence.trim().length() - 1);
@@ -183,35 +184,37 @@ public class FoxTextUtil {
         String[] token = null;
         token = getToken(sentence);
 
-        // remove punctuation mark(points)
-        String lastToken = token[token.length - 1];
-        if (lastToken.charAt(lastToken.length() - 1) == '.')
-            token[token.length - 1] = lastToken.substring(0, lastToken.length() - 1);
+        if (token.length > 0) {
+            // remove punctuation mark(points)
+            String lastToken = token[token.length - 1];
+            if (lastToken.charAt(lastToken.length() - 1) == '.')
+                token[token.length - 1] = lastToken.substring(0, lastToken.length() - 1);
 
-        // add a token to keep original length
-        int len = sentence.length();
+            // add a token to keep original length
+            int len = sentence.length();
 
-        String cleanSentence = StringUtils.join(token, " ");
+            String cleanSentence = StringUtils.join(token, " ");
 
-        int cleanSentenceLen = cleanSentence.length();
+            int cleanSentenceLen = cleanSentence.length();
 
-        String closeLen = "";
-        while (cleanSentenceLen + closeLen.length() < len) {
+            String closeLen = "";
+            while (cleanSentenceLen + closeLen.length() < len) {
+                closeLen += " ";
+            }
+            // add this token
+            if (!closeLen.isEmpty())
+                token = ArrayUtils.add(token, token.length, closeLen);
 
-            closeLen += " ";
+            // logger.info("----");
+            // logger.info("<" + len + ">");
+            // logger.info("<" + cleanSentenceLen + ">");
+            // logger.info("<" + sentence + ">");
+            // logger.info("<" + cleanSentence + ">");
+            // logger.info("<" + StringUtils.join(token, " ") + ">");
+            // logger.info("<" + token[token.length - 1] + ">");
+        } else {
+            token = new String[0];
         }
-        // add this token
-        if (!closeLen.isEmpty())
-            token = ArrayUtils.add(token, token.length, closeLen);
-
-        // logger.info("----");
-        // logger.info("<" + len + ">");
-        // logger.info("<" + cleanSentenceLen + ">");
-        // logger.info("<" + sentence + ">");
-        // logger.info("<" + cleanSentence + ">");
-        // logger.info("<" + StringUtils.join(token, " ") + ">");
-        // logger.info("<" + token[token.length - 1] + ">");
-
         return token;
     }
 
