@@ -30,9 +30,10 @@ Each value is urlencoded.
 todo ..
 <br>
 
+<!-- 
 <h3>Response /api/ner/feedback</h3>
 todo..
-<br>
+<br>-->
 
 <h2>Example requests with curl</h2>
 <h3>/api</h3>
@@ -50,7 +51,11 @@ curl -d type=url -d task=NER -d output=TURTLE -d foxlight=org.aksw.fox.nertools.
 <pre>{{nerExp}}</pre>
 
 <h3>/api/ner/feedback</h3>
+<h5>Content-Type: application/json</h5>
 <pre>curl -d @demo/feedbackExp.json -H "Content-Type: application/json" http://{{host}}/api/ner/feedback > response.txt </pre>
 <a href="/demo/feedbackExp.json" >demo/feedbackExp.json</a>
 <pre>{{feedbackExp}}</pre>
+
+<h5>Content-Type: application/x-www-form-urlencoded</h5>
+<pre>curl -H "Content-Type: application/x-www-form-urlencoded" --data-urlencode "text=Berlin is the capital of Germany." -d "key=&lt;YOUR API KEY&gt;" -d "entity_uri=http://dbpedia.org/resource/Berlin" -d "surface_form=Berlin" -d "offset=0" -d "feedback=correct" -d "systems=User" -d "manual=true"  http://{{host}}/api/ner/feedback > response.txt</pre>
 </div>
