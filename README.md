@@ -12,7 +12,7 @@ Installation
 * Clone the latest version:
  `git clone -b master git@github.com:AKSW/FOX.git`
 
-* Download [NETagger][2]. This archive contains a `data` `config`, `lib` and  `dist` folder. Copy the first two to the FOX root.
+* Download [NETagger][2]. This archive contains a `data`, `config`, `lib` and  `dist` folder. Copy the first two to the FOX root.
   The `lib` folder  contains `LBJLibrary-2.8.2.jar` and `LbjNerTagger-2.3.jar` and the `dist` folder contains `LbjNerTagger-2.3.jar`.
   Copy this three files to `FOX/lib/illinois`.
 
@@ -24,10 +24,13 @@ Installation
 * Go into the target folder and rename `fox.properties-dist` to `fox.properties` and chance the file to your needs.
 
 * Learn with trainings data (optional with default properties file):
-  `./fox_training.sh`
+  `./fox_training.sh` (set training to true in  `fox.properties`)
 
 * Start the server:
   `./fox_run_server.sh`
+
+* Stop the server:
+  `./fox_close.sh`
 
 
 Demo
