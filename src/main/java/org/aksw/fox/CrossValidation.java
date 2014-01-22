@@ -1,5 +1,8 @@
 package org.aksw.fox;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -8,8 +11,8 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.TokenManager;
-import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.nerlearner.IPostProcessing;
+import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.nerlearner.reader.TrainingInputReader;
 import org.aksw.fox.nertools.FoxNERTools;
@@ -19,6 +22,8 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
 import weka.core.Utils;
+import weka.core.converters.ArffSaver;
+import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * 
@@ -30,31 +35,20 @@ public class CrossValidation {
     public static Logger logger = Logger.getLogger(CrossValidation.class);
 
     public static FoxNERTools foxNERTools = new FoxNERTools();
-    static int seed = 1, folds = 10;
 
-    public static void myprint(Evaluation eval, Classifier classifier, Instances instances) {
+    // cross-validation options
+    static int seed = 1, folds = 10, runs = 10;
 
-        logger.info("=== Run information ===\n\n");
-        logger.info("Scheme: " + classifier.getClass().getName() + " Options: " + Utils.joinOptions(classifier.getOptions()));
-        logger.info("Relation: " + instances.relationName());
-        logger.info("Instances: " + instances.numInstances());
-        logger.info("Attributes: " + instances.numAttributes());
+    // current states
+    static String run = "";
+    static String fold = "";
+    static String classifierName = "";
 
-        logger.info("=== Classifier model ===\n\n");
-        logger.info(classifier.toString());
-
-        logger.info("=== Summary ===\n");
-        logger.info(eval.toSummaryString());
-
-        try {
-            logger.info(eval.toClassDetailsString());
-            logger.info(eval.toMatrixString());
-        } catch (Exception e) {
-            logger.error("\n", e);
-        }
-    }
+    static StringBuffer out = null;
 
     public static void crossValidation(Classifier cls, String[] inputFiles) throws Exception {
+        classifierName = cls.getClass().getName();
+        classifierName = classifierName.substring(classifierName.lastIndexOf('.') == -1 ? 0 : classifierName.lastIndexOf('.') + 1);
 
         // read data
         TrainingInputReader trainingInputReader = new TrainingInputReader(inputFiles);
@@ -80,46 +74,104 @@ public class CrossValidation {
             instances = foxInstances.getInstances(token, toolResults, oracle);
         }
 
-        // randomize instances
-        Instances randInstances = new Instances(instances);
+        // write arff file
         {
-            Random rand = new Random(seed);
-            randInstances.randomize(rand);
-            if (randInstances.classAttribute().isNominal())
-                randInstances.stratify(folds);
+            ArffSaver saver = new ArffSaver();
+            try {
+                saver.setInstances(instances);
+                saver.setFile(new File("./tmp/training.arff"));
+                saver.writeBatch();
+            } catch (IOException e) {
+                logger.error("/n", e);
+            }
+        }
+        // perform cross-validation runs
+        for (int i = 0; i < runs; i++) {
+
+            seed = i + 1;
+            run = new Integer(i + 1).toString();
+
+            // randomize instances
+            Instances randInstances = new Instances(instances);
+            {
+                Random rand = new Random(seed);
+                randInstances.randomize(rand);
+                if (randInstances.classAttribute().isNominal())
+                    randInstances.stratify(folds);
+            }
+
+            // perform cross-validation
+            Evaluation evalAll = new Evaluation(randInstances);
+            for (int n = 0; n < folds; n++) {
+                logger.info("Validation run = " + (run + 1));
+                logger.info("Validation fold k = " + (n + 1));
+                fold = new Integer(n + 1).toString();
+
+                Instances train = randInstances.trainCV(folds, n);
+                Instances test = randInstances.testCV(folds, n);
+
+                // build and evaluate classifier
+                Classifier clsCopy = Classifier.makeCopy(cls);
+                clsCopy.buildClassifier(train);
+                Evaluation eval = new Evaluation(randInstances);
+                eval.evaluateModel(clsCopy, test);
+                evalAll.evaluateModel(clsCopy, test);
+
+                // write
+                writeConfusionMatrix(eval);
+
+                // prints
+                /*
+                 * System.out.println(eval.toMatrixString(
+                 * "=== Confusion matrix for fold " + (n + 1) + "/" + folds +
+                 * "(" + (i + 1) + ")" + " ===\n") );
+                 */
+                printMeasures(eval);
+
+            }
+            /*
+             * System.out.println(evalAll.toSummaryString( "=== " + folds +
+             * "-fold Cross-validation ===", false) );
+             */
+            myprint(evalAll, cls, randInstances);
+
         }
 
-        // perform cross-validation
-        Evaluation eval = new Evaluation(randInstances);
-        for (int n = 0; n < folds; n++) {
-            logger.info("Validation fold k = " + (n + 1));
-            Instances train = randInstances.trainCV(folds, n);
-            Instances test = randInstances.testCV(folds, n);
-
-            // build and evaluate classifier
-            Classifier clsCopy = Classifier.makeCopy(cls);
-            clsCopy.buildClassifier(train);
-            eval.evaluateModel(clsCopy, test);
-            printConfusionMatrix(eval);
-            printMeasures(eval);
-        }
-
-        myprint(eval, cls, randInstances);
+        String filename = "eval/" + classifierName + ".csv";
+        CSVWriter writer = new CSVWriter(new FileWriter(filename), ',', CSVWriter.NO_QUOTE_CHARACTER);
+        writer.writeNext(out.toString().split(","));
+        writer.close();
     }
 
-    public static void printConfusionMatrix(Evaluation eval) {
-        StringBuffer cm = new StringBuffer();
+    public static void writeConfusionMatrix(Evaluation eval) {
+
         double[][] cmMatrix = eval.confusionMatrix();
+
+        // header
+        StringBuffer cm = new StringBuffer();
         for (String cl : EntityClassMap.entityClasses) {
             cm.append(cl + "\t");
         }
         cm.append("\n");
+
+        // values
         for (int i = 0; i < cmMatrix.length; i++) {
             for (int ii = 0; ii < cmMatrix[i].length; ii++)
                 cm.append(cmMatrix[i][ii] + "\t\t");
             cm.append("\n");
         }
-        logger.info("confusion matrix\n" + cm.toString());
+
+        // write buffer for file
+        for (int i = 0; i < EntityClassMap.entityClasses.size(); i++) {
+            writeBuffer(
+                    run, fold,
+                    classifierName,
+                    EntityClassMap.entityClasses.get(i),
+                    new Double(cmMatrix[i][0]).toString(),
+                    new Double(cmMatrix[i][1]).toString(),
+                    new Double(cmMatrix[i][2]).toString(),
+                    new Double(cmMatrix[i][3]).toString());
+        }
     }
 
     public static void printMeasures(Evaluation eval) {
@@ -137,5 +189,58 @@ public class CrossValidation {
             logger.info("precision: " + p);
             logger.info("recall: " + r);
         }
+    }
+
+    public static void myprint(Evaluation eval, Classifier classifier, Instances instances) {
+
+        logger.info("=== Run information ===\n\n");
+        logger.info("Scheme: " + classifier.getClass().getName() + " Options: " + Utils.joinOptions(classifier.getOptions()));
+        logger.info("Relation: " + instances.relationName());
+        logger.info("Instances: " + instances.numInstances());
+        logger.info("Attributes: " + instances.numAttributes());
+
+        logger.info("=== Classifier model ===\n\n");
+        logger.info(classifier.toString());
+
+        logger.info("=== Summary ===\n");
+        logger.info(eval.toSummaryString());
+
+        try {
+            logger.info(eval.toClassDetailsString());
+            logger.info(eval.toMatrixString());
+        } catch (Exception e) {
+            logger.error("\n", e);
+        }
+    }
+
+    public static void writeBuffer(String run, String fold, String classifier, String classs, String a, String b, String c, String d) {
+        if (out == null) {
+            out = new StringBuffer();
+            out.append("run,");
+            out.append("fold,");
+            out.append("classifier,");
+            out.append("class,");
+            out.append("a,");
+            out.append("b,");
+            out.append("c,");
+            out.append("d");
+            out.append('\n');
+        }
+        out.append(run);
+        out.append(',');
+        out.append(fold);
+        out.append(',');
+        out.append(classifier);
+        out.append(',');
+        out.append(classs);
+        out.append(',');
+        out.append(a);
+        out.append(',');
+        out.append(b);
+        out.append(',');
+        out.append(c);
+        out.append(',');
+        out.append(d);
+        out.append('\n');
     }
 }
