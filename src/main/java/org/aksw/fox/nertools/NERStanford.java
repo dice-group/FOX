@@ -130,7 +130,7 @@ public class NERStanford extends AbstractNER {
 
     public static void main(String[] a) {
         PropertyConfigurator.configure("log4j.properties");
-        for (Entity e : new NERStanford().retrieve("Stanford University is located in California. It is a great university."))
+        for (Entity e : new NERStanford().retrieve(FoxCfg.test_input1))
             NERStanford.logger.info(e);
 
         // Properties props = new Properties();

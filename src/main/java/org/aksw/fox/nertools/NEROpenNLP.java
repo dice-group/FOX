@@ -99,7 +99,7 @@ public class NEROpenNLP extends AbstractNER {
 
     public static void main(String[] a) {
         PropertyConfigurator.configure("log4j.properties");
-        for (Entity e : new NEROpenNLP().retrieve("Stanford University is located in California. It is a great university."))
+        for (Entity e : new NEROpenNLP().retrieve(FoxCfg.test_input1))
             NEROpenNLP.logger.info(e);
     }
 }

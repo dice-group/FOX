@@ -71,8 +71,7 @@ public class NERBalie extends AbstractNER {
 
     public static void main(String[] a) {
         PropertyConfigurator.configure("log4j.properties");
-        for (Entity e : new NERBalie()
-                .retrieve("Berlin is an American New Wave band. Despite its name, Berlin did not have any known major connections with Germany, but instead was formed in Los Angeles, California in 1978."))
+        for (Entity e : new NERBalie().retrieve(FoxCfg.test_input1))
             NERBalie.logger.info(e);
     }
 }

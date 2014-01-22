@@ -10,6 +10,7 @@ import lbj.NETaggerLevel2;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.utils.FoxCfg;
+import org.apache.log4j.PropertyConfigurator;
 
 import LBJ2.classify.Classifier;
 import LBJ2.parse.LinkedVector;
@@ -22,6 +23,16 @@ import LbjTagger.ParametersForLbjCode;
 public class NERIllinois extends AbstractNER {
     public static boolean inUse = false;
     public String file = "data/illinois/Config/allLayer1.config";
+
+    public static void main(String[] a) {
+
+        PropertyConfigurator.configure("log4j.properties");
+        for (Entity e : new NERIllinois().retrieve(
+                "Stanford University is located in California. " +
+                        "It is a great university. Stanford University is located in California. It is a great university."))
+            NERIllinois.logger.info(e);
+
+    }
 
     public NERIllinois() {
         Parameters.readConfigAndLoadExternalData(file);
@@ -148,6 +159,7 @@ public class NERIllinois extends AbstractNER {
                 String word = "";
                 String tag = "";
                 float prob = 0f;
+                int probcount = 0;
                 NEWord w = null;
                 for (int j = 0; j < vector.size(); j++) {
                     w = (NEWord) vector.get(j);
@@ -163,13 +175,10 @@ public class NERIllinois extends AbstractNER {
                     if (open) {
                         word += words[j] + " ";
                         prob += shapePred(w, tag);
-                        // System.out.println(pro(w, tag) + " " + tag);
-                        // first one
-                        if (prob != Double.valueOf(shapePred(w, tag)).floatValue()) {
-                            prob = prob / 2f;
-                        }
+                        probcount++;
                     }
                     if (open) {
+                        prob = prob / probcount;
                         boolean close = false;
                         if (j == vector.size() - 1)
                             close = true;
