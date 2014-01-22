@@ -121,13 +121,14 @@ public class MainFox {
     }
 
     public static void validate(String[] inputFiles) {
-        // TODO: remove FoxClassifier dependency?
-        FoxClassifier foxClassifier = new FoxClassifier();
 
         Set<String> toolResultKeySet = CrossValidation.foxNERTools.getToolResult().keySet();
         String[] prefix = toolResultKeySet.toArray(new String[toolResultKeySet.size()]);
 
         logger.info("tools used: " + toolResultKeySet);
+
+        // TODO: remove FoxClassifier dependency?
+        FoxClassifier foxClassifier = new FoxClassifier();
         setClassifier(foxClassifier, prefix);
 
         Classifier cls = foxClassifier.getClassifier();
@@ -156,7 +157,6 @@ public class MainFox {
         para.put("input", input);
         fox.setParameter(para);
         fox.run();
-        // logger.info(fox.getResults());
     }
 
     /**
