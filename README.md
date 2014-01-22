@@ -7,8 +7,12 @@
 FOX - Federated Knowledge Extraction Framework
 ==============================================
 
+Requirements
+---
+Java 7 and Maven 3.
+
 Installation
-------------
+---
 * Clone the latest version:
  `git clone -b master git@github.com:AKSW/FOX.git`
 
