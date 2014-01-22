@@ -165,14 +165,15 @@ public class FoxTextUtil {
     }
 
     /**
-     * Gets token of one sentence, token defined by {@link FoxTextUtil#tokenSpliter}.
+     * Gets token of one sentence, token defined by
+     * {@link FoxTextUtil#tokenSpliter}.
      * 
      * @param sentence
      *            (with punctuation mark)
      * @return token
      */
     public static synchronized String[] getSentenceToken(String sentence) {
-        System.out.println(sentence);
+        // System.out.println(sentence);
         // Note: Points won't removed, so we remove punctuation marks to points
         // and handle them later
         char punctuationMark = sentence.trim().charAt(sentence.trim().length() - 1);
