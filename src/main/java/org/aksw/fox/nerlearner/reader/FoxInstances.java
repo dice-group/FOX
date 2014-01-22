@@ -1,10 +1,8 @@
 package org.aksw.fox.nerlearner.reader;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +16,6 @@ import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.TokenCategoryMatrix;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
 
@@ -147,30 +144,6 @@ public class FoxInstances {
         return getInstances(token, toolResults, null);
     }
 
-    // // uses toolResults to make TokenCategoryMatrix object for each tool
-    // private Map<String, TokenCategoryMatrix> getTokenCategoryMatrix(Map<String, Set<Entity>> toolResults) {
-    // if (logger.isDebugEnabled())
-    // logger.debug("getTokenCategoryMatrix ...");
-    //
-    // final Set<String> entityClasses = new LinkedHashSet<>(EntityClassMap.entityClasses);
-    // final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = new HashMap<>();
-    //
-    // for (final Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
-    // toolTokenCategoryMatrix.put(
-    // entry.getKey(),
-    // new TokenCategoryMatrix(
-    // token,
-    // entityClasses,
-    // EntityClassMap.getNullCategory(),
-    // entry.getValue(),
-    // FoxTextUtil.tokenSpliter
-    // )
-    // );
-    // }
-    //
-    // return toolTokenCategoryMatrix;
-    // }
-
     // uses toolResults to make TokenCategoryMatrix object for each tool
     private Map<String, TokenCategoryMatrix> getTokenCategoryMatrix(Map<String, Set<Entity>> toolResults) {
         if (logger.isDebugEnabled())
@@ -236,33 +209,5 @@ public class FoxInstances {
         // class att. at last position!
         featureVector.addElement(new Attribute("class", attVals));
         return featureVector;
-    }
-
-    public static void main(String[] args) throws Exception {
-        // prints arff file from input data
-        PropertyConfigurator.configure("log4j.properties");
-
-        TrainingInputReader trainingInputReader = new TrainingInputReader(new String[] { "input/1/1" });
-        String input = trainingInputReader.getInput();
-        Map<String, String> oracle = trainingInputReader.getEntities();
-
-        Map<String, Set<Entity>> map = new HashMap<>();
-        Set<Entity> set = new HashSet<>();
-
-        for (Entry<String, String> e : oracle.entrySet()) {
-            set.add(new Entity(e.getKey(), e.getValue()));
-        }
-        map.put("oracle", set);
-
-        String[] tokenSplit = FoxTextUtil.getSentencesToken(input);
-        List<String> token = Arrays.asList(tokenSplit);
-        Set<String> tokenSet = new HashSet<>();
-        // TODO: replace token with index as we use right now
-        tokenSet.addAll(token);
-
-        FoxInstances foxinstances = new FoxInstances();
-        Instances instances = foxinstances.getInstances(tokenSet, map);
-        System.out.println(instances);
-
     }
 }

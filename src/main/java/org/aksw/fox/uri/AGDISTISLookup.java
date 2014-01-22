@@ -21,8 +21,8 @@ import org.json.simple.JSONValue;
 
 public class AGDISTISLookup implements ILookup {
 
-    private final String parameter = "text=";
-    private final int indexOffset = parameter.length();
+    // private final String parameter = "text=";
+    // private final int indexOffset = parameter.length();
 
     // index mapper
     // maps AGDISTIS index to real index
@@ -119,7 +119,8 @@ public class AGDISTISLookup implements ILookup {
         http.setUseCaches(false);
         http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         http.setRequestProperty("Content-Length", Integer.toString(urlParameters.getBytes().length));
-        // http.setRequestProperty("Content-Length", String.valueOf(data.length()));
+        // http.setRequestProperty("Content-Length",
+        // String.valueOf(data.length()));
 
         OutputStreamWriter writer = new OutputStreamWriter(http.getOutputStream());
         writer.write(urlParameters);
