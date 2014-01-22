@@ -14,7 +14,7 @@ Java 7 and Maven 3.
 Installation
 ---
 * Clone the latest version:
- `git clone -b master git@github.com:AKSW/FOX.git`
+ `git clone -b master https://github.com/AKSW/FOX.git`
 
 * Download [NETagger][2]. This archive contains a `data`, `config`, `lib` and  `dist` folder. Copy the first two to the FOX root.
   The `lib` folder  contains `LBJLibrary-2.8.2.jar` and `LbjNerTagger-2.3.jar` and the `dist` folder contains `LbjNerTagger-2.3.jar`.
