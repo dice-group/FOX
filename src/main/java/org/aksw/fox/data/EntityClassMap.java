@@ -74,7 +74,7 @@ public class EntityClassMap {
     }
 
     /**
-     * Gets the entity class for a Balie entity type/class.
+     * Gets the entity class for a oracel entity type/class.
      */
     public static String oracel(String tag) {
         String t = entityClassesOracel.get(tag);
