@@ -5,20 +5,22 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import org.aksw.fox.data.Entity;
+import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.Logger;
 
-public class AbstractNER implements INER {
+public abstract class AbstractNER implements INER {
 
     public static Logger logger = Logger.getLogger(AbstractNER.class);
-    protected List<Entity> entitySet = null;
+    protected List<Entity> entityList = null;
     protected CountDownLatch cdl = null;
     protected String input = null;
 
-    @Override
-    public List<Entity> retrieve(String input) {
-        return new ArrayList<>();
-    }
+    /*
+     * @Override public List<Entity> retrieve(String input) { return new
+     * ArrayList<>(); }
+     */
+    abstract public List<Entity> retrieve(String input);
 
     @Override
     public String getToolName() {
@@ -28,7 +30,7 @@ public class AbstractNER implements INER {
     @Override
     public void run() {
         if (input != null)
-            entitySet = clean(retrieve(input));
+            entityList = clean(retrieve(input));
         else
             logger.error("Input not set!");
 
@@ -36,11 +38,13 @@ public class AbstractNER implements INER {
             cdl.countDown();
         else
             logger.warn("CountDownLatch not set!");
+
+        logMsg();
     }
 
     @Override
     public List<Entity> getResults() {
-        return entitySet;
+        return entityList;
     }
 
     @Override
@@ -67,37 +71,75 @@ public class AbstractNER implements INER {
     }
 
     /**
-     * Cleans the entities, uses a tokenizer to tokenize all entities with the same algorithm.
+     * Cleans the entities, uses a tokenizer to tokenize all entities with the
+     * same algorithm.
      * 
      * @param list
      * @return
      */
     protected List<Entity> clean(List<Entity> list) {
         logger.info("clean entities ...");
-        // TODO: cache use
+
         // clean token with the tokenizer
         for (Entity entity : list) {
             StringBuilder cleanText = new StringBuilder();
             String[] tokens = FoxTextUtil.getSentenceToken(entity.getText() + ".");
+            // String[] tokens = FoxTextUtil.getToken(entity.getText());
             for (String token : tokens) {
-                if (!token.trim().isEmpty())
+                if (!token.trim().isEmpty()) {
                     cleanText.append(token);
-                if (tokens[tokens.length - 1] != token)
                     cleanText.append(" ");
+                }
             }
             entity.setText(cleanText.toString().trim());
         }
         list = new ArrayList<Entity>(list);
 
-        // TRACE
-        if (logger.isTraceEnabled()) {
-            if (list.size() > 0)
-                logger.trace(list.size() + "(" + list.iterator().next().getTool() + ")");
-            for (Entity entity : list)
-                logger.trace(entity.getText() + "=>" + entity.getType() + "(" + entity.getTool() + ")");
-        }
-        // TRACE
         logger.info("clean entities done.");
         return list;
+    }
+
+    private void logMsg() {
+        // DEBUG
+        if (entityList.size() > 0)
+            logger.debug(entityList.size() + "(" + entityList.iterator().next().getTool() + ")");
+        for (Entity entity : entityList)
+            logger.debug(entity.getText() + "=>" + entity.getType() + "(" + entity.getTool() + ")");
+
+        // INFO
+        int l = 0, o = 0, p = 0;
+        List<String> list = new ArrayList<>();
+        for (Entity e : entityList) {
+            if (!list.contains(e.getText())) {
+                if (e.getType().equals(EntityClassMap.L))
+                    l++;
+                if (e.getType().equals(EntityClassMap.O))
+                    o++;
+                if (e.getType().equals(EntityClassMap.P))
+                    p++;
+                list.add(e.getText());
+            }
+        }
+        logger.info(this.getToolName() + ":");
+        logger.info(l + " LOCs found");
+        logger.info(o + " ORGs found");
+        logger.info(p + " PERs found");
+        logger.info(entityList.size() + " total found");
+        l = 0;
+        o = 0;
+        p = 0;
+        for (Entity e : entityList) {
+            if (e.getType().equals(EntityClassMap.L))
+                l += e.getText().split(" ").length;
+            if (e.getType().equals(EntityClassMap.O))
+                o += e.getText().split(" ").length;
+            if (e.getType().equals(EntityClassMap.P))
+                p += e.getText().split(" ").length;
+        }
+        logger.info(this.getToolName() + "(token):");
+        logger.info(l + " LOCs found");
+        logger.info(o + " ORGs found");
+        logger.info(p + " PERs found");
+        logger.info(l + o + p + " total found");
     }
 }
