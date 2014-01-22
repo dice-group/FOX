@@ -33,14 +33,15 @@ public class TrainingInputReader {
     public static void main(String[] aa) throws Exception {
         PropertyConfigurator.configure("log4j.properties");
 
-        String[] a = { "input/1/1" };
+        String[] a = { "input/2/2" };
 
         TrainingInputReader trainingInputReader = new TrainingInputReader(a);
-        TrainingInputReader.logger.info("======================");
+        TrainingInputReader.logger.info("input: ");
         TrainingInputReader.logger.info(trainingInputReader.getInput());
-        TrainingInputReader.logger.info("======================");
-        TrainingInputReader.logger.info(trainingInputReader.getEntities());
-        TrainingInputReader.logger.info("======================");
+        TrainingInputReader.logger.info("oracle: ");
+        for (Entry<String, String> e : trainingInputReader.getEntities().entrySet()) {
+            TrainingInputReader.logger.info(e.getValue() + "-" + e.getKey());
+        }
     }
 
     protected File[] inputFiles;
@@ -79,31 +80,37 @@ public class TrainingInputReader {
      * @throws IOException
      */
     public String getInput() throws IOException {
-        // Debug
-        if (logger.isDebugEnabled())
-            logger.debug("getInput ...\n" + input);
-        // Debug
+        {
+            // DEBUG
+            if (logger.isDebugEnabled())
+                logger.debug("getInput ...\n" + input);
+
+            // INFO
+            logger.info("input length: " + input.length());
+        }
 
         return input;
     }
 
     public HashMap<String, String> getEntities() throws IOException {
-        {// Debug
+        {
+            // DEBUG
             if (logger.isDebugEnabled()) {
                 logger.debug("getEntities ...");
                 for (Entry<String, String> e : entities.entrySet())
                     logger.debug(e.getKey() + " -> " + e.getValue());
             }
+            // INFO
+            logger.info("oracle raw size: " + entities.size());
+        }
 
-        }// Debug
-
-        {// remove oracle entities aren't in input
+        {
+            // remove oracle entities aren't in input
             Set<Entity> set = new HashSet<>();
 
             for (Entry<String, String> oracleEntry : entities.entrySet())
                 set.add(new Entity(oracleEntry.getKey(), oracleEntry.getValue()));
 
-            // TODO: remove dependency?
             // repair entities (use fox token)
             TokenManager tokenManager = new TokenManager(input);
             tokenManager.repairEntities(set);
@@ -112,7 +119,42 @@ public class TrainingInputReader {
             entities.clear();
             for (Entity e : set)
                 entities.put(e.getText(), e.getType());
-        }//
+        }
+
+        {
+            // INFO
+            logger.info("oracle cleaned size: " + entities.size());
+            int l = 0, o = 0, p = 0;
+            for (Entry<String, String> e : entities.entrySet()) {
+                if (e.getValue().equals(EntityClassMap.L))
+                    l++;
+                if (e.getValue().equals(EntityClassMap.O))
+                    o++;
+                if (e.getValue().equals(EntityClassMap.P))
+                    p++;
+            }
+            logger.info("oracle :");
+            logger.info(l + " LOCs found");
+            logger.info(o + " ORGs found");
+            logger.info(p + " PERs found");
+
+            l = 0;
+            o = 0;
+            p = 0;
+            for (Entry<String, String> e : entities.entrySet()) {
+                if (e.getValue().equals(EntityClassMap.L))
+                    l += e.getKey().split(" ").length;
+                if (e.getValue().equals(EntityClassMap.O))
+                    o += e.getKey().split(" ").length;
+                if (e.getValue().equals(EntityClassMap.P))
+                    p += e.getKey().split(" ").length;
+            }
+            logger.info("oracle (token):");
+            logger.info(l + " LOCs found");
+            logger.info(o + " ORGs found");
+            logger.info(p + " PERs found");
+            logger.info(l + o + p + " total found");
+        }
 
         return entities;
     }
@@ -189,11 +231,16 @@ public class TrainingInputReader {
 
                             String[] token = FoxTextUtil.getSentenceToken(taggedWords + ".");
                             String word = "";
-                            for (String t : token)
+                            for (String t : token) {
 
-                                word += t + " ";
-
-                            entities.put(word.trim(), cat);
+                                if (!word.isEmpty() && t.isEmpty()) {
+                                    put(word, cat);
+                                    word = "";
+                                } else
+                                    word += t + " ";
+                            }
+                            if (!word.isEmpty())
+                                put(word, cat);
                         }
                     }
 
@@ -231,5 +278,19 @@ public class TrainingInputReader {
         // input = input.replaceAll("\n+", "\n");
         // input = input.replaceAll("[.]+", ".");
         return input;
+    }
+
+    protected void put(String word, String classs) {
+        word = word.trim();
+        if (!word.isEmpty()) {
+            if (entities.get(word) != null) {
+                if (!entities.get(word).equals(classs) && !entities.get(word).equals(EntityClassMap.getNullCategory())) {
+                    logger.info("Oracle with a token with diff. annos. No disamb. for now. Ignore token.");
+                    logger.info(word + " : " + classs + " | " + entities.get(word));
+                    entities.put(word, EntityClassMap.getNullCategory());
+                }
+            } else
+                entities.put(word, classs);
+        }
     }
 }
