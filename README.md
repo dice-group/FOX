@@ -1,29 +1,39 @@
-[1]:  http://repo1.maven.org/maven2/edu/stanford/nlp/stanford-corenlp/3.2.0/stanford-corenlp-3.2.0-models.jar
-[2]: http://cogcomp.cs.illinois.edu/download/software/28
+[1]: http://repo1.maven.org/maven2/edu/stanford/nlp/stanford-corenlp/3.2.0/stanford-corenlp-3.2.0-models.jar
+[2]: http://cogcomp.cs.illinois.edu/download/software/45
 [3]: http://sourceforge.net/projects/balie
-[fox]: http://aksw.org/Projects/FOX.html
-[doc]: http://139.18.2.164:4444/demo/index.html#!/home
+[4]: http://aksw.org/Projects/FOX.html
+[5]: http://139.18.2.164:4444/demo/index.html#!/home
 
 FOX - Federated Knowledge Extraction Framework
 ==============================================
 
 Installation
 ------------
-* `git clone -b master git@github.com:AKSW/FOX.git`
-clones the latest version
+* Clone the latest version:
+ `git clone -b master git@github.com:AKSW/FOX.git`
 
-* `./fox_build.sh`
-downloads dependencies and builds the target
+* Download [NETagger][2]. This archive contains a `data` `config`, `lib` and  `dist` folder. Copy the first two to the FOX root.
+  The `lib` folder  contains `LBJLibrary-2.8.2.jar` and `LbjNerTagger-2.3.jar` and the `dist` folder contains `LbjNerTagger-2.3.jar`.
+  Copy this three files to `FOX/lib/illinois`.
 
-* in the target folder, rename `fox.properties-dist` to `fox.properties` and chance the file to your needs
+* Download [stanford models][1] to `FOX/lib`.
 
-* `./target/fox_run_server.sh`
-starts the server
+* Build the target:
+  `./fox_build.sh`
+  
+* Go into the target folder and rename `fox.properties-dist` to `fox.properties` and chance the file to your needs.
+
+* Learn with trainings data (optional with default properties file):
+  `./fox_training.sh`
+
+* Start the server:
+  `./fox_run_server.sh`
+
 
 Demo
 ----
-[FOX 2.0][fox]
+[FOX 2.0][4]
 
 Documentation
 ----
-[FOX 2.0 doc][doc]
+[FOX 2.0 doc][5]

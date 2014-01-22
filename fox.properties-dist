@@ -17,10 +17,10 @@ serializedClassifier : data/stanford/english.all.3class.distsim.crf.ser.gz
 # path to read / write trained model
 modelPath : data/fox
 #tools to use
-nerTools: org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford, org.aksw.fox.nertools.NERIllinois, org.aksw.fox.nertools.NERBalie
+nerTools: org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford, org.aksw.fox.nertools.NERIllinoisExtended, org.aksw.fox.nertools.NERBalie
 # which learner we use. 
 # values are: {  result_vote | class_vote | weka.classifiers.functions.MultilayerPerceptron | weka.classifiers.trees.J48 | ...}
-learner : weka.classifiers.functions.MultilayerPerceptron
+learner : weka.classifiers.trees.J48
 #learneroptions: -C 0.25 -M 2
 #
 # `true` to train fox. tainFox: { true | false }
