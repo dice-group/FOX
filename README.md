@@ -21,7 +21,7 @@ Installation
 * Build the target:
   `./fox_build.sh`
   
-* Go into the target folder and rename `fox.properties-dist` to `fox.properties` and chance the file to your needs.
+* Go into the target folder and rename `fox.properties-dist` to `fox.properties` and change the file to your needs.
 
 * Learn with trainings data (optional with default properties file):
   `./fox_training.sh` (set training to true in  `fox.properties`)
