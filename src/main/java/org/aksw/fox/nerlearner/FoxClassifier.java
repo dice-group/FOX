@@ -146,8 +146,9 @@ public class FoxClassifier {
         }
         // TRACE
         if (logger.isTraceEnabled())
-            logger.trace("\n" + classified);
+            logger.trace("classified: \n" + classified);
         // TRACE
+
         Set<Entity> set = pp.instancesToEntities(classified);
         logger.info("classify done, size: " + set.size());
         logger.info(classifier);
