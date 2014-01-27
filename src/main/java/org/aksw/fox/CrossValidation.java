@@ -44,7 +44,8 @@ public class CrossValidation {
     static String fold = "";
     static String classifierName = "";
 
-    static StringBuffer out = null;
+    static StringBuffer outDetail = null;
+    static StringBuffer outTotal = null;
 
     public static void crossValidation(Classifier cls, String[] inputFiles) throws Exception {
         classifierName = cls.getClass().getName();
@@ -74,7 +75,7 @@ public class CrossValidation {
             instances = foxInstances.getInstances(token, toolResults, oracle);
         }
 
-        // write arff file
+        // write arff file training data
         {
             ArffSaver saver = new ArffSaver();
             try {
@@ -103,7 +104,7 @@ public class CrossValidation {
             // perform cross-validation
             Evaluation evalAll = new Evaluation(randInstances);
             for (int n = 0; n < folds; n++) {
-                logger.info("Validation run = " + (run + 1));
+                logger.info("Validation run = " + (run));
                 logger.info("Validation fold k = " + (n + 1));
                 fold = new Integer(n + 1).toString();
 
@@ -114,8 +115,26 @@ public class CrossValidation {
                 Classifier clsCopy = Classifier.makeCopy(cls);
                 clsCopy.buildClassifier(train);
                 Evaluation eval = new Evaluation(randInstances);
-                eval.evaluateModel(clsCopy, test);
+
+                double[] predictions = eval.evaluateModel(clsCopy, test);
                 evalAll.evaluateModel(clsCopy, test);
+
+                if (true) {
+                    // write used test data with classification to arff
+                    for (int j = 0; j < test.numInstances(); j++)
+                        test.instance(j).setClassValue(predictions[j]);
+
+                    ArffSaver saver = new ArffSaver();
+                    saver.setInstances(test);
+                    try {
+                        saver.setFile(new
+                                File("./tmp/classified_" + (i + 1) + "_" + (n + 1) +
+                                        ".arff"));
+                        saver.writeBatch();
+                    } catch (IOException e) {
+                        logger.error("\n", e);
+                    }
+                }
 
                 // write
                 writeConfusionMatrix(eval);
@@ -127,7 +146,42 @@ public class CrossValidation {
                  * "(" + (i + 1) + ")" + " ===\n") );
                  */
                 printMeasures(eval);
+                try {
+                    logger.info(eval.toClassDetailsString());
+                    logger.info(eval.toMatrixString());
+                } catch (Exception e) {
+                    logger.error("\n", e);
+                }
 
+            }
+            // write totals
+            if (outTotal == null) {
+                outTotal = new StringBuffer();
+                outTotal.append("run,");
+                outTotal.append("classifier,");
+                outTotal.append("class,");
+                outTotal.append("a,");
+                outTotal.append("b,");
+                outTotal.append("c,");
+                outTotal.append("d");
+                outTotal.append('\n');
+            }
+            double[][] cmMatrix = evalAll.confusionMatrix();
+            for (int k = 0; k < EntityClassMap.entityClasses.size(); k++) {
+                outTotal.append(i + 1);
+                outTotal.append(',');
+                outTotal.append(classifierName);
+                outTotal.append(',');
+                outTotal.append(EntityClassMap.entityClasses.get(k));
+                outTotal.append(',');
+                outTotal.append(new Double(cmMatrix[k][0]).intValue());
+                outTotal.append(',');
+                outTotal.append(new Double(cmMatrix[k][1]).intValue());
+                outTotal.append(',');
+                outTotal.append(new Double(cmMatrix[k][2]).intValue());
+                outTotal.append(',');
+                outTotal.append(new Double(cmMatrix[k][3]).intValue());
+                outTotal.append('\n');
             }
             /*
              * System.out.println(evalAll.toSummaryString( "=== " + folds +
@@ -136,10 +190,15 @@ public class CrossValidation {
             myprint(evalAll, cls, randInstances);
 
         }
-
-        String filename = "eval/" + classifierName + ".csv";
+        String filename = "eval/" + classifierName + "_total.csv";
         CSVWriter writer = new CSVWriter(new FileWriter(filename), ',', CSVWriter.NO_QUOTE_CHARACTER);
-        writer.writeNext(out.toString().split(","));
+        writer.writeNext(outTotal.toString().split(","));
+        writer.close();
+
+        //
+        filename = "eval/" + classifierName + ".csv";
+        writer = new CSVWriter(new FileWriter(filename), ',', CSVWriter.NO_QUOTE_CHARACTER);
+        writer.writeNext(outDetail.toString().split(","));
         writer.close();
     }
 
@@ -167,10 +226,10 @@ public class CrossValidation {
                     run, fold,
                     classifierName,
                     EntityClassMap.entityClasses.get(i),
-                    new Double(cmMatrix[i][0]).toString(),
-                    new Double(cmMatrix[i][1]).toString(),
-                    new Double(cmMatrix[i][2]).toString(),
-                    new Double(cmMatrix[i][3]).toString());
+                    String.valueOf(new Double(cmMatrix[i][0]).intValue()),
+                    String.valueOf(new Double(cmMatrix[i][1]).intValue()),
+                    String.valueOf(new Double(cmMatrix[i][2]).intValue()),
+                    String.valueOf(new Double(cmMatrix[i][3]).intValue()));
         }
     }
 
@@ -214,33 +273,33 @@ public class CrossValidation {
     }
 
     public static void writeBuffer(String run, String fold, String classifier, String classs, String a, String b, String c, String d) {
-        if (out == null) {
-            out = new StringBuffer();
-            out.append("run,");
-            out.append("fold,");
-            out.append("classifier,");
-            out.append("class,");
-            out.append("a,");
-            out.append("b,");
-            out.append("c,");
-            out.append("d");
-            out.append('\n');
+        if (outDetail == null) {
+            outDetail = new StringBuffer();
+            outDetail.append("run,");
+            outDetail.append("fold,");
+            outDetail.append("classifier,");
+            outDetail.append("class,");
+            outDetail.append("a,");
+            outDetail.append("b,");
+            outDetail.append("c,");
+            outDetail.append("d");
+            outDetail.append('\n');
         }
-        out.append(run);
-        out.append(',');
-        out.append(fold);
-        out.append(',');
-        out.append(classifier);
-        out.append(',');
-        out.append(classs);
-        out.append(',');
-        out.append(a);
-        out.append(',');
-        out.append(b);
-        out.append(',');
-        out.append(c);
-        out.append(',');
-        out.append(d);
-        out.append('\n');
+        outDetail.append(run);
+        outDetail.append(',');
+        outDetail.append(fold);
+        outDetail.append(',');
+        outDetail.append(classifier);
+        outDetail.append(',');
+        outDetail.append(classs);
+        outDetail.append(',');
+        outDetail.append(a);
+        outDetail.append(',');
+        outDetail.append(b);
+        outDetail.append(',');
+        outDetail.append(c);
+        outDetail.append(',');
+        outDetail.append(d);
+        outDetail.append('\n');
     }
 }
