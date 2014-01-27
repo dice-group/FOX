@@ -17,9 +17,6 @@ import org.apache.log4j.Logger;
  */
 public class FoxCfg {
 
-    public static String test_input1 = "The foundation of the University of Leipzig in 1409 initiated the city's development into a centre of German law and the publishing industry, and towards being a location of the Reichsgericht (High Court), and the German National Library (founded in 1912). The philosopher and mathematician Gottfried Wilhelm Leibniz was born in Leipzig in 1646, and attended the university from 1661-1666.";
-    public static String test_input2 = "Berlin is an American New Wave band. Despite its name, Berlin did not have any known major connections with Germany, but instead was formed in Los Angeles, California in 1978.";
-
     public static String parameter_input = "input";
     public static String parameter_task = "task";
     public static String parameter_urilookup = "urilookup";

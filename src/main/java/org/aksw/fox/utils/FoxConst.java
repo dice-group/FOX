@@ -15,4 +15,8 @@ public class FoxConst {
             "The city's famous Cologne Cathedral (Kölner Dom) is the seat of the Catholic Archbishop of Cologne. " +
             "The University of Cologne (Universität zu Köln) is one of Europe's oldest and largest universities.";
 
+    public static String EXAMPLE_3 =
+            "Berlin is an American New Wave band. Despite its name, Berlin did not have any known major connections " +
+                    "with Germany, but instead was formed in Los Angeles, California in 1978.";
+
 }
