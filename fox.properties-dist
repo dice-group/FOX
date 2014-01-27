@@ -5,14 +5,8 @@ password : foobar
 #
 # ner settings
 ######################
-# 'true' to turn on bin. mode and use default value
-stanfordDefaultRelevance : true
-openNLPDefaultRelevance : true
-balieDefaultRelevance : true
-illinoisDefaultRelevance : true
 #stanford
-#serializedClassifier : edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz
-serializedClassifier : data/stanford/english.all.3class.distsim.crf.ser.gz
+serializedClassifier : edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz
 #
 # path to read / write trained model
 modelPath : data/fox
