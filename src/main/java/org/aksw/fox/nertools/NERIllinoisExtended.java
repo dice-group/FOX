@@ -7,6 +7,7 @@ import java.util.Vector;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.utils.FoxConst;
 import org.apache.log4j.PropertyConfigurator;
 
 import LBJ2.parse.LinkedVector;
@@ -31,7 +32,7 @@ public class NERIllinoisExtended extends AbstractNER {
 
     public static void main(String[] args) throws Exception {
         PropertyConfigurator.configure("log4j.properties");
-        for (Entity e : new NERIllinoisExtended().retrieve(FoxCfg.test_input1))
+        for (Entity e : new NERIllinoisExtended().retrieve(FoxConst.EXAMPLE_1))
             NERIllinoisExtended.logger.info(e);
     }
 

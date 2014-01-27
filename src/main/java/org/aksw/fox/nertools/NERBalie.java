@@ -6,6 +6,7 @@ import java.util.List;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.utils.FoxConst;
 import org.apache.log4j.PropertyConfigurator;
 
 import ca.uottawa.balie.Balie;
@@ -71,7 +72,7 @@ public class NERBalie extends AbstractNER {
 
     public static void main(String[] a) {
         PropertyConfigurator.configure("log4j.properties");
-        for (Entity e : new NERBalie().retrieve(FoxCfg.test_input1))
+        for (Entity e : new NERBalie().retrieve(FoxConst.EXAMPLE_1))
             NERBalie.logger.info(e);
     }
 }
