@@ -11,3 +11,5 @@ lib/stanford-corenlp-3.2.0-models.jar
 config
 lib/illinois
 data/ner-ext
+tmp
+eval
