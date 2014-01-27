@@ -1,12 +1,12 @@
 package org.aksw.fox.nerlearner;
 
 import org.aksw.fox.nerlearner.classifier.ClassVoteClassifier;
+import org.aksw.fox.nerlearner.classifier.FoxVote;
 import org.aksw.fox.nerlearner.classifier.ResultVoteClassifier;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.Logger;
 
 import weka.classifiers.Classifier;
-import weka.classifiers.meta.Vote;
 import weka.core.SelectedTag;
 import weka.core.Utils;
 
@@ -20,7 +20,7 @@ public class FoxClassifierFactory {
      *            tool attribute prefixes
      */
     public static Classifier getClassifierResultVote(String[] prefix) {
-        return getClassifierVote("result", prefix, new SelectedTag(Vote.AVERAGE_RULE, Vote.TAGS_RULES));
+        return getClassifierVote("result", prefix, new SelectedTag(FoxVote.RESULT, FoxVote.FOXTAGS_RULES));
     }
 
     /**
@@ -30,7 +30,7 @@ public class FoxClassifierFactory {
      *            tool attribute prefixes
      */
     public static Classifier getClassifierClassVote(String[] prefix) {
-        return getClassifierVote("class", prefix, new SelectedTag(Vote.MAX_RULE, Vote.TAGS_RULES));
+        return getClassifierVote("class", prefix, new SelectedTag(FoxVote.CLASS, FoxVote.FOXTAGS_RULES));
     }
 
     private static Classifier getClassifierVote(String type, String[] prefix, SelectedTag rule) {
@@ -47,7 +47,7 @@ public class FoxClassifierFactory {
             }
         }
 
-        Vote vote = new Vote();
+        FoxVote vote = new FoxVote();
         vote.setClassifiers(classifier);
         vote.setCombinationRule(rule);
 

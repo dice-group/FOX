@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.aksw.fox.data.EntityClassMap;
 import org.apache.log4j.Logger;
 
 import weka.classifiers.Classifier;
@@ -24,6 +25,7 @@ public class ClassVoteClassifier extends Classifier {
     private static final long serialVersionUID = 708839473310297945L;
     public static Logger logger = Logger.getLogger(ClassVoteClassifier.class);;
 
+    // NER tool names
     protected String attributePrefix = "";
     public static Map<String, Double> attributeF1 = new HashMap<>();
     public static Map<String, String> catTool = new HashMap<>();
@@ -34,11 +36,8 @@ public class ClassVoteClassifier extends Classifier {
 
     @Override
     public double classifyInstance(Instance instance) {
-        // find the 4 cols we need
-        // return this one that is > 0
         int indexCat = -1;
-        int cols = instance.numValues() - 1;
-        for (int i = 0; i < cols; i++)
+        for (int i = 0; i < instance.numValues() - 1; i++)
             if (instance.attribute(i).name().startsWith(attributePrefix))
                 if (instance.value(i) > 0) {
                     String cat = instance.attribute(i).name().replace(attributePrefix, "");
@@ -49,9 +48,9 @@ public class ClassVoteClassifier extends Classifier {
                 }
 
         if (indexCat != -1) {
-            return Double.valueOf(indexCat + "");
+            return Double.valueOf(indexCat);
         } else {
-            return Double.valueOf(new Integer(instance.classAttribute().indexOfValue("NULL")).toString());
+            return Double.valueOf(instance.classAttribute().indexOfValue(EntityClassMap.getNullCategory()));
         }
     }
 
@@ -60,104 +59,78 @@ public class ClassVoteClassifier extends Classifier {
         getCapabilities().testWithFail(instances);
         logger.info("buildClassifier ...");
 
-        /* 1. find f1 to cat */
-
-        // done by each classifier (attributePrefix)
+        // f1
         for (int i = 0; i < instances.classAttribute().numValues(); i++) {
             String category = instances.classAttribute().value(i);
             double f1 = calcF1Score(attributePrefix, category, instances);
             attributeF1.put(attributePrefix + category, f1);
         }
 
-        // DEBUG
-        if (attributeF1.size() == (instances.numAttributes() - 1))
-            for (Entry<String, Double> e : attributeF1.entrySet())
-                logger.info(e.getKey() + " \t" + e.getValue());
-        // DEBUG
-
-        /* 2. we are done, so find tool for cat */
-
-        // do it after last build
+        // after last build
         if (attributeF1.size() == (instances.numAttributes() - 1)) {
-            // do it just by one tool
-            if (catTool.size() == 0) {
-
-                // revert attributeF1
-                Map<Double, String> f1Attribute = new HashMap<>();
-                for (Entry<String, Double> e : attributeF1.entrySet())
-                    f1Attribute.put(e.getValue(), e.getKey());
-
-                // sort
-                List<Double> values = new ArrayList<>(attributeF1.values());
-                Collections.sort(values, Collections.reverseOrder());
-
-                // from max to min
-                for (Double value : values) {
-                    String att = f1Attribute.get(value);
-                    for (int i = 0; i < instances.classAttribute().numValues(); i++) {
-                        String category = instances.classAttribute().value(i);
-                        if (att.endsWith(category))
-                            if (catTool.get(category) == null)
-                                catTool.put(category, att.replace(category, ""));
+            catTool.clear();
+            List<Double> sortedValues = new ArrayList<>(attributeF1.values());
+            Collections.sort(sortedValues, Collections.reverseOrder());
+            for (Double sortedValue : sortedValues)
+                for (Entry<String, Double> entry : attributeF1.entrySet())
+                    if (entry.getValue() == sortedValue) {
+                        logger.info(entry.getKey() + " \t" + entry.getValue());
+                        for (int i = 0; i < instances.classAttribute().numValues(); i++) {
+                            String category = instances.classAttribute().value(i);
+                            if (entry.getKey().endsWith(category))
+                                if (catTool.get(category) == null)
+                                    catTool.put(category, entry.getKey().replace(category, ""));
+                        }
                     }
-                }
-            }
 
             // don't serialize this
             attributeF1 = new HashMap<>();
             // DEBUG
-            logger.debug(catTool.toString());
+            logger.info(catTool.toString());
             // DEBUG
         }
     }
 
     private double calcF1Score(String attributePrefix, String category, Instances instances) {
 
-        double precision = 1.0;
-        double recall = 1.0;
-        double f1 = 0.0;
+        int tp = 0, fp = 0, tn = 0, fn = 0;
 
-        int tp = 0;
-        int fp = 0;
-        int tn = 0;
-        @SuppressWarnings("unused")
-        int fn = 0;
+        int categoryIndex = instances.classAttribute().indexOfValue(category);
 
-        int toolSize = (instances.numAttributes() - 1) / instances.classAttribute().numValues();
-
+        // each instance
         for (int i = 0; i < instances.numInstances(); i++) {
             Instance instance = instances.instance(i);
-            int cols = instance.numValues() - 1;
 
-            double oracleValue = instance.value(cols);
+            int oracleIndex = Double.valueOf(instance.value(instances.numAttributes() - 1)).intValue();
+            double toolValue = instance.value(instances.attribute(attributePrefix + category));
 
-            for (int col = 0; col < cols; col++) {
-                if (instance.attribute(col).name().startsWith(attributePrefix) && instance.attribute(col).name().endsWith(category)) {
-
-                    double toolValue = instance.value(col);
-                    double classValue = Double.valueOf(col % toolSize + "");
-
-                    if (toolValue > 0 && oracleValue == classValue) {
-                        tp++;
-                    } else if (toolValue <= 0 && oracleValue == classValue) {
-                        fp++;
-                    } else if (toolValue > 0 && oracleValue != classValue) {
-                        tn++;
-                    } else if (toolValue <= 0 && oracleValue != classValue) {
-                        fn++;
-                    }
-                }
+            if (toolValue > 0 && oracleIndex == categoryIndex) {
+                tp++;
+            } else if (toolValue <= 0 && oracleIndex == categoryIndex) {
+                fp++;
+            } else if (toolValue > 0 && oracleIndex != categoryIndex) {
+                tn++;
+            } else if (toolValue <= 0 && oracleIndex != categoryIndex) {
+                fn++;
             }
         }
+
+        logger.info(attributePrefix + " " + category + ": ");
+        logger.info("tp: " + tp + " fp: " + fp + " tn: " + tn + " fn: " + fn);
+
+        double precision = 0.0, recall = 0.0, f1 = 0.0;
         if ((tp + fp) > 0) {
-            precision = tp / ((tp + fp) * 1.0);
+            precision = tp / Double.valueOf(tp + fp);
         }
         if ((tp + tn) > 0) {
-            recall = tp / ((tp + tn) * 1.0);
+            recall = tp / Double.valueOf(tp + tn);
         }
         if (precision + recall > 0) {
-            f1 = 2 * ((precision * recall) / (precision + recall));
+            f1 = 2 * (Double.valueOf(precision * recall) / Double.valueOf(precision + recall));
         }
+
+        logger.info("precision: " + precision + " recall: " + recall + " f1: " + f1);
+
         return f1;
     }
 }

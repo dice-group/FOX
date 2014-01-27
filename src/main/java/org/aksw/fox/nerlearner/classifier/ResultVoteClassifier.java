@@ -19,6 +19,7 @@ public class ResultVoteClassifier extends Classifier {
     private static final long serialVersionUID = -4351327405377856444L;
     public static final Logger logger = Logger.getLogger(ResultVoteClassifier.class);
 
+    // NER tool names
     protected String attributePrefix = "";
 
     public ResultVoteClassifier(String attributePrefix) {
@@ -39,20 +40,18 @@ public class ResultVoteClassifier extends Classifier {
      */
     @Override
     public double classifyInstance(Instance instance) {
-        int cols = instance.numValues() - 1;
         int cl = -1;
-        int toolSize = (instance.numAttributes() - 1) / instance.classAttribute().numValues();
-
-        for (int i = 0; i < cols; i++) {
-
-            if (instance.attribute(i).name().startsWith(attributePrefix) && instance.value(i) > 0) {
-                cl = i % toolSize;
-                break;
-            }
-
+        for (int i = 0; i < instance.numValues() - 1; i++) {
+            if (instance.value(i) > 0)
+                if (instance.attribute(i).name().startsWith(attributePrefix)) {
+                    String classs = instance.attribute(i).name().replace(attributePrefix, "");
+                    cl = instance.classAttribute().indexOfValue(classs);
+                    break;
+                }
         }
+
         if (cl != -1)
-            return Double.valueOf(cl + "");
+            return Double.valueOf(cl);
         else
             throw new ArrayIndexOutOfBoundsException("Attribute prefix \"" + attributePrefix + "\" not found.");
     }
@@ -66,17 +65,10 @@ public class ResultVoteClassifier extends Classifier {
         result.disableAll();
 
         // attributes
-        // result.enable(Capability.NOMINAL_ATTRIBUTES);
         result.enable(Capability.NUMERIC_ATTRIBUTES);
-        // result.enable(Capability.DATE_ATTRIBUTES);
-        // result.enable(Capability.STRING_ATTRIBUTES);
-        // result.enable(Capability.RELATIONAL_ATTRIBUTES);
-        // result.enable(Capability.MISSING_VALUES);
 
         // class
         result.enable(Capability.NOMINAL_CLASS);
-        // result.enable(Capability.NUMERIC_CLASS);
-        // result.enable(Capability.DATE_CLASS);
         result.enable(Capability.MISSING_CLASS_VALUES);
 
         // instances
