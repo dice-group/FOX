@@ -300,7 +300,7 @@
 							<!-- <classpathPrefix>lib/</classpathPrefix> -->
 						</manifest>
 						<manifestEntries>
-							<Class-Path>lib/balie/Balie.jar LBJ-2.8.2.jar lib/illinois/LBJLibrary-2.8.2.jar lib/illinois/LbjNerTagger-2.3.jar</Class-Path>
+							<Class-Path>lib/balie/Balie.jar LBJ-2.8.2.jar lib/illinois/LBJLibrary-2.8.2.jar lib/illinois/LbjNerTagger-2.3.jar lib/stanford-corenlp-3.2.0-models.jar</Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -321,7 +321,7 @@
 							<addClasspath>true</addClasspath>
 						</manifest>
 						<manifestEntries>
-							<Class-Path>lib/balie/Balie.jar LBJ-2.8.2.jar lib/illinois/LBJLibrary-2.8.2.jar lib/illinois/LbjNerTagger-2.3.jar</Class-Path>
+							<Class-Path>lib/balie/Balie.jar LBJ-2.8.2.jar lib/illinois/LBJLibrary-2.8.2.jar lib/illinois/LbjNerTagger-2.3.jar lib/stanford-corenlp-3.2.0-models.jar</Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>
