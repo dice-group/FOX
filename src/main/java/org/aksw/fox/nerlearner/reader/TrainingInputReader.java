@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -33,7 +35,26 @@ public class TrainingInputReader {
     public static void main(String[] aa) throws Exception {
         PropertyConfigurator.configure("log4j.properties");
 
-        String[] a = { "input/2/2" };
+        List<String> files = new ArrayList<>();
+        File file = new File("input/3");
+        if (!file.exists()) {
+            throw new IOException("Can't find file or directory.");
+        } else {
+            if (file.isDirectory()) {
+                // read all files in a directory
+                for (File fileEntry : file.listFiles()) {
+                    if (fileEntry.isFile() && !fileEntry.isHidden()) {
+                        files.add(fileEntry.getAbsolutePath());
+                    }
+                }
+            } else if (file.isFile()) {
+                files.add(file.getAbsolutePath());
+            } else {
+                throw new IOException("Input isn't a valid file or directory.");
+            }
+        }
+
+        String[] a = files.toArray(new String[files.size()]);
 
         TrainingInputReader trainingInputReader = new TrainingInputReader(a);
         TrainingInputReader.logger.info("input: ");
