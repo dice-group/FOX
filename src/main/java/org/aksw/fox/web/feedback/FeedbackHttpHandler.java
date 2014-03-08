@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.aksw.fox.utils.FoxCfg;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.log4j.Logger;
 import org.glassfish.grizzly.http.server.HttpHandler;
@@ -121,7 +122,7 @@ public class FeedbackHttpHandler extends HttpHandler {
     }
 
     public boolean checkKey(String key) {
-        if (key.equals("<YOUR API KEY>"))
+        if (key.equals(FoxCfg.get("api_key")))
             return true;
         else
             return false;
