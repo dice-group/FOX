@@ -13,3 +13,4 @@ lib/illinois
 data/ner-ext
 tmp
 eval
+release
