@@ -9,7 +9,8 @@ FOX - Federated Knowledge Extraction Framework
 
 Requirements
 ---
-Java 7 and Maven 3.
+Unix based platform, Java 7, Maven 3, graphviz
+
 
 Installation
 ---
@@ -17,30 +18,25 @@ Installation
  `git clone -b master https://github.com/AKSW/FOX.git`
 
 * Download [NETagger][2]. This archive contains a `data`, `config`, `lib` and  `dist` folder. Copy the first two to the FOX root.
-  The `lib` folder  contains `LBJLibrary-2.8.2.jar` and `LbjNerTagger-2.3.jar` and the `dist` folder contains `LbjNerTagger-2.3.jar`.
+  The `lib` folder  contains `LBJLibrary-2.8.2.jar` and `LBJ-2.8.2.jar` and the `dist` folder contains `LbjNerTagger-2.3.jar`.
   Copy this three files to `FOX/lib/illinois`.
 
 * Download [stanford models][1] to `FOX/lib`.
 
-* Build the target:
+* Build the release:
   `./fox_build.sh`
-  
-* Go into the target folder and rename `fox.properties-dist` to `fox.properties` and change the file to your needs.
+
+* Go into the release folder and rename `fox.properties-dist` to `fox.properties` and change the file to your needs.
 
 * Learn with trainings data (optional with default properties file):
-  `./fox_training.sh` (set training to true in  `fox.properties`)
+  `./fox_train.sh` (set training to true in  `fox.properties`)
 
 * Start the server:
-  `./fox_run_server.sh`
+  `./fox_run.sh`
 
 * Stop the server:
   `./fox_close.sh`
 
-
-Demo
+Demo and Documentation
 ----
 [FOX 2.1.0][4]
-
-Documentation
-----
-[FOX 2.1.0 doc][5]
