@@ -1,0 +1,82 @@
+<div data-ng-include src="'templates/partials/navi.html'"></div>
+<div class="container">
+    <p>The FOX framework can be used programmatically. For more informations read the <a href="doc/index.html">Java documentation</a>. 
+    FOX accepts HTTP POST requests to: </p>
+    <div data-ng-init="showFoxApi=0; showFeedbackApi=0;"></div>
+
+    <button class="btn btn-custom" data-ng-click="showFoxApi=!showFoxApi;showFeedbackApi=0">FOX parameter</button>
+    <a data-ng-href="http://{{host}}/api">http://{{host}}/api</a>
+    <button class="btn btn-custom" data-ng-click="showFeedbackApi=!showFeedbackApi;showFoxApi=0">NER Feedback parameter</button>
+    <a data-ng-href="http://{{host}}/api/ner/feedback">http://{{host}}/api/ner/feedback</a><br>
+    <br>
+    <p>Press the buttons to view the parameters and examples.</p>
+
+    <div data-ng-hide="!showFoxApi">
+        <h3>FOX Parameter</h3>
+        <p>Optional parameters and there default values are marked.</p>
+        <ul>
+            <li>input : text or an url (e.g.: `G. W. Leibniz was born in Leipzig`, `http://en.wikipedia.org/wiki/Leipzig_University`)</li>
+            <li>type : { text | url }</li>
+            <li>task : { NER }</li>
+            <li>output : { JSONLD | N3 | N-TRIPLE | RDF/{ JSON | XML | XML-ABBREV} | TURTLE }</li>
+            <!-- <li>nif : { true | <b>false</b> } </li> -->
+            <li>returnHtml : { true | <b>false</b> }</li>
+            <li>foxlight : an implemented <a href="http://{{host}}/demo/doc/org/aksw/fox/nertools/INER.html">INER</a> class name (e.g.: `org.aksw.fox.nertools.NEROpenNLP`) or `<b>OFF</b>`.
+                <br>Is this parameter given with a wrong value, org.aksw.fox.nertools.NERStanford will be used.</li>
+        </ul>
+        <h3>FOX Response</h3>
+        Each value is urlencoded.
+<pre>[{
+"input"  : "", 
+"output" : "",
+"log"    : ""
+}]</pre>
+
+    <h2>Example requests with curl</h2>
+    <h5>Content-Type: application/x-www-form-urlencoded</h5>
+    <pre>
+curl -d type=text -d task=NER -d output=JSONLD --data-urlencode "input=The foundation of the University of Leipzig in 1409 initiated the city's development into a centre of German law and the publishing industry, and towards being a location of the Reichsgericht (High Court), and the German National Library (founded in 1912). The philosopher and mathematician Gottfried Leibniz was born in Leipzig in 1646, and attended the university from 1661-1666." -H "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api > response.txt
+    </pre>
+    <pre>
+curl -d type=url -d task=NER -d output=TURTLE -d foxlight=org.aksw.fox.nertools.NEROpenNLP --data-urlencode "input=http://en.wikipedia.org/wiki/Leipzig_University" -H "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api > response.txt
+    </pre>
+    <br>
+    <h5>Content-Type: application/json</h5>
+    <pre>curl -d @demo/nerExp.json -H "Content-Type: application/json" http://{{host}}/api > response.txt</pre>
+    <a href="/demo/nerExp.json">demo/nerExp.json</a>
+    <pre>{{nerExp}}</pre>
+
+   </div>
+
+    <div data-ng-hide="!showFeedbackApi">
+    <h3>NER Feedback Parameter</h3>
+<!--
+    <p>Optional parameters and there default values are marked.</p>
+-->
+    <ul>
+        <li>key: the feedback api key, get your key from the author</li>
+        <li>text: plain text with the entities</li>
+        <li>entity_uri: an uri for the given entity</li>
+        <li>surface_form: the surface_form of the entity within the given text</li>
+        <li>offset: the offset of the surface_form in the given text </li>
+        <li>feedback: {correct|incorrect}</li>
+        <li>systems: the name of the used system</li>
+        <li>manual: {false | true}</li>
+        <li>annotation: {LOCATION | ORGANIZATION | PERSON}</li>
+    </ul>
+    <h3>NER Feedback Response</h3>
+    The request responses with `ok` or an error message.
+    <h2>Example requests with curl</h2>
+    <h5>Content-Type: application/json</h5>
+    <pre>curl -d @demo/feedbackExp.json -H "Content-Type: application/json" http://{{host}}/api/ner/feedback > response.txt </pre>
+    <a href="/demo/feedbackExp.json">demo/feedbackExp.json</a>
+    <pre>{{feedbackExp}}</pre>
+
+    <h5>Content-Type: application/x-www-form-urlencoded</h5>
+    <pre>curl -H "Content-Type: application/x-www-form-urlencoded" --data-urlencode "text=Berlin is the capital of Germany." -d "key=&lt;YOUR API KEY&gt;" -d "entity_uri=http://dbpedia.org/resource/Berlin" -d "surface_form=Berlin" -d "offset=0" -d "feedback=correct" -d "systems=User" -d "manual=true" -d "annotaion=LOCATION" http://{{host}}/api/ner/feedback > response.txt</pre>
+    </div>
+</div>
+<br>
+<br>
+<br>   
+    

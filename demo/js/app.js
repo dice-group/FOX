@@ -5,7 +5,7 @@ Fox.pagesCtrl =  ['HomeCtrl', 'DemoCtrl', 'DocCtrl'];
 Fox.config(['$routeProvider', '$locationProvider', function($routeProvider,$locationProvider) {
     angular.forEach(Fox.pages , function(value, key){
         $routeProvider.when('/' + value, {
-            templateUrl: 'partials/' + value + '.html',
+            templateUrl: 'templates/' + value + '.html',
             controller: Fox.pagesCtrl[key]
         });
     });
