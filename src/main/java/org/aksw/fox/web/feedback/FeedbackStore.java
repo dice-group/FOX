@@ -26,9 +26,21 @@ class FeedbackEntry {
     public String annotation = "";
     public String manual = "";
     public String time = "";
+
+    public String toString() {
+        String rtn = "{";
+        rtn += "textid:" + textid + " ";
+        rtn += "entity_uri:" + entity_uri + " ";
+        rtn += "offset:" + offset + " ";
+        rtn += "annotation:" + annotation + "}";
+
+        return rtn;
+    }
 }
 
 public class FeedbackStore extends FeedbackDB {
+
+    public String errorMessage = "";
 
     public FeedbackStore() {
         createTable();
@@ -59,7 +71,7 @@ public class FeedbackStore extends FeedbackDB {
      */
     public boolean insert(TextEntry textEntry, List<FeedbackEntry> feedbackEntries) {
         boolean done = false;
-        if (connect())
+        if (connect()) {
             try {
                 logger.info("inserting ...");
                 Long time = getTime();
@@ -88,10 +100,18 @@ public class FeedbackStore extends FeedbackDB {
                 if (textid >= 0) {
                     logger.info("inserting feedback ...");
 
-                    for (FeedbackEntry fe : feedbackEntries)
-                        insert(textid, time, fe);
-
-                    done = true; // TODO
+                    for (FeedbackEntry fe : feedbackEntries) {
+                        try {
+                            fe.textid = textid;
+                            insert(time, fe);
+                        } catch (SQLException e) {
+                            logger.warn("\n", e);
+                            errorMessage = e.getLocalizedMessage();
+                            break;
+                        }
+                    }
+                    if (errorMessage.isEmpty())
+                        done = true;
 
                     if (!done) {
                         logger.warn("Couldn't execute statement!");
@@ -101,31 +121,33 @@ public class FeedbackStore extends FeedbackDB {
                 }
             } catch (SQLException e) {
                 logger.warn("\n", e);
+                errorMessage = e.getLocalizedMessage();
             } finally {
                 disconnect();
             }
+        }
         return done;
     }
 
-    private void insert(int textid, Long time, FeedbackEntry fe) {
+    private void insert(Long time, FeedbackEntry fe) throws SQLException {
+
+        logger.info(fe);
+
         String sql = "insert into " + feedbackTable +
                 " ( textid, entity_uri, surface_form, offset, feedback," +
                 " systems, annotation, time) values" +
                 " ( ?, ?, ?, ?, ?, ?, ?, ?)";
-        try {
-            PreparedStatement prep = connection.prepareStatement(sql);
-            prep.setInt(1, textid);
-            prep.setString(2, fe.entity_uri);
-            prep.setString(3, fe.surface_form);
-            prep.setInt(4, fe.offset);
-            prep.setString(5, fe.feedback);
-            prep.setString(6, fe.systems);
-            prep.setString(7, fe.annotation);
-            prep.setString(8, time.toString());
-            prep.execute();
-            prep.close();
-        } catch (SQLException e) {
-            logger.warn("\n", e);
-        }
+
+        PreparedStatement prep = connection.prepareStatement(sql);
+        prep.setInt(1, fe.textid);
+        prep.setString(2, fe.entity_uri);
+        prep.setString(3, fe.surface_form);
+        prep.setInt(4, fe.offset);
+        prep.setString(5, fe.feedback);
+        prep.setString(6, fe.systems);
+        prep.setString(7, fe.annotation);
+        prep.setString(8, time.toString());
+        prep.execute();
+        prep.close();
     }
 }

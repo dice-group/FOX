@@ -129,7 +129,7 @@ public class FeedbackHttpHandler extends HttpHandler {
     }
 
     public boolean insertJson(Request request, Response response) {
-        boolean rtn = true;
+        boolean rtn = false;
         String query = getQuery(request);
         logger.info("query:" + query);
 
@@ -172,9 +172,7 @@ public class FeedbackHttpHandler extends HttpHandler {
                             found = false;
                         }
                         if (!found || !tmp_surface_form.equals(fe.surface_form)) {
-                            rtn = false;
-                            logger.error("Can't find surface form in text with the given offset: " + fe.entity_uri);
-                            errorMessage = "Can't find surface form in text with the given offset: " + fe.entity_uri;
+                            setErrorMessage("Can't find surface form in text with the given offset: " + fe.entity_uri);
                             break;
                         }
 
@@ -182,17 +180,15 @@ public class FeedbackHttpHandler extends HttpHandler {
                         if (isValidUrl(fe.entity_uri)) {
                             feedbackEntries.add(fe);
                         } else {
-                            rtn = false;
-                            logger.error("Isn't a valid url: " + fe.entity_uri);
-                            errorMessage = "Isn't a valid url: " + fe.entity_uri;
+                            setErrorMessage("Isn't a valid url: " + fe.entity_uri);
                             break;
                         }
                     }
+                    rtn = true;
 
                 } catch (Exception e) {
                     logger.error("\n", e);
                     errorMessage = "Couldn't read data, check required parameters.";
-                    rtn = false;
                 }
 
                 // optional
@@ -201,16 +197,15 @@ public class FeedbackHttpHandler extends HttpHandler {
                 textEntry.language = (json.get("language") != null) ? json.get("language").toString() : "";
 
                 // insert data
-                if (rtn)
+                if (rtn) {
                     rtn = insert(textEntry, feedbackEntries);
 
+                }
             } else {
-                errorMessage = "Wrong feedback api key.";
-                rtn = false;
+                setErrorMessage("Wrong feedback api key.");
             }
         } else {
-            errorMessage = "Empty query.";
-            rtn = false;
+            setErrorMessage("Empty query.");
         }
         return rtn;
     }
@@ -235,54 +230,56 @@ public class FeedbackHttpHandler extends HttpHandler {
                     try {
                         String key = entry.getKey();
                         if (key != null && entry.getValue().length > 0) {
-
+                            String v = entry.getValue()[0];
                             switch (key.toLowerCase()) {
 
                             case "key":
-                                String apiKey = entry.getValue()[0];
+                                String apiKey = v;
                                 if (apiKey != null && checkKey(apiKey)) {
                                     apiKeyValid = true;
                                 }
                                 break;
 
                             case "text":
-                                textEntry.text = URLDecoder.decode(entry.getValue()[0], "UTF-8");
+                                textEntry.text = URLDecoder.decode(v, "UTF-8");
                                 break;
 
                             case "entity_uri":
-                                fe.entity_uri = URLDecoder.decode(entry.getValue()[0], "UTF-8");
+                                fe.entity_uri = URLDecoder.decode(v, "UTF-8");
                                 break;
 
                             case "surface_form":
-                                fe.surface_form = URLDecoder.decode(entry.getValue()[0], "UTF-8");
+                                fe.surface_form = URLDecoder.decode(v, "UTF-8");
                                 break;
 
                             case "offset":
-                                fe.offset = Integer.valueOf(entry.getValue()[0]);
+                                fe.offset = Integer.valueOf(v);
                                 break;
 
                             case "feedback":
-                                fe.feedback = entry.getValue()[0];
+                                fe.feedback = v;
                                 break;
 
                             case "systems":
-                                fe.systems = entry.getValue()[0];
+                                fe.systems = v;
                                 break;
 
                             case "manual":
-                                fe.manual = entry.getValue()[0];
+                                fe.manual = v;
                                 break;
-
+                            case "annotation":
+                                fe.annotation = v;
+                                break;
                             case "gender":
-                                textEntry.gender = entry.getValue()[0];
+                                textEntry.gender = v;
                                 break;
 
                             case "url":
-                                textEntry.url = entry.getValue()[0];
+                                textEntry.url = v;
                                 break;
 
                             case "language":
-                                textEntry.language = entry.getValue()[0];
+                                textEntry.language = v;
                                 break;
                             }
                         } else {
@@ -297,7 +294,6 @@ public class FeedbackHttpHandler extends HttpHandler {
                         break;
                     }
             }
-            feedbackEntries.add(fe);
         } else {
             errorMessage = "Parameters missing.";
             rtn = false;
@@ -313,22 +309,18 @@ public class FeedbackHttpHandler extends HttpHandler {
         }
         if (!found || !tmp_surface_form.equals(fe.surface_form)) {
             rtn = false;
-            logger.error("Can't find surface form in text with the given offset: " + fe.entity_uri);
-            errorMessage = "Can't find surface form in text with the given offset: " + fe.entity_uri;
-
+            setErrorMessage("Can't find surface form in text with the given offset: " + fe.entity_uri);
         }
 
         // check uri
-        if (isValidUrl(fe.entity_uri)) {
-            feedbackEntries.add(fe);
-        } else {
+        if (!isValidUrl(fe.entity_uri)) {
             rtn = false;
-            logger.error("Isn't a valid url: " + fe.entity_uri);
-            errorMessage = "Isn't a valid url: " + fe.entity_uri;
+            setErrorMessage("Isn't a valid url: " + fe.entity_uri);
         }
 
         // check api key
         if (rtn) {
+            feedbackEntries.add(fe);
             if (!apiKeyValid) {
                 errorMessage = "Wrong feedback api key.";
                 rtn = false;
@@ -356,7 +348,10 @@ public class FeedbackHttpHandler extends HttpHandler {
      * @param in
      */
     protected boolean insert(TextEntry textEntry, List<FeedbackEntry> feedbackEntries) {
-        return this.feedbackStore.insert(textEntry, feedbackEntries);
+        boolean rtn = feedbackStore.insert(textEntry, feedbackEntries);
+        if (!rtn)
+            errorMessage = feedbackStore.errorMessage;
+        return rtn;
     }
 
     public List<String> getMappings() {
@@ -387,5 +382,10 @@ public class FeedbackHttpHandler extends HttpHandler {
             logger.error("\n", e);
         }
         response.finish();
+    }
+
+    private void setErrorMessage(String e) {
+        logger.error(e);
+        errorMessage = e;
     }
 }
