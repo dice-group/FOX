@@ -1,7 +1,6 @@
-<div
-    data-ng-include
-    src="'templates/partials/navi.html'"></div>
 <div class="container">
+    <div data-ng-include src="'templates/partials/navi.html'"></div>
+
     <form class="form-horizontal ">
         <fieldset>
             <div data-ng-hide="!foxResponse.output">
@@ -148,4 +147,7 @@
     <div class="container">
         <pre class="log">{{foxResponse.log}}</pre>
     </div>
+
+
+    <div data-ng-include src="'templates/partials/footer.html'"></div>
 </div>
