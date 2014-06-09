@@ -1,0 +1,30 @@
+<TEXT>
+<ENAMEX TYPE="PERSON"> Anant Agarwal </ENAMEX>
+
+Position: Faculty
+
+<ENAMEX TYPE="LOCATION"> Office: 32-G782 </ENAMEX>
+
+Phone:253-1448 
+E-mail: agarwal@csail.mit.edu 
+
+Research Directorate(s): <ENAMEX TYPE="MISCELLANEOUS"> Systems </ENAMEX>
+
+URL: http://cag.csail.mit.edu/~agarwal/
+Biography:
+
+<ENAMEX TYPE="PERSON"> Anant Agarwal </ENAMEX> holds a Ph.D. (1987) and an MS in <ENAMEX TYPE="MISCELLANEOUS"> Electrical Engineering</ENAMEX> from <ENAMEX TYPE="ORGANIZATION"> Stanford University </ENAMEX> . He got his bachelor's degree in <ENAMEX TYPE="MISCELLANEOUS"> Electrical Engineering </ENAMEX> from <ENAMEX TYPE="ORGANIZATION"> IIT Madras </ENAMEX> (1982). He is currently a professor of <ENAMEX TYPE="MISCELLANEOUS"> Electrical Engineering and Computer Science </ENAMEX> at <ENAMEX TYPE="ORGANIZATION"> MIT </ENAMEX> , where his teaching and research interests include VLSI , computer architecture, compilation, and software systems . He led a group that developed the <ENAMEX TYPE="MISCELLANEOUS"> MIT Alewife </ENAMEX> , a scalable shared-memory multiprocessor. He also led the <ENAMEX TYPE="MISCELLANEOUS"> VirtualWires </ENAMEX> project at <ENAMEX TYPE="ORGANIZATION"> MIT </ENAMEX> and was founder of <ENAMEX TYPE="ORGANIZATION"> Virtual Machine Works, Inc. </ENAMEX> , which took the <ENAMEX TYPE="MISCELLANEOUS"> VirtualWires </ENAMEX> logic emulation technology to market. He currently leads the <ENAMEX TYPE="MISCELLANEOUS"> Raw </ENAMEX> project in the <ENAMEX TYPE="ORGANIZATION"> Computer Science and Artificial Intelligence Laboratory </ENAMEX> . He is also founder of <ENAMEX TYPE="ORGANIZATION"> InCert Software Corporation </ENAMEX> , which is applying a software agent technology to enterprise applications management.
+Recent and/or Significant Publications:
+
+<ENAMEX TYPE="PERSON"> A. Agarwal, M. Horowitz, , John Hennessy </ENAMEX> <ENAMEX TYPE="MISCELLANEOUS"> "An Analytical Cache Model." </ENAMEX> <ENAMEX TYPE="MISCELLANEOUS"> ACM Transactions on Computer Systems </ENAMEX> , 7:2, May 1989, pp. 184-215.
+
+<ENAMEX TYPE="PERSON"> A. Agarwal, J. Babb, D. Chaiken, G.D. Souza, K. Johnson, D. Kranz, J. Kubiatowicz, B.H. Lim, G. Maa, K. MacKenzie, D. Nussbaum, M. Parkin,  D. Yeung </ENAMEX> <ENAMEX TYPE="MISCELLANEOUS"> "Sparcle: Today's micro for Tomorrow's Multiprocessor." </ENAMEX> In proceedings of the <ENAMEX TYPE="MISCELLANEOUS"> HOTCHIPS Conference </ENAMEX> , August 1992, and also in <ENAMEX TYPE="MISCELLANEOUS"> IEEE Micro 13:3 </ENAMEX> , June 1993, PP.48-61.
+
+<ENAMEX TYPE="PERSON"> J. Babb, R. Tessier, and A. Agarwal</ENAMEX> <ENAMEX TYPE="MISCELLANEOUS">Virtual Wires: Overcoming Pin Limitations in FPGA-Based Logic Emulators </ENAMEX> In proceedings of the <ENAMEX TYPE="MISCELLANEOUS"> First IEEE Workshop on FPGAs for Custom Computing Machines (FCCM"93) </ENAMEX> . April 1993, pp 142-151.
+
+<ENAMEX TYPE="PERSON"> A. Agarwal, R. Bianchini, D. Chaiken, K. Johnson, D. Kranz, J. Kubiatowicz, B. H. LIm, K. MacKenzie, D. Yeung</ENAMEX> <ENAMEX TYPE="MISCELLANEOUS"> " The MIT Alewife Machine: Architecture and Performance." </ENAMEX> In proceedings of the <ENAMEX TYPE="MISCELLANEOUS"> 22nd Annual Internationsl Symposium on Computer Architecture (ISCA 1995) </ENAMEX> , June 1995, pp 2-13.
+    
+<ENAMEX TYPE="ORGANIZATION"> MIT Computer Science and Artificial Intelligence Laboratory </ENAMEX>
+<ENAMEX TYPE="LOCATION"> The Stata Center, Building 32 - 32 Vassar Street - Cambridge, MA 02139 - USA </ENAMEX>
+tel:+1-617-253-5851 - webmaster@csail.mit.edu 
+</TEXT>

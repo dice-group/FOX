@@ -1,0 +1,101 @@
+<TEXT>
+<ENAMEX TYPE="PERSON"> Gerard J. Holzmann  </ENAMEX> 
+ gholzmann (insert atsign here )  acm.org  
+
+<ENAMEX TYPE="ORGANIZATION"> NASA/JPL Laboratory for Reliable Software  </ENAMEX>  ,
+and <ENAMEX TYPE="ORGANIZATION"> Caltech CS  </ENAMEX>  , <ENAMEX TYPE="LOCATION"> Pasadena, CA  </ENAMEX>  .
+
+interested in: software reliability, software analysis methods, formal verification, metrics, logic model checking, distributed systems design, analysis of multi-threaded software, testing, requirements capture and analysis, algorithms, user interface design, graphic design, text processing, image processing, history of technology, technology transfer.
+
+before joining <ENAMEX TYPE="ORGANIZATION"> jpl  </ENAMEX>  i worked in the cs research group at <ENAMEX TYPE="ORGANIZATION"> bell labs  </ENAMEX>  (1980-1981 and 1983-2003) a truly remarkable group that was given virtually complete freedom to pursue research goals, with no perceptible management oversight. i made a map of the 5th floor at stair 9 in building 2, the most desirable location for one's office at the time. the map lists the main occupants for each office over the years, with the person that occupied it the longest in red. from the 30-some people shown on this map, just a few remained to witness the final disappearance of center 1127 from the <ENAMEX TYPE="ORGANIZATION"> bell labs  </ENAMEX>  org charts in august 2005: <ENAMEX TYPE="PERSON"> rae mclellan  </ENAMEX>  , <ENAMEX TYPE="PERSON"> howard trickey  </ENAMEX>  (since moved to <ENAMEX TYPE="ORGANIZATION"> google  </ENAMEX>  ) and <ENAMEX TYPE="PERSON"> dennis ritchie  </ENAMEX>  . one by one, the others all found a safe haven elsewhere.
+remarkably, 8 of the 30 people whose name is shown on this map (and about 18 former members of center 1127 alltogether) now work at <ENAMEX TYPE="ORGANIZATION"> google  </ENAMEX>  .
+
+Software
+	
+
+    * <ENAMEX TYPE="MISCELLANEOUS"> Spin  </ENAMEX>  an efficient verification system for distributed software systems (a logic model checker).
+    * <ENAMEX TYPE="MISCELLANEOUS"> Feaver   </ENAMEX>  a model extraction system for ANSI-C source code: the first step towards the development of a general purpose tool for the verification of distributed systems applications directly from program source text. the system was used at <ENAMEX TYPE="ORGANIZATION"> Bell Labs  </ENAMEX>  between 1998 and 2000 to exhaustively verify the call-processing software of <ENAMEX TYPE="MISCELLANEOUS"> Lucent's PathStar  </ENAMEX>  access server. The source code is available, see the <ENAMEX TYPE="MISCELLANEOUS"> Modex  </ENAMEX>  distribution page.
+    * <ENAMEX TYPE="MISCELLANEOUS"> Uno  </ENAMEX>  A simple static analysis tool for ANSI C programs, based on Ctree 0.14.
+    * <ENAMEX TYPE="MISCELLANEOUS"> Ubet  </ENAMEX>  a requirements capture and analysis toolset from around 1995, originally called <ENAMEX TYPE="MISCELLANEOUS"> msc/poga  </ENAMEX> , later productized and distributed within <ENAMEX TYPE="MISCELLANEOUS"> Lucent   </ENAMEX>  as the uBET tool.
+    * <ENAMEX TYPE="MISCELLANEOUS"> Sdlvalid  </ENAMEX>  , an early verifier for SDL. the tool was written in 1987/1988, and was used internally for about five years. it was never approved for public release.
+    * <ENAMEX TYPE="MISCELLANEOUS"> microtrace  </ENAMEX>  a demo awk-script for FSM verification (written 1987).
+    * <ENAMEX TYPE="MISCELLANEOUS"> Pico/Popi  </ENAMEX>  digital darkroom software (written 1984). For the curious, here is also a tar archive pico.tar with the pre-ansi c source code that includes the little on-the-fly compiler that <ENAMEX TYPE="PERSON"> Ken Thompson  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Rob Pike  </ENAMEX>  wrote. The compiler in gen.c (also written in 1984) generated machine code for a VAX. Of course, this code will not compile or run on any modern machine. See also <ENAMEX TYPE="MISCELLANEOUS"> Pico's  </ENAMEX>  website. 
+
+Books
+	
+
+    * <ENAMEX TYPE="MISCELLANEOUS"> The Spin Model Checker - Primer and Reference Manual  </ENAMEX>  . The new book, describing the most recent version of <ENAMEX TYPE="MISCELLANEOUS"> Spin  </ENAMEX>  , 608 pgs. <ENAMEX TYPE="ORGANIZATION"> Addison-Wesley  </ENAMEX>   Publ., ISBN 0-321-22862-6, available September 2003.
+    * <ENAMEX TYPE="MISCELLANEOUS"> Design and Validation of Computer Protocols  </ENAMEX>  , <ENAMEX TYPE="ORGANIZATION"> Prentice Hall  </ENAMEX>  , 1991. The first <ENAMEX TYPE="MISCELLANEOUS"> Spin  </ENAMEX>  book. <ENAMEX TYPE="MISCELLANEOUS"> Spin  </ENAMEX>  was written for this book in 1989.
+    * <ENAMEX TYPE="MISCELLANEOUS"> The Early History of Data Networks  </ENAMEX>  , <ENAMEX TYPE="ORGANIZATION"> IEEE Computer Society Press  </ENAMEX>  , 1995. (inspired by the first chapter in the <ENAMEX TYPE="MISCELLANEOUS"> Design and Validation  </ENAMEX>  book.)
+    * <ENAMEX TYPE="MISCELLANEOUS"> Beyond Photography -- The Digital Darkroom  </ENAMEX>  , <ENAMEX TYPE="ORGANIZATION"> Prentice Hall  </ENAMEX>  , 1988. The first book to coin the term digital darkroom; it predicted that the days of conventional photograph would be numbered. The book, and lots of background information, is today accessible online via the link above.
+
+Papers etc.
+	
+
+    * publications, with PDF for most papers (new)
+    * abstracts for selected papers
+
+Little Movies
+	
+
+    * <ENAMEX TYPE="MISCELLANEOUS"> pixelface  </ENAMEX>  , 1988, a five minute demo of <ENAMEX TYPE="MISCELLANEOUS"> Pico/Popi  </ENAMEX>  (Mpeg 40Mb).
+      A portion of the video was shown on <ENAMEX TYPE="MISCELLANEOUS"> CNN Science & Technology report  </ENAMEX>  in 1989: see clip.
+    * <ENAMEX TYPE="MISCELLANEOUS"> walkman  </ENAMEX>  , 1984, a 40 second try to make a little movie, with <ENAMEX TYPE="PERSON"> Rob Pike  </ENAMEX>  , <ENAMEX TYPE="PERSON"> Don Mitchell  </ENAMEX>  , and <ENAMEX TYPE="PERSON"> Lillian Schwartz  </ENAMEX>  (Mpeg 7 Mb).
+      A frame from the movie was used for the cover of <ENAMEX TYPE="MISCELLANEOUS"> IEEE Spectrum  </ENAMEX> , June 1984.
+
+Covers, Logos etc.
+	
+
+
+    * The first <ENAMEX TYPE="ORGANIZATION"> Inferno  </ENAMEX>  logo, 1996.
+    * <ENAMEX TYPE="ORGANIZATION"> CS Research Center  </ENAMEX>  logo, 1997.
+    * <ENAMEX TYPE="MISCELLANEOUS"> Spin  </ENAMEX>  logo , 2000.
+    * <ENAMEX TYPE="ORGANIZATION"> NASA/JPL Lars  </ENAMEX>  logo, 2004.
+
+    * CD, floppies, and manual covers, Plan-9, 2nd Edition,
+      <ENAMEX TYPE="ORGANIZATION"> Pub. Harcourt Brace & Company  </ENAMEX>  , <ENAMEX TYPE="LOCATION"> Orlando, Fl.  </ENAMEX>  , 1995.
+      (Illustrations from <ENAMEX TYPE="PERSON"> Louis Figuier  </ENAMEX>  , <ENAMEX TYPE="ORGANIZATION"> Les Merveilles de la Science  </ENAMEX>  , <ENAMEX TYPE="LOCATION"> Paris  </ENAMEX>  1867.)
+    * CD, <ENAMEX TYPE="MISCELLANEOUS"> Plan-9  </ENAMEX>  from <ENAMEX TYPE="ORGANIZATION"> Bell Labs  </ENAMEX>  , 1st Edition, 1992.
+      (Three actors from Plan-9, the movie by <ENAMEX TYPE="PERSON"> Ed Wood  </ENAMEX>  .)
+    * CD, <ENAMEX TYPE="MISCELLANEOUS"> Chess Endgames  </ENAMEX>  , Vols 1-4, (issued by <ENAMEX TYPE="PERSON"> Ken Thompson  </ENAMEX>  , 1991)
+      (Chess-piece and a small part of <ENAMEX TYPE="PERSON"> Leonardo da Vinci  </ENAMEX>  's Creation.)
+
+    * <ENAMEX TYPE="MISCELLANEOUS"> AT&T Technical Journal  </ENAMEX>  , March/April 1987, Vol 66, Issue 2.
+      (Cover with a transformed <ENAMEX TYPE="MISCELLANEOUS"> Pico/Popi  </ENAMEX>  Image of <ENAMEX TYPE="PERSON"> Peter Weinberger  </ENAMEX>  's portrait.)
+    * <ENAMEX TYPE="MISCELLANEOUS"> AT&T Bell Laboratories Technical Journal  </ENAMEX>  , October 1984, Vol 63, No. 8, Part 2. Special Issue on Unix (cover with computer generated graphics.)
+
+Photos
+	
+
+    * Portraits, a small selection of the portraits I've taken in the last 25 years or so, mostly with a large studio view camera.
+    * Masks and Statues from the collection of <ENAMEX TYPE="PERSON"> Norbert Elias  </ENAMEX>  , taken between 1983 and 1987 in <ENAMEX TYPE="LOCATION"> Amsterdam  </ENAMEX> 
+    * Pictures of <ENAMEX TYPE="PERSON"> Tessa  </ENAMEX>  , the start of a well-documented life... 
+
+Press
+	
+
+    * Story in <ENAMEX TYPE="ORGANIZATION"> IEEE Computer  </ENAMEX>  , Jan. 2004
+    * Interview with <ENAMEX TYPE="ORGANIZATION"> FTP online  </ENAMEX>  , Oct. 2003
+    * Interview with <ENAMEX TYPE="ORGANIZATION"> objectmonkey.com  </ENAMEX> , Oct. 2003
+    * <ENAMEX TYPE="ORGANIZATION"> MIT Technology Review  </ENAMEX>  , February 2003, brief mention in the category of <ENAMEX TYPE="MISCELLANEOUS"> Software Assurance  </ENAMEX>  , in article on <ENAMEX TYPE="MISCELLANEOUS"> "10 Emerging Technologies That Will Change the World."  </ENAMEX> 
+    * Interview with <ENAMEX TYPE="ORGANIZATION"> Software Development Magazine (SD Magazine)  </ENAMEX>  , on software verification, September 2002, p.15.
+    * <ENAMEX TYPE="ORGANIZATION"> NJN New Jersey Network News  </ENAMEX>  , an interview on software quality aired in the science and technology segment on March 6, 2002.
+    * Two Dutch journals, <ENAMEX TYPE="ORGANIZATION"> Technisch Weekblad  </ENAMEX>  , No. 17, and <ENAMEX TYPE="ORGANIZATION"> Embedded Systems  </ENAMEX>  , published interviews (in Dutch).
+    * <ENAMEX TYPE="ORGANIZATION"> Infoworld  </ENAMEX>  , October 26, 2001 Short feature on code debugging.
+    * <ENAMEX TYPE="ORGANIZATION"> CIO magazine  </ENAMEX>  , August 1, 2001. Brief mention of software verification project.
+    * <ENAMEX TYPE="ORGANIZATION"> New Scientist  </ENAMEX>  , 18 November, 2000
+    * Future of <ENAMEX TYPE="ORGANIZATION"> Software Column  </ENAMEX>  published in <ENAMEX TYPE="ORGANIZATION"> FTP magazine  </ENAMEX>  in 2000, <ENAMEX TYPE="ORGANIZATION"> Fawcette Publ  </ENAMEX> .
+    * A series of columns on <ENAMEX TYPE="MISCELLANEOUS"> Smart Machines  </ENAMEX>  , published in <ENAMEX TYPE="ORGANIZATION"> Inc. Technology  </ENAMEX> 
+
+Other
+	
+
+    * <ENAMEX TYPE="MISCELLANEOUS"> JPL Fellow  </ENAMEX>  , May 2007.
+    * <ENAMEX TYPE="ORGANIZATION"> Caltech  </ENAMEX>  CS, Faculty Associate, May 2007.
+    * Honorary doctorate, <ENAMEX TYPE="ORGANIZATION"> Twente University  </ENAMEX>  , <ENAMEX TYPE="LOCATION"> The Netherlands  </ENAMEX>  , December 2006.
+    * <ENAMEX TYPE="MISCELLANEOUS"> ACM Kanellakis Theory and Practice Award  </ENAMEX>  , May 2006 (with <ENAMEX TYPE="PERSON"> Vardi </ENAMEX>  , <ENAMEX TYPE="PERSON"> Wolper  </ENAMEX>  , and <ENAMEX TYPE="PERSON"> Kurshan  </ENAMEX>  ). (press release March 2006)
+    * <ENAMEX TYPE="ORGANIZATION"> US National Academy of Engineering  </ENAMEX>  , elected member 2005.
+    * <ENAMEX TYPE="MISCELLANEOUS"> Thomas Alva Edison Patent Award  </ENAMEX> , 2003, in the <ENAMEX TYPE="MISCELLANEOUS"> Information Technology Category  </ENAMEX>  , for a patent on software verification with <ENAMEX TYPE="MISCELLANEOUS"> FeaVer  </ENAMEX>  and <ENAMEX TYPE="MISCELLANEOUS">  Spin   </ENAMEX>  (with <ENAMEX TYPE="PERSON"> Ken Thompson  </ENAMEX>  and <ENAMEX TYPE="PERSON"> Phil Winterbottom  </ENAMEX>  ), July 2003.
+    * <ENAMEX TYPE="MISCELLANEOUS"> ACM SigSoft Outstanding Research award  </ENAMEX>  , 2002
+    * <ENAMEX TYPE="MISCELLANEOUS"> ACM System Software Award   </ENAMEX>  
+</TEXT>
