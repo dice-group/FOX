@@ -39,7 +39,7 @@ Installation
 
 Demo and Documentation
 ----
-[FOX 2.1.0][4]
+[FOX 2.2.0][4]
 
 Datasets
 ----
