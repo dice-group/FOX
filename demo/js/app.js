@@ -1,7 +1,7 @@
 'use strict';
 var Fox = angular.module('Fox',['ngResource', 'ui.bootstrap', 'ui']);
-Fox.pages =      ['home', 'demo', 'doc'];
-Fox.pagesCtrl =  ['HomeCtrl', 'DemoCtrl', 'DocCtrl'];
+Fox.pages =      ['home', 'demo', 'downloads', 'doc'];
+Fox.pagesCtrl =  ['HomeCtrl', 'DemoCtrl', 'DownloadCtrl', 'DocCtrl'];
 Fox.config(['$routeProvider', '$locationProvider', function($routeProvider,$locationProvider) {
     angular.forEach(Fox.pages , function(value, key){
         $routeProvider.when('/' + value, {
