@@ -40,3 +40,11 @@ Installation
 Demo and Documentation
 ----
 [FOX 2.1.0][4]
+
+Datasets
+----
+The datasets are in the `FOX/input` folder.
+
+License
+----
+FOX is licensed under the [GNU General Public License Version 3, 29 June 2007](http://www.gnu.org/licenses/gpl-3.0.txt) (license document is in the application folder).
