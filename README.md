@@ -43,7 +43,9 @@ Demo and Documentation
 
 Datasets
 ----
-The datasets are in the `FOX/input` folder.
+The training and testing datasets are in the `FOX/input` folder.
+
+The resulting raw data from the learning and testing process are in the `FOX/evaluation` folder.
 
 License
 ----
