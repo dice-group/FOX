@@ -10,9 +10,8 @@ import org.apache.log4j.WriterAppender;
 
 public class FoxWebLog {
 
-    public static Logger logger = Logger.getLogger(FoxWebLog.class);
-
-    private final StringWriter consoleWriter = new StringWriter();
+    private Logger       logger        = Logger.getLogger(FoxWebLog.class);
+    private StringWriter consoleWriter = new StringWriter();
 
     /**
      * 
