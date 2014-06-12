@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +20,7 @@ import org.aksw.fox.nertools.NERStanford;
 import org.aksw.fox.uri.AGDISTISLookup;
 import org.aksw.fox.uri.ILookup;
 import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.utils.FoxConst;
 import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.aksw.fox.utils.FoxWebLog;
@@ -34,41 +36,41 @@ import org.jetlang.fibers.ThreadFiber;
  */
 public class Fox implements IFox {
 
-    public static Logger logger = Logger.getLogger(Fox.class);
+    public static Logger        logger         = Logger.getLogger(Fox.class);
 
     /**
      * 
      */
-    protected ILookup uriLookup = null;
+    protected ILookup           uriLookup      = null;
 
     /**
      * 
      */
-    protected FoxNERTools nerTools = null;
+    protected FoxNERTools       nerTools       = null;
 
     /**
      * 
      */
-    protected TokenManager tokenManager = null;
+    protected TokenManager      tokenManager   = null;
 
     /**
      * 
      */
-    protected FoxJena foxJena = new FoxJena();
+    protected FoxJena           foxJena        = new FoxJena();
 
     /**
      * Holds a tool for fox's light version.
      */
-    protected INER nerLight = null;
+    protected INER              nerLight       = null;
 
     /**
      * 
      */
-    protected FoxWebLog foxWebLog = null;
+    protected FoxWebLog         foxWebLog      = null;
 
-    private CountDownLatch countDownLatch = null;
-    private Map<String, String> parameter = null;
-    private String response = null;
+    private CountDownLatch      countDownLatch = null;
+    private Map<String, String> parameter      = null;
+    private String              response       = null;
 
     /**
      * 
@@ -104,7 +106,7 @@ public class Fox implements IFox {
     @Override
     public void run() {
 
-        foxWebLog = new FoxWebLog();
+        foxWebLog = new FoxWebLog(UUID.randomUUID().toString());
         foxWebLog.setMessage("Running Fox...");
 
         if (parameter == null) {
@@ -351,9 +353,7 @@ public class Fox implements IFox {
     @Override
     public Map<String, String> getDefaultParameter() {
         Map<String, String> map = new HashMap<>();
-        map.put(
-                FoxCfg.parameter_input,
-                    "Leipzig was first documented in 1015 in the chronicles of Bishop Thietmar of Merseburg and endowed with city and market privileges in 1165 by Otto the Rich. Leipzig has fundamentally shaped the history of Saxony and of Germany and has always been known as a place of commerce. The Leipzig Trade Fair, started in the Middle Ages, became an event of international importance and is the oldest remaining trade fair in the world.");
+        map.put(FoxCfg.parameter_input, FoxConst.EXAMPLE_1);
         map.put(FoxCfg.parameter_task, "ner");
         map.put(FoxCfg.parameter_output, "rdf");
         map.put(FoxCfg.parameter_nif, "false");

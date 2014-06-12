@@ -10,14 +10,14 @@ import org.apache.log4j.WriterAppender;
 
 public class FoxWebLog {
 
-    private Logger       logger        = Logger.getLogger(FoxWebLog.class);
+    private Logger       logger        = null;
     private StringWriter consoleWriter = new StringWriter();
 
     /**
      * 
      */
-    public FoxWebLog() {
-
+    public FoxWebLog(String name) {
+        logger = Logger.getLogger(name);
         // add appender to log
         WriterAppender appender = new WriterAppender(new PatternLayout("%d{HH:mm:ss} - %m%n"), consoleWriter);
         appender.setName("CONSOLE_APPENDER");
@@ -49,7 +49,7 @@ public class FoxWebLog {
     public static void main(String[] args) {
         PropertyConfigurator.configure("log4j.properties");
 
-        FoxWebLog foxWebLog = new FoxWebLog();
+        FoxWebLog foxWebLog = new FoxWebLog("mylog");
         foxWebLog.setMessage("That is a test message.");
         foxWebLog.setMessage("That is an other test message.");
 
