@@ -9,7 +9,7 @@ FOX - Federated Knowledge Extraction Framework
 
 Requirements
 ---
-Unix based platform, Java 7, Maven 3, graphviz
+Java 7, Maven 3, graphviz
 
 
 Installation
@@ -17,9 +17,8 @@ Installation
 * Clone the latest version:
  `git clone -b master https://github.com/AKSW/FOX.git`
 
-* Download [NETagger][2]. This archive contains a `data`, `config`, `lib` and  `dist` folder. Copy the first two to the FOX root.
-  The `lib` folder  contains `LBJLibrary-2.8.2.jar` and `LBJ-2.8.2.jar` and the `dist` folder contains `LbjNerTagger-2.3.jar`.
-  Copy this three files to `FOX/lib/illinois`.
+* Download [NETagger][2]. This archive contains a `data`, `config` and `dist` folder. Copy the first two to the FOX root.
+  The `dist` folder contains `LbjNerTagger-2.3.jar`. Copy this file to `FOX/lib/illinois`.
 
 * Download [stanford models][1] to `FOX/lib`.
 
