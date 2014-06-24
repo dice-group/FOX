@@ -26,11 +26,11 @@ import weka.core.Instances;
  */
 public class PostProcessing implements IPostProcessing {
 
-    public static Logger logger = Logger.getLogger(PostProcessing.class);
+    public static Logger               logger       = Logger.getLogger(PostProcessing.class);
 
-    protected Map<String, Set<Entity>> toolResults = null;
+    protected Map<String, Set<Entity>> toolResults  = null;
 
-    protected TokenManager tokenManager = null;
+    protected TokenManager             tokenManager = null;
 
     /**
      * 
@@ -174,9 +174,11 @@ public class PostProcessing implements IPostProcessing {
         for (Entry<String, String> entry : labeledEntityToken.entrySet()) {
 
             String label = entry.getKey();
-            String token = tokenManager.getToken(tokenManager.getLabelIndex(label));
             String category = entry.getValue();
+
+            String token = tokenManager.getToken(tokenManager.getLabelIndex(label));
             int labelIndex = tokenManager.getLabelIndex(label);
+
             // test previous index
             boolean testIndex = false;
             if (results.size() > 0) {
@@ -187,14 +189,20 @@ public class PostProcessing implements IPostProcessing {
             }
 
             // check previous index and entity category
-            if (testIndex && results.get(results.size() - 1).getType().equals(category))
+            if (testIndex && results.get(results.size() - 1).getType().equals(category)) {
                 results.get(results.size() - 1).addText(token);
-            else {
-
-                Entity entity = new Entity(token, category, Entity.DEFAULT_RELEVANCE, "fox");
-                int index = Integer.valueOf(label.split(TokenManager.SEP)[1]);
-                entity.addIndicies(index);
-                results.add(entity);
+            } else {
+                int index = -1;
+                try {
+                    index = Integer.valueOf(label.split(TokenManager.SEP)[1]);
+                } catch (Exception e) {
+                    logger.error("\n label: " + label, e);
+                }
+                if (index > -1) {
+                    Entity entity = new Entity(token, category, Entity.DEFAULT_RELEVANCE, "fox");
+                    entity.addIndicies(index);
+                    results.add(entity);
+                }
             }
 
             // remember last label
