@@ -15,9 +15,11 @@ import org.glassfish.grizzly.http.server.StaticHttpHandler;
  */
 public class Server {
 
-    public static Logger logger = Logger.getLogger(Server.class);
+    public static Logger        logger        = Logger.getLogger(Server.class);
 
-    protected final HttpServer server = new HttpServer();
+    private final static String Listener_Name = "FoxNetworkListener";
+
+    protected final HttpServer  server        = new HttpServer();
 
     /**
      * Adds HttpHandler.
@@ -26,8 +28,11 @@ public class Server {
      */
     public Server(int port) {
 
-        server.addListener(new NetworkListener("FoxNetworkListener", NetworkListener.DEFAULT_NETWORK_HOST, port));
+        server.addListener(new NetworkListener(Listener_Name, NetworkListener.DEFAULT_NETWORK_HOST, port));
+
         String state = null;
+
+        // demoHttpHandler
         state = FoxCfg.get("demoHttpHandler");
         if (state != null && state.equalsIgnoreCase("true")) {
             StaticHttpHandler shl = new StaticHttpHandler("demo");
@@ -41,6 +46,8 @@ public class Server {
             server.getServerConfiguration().addHttpHandler(shl, "/", "/demo");
 
         }
+
+        // apiHttpHandler
         state = FoxCfg.get("apiHttpHandler");
         if (state != null && state.equalsIgnoreCase("true")) {
             FoxHttpHandler foxhttp = new FoxHttpHandler();
@@ -48,6 +55,8 @@ public class Server {
                     foxhttp,
                     foxhttp.getMappings().toArray(new String[foxhttp.getMappings().size() - 1]));
         }
+
+        // feedbackHttpHandler
         state = FoxCfg.get("feedbackHttpHandler");
         if (state != null && state.equalsIgnoreCase("true")) {
             FeedbackHttpHandler fb = new FeedbackHttpHandler();
@@ -67,8 +76,8 @@ public class Server {
      */
     public void start() {
 
-        int port = server.getListener("FoxNetworkListener").getPort();
-        String host = server.getListener("FoxNetworkListener").getHost();
+        int port = server.getListener(Listener_Name).getPort();
+        String host = server.getListener(Listener_Name).getHost();
 
         try {
             logger.info("----------------------------------------------------------\n");
