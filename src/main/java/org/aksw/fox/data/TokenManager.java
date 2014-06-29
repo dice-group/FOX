@@ -17,14 +17,14 @@ import org.apache.log4j.Logger;
  */
 public class TokenManager {
 
-    public static Logger logger = Logger.getLogger(TokenManager.class);
+    public static Logger           logger     = Logger.getLogger(TokenManager.class);
 
-    protected String input = "";
+    protected String               input      = "";
 
-    protected String tokenInput = "";
-    protected String[] tokenSplit = null;
+    protected String               tokenInput = "";
+    protected String[]             tokenSplit = null;
 
-    public static final String SEP = "FOXFOXFOX";
+    public static final String     SEP        = "fFWAeRQ9w0L";
 
     protected Map<Integer, String> indexToken = new LinkedHashMap<>();
     protected Map<Integer, String> indexLabel = new LinkedHashMap<>();
