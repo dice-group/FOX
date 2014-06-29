@@ -8,13 +8,11 @@ import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFLanguages;
 import org.apache.log4j.Logger;
 
-import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.impl.JenaRDFParser;
-import com.github.jsonldjava.utils.JSONUtils;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -26,19 +24,21 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
 public class FoxJena {
 
-    public static Logger logger = Logger.getLogger(FoxJena.class);
+    public static Logger             logger = Logger.getLogger(FoxJena.class);
 
-    public static final List<String> prints = new ArrayList<>();
-    static {
-
-        prints.add(FileUtils.langXML);
-        prints.add(FileUtils.langXMLAbbrev);
-        prints.add(FileUtils.langTurtle);
-        prints.add(FileUtils.langNTriple);
-        prints.add(FileUtils.langN3);
-        prints.add(RDFFormat.RDFJSON.toString());
-        // prints.add("JSONLD");
-    }
+    public static final List<String> prints = new ArrayList<String>() {
+                                                private static final long serialVersionUID = 7210007132876173878L;
+                                                {
+                                                    add(Lang.RDFXML.getName());
+                                                    add(FileUtils.langXMLAbbrev);
+                                                    add(Lang.TURTLE.getName());
+                                                    add(Lang.NTRIPLES.getName());
+                                                    add(Lang.N3.getName());
+                                                    add(Lang.RDFJSON.getName());
+                                                    add(Lang.JSONLD.getName());
+                                                    add(Lang.TRIG.getName());
+                                                }
+                                            };
 
     public static enum RelationEnum {
         employeeOf("employeeOf"), hasPosition("hasPosition"), hasDegree("hasDegree");
@@ -51,18 +51,18 @@ public class FoxJena {
     };
 
     /* namespace */
-    public static final String nsAnn = "http://www.w3.org/2000/10/annotation-ns#";
-    public static final String nsCTag = "http://commontag.org/ns#";
-    public static final String nsScms = "http://ns.aksw.org/scms/";
-    public static final String nsScmsann = "http://ns.aksw.org/scms/annotations/";
+    public static final String nsAnn        = "http://www.w3.org/2000/10/annotation-ns#";
+    public static final String nsCTag       = "http://commontag.org/ns#";
+    public static final String nsScms       = "http://ns.aksw.org/scms/";
+    public static final String nsScmsann    = "http://ns.aksw.org/scms/annotations/";
     public static final String nsScmssource = "http://ns.aksw.org/scms/tools/";
 
     /* properties */
-    protected Property beginIndex, endIndex, means, source, body, ctagLabel, ctagMeans, ctagAutoTag, relation;
-    protected Property[] scmsRelationLabels;
+    protected Property         beginIndex, endIndex, means, source, body, ctagLabel, ctagMeans, ctagAutoTag, relation;
+    protected Property[]       scmsRelationLabels;
 
     /* model */
-    protected Model graph = null;
+    protected Model            graph        = null;
 
     public void initGraph() {
 
@@ -108,7 +108,7 @@ public class FoxJena {
      * Prints the model in a given format.
      * 
      * @param kind
-     *            it's {@link NLPBox#printRDF} or {@link NLPBox#printTURTLE}
+     *            output format
      * @param nif
      *            true to use nif
      * @param wholeText
@@ -121,28 +121,17 @@ public class FoxJena {
         if (graph == null)
             return null;
 
-        if (FoxJena.prints.contains(kind)) {
-
-            StringWriter sw = new StringWriter();
-            graph.write(sw, kind);
-            return sw.toString();
-
-        } else if (kind.equals("JSONLD")) {
-
-            Object json = null;
-            try {
-                json = JSONLD.fromRDF(graph, new JenaRDFParser());
-            } catch (JSONLDProcessingError e) {
-                logger.error("\n", e);
-
-                StringWriter sw = new StringWriter();
-                graph.write(sw, kind);
-                return sw.toString();
-            }
-            return JSONUtils.toPrettyString(json);
+        StringWriter sw = new StringWriter();
+        if (!kind.equals(FileUtils.langXMLAbbrev) && FoxJena.prints.contains(kind)) {
+            RDFDataMgr.write(sw, graph, RDFLanguages.nameToLang(kind));
         } else {
-            return null;
+            try {
+                graph.write(sw, kind);
+            } catch (Exception e) {
+                logger.error("\n Output format " + kind + " is not supported.", e);
+            }
         }
+        return sw.toString();
     }
 
     /**
@@ -204,6 +193,6 @@ public class FoxJena {
         r.addProperty(RDFS.label, "11").addLiteral(RDFS.label, 11);
 
         // write out the graph
-        graph.write(System.out, "N-TRIPLE");
+        graph.write(System.out, FoxJena.prints.get(0));
     }
 }

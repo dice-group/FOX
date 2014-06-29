@@ -34,7 +34,7 @@
             <li>input : text or an url (e.g.: `G. W. Leibniz was born in Leipzig`, `http://en.wikipedia.org/wiki/Leipzig_University`)</li>
             <li>type : { text | url }</li>
             <li>task : { NER }</li>
-            <li>output : { JSONLD | N3 | N-TRIPLE | RDF/{ JSON | XML | XML-ABBREV} | TURTLE }</li>
+            <li>output : { JSON-LD | N3 | N-Triples | RDF/{ JSON | XML | XML-ABBREV} | Turtle | TriG}</li>
             <!-- <li>nif : { true | <b>false</b> } </li> -->
             <li>returnHtml : { true | <b>false</b> }</li>
             <li>foxlight : an implemented <a href="http://{{host}}/demo/doc/org/aksw/fox/nertools/INER.html">INER</a> class name (e.g.: `org.aksw.fox.nertools.NEROpenNLP`) or `<b>OFF</b>`.
@@ -50,9 +50,9 @@
         <pre data-ng-bind-html-unsafe="nerExp"></pre>
         
         <h5>Content-Type: application/x-www-form-urlencoded</h5>
-        <pre>curl -d type=text -d task=NER -d output=JSONLD --data-urlencode "input=The foundation of the University of Leipzig in 1409 initiated the city's development into a centre of German law and the publishing industry, and towards being a location of the Reichsgericht (High Court), and the German National Library (founded in 1912). The philosopher and mathematician Gottfried Leibniz was born in Leipzig in 1646, and attended the university from 1661-1666." -H "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api > response.txt</pre>
+        <pre>curl -d type=text -d task=NER -d output=JSON-LD --data-urlencode "input=The foundation of the University of Leipzig in 1409 initiated the city's development into a centre of German law and the publishing industry, and towards being a location of the Reichsgericht (High Court), and the German National Library (founded in 1912). The philosopher and mathematician Gottfried Leibniz was born in Leipzig in 1646, and attended the university from 1661-1666." -H "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api > response.txt</pre>
 
-        <pre>curl -d type=url -d task=NER -d output=TURTLE -d foxlight=org.aksw.fox.nertools.NEROpenNLP --data-urlencode "input=http://en.wikipedia.org/wiki/Leipzig_University" -H "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api > response.txt</pre>
+        <pre>curl -d type=url -d task=NER -d output=Turtle -d foxlight=org.aksw.fox.nertools.NEROpenNLP --data-urlencode "input=http://en.wikipedia.org/wiki/Leipzig_University" -H "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api > response.txt</pre>
     </div>
 
     <div data-ng-hide="!showFeedbackApi">

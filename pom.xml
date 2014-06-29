@@ -25,13 +25,11 @@
             <name>University Leipzig, AKSW Maven2 Repository</name>
             <url>http://maven.aksw.org/archiva/repository/internal</url>
         </repository>
-<!--
         <repository>
             <id>maven.aksw.snapshots</id>
             <name>University Leipzig, AKSW Maven2 Repository</name>
             <url>http://maven.aksw.org/archiva/repository/snapshots</url>
         </repository>
--->
     </repositories>
 
     <dependencies>
@@ -195,12 +193,12 @@
             <groupId>org.apache.jena</groupId>
             <artifactId>apache-jena</artifactId>
             <type>pom</type>
-            <version>2.10.1</version>
+            <version>2.11.2</version>
         </dependency>
         <dependency>
             <groupId>com.github.jsonld-java</groupId>
             <artifactId>jsonld-java-jena</artifactId>
-            <version>0.2</version>
+             <version>0.4</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.grizzly</groupId>
