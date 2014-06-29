@@ -1,8 +1,6 @@
 package org.aksw.fox.web;
 
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.aksw.fox.IFox;
 import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.utils.FoxJena;
+import org.aksw.fox.utils.FoxStringUtil;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
@@ -87,9 +87,9 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
         String in = null, out = null, log = null;
         if (fox != null) {
             // set response
-            in = encodeURLComponent(parameter.get("input"));
-            out = encodeURLComponent(output);
-            log = encodeURLComponent(fox.getLog());
+            in = FoxStringUtil.encodeURLComponent(parameter.get("input"));
+            out = FoxStringUtil.encodeURLComponent(output);
+            log = FoxStringUtil.encodeURLComponent(fox.getLog());
         }
         setResponse(response, "[{\"input\" : \" " + in + "\" , \"output\" : \"" + out + "\", \"log\" : \"" + log + "\" }]", HttpURLConnection.HTTP_OK, "text/plain");
     }
@@ -123,7 +123,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
         String output = formData.get("output");
 
-        if (!output.equalsIgnoreCase("JSONLD") && !output.equalsIgnoreCase("RDF/JSON") && !output.equalsIgnoreCase("RDF/XML") && !output.equalsIgnoreCase("RDF/XML-ABBREV") && !output.equalsIgnoreCase("TURTLE") && !output.equalsIgnoreCase("N-TRIPLE") && !output.equalsIgnoreCase("N3"))
+        if (!FoxJena.prints.contains(output))
             return false;
 
         String nif = formData.get("nif");
@@ -141,27 +141,13 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
         return true;
     }
 
-    public String encodeURLComponent(String in) {
-        // try {
-        // return new
-        // ScriptEngineManager().getEngineByName("JavaScript").eval("encodeURIComponent('"
-        // + in + "')").toString();
-        // } catch (ScriptException e) {
-        // logger.error("\n", e);
-        // return "";
-        // }
-        try {
-            return URLEncoder.encode(in, "UTF-8").replaceAll("\\+", "%20").replaceAll("\\%21", "!").replaceAll("\\%27", "'").replaceAll("\\%28", "(").replaceAll("\\%29", ")").replaceAll("\\%7E", "~");
-        } catch (UnsupportedEncodingException e) {
-            logger.error("\n", e);
-            return "";
-        }
-    }
-
     @Override
     public List<String> getMappings() {
-        List<String> l = new ArrayList<>();
-        l.add("/api");
-        return l;
+        return new ArrayList<String>() {
+            private static final long serialVersionUID = 8208244078508063707L;
+            {
+                add("/api");
+            }
+        };
     }
 }
