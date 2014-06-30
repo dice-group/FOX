@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.aksw.fox.Fox;
 import org.aksw.fox.IFox;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxJena;
@@ -24,7 +25,7 @@ import org.jetlang.fibers.ThreadFiber;
  */
 public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
-    protected Pool pool = new Pool(Integer.parseInt(FoxCfg.get("poolCount")));
+    protected Pool<IFox> pool = new Pool<IFox>(Fox.class.getName(), Integer.parseInt(FoxCfg.get("poolCount")));
 
     /**
      * 
