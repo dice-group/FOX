@@ -92,7 +92,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
             out = FoxStringUtil.encodeURLComponent(output);
             log = FoxStringUtil.encodeURLComponent(fox.getLog());
         }
-        setResponse(response, "[{\"input\" : \" " + in + "\" , \"output\" : \"" + out + "\", \"log\" : \"" + log + "\" }]", HttpURLConnection.HTTP_OK, "text/plain");
+        setResponse(response, "{\"input\" : \" " + in + "\" , \"output\" : \"" + out + "\", \"log\" : \"" + log + "\" }", HttpURLConnection.HTTP_OK, "text/plain");
     }
 
     /**

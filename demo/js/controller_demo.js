@@ -73,9 +73,9 @@ Fox.DemoCtrl = function($routeParams, $scope, $http) {
         }).
         success(function(data, status, headers, config) {
 
-            $scope.foxResponse.input = decodeURIComponent(data[0].input);
-            $scope.foxResponse.output = decodeURIComponent(data[0].output);
-            $scope.foxResponse.log = decodeURIComponent(data[0].log);
+            $scope.foxResponse.input = decodeURIComponent(data.input);
+            $scope.foxResponse.output = decodeURIComponent(data.output);
+            $scope.foxResponse.log = decodeURIComponent(data.log);
 
             $scope.foxRequest.state = 'done';
             $scope.isCollapsed = true;
