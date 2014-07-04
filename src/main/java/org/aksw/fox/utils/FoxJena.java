@@ -17,7 +17,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.util.FileUtils;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
@@ -30,13 +29,14 @@ public class FoxJena {
                                                 private static final long serialVersionUID = 7210007132876173878L;
                                                 {
                                                     add(Lang.RDFXML.getName());
-                                                    add(FileUtils.langXMLAbbrev);
+                                                    /* add(FileUtils.langXMLAbbrev);*/
                                                     add(Lang.TURTLE.getName());
                                                     add(Lang.NTRIPLES.getName());
-                                                    add(Lang.N3.getName());
+                                                    // add(Lang.N3.getName());
                                                     add(Lang.RDFJSON.getName());
                                                     add(Lang.JSONLD.getName());
                                                     add(Lang.TRIG.getName());
+                                                    add(Lang.NQUADS.getName());
                                                 }
                                             };
 
@@ -57,6 +57,9 @@ public class FoxJena {
     public static final String nsScmsann    = "http://ns.aksw.org/scms/annotations/";
     public static final String nsScmssource = "http://ns.aksw.org/scms/tools/";
 
+    // TODO
+    public static final String prefix_ann   = "ann";
+
     /* properties */
     protected Property         beginIndex, endIndex, means, source, body, ctagLabel, ctagMeans, ctagAutoTag, relation;
     protected Property[]       scmsRelationLabels;
@@ -68,7 +71,7 @@ public class FoxJena {
 
         graph = ModelFactory.createDefaultModel();
         // create namespace prefix
-        graph.setNsPrefix("ann", nsAnn);
+        graph.setNsPrefix(prefix_ann, nsAnn);
         graph.setNsPrefix("scms", nsScms);
         graph.setNsPrefix("rdf", RDF.getURI());
         graph.setNsPrefix("ctag", nsCTag);
@@ -122,7 +125,7 @@ public class FoxJena {
             return null;
 
         StringWriter sw = new StringWriter();
-        if (!kind.equals(FileUtils.langXMLAbbrev) && FoxJena.prints.contains(kind)) {
+        if (FoxJena.prints.contains(kind)) {
             RDFDataMgr.write(sw, graph, RDFLanguages.nameToLang(kind));
         } else {
             try {
