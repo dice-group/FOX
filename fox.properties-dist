@@ -12,7 +12,7 @@ modelPath : data/fox
 nerTools: org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford, org.aksw.fox.nertools.NERIllinoisExtended, org.aksw.fox.nertools.NERBalie
 # which learner we use. 
 # values are: {  result_vote | class_vote | weka.classifiers.functions.MultilayerPerceptron | weka.classifiers.trees.J48 | ...}
-learner : weka.classifiers.trees.RandomForest
+learner : weka.classifiers.functions.MultilayerPerceptron
 #learneroptions: -C 0.25 -M 2
 #
 # `true` to train fox. tainFox: { true | false }
