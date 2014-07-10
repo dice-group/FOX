@@ -36,7 +36,7 @@ public class CrossValidation {
     public static FoxNERTools foxNERTools    = new FoxNERTools();
 
     // cross-validation options
-    static int                seed           = 1, folds = 10, runs = 3;
+    static int                seed           = 1, folds = 10, runs = 10;
 
     // current states
     static String             run            = "";
@@ -57,7 +57,6 @@ public class CrossValidation {
         // prepare data
         IPostProcessing pp = null;
         {
-
             foxNERTools.setTraining(true);
             foxNERTools.getEntities(tokenManager.getInput());
             pp = new PostProcessing(tokenManager, foxNERTools.getToolResult());
@@ -75,11 +74,16 @@ public class CrossValidation {
         }
 
         // write arff file training data
+        File tmp = new File("tmp");
+        if (!tmp.exists())
+            tmp.mkdir();
+        tmp = null;
+
         {
             ArffSaver saver = new ArffSaver();
             try {
                 saver.setInstances(instances);
-                saver.setFile(new File("./tmp/training.arff"));
+                saver.setFile(new File("tmp/training.arff"));
                 saver.writeBatch();
             } catch (IOException e) {
                 logger.error("/n", e);
@@ -90,15 +94,6 @@ public class CrossValidation {
 
             seed = i + 1;
             run = new Integer(i + 1).toString();
-
-            // randomize instances
-            /*Instances randInstances = new Instances(instances);
-            {
-                Random rand = new Random(seed);
-                randInstances.randomize(rand);
-                if (randInstances.classAttribute().isNominal())
-                    randInstances.stratify(folds);
-            }*/
 
             // perform cross-validation
             Evaluation evalAll = new Evaluation(instances);
@@ -126,9 +121,7 @@ public class CrossValidation {
                     ArffSaver saver = new ArffSaver();
                     saver.setInstances(test);
                     try {
-                        saver.setFile(new
-                                File("./tmp/classified_" + (i + 1) + "_" + (n + 1) +
-                                        ".arff"));
+                        saver.setFile(new File("tmp/classified_" + (i + 1) + "_" + (n + 1) + ".arff"));
                         saver.writeBatch();
                     } catch (IOException e) {
                         logger.error("\n", e);
@@ -138,12 +131,6 @@ public class CrossValidation {
                 // write
                 writeConfusionMatrix(eval);
 
-                // prints
-                /*
-                 * System.out.println(eval.toMatrixString(
-                 * "=== Confusion matrix for fold " + (n + 1) + "/" + folds +
-                 * "(" + (i + 1) + ")" + " ===\n") );
-                 */
                 printMeasures(eval);
                 try {
                     logger.info(eval.toClassDetailsString());
@@ -182,13 +169,13 @@ public class CrossValidation {
                 outTotal.append(new Double(cmMatrix[k][3]).intValue());
                 outTotal.append('\n');
             }
-            /*
-             * System.out.println(evalAll.toSummaryString( "=== " + folds +
-             * "-fold Cross-validation ===", false) );
-             */
             myprint(evalAll, cls, instances);
-
         }
+        File eval = new File("eval");
+        if (!eval.exists())
+            eval.mkdir();
+        eval = null;
+
         String filename = "eval/" + classifierName + "_total.csv";
         CSVWriter writer = new CSVWriter(new FileWriter(filename), ',', CSVWriter.NO_QUOTE_CHARACTER);
         writer.writeNext(outTotal.toString().split(","));

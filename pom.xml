@@ -264,6 +264,18 @@
             <version>5.6</version>
         </dependency>
 -->
+
+        <!-- nif 
+        <dependency>
+            <groupId>org.nlp2rdf.ontologies</groupId>
+            <artifactId>persistence.uni-leipzig.org</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+              <groupId>org.nlp2rdf.software</groupId>
+              <artifactId>jena</artifactId>
+              <version>2.0.1-SNAPSHOT</version>
+        </dependency>-->
     </dependencies>
     <!-- build -->
     <build>
@@ -293,12 +305,6 @@
                         <phase> package</phase>
                         <configuration>
                             <target>
-                                <copy todir="${project.build.directory}/eval">
-                                    <fileset dir="eval" />
-                                </copy>
-                                <copy todir="${project.build.directory}/tmp">
-                                    <fileset dir="tmp" />
-                                </copy>
                                 <copy todir="${project.build.directory}/input">
                                     <fileset dir="input" />
                                 </copy>
