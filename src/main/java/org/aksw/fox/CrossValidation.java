@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
@@ -32,20 +31,20 @@ import au.com.bytecode.opencsv.CSVWriter;
  */
 public class CrossValidation {
 
-    public static Logger logger = Logger.getLogger(CrossValidation.class);
+    public static Logger      logger         = Logger.getLogger(CrossValidation.class);
 
-    public static FoxNERTools foxNERTools = new FoxNERTools();
+    public static FoxNERTools foxNERTools    = new FoxNERTools();
 
     // cross-validation options
-    static int seed = 1, folds = 10, runs = 10;
+    static int                seed           = 1, folds = 10, runs = 3;
 
     // current states
-    static String run = "";
-    static String fold = "";
-    static String classifierName = "";
+    static String             run            = "";
+    static String             fold           = "";
+    static String             classifierName = "";
 
-    static StringBuffer outDetail = null;
-    static StringBuffer outTotal = null;
+    static StringBuffer       outDetail      = null;
+    static StringBuffer       outTotal       = null;
 
     public static void crossValidation(Classifier cls, String[] inputFiles) throws Exception {
         classifierName = cls.getClass().getName();
@@ -93,28 +92,28 @@ public class CrossValidation {
             run = new Integer(i + 1).toString();
 
             // randomize instances
-            Instances randInstances = new Instances(instances);
+            /*Instances randInstances = new Instances(instances);
             {
                 Random rand = new Random(seed);
                 randInstances.randomize(rand);
                 if (randInstances.classAttribute().isNominal())
                     randInstances.stratify(folds);
-            }
+            }*/
 
             // perform cross-validation
-            Evaluation evalAll = new Evaluation(randInstances);
+            Evaluation evalAll = new Evaluation(instances);
             for (int n = 0; n < folds; n++) {
                 logger.info("Validation run = " + (run));
                 logger.info("Validation fold k = " + (n + 1));
                 fold = new Integer(n + 1).toString();
 
-                Instances train = randInstances.trainCV(folds, n);
-                Instances test = randInstances.testCV(folds, n);
+                Instances train = instances.trainCV(folds, n);
+                Instances test = instances.testCV(folds, n);
 
                 // build and evaluate classifier
                 Classifier clsCopy = Classifier.makeCopy(cls);
                 clsCopy.buildClassifier(train);
-                Evaluation eval = new Evaluation(randInstances);
+                Evaluation eval = new Evaluation(instances);
 
                 double[] predictions = eval.evaluateModel(clsCopy, test);
                 evalAll.evaluateModel(clsCopy, test);
@@ -187,7 +186,7 @@ public class CrossValidation {
              * System.out.println(evalAll.toSummaryString( "=== " + folds +
              * "-fold Cross-validation ===", false) );
              */
-            myprint(evalAll, cls, randInstances);
+            myprint(evalAll, cls, instances);
 
         }
         String filename = "eval/" + classifierName + "_total.csv";
