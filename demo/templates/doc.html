@@ -1,33 +1,24 @@
 <div class="container" data-ng-init="showFoxApi=0; showFeedbackApi=0;">
     <div data-ng-include src="'templates/partials/navi.html'"></div>
-
     <p>The FOX framework can be used programmatically. For more informations read the <a href="doc/index.html">Java documentation</a>.</p>
-     <p>FOX accepts HTTP POST requests to the following API endpoints: </p>
     <div class="row">
         <div class="span3">
-            <a data-ng-href="http://{{host}}/api">http://{{host}}/api</a>
-        </div>
-        <div class="span4">
             <button class="btn btn-custom" data-ng-click="showFoxApi=!showFoxApi;showFeedbackApi=0">FOX parameter</button>
         </div>
     </div>
     <br> 
     <div class="row">
         <div class="span3">
-            <a data-ng-href="http://{{host}}/api/ner/feedback">http://{{host}}/api/ner/feedback</a>
-        </div>
-        <div class="span4">
             <button class="btn btn-custom" data-ng-click="showFeedbackApi=!showFeedbackApi;showFoxApi=0">NER Feedback parameter</button>
         </div>
     </div>
     <br>
-    <p>To use FOX's feedback, you need an access key. Contact the author.</p>
-    <p data-ng-hide="showFoxApi || showFeedbackApi"><br><br>(Press the buttons to view the parameters and examples)</p>
+    <p data-ng-hide="showFoxApi || showFeedbackApi">(Press the buttons to view the parameters and examples)</p>
     <br>
-    <br>
-
     <div data-ng-hide="!showFoxApi">
         <h2>FOX</h2>
+        <p>FOX accepts HTTP POST requests.</p>
+        <p><a data-ng-href="http://{{host}}/api">http://{{host}}/api</a></p>
         <h3>Parameter</h3>
         <p>Optional parameters and there default values are marked.</p>
         <ul>
@@ -48,15 +39,16 @@
         <pre>curl -d @demo/examples/nerExp.json -H "Content-Type: application/json" http://{{host}}/api > response.txt</pre>
         <a href="/demo/examples/nerExp.json">/demo/examples/nerExp.json</a>
         <pre data-ng-bind-html-unsafe="nerExp"></pre>
-        
         <h5>Content-Type: application/x-www-form-urlencoded</h5>
         <pre>curl -d type=text -d task=NER -d output=JSON-LD --data-urlencode "input=The foundation of the University of Leipzig in 1409 initiated the city's development into a centre of German law and the publishing industry, and towards being a location of the Reichsgericht (High Court), and the German National Library (founded in 1912). The philosopher and mathematician Gottfried Leibniz was born in Leipzig in 1646, and attended the university from 1661-1666." -H "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api > response.txt</pre>
 
         <pre>curl -d type=url -d task=NER -d output=Turtle -d foxlight=org.aksw.fox.nertools.NEROpenNLP --data-urlencode "input=http://en.wikipedia.org/wiki/Leipzig_University" -H "Content-Type: application/x-www-form-urlencoded" http://{{host}}/api > response.txt</pre>
     </div>
-
     <div data-ng-hide="!showFeedbackApi">
         <h2>NER Feedback</h2>
+        <p>FOX accepts HTTP POST requests.</p>
+        <p><a data-ng-href="http://{{host}}/api/ner/feedback">http://{{host}}/api/ner/feedback</a></p>
+        <p>To use FOX's feedback, you need an access key. Please contact the author.</p>
         <h3>Parameter</h3>
         <p>Optional parameters and there default values are marked.</p>
         <ul>
