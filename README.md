@@ -17,13 +17,9 @@ Installation
 * Clone the latest version:
  `git clone -b master https://github.com/AKSW/FOX.git`
 
-* Download [NETagger][2]. This archive contains a `data`, `config` and `dist` folder. Copy the first two to the FOX root.
-  The `dist` folder contains `LbjNerTagger-2.3.jar`. Copy this file to `FOX/lib/illinois`.
-
-* Download [stanford models][1] to `FOX/lib`.
-
 * Build the release:
   `./fox_build.sh`
+  (This will download [stanford models][1] to `FOX/lib`.)
 
 * Go into the release folder and rename `fox.properties-dist` to `fox.properties` and change the file to your needs.
 

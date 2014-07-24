@@ -10,7 +10,6 @@ import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.log4j.PropertyConfigurator;
 
-import LBJ2.parse.LinkedVector;
 import edu.illinois.cs.cogcomp.LbjNer.ExpressiveFeatures.ExpressiveFeaturesAnnotator;
 import edu.illinois.cs.cogcomp.LbjNer.InferenceMethods.Decoder;
 import edu.illinois.cs.cogcomp.LbjNer.LbjFeatures.NETaggerLevel1;
@@ -21,14 +20,15 @@ import edu.illinois.cs.cogcomp.LbjNer.LbjTagger.NEWord;
 import edu.illinois.cs.cogcomp.LbjNer.LbjTagger.Parameters;
 import edu.illinois.cs.cogcomp.LbjNer.LbjTagger.ParametersForLbjCode;
 import edu.illinois.cs.cogcomp.LbjNer.ParsingProcessingData.PlainTextReader;
+import edu.illinois.cs.cogcomp.lbjava.parse.LinkedVector;
 
 public class NERIllinoisExtended extends AbstractNER {
 
-    public static String file = "config/conll.config";
-    boolean areWeTraining = false;
+    public static String file          = "config/conll.config";
+    boolean              areWeTraining = false;
 
-    NETaggerLevel1 tagger1;
-    NETaggerLevel2 tagger2;
+    NETaggerLevel1       tagger1;
+    NETaggerLevel2       tagger2;
 
     public static void main(String[] args) throws Exception {
         PropertyConfigurator.configure("log4j.properties");
@@ -158,4 +158,5 @@ public class NERIllinoisExtended extends AbstractNER {
         }
         return -1;
     }
+
 }
