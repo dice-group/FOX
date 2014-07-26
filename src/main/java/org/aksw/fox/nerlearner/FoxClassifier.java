@@ -29,12 +29,12 @@ import weka.core.SerializationHelper;
  */
 public class FoxClassifier {
 
-    public static Logger logger = Logger.getLogger(FoxClassifier.class);
+    public static Logger   logger       = Logger.getLogger(FoxClassifier.class);
 
-    protected Classifier classifier = null;
-    protected Instances instances = null;
+    protected Classifier   classifier   = null;
+    protected Instances    instances    = null;
     protected FoxInstances foxInstances = null;
-    private boolean isTrained = false;
+    private boolean        isTrained    = false;
 
     /**
      * FoxClassifier.
@@ -151,7 +151,8 @@ public class FoxClassifier {
 
         Set<Entity> set = pp.instancesToEntities(classified);
         logger.info("classify done, size: " + set.size());
-        logger.info(classifier);
+        if (logger.isDebugEnabled())
+            logger.debug(classifier);
         return set;
     }
 

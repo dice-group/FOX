@@ -208,7 +208,8 @@ public class PostProcessing implements IPostProcessing {
             // remember last label
             previousLabel = label;
         }
-        logger.info("result: " + results.toString());
+        if (logger.isDebugEnabled())
+            logger.debug("result: " + results.toString());
         logger.info("result size: " + results.size());
 
         // result set
@@ -225,7 +226,8 @@ public class PostProcessing implements IPostProcessing {
                 }
 
             }
-        logger.info("set: " + set.toString());
+        if (logger.isDebugEnabled())
+            logger.debug("set: " + set.toString());
         logger.info("result set size: " + set.size());
         return set;
     }
