@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.aksw</groupId>
     <artifactId>fox</artifactId>
-    <version>2.2.1</version>
+    <version>2.2.2</version>
     <name>FOX</name>
     <packaging>jar</packaging>
     <properties>
@@ -38,6 +38,8 @@
     </repositories>
     <dependencies>
         <!-- external dependencies -->
+        <!--  -->
+        <!-- stanford models -->
         <dependency>
             <groupId>stanford-corenlp-3.2.0-models</groupId>
             <artifactId>models</artifactId>
@@ -45,6 +47,16 @@
             <scope>system</scope>
             <systemPath>${system.libs}/stanford-corenlp-3.2.0-models.jar</systemPath>
         </dependency>
+        <!-- http://sourceforge.net/projects/balie -->
+        <dependency>
+            <groupId>ca.uottawa</groupId>
+            <artifactId>balie</artifactId>
+            <version>1.81</version>
+            <scope>system</scope>
+            <systemPath>${system.libs}/balie/Balie.jar</systemPath>
+        </dependency>
+        <!-- regular dependencies -->
+        <!--  -->
         <!-- Illinois -->
          <dependency>
             <groupId>edu.illinois.cs.cogcomp</groupId>
@@ -56,15 +68,6 @@
             <artifactId>IllinoisNerExtended</artifactId>
             <version>2.7</version>
         </dependency>
-        <!-- http://sourceforge.net/projects/balie -->
-        <dependency>
-            <groupId>ca.uottawa</groupId>
-            <artifactId>balie</artifactId>
-            <version>1.81</version>
-            <scope>system</scope>
-            <systemPath>${system.libs}/balie/Balie.jar</systemPath>
-        </dependency>
-        <!-- regular dependencies -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -305,7 +308,7 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/balie/Balie.jar lib/illinois/LbjNerTagger-2.3.jar lib/stanford-corenlp-3.2.0-models.jar</Class-Path>
+                            <Class-Path>lib/balie/Balie.jar lib/stanford-corenlp-3.2.0-models.jar</Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -325,7 +328,7 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/balie/Balie.jar lib/illinois/LbjNerTagger-2.3.jar lib/stanford-corenlp-3.2.0-models.jar</Class-Path>
+                            <Class-Path>lib/balie/Balie.jar lib/stanford-corenlp-3.2.0-models.jar</Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -346,7 +349,6 @@
                     <argLine>-Xmx5G</argLine>
                 </configuration>
             </plugin>
-
 <!--        UML with less information
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -371,8 +373,8 @@
                     -sourceclasspath ${project.build.directory}/
                   </additionalparam>
                 </configuration>
-                </plugin> -->
-
+            </plugin>
+-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -391,9 +393,11 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
-			<encoding>UTF-8</encoding>
+			         <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
         </plugins>
