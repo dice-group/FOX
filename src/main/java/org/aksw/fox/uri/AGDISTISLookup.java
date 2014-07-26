@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.aksw.fox.data.Entity;
+import org.aksw.fox.utils.FoxCfg;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -21,16 +22,13 @@ import org.json.simple.JSONValue;
 
 public class AGDISTISLookup implements ILookup {
 
-    // private final String parameter = "text=";
-    // private final int indexOffset = parameter.length();
+    // endpoint in cfg file
+    public static String cfgKeyAgdistisEndpoint = "agdistisEndpoint";
 
-    // index mapper
+    public static Logger logger                 = Logger.getLogger(AGDISTISLookup.class);
+
     // maps AGDISTIS index to real index
-    Map<Integer, Entity> indexMap = new HashMap<>();
-
-    public static final String endpoint = "http://139.18.2.164:8080/AGDISTIS";
-
-    public static Logger logger = Logger.getLogger(AGDISTISLookup.class);
+    Map<Integer, Entity> indexMap               = new HashMap<>();
 
     @Override
     public void setUris(Set<Entity> entities, String input) {
@@ -109,7 +107,7 @@ public class AGDISTISLookup implements ILookup {
         // String data = parameter + agdistis_input;
         String urlParameters = "text=" + URLEncoder.encode(agdistis_input, "UTF-8") + "&type=agdistis";
 
-        URL url = new URL(endpoint);
+        URL url = new URL(FoxCfg.get(cfgKeyAgdistisEndpoint));
 
         HttpURLConnection http = (HttpURLConnection) url.openConnection();
 
