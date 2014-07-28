@@ -17,40 +17,40 @@ import org.apache.log4j.Logger;
  */
 public class FoxCfg {
 
-    public static String parameter_input = "input";
-    public static String parameter_task = "task";
-    public static String parameter_urilookup = "urilookup";
-    public static String parameter_output = "output";
-    public static String parameter_foxlight = "foxlight";
-    public static String parameter_nif = "nif";
+    public static String        parameter_input     = "input";
+    public static String        parameter_task      = "task";
+    public static String        parameter_urilookup = "urilookup";
+    public static String        parameter_output    = "output";
+    public static String        parameter_foxlight  = "foxlight";
+    public static String        parameter_nif       = "nif";
 
-    public static Logger logger = Logger.getLogger(FoxCfg.class);;
-    protected static Properties FoxProperties = new Properties();
-    public static final String CFG_FILE = "fox.properties";
+    public static Logger        LOG                 = Logger.getLogger(FoxCfg.class); ;
+    protected static Properties FoxProperties       = new Properties();
+    public static final String  CFG_FILE            = "fox.properties";
 
     // loads CFG_FILE to FoxProperties
     static {
-        logger.info("Loads cfg ...");
+        LOG.info("Loads cfg ...");
 
         FileInputStream in = null;
         try {
             in = new FileInputStream(CFG_FILE);
         } catch (FileNotFoundException e) {
-            logger.error("file: " + CFG_FILE + " not found!");
+            LOG.error("file: " + CFG_FILE + " not found!");
         }
         if (in != null) {
             try {
                 FoxProperties.load(in);
             } catch (IOException e) {
-                logger.error("Can't read `fox.properties` file.");
+                LOG.error("Can't read `fox.properties` file.");
             }
             try {
                 in.close();
             } catch (Exception e) {
-                logger.error("Something went wrong.\n", e);
+                LOG.error("Something went wrong.\n", e);
             }
         } else {
-            logger.error("Can't read `fox.properties` file.");
+            LOG.error("Can't read `fox.properties` file.");
         }
     }
 
@@ -59,6 +59,8 @@ public class FoxCfg {
     }
 
     public synchronized static Object getClass(String classPath) {
+        LOG.info("Load class: " + classPath);
+
         Class<?> clazz = null;
         try {
             clazz = Class.forName(classPath.trim());
@@ -67,11 +69,11 @@ public class FoxCfg {
                 return constructor.newInstance();
             }
         } catch (ClassNotFoundException e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         } catch (NoSuchMethodException | SecurityException e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         }
         return null;
     }
