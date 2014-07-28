@@ -60,10 +60,14 @@ public class Pool<T> {
      * @param t
      */
     public void push(T t) {
-        if (queue.size() < max) {
-            queue.add(t);
+        if (t != null) {
+            if (queue.size() < max) {
+                queue.add(t);
+            } else {
+                LOG.warn("pool queue is full.");
+            }
         } else {
-            LOG.warn("pool queue is full.");
+            LOG.warn("We don't push null to pool queue!!");
         }
     }
 
