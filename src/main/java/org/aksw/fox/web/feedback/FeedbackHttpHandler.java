@@ -39,6 +39,8 @@ public class FeedbackHttpHandler extends HttpHandler {
                 );
     }
 
+    // TODO
+    String                     errorMessage       = "";
     protected FeedbackStore    feedbackStore      = null;
     private UrlValidator       urlValidator       = new UrlValidator();
 
