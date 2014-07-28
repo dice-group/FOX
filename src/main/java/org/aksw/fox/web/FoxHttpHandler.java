@@ -64,9 +64,9 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
         try {
             latch.await(Integer.parseInt(FoxCfg.get("foxLifeTime")), TimeUnit.MINUTES);
         } catch (InterruptedException e) {
-            logger.error("Fox timeout after " + FoxCfg.get("foxLifeTime") + "min.");
-            logger.error("\n", e);
-            logger.error("input: " + parameter.get("input"));
+            LOG.error("Fox timeout after " + FoxCfg.get("foxLifeTime") + "min.");
+            LOG.error("\n", e);
+            LOG.error("input: " + parameter.get("input"));
         }
 
         // shutdown thread
@@ -108,7 +108,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
     @Override
     protected boolean checkParameter(Map<String, String> formData) {
 
-        logger.info("checking form parameter ...");
+        LOG.info("checking form parameter ...");
 
         String type = formData.get("type");
         if (type == null || !(type.equalsIgnoreCase("url") || type.equalsIgnoreCase("text")))
@@ -138,7 +138,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
             formData.put("foxlight", "OFF");
         }
 
-        logger.info("ok.");
+        LOG.info("ok.");
         return true;
     }
 

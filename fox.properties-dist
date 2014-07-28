@@ -37,7 +37,7 @@ poolCount : 5
 # static file cache
 staticFileCacheEnabled : false
 # http handler settings, values are: 'true' to enable somehting else to disable
-demoHttpHandler : true
-apiHttpHandler : true
-feedbackHttpHandler : true
+demo : true
+api : true
+feedback : true
 ##################################################################

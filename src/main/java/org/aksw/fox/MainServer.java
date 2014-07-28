@@ -31,7 +31,7 @@ public class MainServer {
         // test config
         String poolCount = FoxCfg.get("poolCount");
         if (poolCount == null) {
-            Server.logger.error("Can't read poolCount key in `fox.properties` file.");
+            Server.LOG.error("Can't read poolCount key in `fox.properties` file.");
             System.exit(0);
         }
 
@@ -51,6 +51,6 @@ public class MainServer {
         if (FoxServerUtil.isPortAvailable(port))
             new Server(port).start();
         else
-            Server.logger.error("Port " + port + " in use or wrong argument, try an other one!");
+            Server.LOG.error("Port " + port + " in use or wrong argument, try an other one!");
     }
 }

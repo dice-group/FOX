@@ -26,7 +26,7 @@ import com.google.gson.JsonParser;
  */
 public abstract class AbstractFoxHttpHandler extends HttpHandler {
 
-    public static Logger logger = Logger.getLogger(AbstractFoxHttpHandler.class);
+    public static Logger LOG = Logger.getLogger(AbstractFoxHttpHandler.class);
 
     abstract public List<String> getMappings();
 
@@ -37,28 +37,34 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
      */
     @Override
     public void service(Request request, Response response) throws Exception {
-        logger.info("service ...");
-        if (logger.isDebugEnabled()) {
-            logger.debug("mapping list: " + getMappings());
-            logger.debug("requested path: " + request.getContextPath() + request.getHttpHandlerPath());
+        LOG.info("service ...");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("mapping list: " + getMappings());
+            LOG.debug("context path: " + request.getContextPath());
         }
-        if (getMappings().contains(request.getContextPath() + request.getHttpHandlerPath())) {
+        if (getMappings().contains(request.getContextPath())) {
             if (request.getMethod().getMethodString().equalsIgnoreCase("POST")) {
-                logger.info("service post ...");
+                LOG.info("service post ...");
                 Map<String, String> parameter = getPostParameter(request);
-                if (checkParameter(parameter)) {
-
-                    postService(request, response, parameter);
-
+                if (parameter.size() == 0) {
+                    LOG.info("HTTP_UNSUPPORTED_TYPE (415)");
+                    response.sendError(HttpURLConnection.HTTP_UNSUPPORTED_TYPE);
                 } else {
-                    setResponse(response, "Wrong parameter.", HttpURLConnection.HTTP_BAD_REQUEST, "text/plain");
+
+                    if (checkParameter(parameter)) {
+                        postService(request, response, parameter);
+                    } else {
+                        LOG.info("HTTP_BAD_REQUEST (400)");
+                        response.sendError(HttpURLConnection.HTTP_BAD_REQUEST);
+                    }
                 }
             } else {
-                setResponse(response, "Please use HTTP POST method.", HttpURLConnection.HTTP_BAD_METHOD, "text/plain");
+                LOG.info("HTTP_BAD_METHOD (405)");
+                response.sendError(HttpURLConnection.HTTP_BAD_METHOD);
             }
         } else {
-            setResponse(response, "404", HttpURLConnection.HTTP_NOT_FOUND, "text/plain");
-
+            LOG.info("HTTP_NOT_FOUND (404)");
+            response.sendError(HttpURLConnection.HTTP_NOT_FOUND);
         }
     }
 
@@ -84,7 +90,7 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
 
         Map<String, String> formMap = new HashMap<String, String>();
         if (request.getContentType().contains("application/json")) {
-            logger.info("application/json ...");
+            LOG.info("application/json ...");
 
             int contentLength = request.getContentLength();
             byte[] data = new byte[contentLength];
@@ -98,19 +104,19 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
                     offset += pointer;
                 }
             } catch (Exception e) {
-                logger.error("\n", e);
+                LOG.error("\n", e);
             }
 
             String query = "";
             try {
                 query = new String(data, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                logger.error("\n", e);
+                LOG.error("\n", e);
                 query = "";
             }
 
-            logger.info("query:" + query);
-            logger.info(data.length == contentLength);
+            LOG.info("query:" + query);
+            LOG.info(data.length == contentLength);
 
             if (!query.isEmpty()) {
 
@@ -136,18 +142,16 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
                         try {
                             formMap.put(key, URLDecoder.decode(value, "UTF-8"));
                         } catch (UnsupportedEncodingException e) {
-                            logger.error("\n", e);
+                            LOG.error("\n", e);
                         }
                     }
                 }
             } else {
-                logger.error("query is empty!");
+                LOG.error("query is empty!");
             }
 
-        }
-
-        else if (request.getContentType().contains("application/x-www-form-urlencoded")) {
-            logger.info("application/x-www-form-urlencoded ...");
+        } else if (request.getContentType().contains("application/x-www-form-urlencoded")) {
+            LOG.info("application/x-www-form-urlencoded ...");
             Map<String, String[]> parameterMap = request.getParameterMap();
             if (parameterMap != null && parameterMap.size() > 0) {
 
@@ -159,14 +163,14 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
                             formMap.put(entry.getKey().toLowerCase(), entry.getValue()[0]);
 
                         } catch (Exception e) {
-                            logger.error("\n", e);
+                            LOG.error("\n", e);
                         }
                 }
             }
         } else {
-            logger.error("Header Content-Type not supported: " + request.getContentType());
+            LOG.error("Header Content-Type not supported: " + request.getContentType());
         }
-        logger.info(formMap);
+        LOG.info(formMap);
         return formMap;
     }
 
@@ -189,7 +193,7 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
             response.setContentLength(bytes.length);
             response.getWriter().write(data);
         } catch (IOException e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         }
         response.finish();
     }

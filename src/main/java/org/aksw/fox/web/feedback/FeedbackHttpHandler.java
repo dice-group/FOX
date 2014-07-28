@@ -25,9 +25,9 @@ import com.google.gson.JsonParser;
 
 public class FeedbackHttpHandler extends HttpHandler {
 
-    private static Logger logger = Logger.getLogger(FeedbackHttpHandler.class);
+    private static Logger      LOG                = Logger.getLogger(FeedbackHttpHandler.class);
 
-    public static List<String> PARAMETER = new ArrayList<>();
+    public static List<String> PARAMETER          = new ArrayList<>();
     public static List<String> PARAMETER_OPTIONAL = new ArrayList<>();
     static {
         Collections.addAll(PARAMETER,
@@ -39,10 +39,8 @@ public class FeedbackHttpHandler extends HttpHandler {
                 );
     }
 
-    protected FeedbackStore feedbackStore = null;
-    private UrlValidator urlValidator = new UrlValidator();
-
-    private String errorMessage = "";
+    protected FeedbackStore    feedbackStore      = null;
+    private UrlValidator       urlValidator       = new UrlValidator();
 
     /**
      * Handles HTTP POST requests to store feedback.
@@ -62,36 +60,46 @@ public class FeedbackHttpHandler extends HttpHandler {
 
     @Override
     public void service(Request request, Response response) throws Exception {
-        logger.info("service ...");
-
-        if (getMappings().contains(request.getContextPath() + request.getHttpHandlerPath())) {
+        LOG.info("service ...");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("mapping list: " + getMappings());
+            LOG.debug("context path: " + request.getContextPath());
+        }
+        if (getMappings().contains(request.getContextPath())) {
             if (request.getMethod().getMethodString().equalsIgnoreCase("POST")) {
-                logger.info("service post ...");
+                LOG.info("service post ...");
                 boolean done = false;
                 if (request.getContentType().contains("application/json")) {
                     // json request
-                    logger.info("application/json ...");
+                    LOG.info("application/json ...");
                     done = insertJson(request, response);
 
                 } else if (request.getContentType().contains("application/xml")) {
                     // xml request
-                    logger.info("application/xml ...");
+                    LOG.info("application/xml ...");
                     done = insertXML(request, response);
                 } else if (request.getContentType().contains("application/x-www-form-urlencoded")) {
                     // form
-                    logger.info("application/x-www-form-urlencoded ...");
+                    LOG.info("application/x-www-form-urlencoded ...");
                     done = insertForm(request, response);
                 } else {
-                    errorMessage = "Couldn't find a supported Content-Type.";
+                    LOG.info("HTTP_UNSUPPORTED_TYPE (415)");
+                    response.sendError(HttpURLConnection.HTTP_UNSUPPORTED_TYPE);
+                }
+                if (done) {
+                    setResponse(response, "ok", HttpURLConnection.HTTP_OK, "text/plain");
+                } else {
+                    LOG.info("HTTP_BAD_REQUEST (400)");
+                    response.sendError(HttpURLConnection.HTTP_BAD_REQUEST);
                 }
 
-                setResponse(response, done ? "ok" : errorMessage, done ? HttpURLConnection.HTTP_OK : HttpURLConnection.HTTP_BAD_REQUEST, "text/plain");
-
             } else {
-                setResponse(response, "Please use HTTP POST method.", HttpURLConnection.HTTP_BAD_METHOD, "text/plain");
+                LOG.info("HTTP_BAD_METHOD (405)");
+                response.sendError(HttpURLConnection.HTTP_BAD_METHOD);
             }
         } else {
-            setResponse(response, "404", HttpURLConnection.HTTP_NOT_FOUND, "text/plain");
+            LOG.info("HTTP_NOT_FOUND (404)");
+            response.sendError(HttpURLConnection.HTTP_NOT_FOUND);
         }
     }
 
@@ -108,14 +116,14 @@ public class FeedbackHttpHandler extends HttpHandler {
                 offset += pointer;
             }
         } catch (Exception e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         }
 
         String query = "";
         try {
             query = new String(data, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
             query = "";
         }
         return query;
@@ -131,13 +139,13 @@ public class FeedbackHttpHandler extends HttpHandler {
     public boolean insertJson(Request request, Response response) {
         boolean rtn = false;
         String query = getQuery(request);
-        logger.info("query:" + query);
+        LOG.info("query:" + query);
 
         if (!query.isEmpty()) {
             JsonObject json = (JsonObject) new JsonParser().parse(query);
 
             TextEntry textEntry = new TextEntry();
-            logger.info(json);
+            LOG.info(json);
 
             String key = "";
             if (json.get("key") != null) {
@@ -187,7 +195,7 @@ public class FeedbackHttpHandler extends HttpHandler {
                     rtn = true;
 
                 } catch (Exception e) {
-                    logger.error("\n", e);
+                    LOG.error("\n", e);
                     errorMessage = "Couldn't read data, check required parameters.";
                 }
 
@@ -290,7 +298,7 @@ public class FeedbackHttpHandler extends HttpHandler {
                     } catch (Exception e) {
                         rtn = false;
                         errorMessage = "Exception while reading parameters and values.";
-                        logger.error("\n", e);
+                        LOG.error("\n", e);
                         break;
                     }
             }
@@ -336,7 +344,7 @@ public class FeedbackHttpHandler extends HttpHandler {
 
     private boolean isValidUrl(String url) {
         if (!urlValidator.isValid(url)) {
-            logger.error("uri isn't valid: " + url);
+            LOG.error("uri isn't valid: " + url);
             return false;
         }
         return true;
@@ -379,13 +387,13 @@ public class FeedbackHttpHandler extends HttpHandler {
             response.setContentLength(bytes.length);
             response.getWriter().write(data);
         } catch (IOException e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         }
         response.finish();
     }
 
     private void setErrorMessage(String e) {
-        logger.error(e);
+        LOG.error(e);
         errorMessage = e;
     }
 }
