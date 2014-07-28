@@ -17,6 +17,8 @@ Java 7, Maven 3, graphviz
 * Clone the latest version:
  `git clone -b master https://github.com/AKSW/FOX.git`
 
+* Download [NETagger][2]. This archive contains a `data` and `config` folder. Copy both to the root folder `FOX`.
+
 * Build the release:
   `./fox_build.sh`
   (This will download [stanford models][1] to `FOX/lib`.)
