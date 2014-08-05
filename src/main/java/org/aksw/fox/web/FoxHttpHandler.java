@@ -27,9 +27,6 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
     protected Pool<IFox> pool = new Pool<IFox>(Fox.class.getName(), Integer.parseInt(FoxCfg.get("poolCount")));
 
-    /**
-     * 
-     */
     @Override
     protected void postService(Request request, Response response, Map<String, String> parameter) {
 
@@ -95,16 +92,6 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
         setResponse(response, "{\"input\" : \"" + in + "\" , \"output\" : \"" + out + "\", \"log\" : \"" + log + "\" }", HttpURLConnection.HTTP_OK, "text/plain");
     }
 
-    /**
-     * Checks parameter.
-     * <p>
-     * type: url | text<br>
-     * task: ke | ner | keandner | re | all<br>
-     * output: rdf | turtle | html<br>
-     * nif: true : false<br>
-     * input : plain text | url
-     * </p>
-     */
     @Override
     protected boolean checkParameter(Map<String, String> formData) {
 

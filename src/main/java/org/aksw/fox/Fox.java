@@ -24,6 +24,7 @@ import org.aksw.fox.utils.FoxConst;
 import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.aksw.fox.utils.FoxWebLog;
+import org.apache.jena.riot.Lang;
 import org.apache.log4j.Logger;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
@@ -125,7 +126,7 @@ public class Fox implements IFox {
                 input = tokenManager.getInput();
                 parameter.put(FoxCfg.parameter_input, input);
 
-                if (!parameter.get(FoxCfg.parameter_foxlight).equals("OFF")) {
+                if (parameter.get(FoxCfg.parameter_foxlight) != null && !parameter.get(FoxCfg.parameter_foxlight).equals("OFF")) {
                     // switch task
                     switch (task.toLowerCase()) {
 
@@ -354,9 +355,10 @@ public class Fox implements IFox {
     public Map<String, String> getDefaultParameter() {
         Map<String, String> map = new HashMap<>();
         map.put(FoxCfg.parameter_input, FoxConst.EXAMPLE_1);
-        map.put(FoxCfg.parameter_task, "ner");
-        map.put(FoxCfg.parameter_output, "rdf");
+        map.put(FoxCfg.parameter_task, "NER");
+        map.put(FoxCfg.parameter_output, Lang.RDFXML.getName());
         map.put(FoxCfg.parameter_nif, "false");
+        map.put(FoxCfg.parameter_foxlight, "OFF");
         return map;
     }
 
