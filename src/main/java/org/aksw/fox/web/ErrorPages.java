@@ -2,6 +2,8 @@ package org.aksw.fox.web;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -15,39 +17,37 @@ import org.glassfish.grizzly.http.server.Request;
  * 
  */
 public class ErrorPages extends DefaultErrorPageGenerator {
-    public final static Logger LOG = Logger.getLogger(ErrorPages.class);
+
+    public final static Logger               LOG   = Logger.getLogger(ErrorPages.class);
+    public final static Map<Integer, String> pages = new HashMap<>();
+    static {
+        pages.put(400, null);
+        pages.put(404, null);
+        pages.put(405, null);
+    }
 
     @Override
     public String generate(Request request, int status, String reasonPhrase, String description, Throwable exception) {
 
-        String defaultResponse = super.generate(request, status, reasonPhrase, description, exception);
+        if (LOG.isDebugEnabled())
+            LOG.debug("HTTP status: " + status);
 
-        LOG.debug("HTTP status: " + status);
-        String page = "";
-        switch (status) {
-        case 404: {
-            page = "404.html";
-            break;
+        if (pages.get(status) == null) {
+            if (pages.keySet().contains(status)) {
+                pages.put(status, read(String.valueOf(status).concat(".html")));
+            } else {
+                return super.generate(request, status, reasonPhrase, description, exception);
+            }
         }
-        case 405: {
-            page = "405.html";
-            break;
-        }
-        case 400: {
-            page = "400.html";
-            break;
-        }
-        default:
-            return defaultResponse;
-        }
+        return pages.get(status);
+    }
 
-        //
+    protected String read(String page) {
         StringWriter writer = new StringWriter();
         try {
             IOUtils.copy(ErrorPages.class.getResource(page).openStream(), writer, "UTF-8");
         } catch (IOException e) {
             LOG.error("\n", e);
-            return defaultResponse;
         }
         return writer.toString();
     }

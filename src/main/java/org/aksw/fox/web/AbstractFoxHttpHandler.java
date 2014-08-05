@@ -38,33 +38,52 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
     @Override
     public void service(Request request, Response response) throws Exception {
         LOG.info("service ...");
+
+        // log RemoteAddr
+        {
+            String ra = request.getRemoteAddr();
+            int index = ra.lastIndexOf(".");
+            if (index > 0 && ra.length() > index)
+                LOG.info("remote addr.: " + ra.substring(0, index));
+        }
+
+        // log path
         if (LOG.isDebugEnabled()) {
             LOG.debug("mapping list: " + getMappings());
             LOG.debug("context path: " + request.getContextPath());
         }
+
+        // service
         if (getMappings().contains(request.getContextPath())) {
+
             if (request.getMethod().getMethodString().equalsIgnoreCase("POST")) {
                 LOG.info("service post ...");
                 Map<String, String> parameter = getPostParameter(request);
+
                 if (parameter.size() == 0) {
-                    LOG.info("HTTP_UNSUPPORTED_TYPE (415)");
-                    response.sendError(HttpURLConnection.HTTP_UNSUPPORTED_TYPE);
+                    if (LOG.isDebugEnabled())
+                        LOG.debug("HTTP_BAD_REQUEST (400)");
+                    setResponse(response, HttpURLConnection.HTTP_BAD_REQUEST);
+
                 } else {
 
                     if (checkParameter(parameter)) {
                         postService(request, response, parameter);
                     } else {
-                        LOG.info("HTTP_BAD_REQUEST (400)");
-                        response.sendError(HttpURLConnection.HTTP_BAD_REQUEST);
+                        if (LOG.isDebugEnabled())
+                            LOG.debug("HTTP_BAD_REQUEST (400)");
+                        setResponse(response, HttpURLConnection.HTTP_BAD_REQUEST);
                     }
                 }
             } else {
-                LOG.info("HTTP_BAD_METHOD (405)");
-                response.sendError(HttpURLConnection.HTTP_BAD_METHOD);
+                if (LOG.isDebugEnabled())
+                    LOG.debug("HTTP_BAD_METHOD (405)");
+                setResponse(response, HttpURLConnection.HTTP_BAD_METHOD);
             }
         } else {
-            LOG.info("HTTP_NOT_FOUND (404)");
-            response.sendError(HttpURLConnection.HTTP_NOT_FOUND);
+            if (LOG.isDebugEnabled())
+                LOG.debug("HTTP_NOT_FOUND (404)");
+            setResponse(response, HttpURLConnection.HTTP_NOT_FOUND);
         }
     }
 
@@ -170,7 +189,10 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
         } else {
             LOG.error("Header Content-Type not supported: " + request.getContentType());
         }
-        LOG.info(formMap);
+
+        if (LOG.isDebugEnabled())
+            LOG.debug(formMap);
+
         return formMap;
     }
 
@@ -192,6 +214,15 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
         try {
             response.setContentLength(bytes.length);
             response.getWriter().write(data);
+        } catch (IOException e) {
+            LOG.error("\n", e);
+        }
+        response.finish();
+    }
+
+    protected void setResponse(Response response, int status) {
+        try {
+            response.sendError(status);
         } catch (IOException e) {
             LOG.error("\n", e);
         }

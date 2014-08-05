@@ -86,22 +86,22 @@ public class FeedbackHttpHandler extends HttpHandler {
                     done = insertForm(request, response);
                 } else {
                     LOG.info("HTTP_UNSUPPORTED_TYPE (415)");
-                    response.sendError(HttpURLConnection.HTTP_UNSUPPORTED_TYPE);
+                    setResponse(response, HttpURLConnection.HTTP_UNSUPPORTED_TYPE);
                 }
                 if (done) {
                     setResponse(response, "ok", HttpURLConnection.HTTP_OK, "text/plain");
                 } else {
                     LOG.info("HTTP_BAD_REQUEST (400)");
-                    response.sendError(HttpURLConnection.HTTP_BAD_REQUEST);
+                    setResponse(response, HttpURLConnection.HTTP_BAD_REQUEST);
                 }
 
             } else {
                 LOG.info("HTTP_BAD_METHOD (405)");
-                response.sendError(HttpURLConnection.HTTP_BAD_METHOD);
+                setResponse(response, HttpURLConnection.HTTP_BAD_METHOD);
             }
         } else {
             LOG.info("HTTP_NOT_FOUND (404)");
-            response.sendError(HttpURLConnection.HTTP_NOT_FOUND);
+            setResponse(response, HttpURLConnection.HTTP_NOT_FOUND);
         }
     }
 
@@ -388,6 +388,15 @@ public class FeedbackHttpHandler extends HttpHandler {
         try {
             response.setContentLength(bytes.length);
             response.getWriter().write(data);
+        } catch (IOException e) {
+            LOG.error("\n", e);
+        }
+        response.finish();
+    }
+
+    protected void setResponse(Response response, int status) {
+        try {
+            response.sendError(status);
         } catch (IOException e) {
             LOG.error("\n", e);
         }

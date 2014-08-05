@@ -38,6 +38,14 @@ public class Server {
         server.addListener(new NetworkListener(LISTENER_NAME, NetworkListener.DEFAULT_NETWORK_HOST, port));
 
         String state = null;
+        // error page data
+        {
+            LOG.info("Adds error page data handler ...");
+            StaticHttpHandler shl = new StaticHttpHandler("public");
+            shl.setFileCacheEnabled(true);
+            server.getServerConfiguration().addHttpHandler(shl, "/public");
+        }
+
         // demoHttpHandler
         state = FoxCfg.get(DEMO_HANDLER_KEY);
         if (state != null && state.equalsIgnoreCase("true")) {
