@@ -43,7 +43,7 @@ The resulting raw data from the learning and testing process are in the `FOX/eva
 FOX is licensed under the [GNU General Public License Version 2, June 1991](http://www.gnu.org/licenses/gpl-2.0.txt) (license document is in the application folder).
 
 ##Bugs
-Found a :bug: bug? [Open an issue](https://github.com/AKSW/fox/new) with some [emojis](http://emoji.muan.co). Issues without emojis are not valid. :trollface:
+Found a :bug: bug? [Open an issue](https://github.com/AKSW/fox/issues/new) with some [emojis](http://emoji.muan.co). Issues without emojis are not valid. :trollface:
 
 ##Changelog
 ### [v2.2.2]
