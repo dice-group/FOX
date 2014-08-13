@@ -2,7 +2,7 @@
 [2]: http://cogcomp.cs.illinois.edu/download/software/45
 [3]: http://sourceforge.net/projects/balie
 [4]: http://fox.aksw.org
-[5]: http://139.18.2.164:4444/demo/index.html#!/home
+[5]: http://titan.informatik.uni-leipzig.de:4444
 [6]: http://fox-demo.aksw.org
 
 ##FOX - Federated Knowledge Extraction Framework
@@ -30,9 +30,9 @@ Java 7, Maven 3, graphviz
 :seven: Stop the server: `./fox_close.sh`
 
 ##Demo and Documentation
-Project Page: [http://fox.aksw.org](http://fox.aksw.org)
+Project Page: [http://fox.aksw.org][4]
 
-Live Demo: [http://fox-demo.aksw.org (Version 2.2.2) ](http://fox-demo.aksw.org)
+Live Demo: [http://fox-demo.aksw.org (Version 2.2.2) ][5]
 
 ##Datasets
 The training and testing datasets are in the `FOX/input` folder.
