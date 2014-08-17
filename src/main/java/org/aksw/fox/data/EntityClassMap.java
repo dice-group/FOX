@@ -72,6 +72,13 @@ public class EntityClassMap {
         entityClassesILLINOIS.put("PER", P);
         // entityClassesILLINOIS.put("MISC", M);
     }
+    
+    protected static final Map<String, String> entityClassesSpotlight = new HashMap<String, String>();
+    static {
+    	entityClassesSpotlight.put("Person", P);
+    	entityClassesSpotlight.put("Place", L);
+    	entityClassesSpotlight.put("Organisation", O);
+    }
 
     /**
      * Gets the entity class for a oracel entity type/class.
@@ -121,6 +128,25 @@ public class EntityClassMap {
         if (t == null)
             t = getNullCategory();
         return t;
+    }
+    
+    /**
+     * Gets the entity class for a spotlight entity type/class.
+     */
+    public static String spotlight(String spotlightTag) {
+    	// The response can hold multiple Types at the same time. All cases need to be checked independantly.
+    	String t = null;
+    	if (spotlightTag.contains(":Person,") == true) {
+    		t = entityClassesSpotlight.get("Person");
+    	} else if (spotlightTag.contains(":Place,") == true) {
+    		t = entityClassesSpotlight.get("Place");
+    	} else if (spotlightTag.contains(":Organisation,") == true) {
+    		t = entityClassesSpotlight.get("Organisation");
+    	} 
+    	if (t == null) {
+    	    t = getNullCategory();
+    	}
+    	return t;
     }
 
     /**
