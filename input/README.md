@@ -2,7 +2,7 @@ FOX - Datasets
 ===============
 
 * 1 - news dataset (created manually)
-* 2 - Illinois dataset
+* 2 - Illinois dataset ([NERWebpagesColumns] (http://cogcomp.cs.illinois.edu/page/resource_view/28))
 * 3 - subset of news dataset
 * 4 - reuters dataset (created manually)
 * 5 - all datasets 1-4
