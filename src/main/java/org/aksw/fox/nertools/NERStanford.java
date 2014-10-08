@@ -29,7 +29,9 @@ import edu.stanford.nlp.util.Triple;
  */
 public class NERStanford extends AbstractNER {
 
-    protected CRFClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions(FoxCfg.get("serializedClassifier"));
+    public static final String         CFG_KEY_STANFORD_CLASSIFIER = NERStanford.class.getName().concat(".classifier");
+
+    protected CRFClassifier<CoreLabel> classifier                  = CRFClassifier.getClassifierNoExceptions(FoxCfg.get(CFG_KEY_STANFORD_CLASSIFIER));
 
     /*
      * Gets a list with (CoreLabel, likelihood) with max likelihood at each
@@ -58,13 +60,13 @@ public class NERStanford extends AbstractNER {
     @Override
     public List<Entity> retrieve(String input) {
 
-        logger.info("retrieve ...");
+        LOG.info("retrieve ...");
         List<Entity> list = new ArrayList<Entity>();
 
         for (String sentence : FoxTextUtil.getSentences(input)) {
             // DEBUG
-            if (logger.isDebugEnabled())
-                logger.debug("sentence: " + sentence);
+            if (LOG.isDebugEnabled())
+                LOG.debug("sentence: " + sentence);
             // DEBUG
 
             // token
@@ -89,8 +91,8 @@ public class NERStanford extends AbstractNER {
                 // gets probs map
                 List<Pair<CoreLabel, Double>> probs = getProbsDocumentToList(lcl);
                 // DEBUG
-                if (logger.isDebugEnabled())
-                    logger.debug("getProbs: " + probs);
+                if (LOG.isDebugEnabled())
+                    LOG.debug("getProbs: " + probs);
                 // DEBUG
                 for (Pair<CoreLabel, Double> prob : probs) {
 
@@ -123,16 +125,16 @@ public class NERStanford extends AbstractNER {
             }
         }
         // TRACE
-        if (logger.isTraceEnabled()) {
-            logger.trace(list);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(list);
         } // TRACE
         return list;
     }
 
     public static void main(String[] a) {
-        PropertyConfigurator.configure("log4j.properties");
+        PropertyConfigurator.configure(FoxCfg.LOG_FILE);
         for (Entity e : new NERStanford().retrieve(FoxConst.EXAMPLE_1))
-            NERStanford.logger.info(e);
+            NERStanford.LOG.info(e);
 
         // Properties props = new Properties();
         // props.setProperty("annotators",

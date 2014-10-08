@@ -15,6 +15,7 @@ import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.IPostProcessing;
 import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.utils.FoxCfg;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
@@ -27,34 +28,41 @@ import org.jetlang.fibers.ThreadFiber;
  */
 public class FoxNERTools {
 
-    public static Logger logger = Logger.getLogger(FoxNERTools.class);
+    public static final Logger         LOG             = LogManager.getLogger(FoxNERTools.class);
+
+    /* Cfg file key. */
+    public final static String         NERTOOLS_KEY    = FoxNERTools.class.getName().concat(".nerTools");
+    /* Cfg file key. */
+    public final static String         NERLIFETIME_KEY = FoxNERTools.class.getName().concat(".foxNERLifeTime");
+
     /**
      * Contains all tools to be used to retrieve entities.
      */
-    protected List<INER> nerTools = new ArrayList<>();
-    protected Map<String, Set<Entity>> toolResults = new HashMap<>();
-    private boolean doTraining = false;
+    protected List<INER>               nerTools        = new ArrayList<>();
+    protected Map<String, Set<Entity>> toolResults     = new HashMap<>();
+    private boolean                    doTraining      = false;
 
     // use learner and merge
-    protected FoxClassifier foxClassifier = new FoxClassifier();
+    protected FoxClassifier            foxClassifier   = new FoxClassifier();
 
     /**
      * Initializes and fills {@link #nerTools}.
      */
     public FoxNERTools() {
-        logger.info("FoxNERTools ...");
-        if (FoxCfg.get("nerTools") != null) {
-            String[] classes = FoxCfg.get("nerTools").split(",");
+        LOG.info("FoxNERTools ...");
+
+        if (FoxCfg.get(NERTOOLS_KEY) != null) {
+            String[] classes = FoxCfg.get(NERTOOLS_KEY).split(",");
             for (String cl : classes) {
                 nerTools.add((INER) FoxCfg.getClass(cl));
             }
         }
-        initToolResults();
-    }
 
-    private void initToolResults() {
+        // init tools
         for (INER nerTool : nerTools)
             toolResults.put(nerTool.getToolName(), null);
+
+        LOG.info("FoxNERTools done.");
     }
 
     public List<INER> getNerTools() {
@@ -67,7 +75,7 @@ public class FoxNERTools {
      * @return entities
      */
     public Set<Entity> getEntities(String input) {
-        logger.info("get entities ...");
+        LOG.info("get entities ...");
 
         Set<Entity> results = null;
 
@@ -85,15 +93,15 @@ public class FoxNERTools {
             fiber.execute(nerTool);
             fibers.add(fiber);
         }
-        // TODO: if nerTools.size() == 0 we wait for ever here?
-        // wait x min for finish
-        int min = Integer.parseInt(FoxCfg.get("foxNERLifeTime"));
+
+        // wait till finished
+        int min = Integer.parseInt(FoxCfg.get(NERLIFETIME_KEY));
         try {
             latch.await(min, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
-            logger.error("Timeout after " + min + "min.");
-            logger.error("\n", e);
-            logger.error("input:\n" + input);
+            LOG.error("Timeout after " + min + "min.");
+            LOG.error("\n", e);
+            LOG.error("input:\n" + input);
         }
 
         // shutdown threads
@@ -109,22 +117,18 @@ public class FoxNERTools {
                         new HashSet<Entity>(nerTool.getResults())
                         );
 
-            if (logger.isTraceEnabled()) {
-                logger.trace(toolResults);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(toolResults);
             }
 
         } else {
-            if (logger.isDebugEnabled())
-                logger.debug("timeout after " + min + "min.");
+            if (LOG.isDebugEnabled())
+                LOG.debug("timeout after " + min + "min.");
 
             // TODO: handle timeout
         }
 
-        if (doTraining) {
-            // TODO: we need changes here?
-            // train the FoxClassifier separately
-
-        } else {
+        if (!doTraining) {
             foxClassifier.readClassifier();
             // post
             IPostProcessing pp = new PostProcessing(new TokenManager(input), toolResults);
@@ -139,7 +143,7 @@ public class FoxNERTools {
             // logger.error("\n", e);
             // }
         }
-        logger.info("get entities done.");
+        LOG.info("get entities done.");
         return results;
     }
 

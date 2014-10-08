@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -22,48 +23,47 @@ import org.json.simple.JSONValue;
 
 public class AGDISTISLookup implements ILookup {
 
-    // endpoint in cfg file
-    public static String cfgKeyAgdistisEndpoint = "agdistisEndpoint";
+    public static final String CFG_KEY_AGDISTIS_ENDPOINT = AGDISTISLookup.class.getName().concat(".endpoint");
 
-    public static Logger logger                 = Logger.getLogger(AGDISTISLookup.class);
+    public static final Logger LOG                       = LogManager.getLogger(AGDISTISLookup.class);
 
     // maps AGDISTIS index to real index
-    Map<Integer, Entity> indexMap               = new HashMap<>();
+    Map<Integer, Entity>       indexMap                  = new HashMap<>();
 
     @Override
     public void setUris(Set<Entity> entities, String input) {
-        logger.info("AGDISTISLookup ...");
-        if (logger.isDebugEnabled())
-            logger.debug("makeInput ...");
+        LOG.info("AGDISTISLookup ...");
+        if (LOG.isDebugEnabled())
+            LOG.debug("makeInput ...");
 
         String agdistis_input = makeInput(entities, input);
 
-        if (logger.isDebugEnabled())
-            logger.debug(indexMap);
+        if (LOG.isDebugEnabled())
+            LOG.debug(indexMap);
 
-        if (logger.isDebugEnabled())
-            logger.debug("send ...");
-        logger.info("AGDISTISLookup sending...");
+        if (LOG.isDebugEnabled())
+            LOG.debug("send ...");
+        LOG.info("AGDISTISLookup sending...");
         String agdistis_output = "";
         try {
             agdistis_output = send(agdistis_input);
             agdistis_input = null;
         } catch (Exception e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         }
-        logger.info("AGDISTISLookup sending done.");
-        if (logger.isDebugEnabled())
-            logger.debug(agdistis_output);
+        LOG.info("AGDISTISLookup sending done.");
+        if (LOG.isDebugEnabled())
+            LOG.debug(agdistis_output);
 
-        if (logger.isDebugEnabled())
-            logger.debug("addURItoEntities ...");
+        if (LOG.isDebugEnabled())
+            LOG.debug("addURItoEntities ...");
 
         addURItoEntities(agdistis_output, entities);
 
-        if (logger.isDebugEnabled())
-            logger.debug("done.");
+        if (LOG.isDebugEnabled())
+            LOG.debug("done.");
 
-        logger.info("AGDISTISLookup done..");
+        LOG.info("AGDISTISLookup done..");
         indexMap.clear();
     }
 
@@ -107,7 +107,7 @@ public class AGDISTISLookup implements ILookup {
         // String data = parameter + agdistis_input;
         String urlParameters = "text=" + URLEncoder.encode(agdistis_input, "UTF-8") + "&type=agdistis";
 
-        URL url = new URL(FoxCfg.get(cfgKeyAgdistisEndpoint));
+        URL url = new URL(FoxCfg.get(CFG_KEY_AGDISTIS_ENDPOINT));
 
         HttpURLConnection http = (HttpURLConnection) url.openConnection();
 
@@ -128,8 +128,8 @@ public class AGDISTISLookup implements ILookup {
     }
 
     private void addURItoEntities(String json, Set<Entity> entities) {
-        if (logger.isDebugEnabled())
-            logger.debug("addURItoEntities ...");
+        if (LOG.isDebugEnabled())
+            LOG.debug("addURItoEntities ...");
 
         if (json != null && json.length() > 0) {
 
@@ -154,7 +154,7 @@ public class AGDISTISLookup implements ILookup {
                                 entity.uri = uri.toASCIIString();
                             } catch (URISyntaxException e) {
                                 entity.uri = "http://scms.eu/" + entity.getText();
-                                logger.error(entity.uri + "\n", e);
+                                LOG.error(entity.uri + "\n", e);
                             }
 
                         } else {
@@ -174,7 +174,7 @@ public class AGDISTISLookup implements ILookup {
         } catch (Exception e) {
             encode = disambiguatedURL;
 
-            logger.error(encode + "\n", e);
+            LOG.error(encode + "\n", e);
         }
         return "http://dbpedia.org/resource/" + encode;
     }

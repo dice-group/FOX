@@ -18,6 +18,22 @@
     <div data-ng-hide="!showFoxApi">
         <h2>FOX</h2>
         <p>FOX accepts HTTP POST requests.</p>
+        <p><a data-ng-href="http://{{host}}/call/ner/entities">http://{{host}}/call/ner/entities</a></p>
+        <h3>Parameter</h3>
+        <ul>
+            <li>input : text or an url (e.g.: `G. W. Leibniz was born in Leipzig`, `http://en.wikipedia.org/wiki/Leipzig_University`)</li>
+            <li>type : { text | url }</li>
+            <li>task : { NER }</li>
+            <li>output : { JSON-LD | N-Triples | RDF/{ JSON | XML } | Turtle | TriG | N-Quads}</li>
+            <!-- <li>nif : { true | <b>false</b> } </li> -->
+            <!--<li>returnHtml : { true | <b>false</b> }</li>
+             <li>foxlight : an implemented <a href="http://{{host}}/demo/doc/org/aksw/fox/nertools/INER.html">INER</a> class name (e.g.: `org.aksw.fox.nertools.NEROpenNLP`) or `<b>OFF</b>`.
+                <br>Is this parameter given with a wrong value, org.aksw.fox.nertools.NERStanford will be used.</li>
+        --> </ul>
+        <h3>Response</h3>
+        Serialization Format declared in the request.
+        <br>
+        <br>
         <p><a data-ng-href="http://{{host}}/api">http://{{host}}/api</a></p>
         <h3>Parameter</h3>
         <p>Optional parameters and there default values are marked.</p>
@@ -47,7 +63,7 @@
     <div data-ng-hide="!showFeedbackApi">
         <h2>NER Feedback</h2>
         <p>FOX accepts HTTP POST requests.</p>
-        <p><a data-ng-href="http://{{host}}/api/ner/feedback">http://{{host}}/api/ner/feedback</a></p>
+        <p><a data-ng-href="http://{{host}}/api/ner/feedback/">http://{{host}}/api/ner/feedback/</a></p>
         <p>To use FOX's feedback, you need an access key. Please contact the author.</p>
         <h3>Parameter</h3>
         <p>Optional parameters and there default values are marked.</p>
@@ -66,11 +82,11 @@
         The request responses with `ok` or an error message.
         <h3>Example requests with curl</h3>
         <h5>Content-Type: application/json</h5>
-        <pre>curl -d @demo/feedbackExp.json -H "Content-Type: application/json" http://{{host}}/api/ner/feedback > response.txt </pre>
+        <pre>curl -d @demo/feedbackExp.json -H "Content-Type: application/json" http://{{host}}/api/ner/feedback/ > response.txt </pre>
         <a href="/demo/examples/feedbackExp.json">demo/examples/feedbackExp.json</a>
         <pre data-ng-bind-html-unsafe="feedbackExp"></pre>
         <h5>Content-Type: application/x-www-form-urlencoded</h5>
-        <pre>curl -H "Content-Type: application/x-www-form-urlencoded" --data-urlencode "text=Berlin is the capital of Germany." -d "key=&lt;YOUR API KEY&gt;" -d "entity_uri=http://dbpedia.org/resource/Berlin" -d "surface_form=Berlin" -d "offset=0" -d "feedback=correct" -d "systems=User" -d "manual=true" -d "annotaion=LOCATION" http://{{host}}/api/ner/feedback > response.txt</pre>
+        <pre>curl -H "Content-Type: application/x-www-form-urlencoded" --data-urlencode "text=Berlin is the capital of Germany." -d "key=&lt;YOUR API KEY&gt;" -d "entity_uri=http://dbpedia.org/resource/Berlin" -d "surface_form=Berlin" -d "offset=0" -d "feedback=correct" -d "systems=User" -d "manual=true" -d "annotaion=LOCATION" http://{{host}}/api/ner/feedback/ > response.txt</pre>
     </div>
     <div data-ng-include src="'templates/partials/footer.html'"></div>
 </div>

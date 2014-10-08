@@ -24,7 +24,7 @@ public class NERBalie extends AbstractNER {
 
     @Override
     public List<Entity> retrieve(String input) {
-        logger.info("retrieve ...");
+        LOG.info("retrieve ...");
 
         Tokenizer tokenizer = new Tokenizer(Balie.LANGUAGE_ENGLISH, true);
         tokenizer.Reset(); // ?
@@ -35,7 +35,7 @@ public class NERBalie extends AbstractNER {
                 new LexiconOnDisk(LexiconOnDisk.Lexicon.OPEN_SOURCE_LEXICON), DisambiguationRulesNerf.Load(),
                 pcn,
                 NamedEntityTypeEnumMappingNerf.values(),
-                logger.isTraceEnabled());
+                LOG.isTraceEnabled());
 
         ner.RecognizeEntities();
         TokenList tokenList = ner.GetTokenList();
@@ -64,15 +64,15 @@ public class NERBalie extends AbstractNER {
             }
         }
         // TRACE
-        if (logger.isTraceEnabled()) {
-            logger.trace(list);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(list);
         } // TRACE
         return list;
     }
 
     public static void main(String[] a) {
-        PropertyConfigurator.configure("log4j.properties");
+        PropertyConfigurator.configure(FoxCfg.LOG_FILE);
         for (Entity e : new NERBalie().retrieve(FoxConst.EXAMPLE_1))
-            NERBalie.logger.info(e);
+            NERBalie.LOG.info(e);
     }
 }

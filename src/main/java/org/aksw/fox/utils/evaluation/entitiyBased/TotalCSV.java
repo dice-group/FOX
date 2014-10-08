@@ -5,7 +5,9 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.aksw.fox.CrossValidation;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.utils.FoxCfg;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -13,15 +15,17 @@ import au.com.bytecode.opencsv.CSVWriter;
 //TODO: clean up this quick n dirty code
 public class TotalCSV {
 
-    public static String                     folder     = DetailCSV.folder;
-    public static String                     file       = "/" + DetailCSV.alg + ".csv";
-    public static String                     fileout    = "/" + DetailCSV.alg + "_total.csv";
+    public static String                     folder                       = DetailCSV.folder;
+    public static String                     file                         = "/" + DetailCSV.alg + ".csv";
+    public static String                     fileout                      = "/" + DetailCSV.alg + "_total.csv";
 
-    //
-    private static final int                 runs       = 3;
-    public static StringBuffer               csv_out    = null;
-    static Map<String, Integer>              defaultmap = new HashMap<String, Integer>();
-    static Map<String, Map<String, Integer>> matrix     = new HashMap<String, Map<String, Integer>>();
+    public static final String               CFG_KEY_CROSSVALIDATION_RUNS = CrossValidation.class.getName().concat(".runs");
+
+    protected static int                     runs                         = Integer.valueOf(FoxCfg.get(CFG_KEY_CROSSVALIDATION_RUNS));
+
+    public static StringBuffer               csv_out                      = null;
+    static Map<String, Integer>              defaultmap                   = new HashMap<String, Integer>();
+    static Map<String, Map<String, Integer>> matrix                       = new HashMap<String, Map<String, Integer>>();
     static {
         defaultmap.put(EntityClassMap.L, 0); // a
         defaultmap.put(EntityClassMap.O, 0); // b
@@ -30,14 +34,14 @@ public class TotalCSV {
     }
 
     // csv index
-    static int                               run        = 0;
-    static int                               fold       = 1;
-    static int                               classifier = 2;
-    static int                               classs     = 3;
-    static int                               a          = 4;
-    static int                               b          = 5;
-    static int                               c          = 6;
-    static int                               d          = 7;
+    static int                               run                          = 0;
+    static int                               fold                         = 1;
+    static int                               classifier                   = 2;
+    static int                               classs                       = 3;
+    static int                               a                            = 4;
+    static int                               b                            = 5;
+    static int                               c                            = 6;
+    static int                               d                            = 7;
 
     public static void init() {
         matrix.put(EntityClassMap.L, new HashMap<String, Integer>(defaultmap));

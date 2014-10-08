@@ -47,7 +47,7 @@ public class FoxWebLog {
      * @param args
      */
     public static void main(String[] args) {
-        PropertyConfigurator.configure("log4j.properties");
+        PropertyConfigurator.configure(FoxCfg.LOG_FILE);
 
         FoxWebLog foxWebLog = new FoxWebLog("mylog");
         foxWebLog.setMessage("That is a test message.");

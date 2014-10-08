@@ -3,107 +3,100 @@ package org.aksw.fox.nertools;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.client.fluent.Form;
-import org.apache.http.client.fluent.Request;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
-import org.json.JSONObject;
+import org.apache.http.client.fluent.Form;
+import org.apache.http.client.fluent.Request;
+import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class NERSpotlight extends AbstractNER {
-	
-	// Web service and installed tool show different quality
-	//private final static String API_URL = "http://localhost:2222/";
-	//private final static String API_URL = "http://spotlight.dbpedia.org/";
-	private final static String API_URL = "http://spotlight.sztaki.hu:2222/";
-	private final static String CONFIDENCE = "0.2";
-	private final static String SUPPORT = "2";
 
-	@Override
-	public List<Entity> retrieve(String input) {
-		 
-		logger.info("retrieve ...");
-		
-		String spotlightResponse = null;
-		
-		// Get the information from server-side.
-		try {	
-			spotlightResponse = Request.Post(API_URL + "rest/annotate")
-				.addHeader("Accept", "application/json")
-				.bodyForm(Form.form().add("confidence", CONFIDENCE).add("support", SUPPORT).add("text", input)
-				.build())
-				.execute().returnContent().toString();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		logger.info("all: " + spotlightResponse);
-		
-		JSONObject resultJSON = null;
-		JSONArray entities = null;
-		
-		// Check which requests held new information.
-		try {
-			resultJSON = new JSONObject(spotlightResponse);
-			if (resultJSON.has("Resources")) {
-				entities = resultJSON.getJSONArray("Resources");
-			}
-		} catch (JSONException e) {
-            logger.error("JSON exception "+e);
+    public static final String   CFG_KEY_SPOTLIGHT_ENDPOINT   = NERSpotlight.class.getName().concat(".endpoint");
+    public static final String   CFG_KEY_SPOTLIGHT_CONFIDENCE = NERSpotlight.class.getName().concat(".confidence");
+    public static final String   CFG_KEY_SPOTLIGHT_SUPPORT    = NERSpotlight.class.getName().concat(".support");
+
+    private final static String  API_URL                      = FoxCfg.get(CFG_KEY_SPOTLIGHT_ENDPOINT);
+    private final static Double  CONFIDENCE                   = Double.valueOf(FoxCfg.get(CFG_KEY_SPOTLIGHT_CONFIDENCE));
+    private final static Integer SUPPORT                      = Integer.valueOf(FoxCfg.get(CFG_KEY_SPOTLIGHT_SUPPORT));
+    private final static String  DISAMBIGUATOR                = "Default";
+    private final static String  POLICY                       = "whitelist";
+
+    @Override
+    public List<Entity> retrieve(String input) {
+
+        LOG.info("retrieve ...");
+
+        String spotlightResponse = null;
+        try {
+            spotlightResponse = Request.Post(API_URL + "/rest/annotate")
+                    .addHeader("Accept", "application/json")
+                    .bodyForm(Form.form()
+                            .add("text", input)
+                            .add("confidence", CONFIDENCE.toString())
+                            .add("disambiguator", DISAMBIGUATOR)
+                            .add("support", SUPPORT.toString())
+                            .add("policy", POLICY)
+                            .build())
+                    .execute()
+                    .returnContent()
+                    .asString();
+            LOG.debug(spotlightResponse);
+        } catch (Exception e) {
+            LOG.error("\n", e);
         }
-		
-		// Put the gathered information into a list of FOX Entities.
-		List<Entity> list = new ArrayList<Entity>();
-			
-		// In case entities were returned...
-		if (entities != null) {
-			logger.debug(entities.toString());
-			// ...iterate through each of them...
-			for(int i = 0; i < entities.length(); i++) {
-				try {
-					// ...and add a new FOX-entity to the total entity list.
-					JSONObject entity = entities.getJSONObject(i);
-					list.add(getEntity(entity.getString("@surfaceForm"), EntityClassMap.spotlight(entity.getString("@types")), Entity.DEFAULT_RELEVANCE, "Spotlight"));
-					// Test Output
-					/*if (entity.getString("@types").contains(":Person,")) {
-						logger.info("JAP!! Person!: " + entity.getString("@surfaceForm") + " " + EntityClassMap.spotlight(entity.getString("@types")));
-					} else if (entity.getString("@types").contains(":Place,")) {
-						logger.info("JAP!! Location!: " + entity.getString("@surfaceForm") + " " + EntityClassMap.spotlight(entity.getString("@types")));
-					} else if (entity.getString("@types").contains(":Organisation,")) {
-						logger.info("JAP!! Organisation!: " + entity.getString("@surfaceForm") + " " + EntityClassMap.spotlight(entity.getString("@types")));
-					} else {
-						logger.info("nope...");
-					}*/
-				} catch (JSONException e) {
-		           	logger.error("JSON exception "+e);
-		       	}
-			}
-		}
-		
-		// Test output
-		//logger.info("Entitäten: " + list.size());
-		
-		// TRACE
-        if (logger.isTraceEnabled()) {
-            logger.trace(list);
+
+        JSONObject resultJSON = null;
+        JSONArray entities = null;
+
+        if (spotlightResponse != null)
+            try {
+                resultJSON = new JSONObject(spotlightResponse);
+                if (resultJSON.has("Resources")) {
+                    entities = resultJSON.getJSONArray("Resources");
+                } else {
+                    LOG.debug("No Resources found.");
+                }
+            } catch (JSONException e) {
+                LOG.error("\nJSON exception ", e);
+            }
+
+        List<Entity> list = new ArrayList<>();
+        if (entities != null) {
+            for (int i = 0; i < entities.length(); i++) {
+                try {
+                    JSONObject entity = entities.getJSONObject(i);
+                    String type = EntityClassMap.spotlight(entity.getString("@types"));
+
+                    if (!type.equals(EntityClassMap.getNullCategory())) {
+                        list.add(getEntity(
+                                entity.getString("@surfaceForm"),
+                                type,
+                                Entity.DEFAULT_RELEVANCE,
+                                getToolName()
+                                ));
+                    }
+                } catch (JSONException e) {
+                    LOG.error("\nJSON exception ", e);
+                }
+            }
+        }
+
+        // TRACE
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(list);
         } // TRACE*/
-		return list;
-	}
-	
-	/*
-	 *  Test Method
-	 */
-	public static void main(String[] a) {
-		NERSpotlight ner = new NERSpotlight();
-		 String text = "President Obama called Wednesday on Congress " +
-				"to extend a tax break for students included in last year's economic stimulus " +
-				"package, arguing that the policy provides more generous assistance.";
-		
-		text = FoxConst.EXAMPLE_1;
-		ner.retrieve(text);	
-	}
-	
+
+        return list;
+    }
+
+    public static void main(String[] a) {
+        PropertyConfigurator.configure(FoxCfg.LOG_FILE);
+        for (Entity e : new NERSpotlight().retrieve(FoxConst.EXAMPLE_1))
+            LOG.info(e);
+    }
 }

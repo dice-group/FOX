@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.Request;
@@ -25,7 +26,9 @@ import com.google.gson.JsonParser;
 
 public class FeedbackHttpHandler extends HttpHandler {
 
-    private static Logger      LOG                = Logger.getLogger(FeedbackHttpHandler.class);
+    public static final String CFG_KEY_API_KEY    = FeedbackHttpHandler.class.getName().concat(".apikey");
+
+    private static Logger      LOG                = LogManager.getLogger(FeedbackHttpHandler.class);
 
     public static List<String> PARAMETER          = new ArrayList<>();
     public static List<String> PARAMETER_OPTIONAL = new ArrayList<>();
@@ -132,7 +135,7 @@ public class FeedbackHttpHandler extends HttpHandler {
     }
 
     public boolean checkKey(String key) {
-        if (key.equals(FoxCfg.get("api_key")))
+        if (key.equals(FoxCfg.get(CFG_KEY_API_KEY)))
             return true;
         else
             return false;

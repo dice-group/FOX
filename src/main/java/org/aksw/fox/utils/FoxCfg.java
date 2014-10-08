@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 /**
@@ -17,16 +18,18 @@ import org.apache.log4j.Logger;
  */
 public class FoxCfg {
 
-    public static String        parameter_input     = "input";
-    public static String        parameter_task      = "task";
-    public static String        parameter_urilookup = "urilookup";
-    public static String        parameter_output    = "output";
-    public static String        parameter_foxlight  = "foxlight";
-    public static String        parameter_nif       = "nif";
+    public static final String  parameter_input    = "input";
+    public static final String  parameter_task     = "task";
+    public static final String  parameter_output   = "output";
+    public static final String  parameter_foxlight = "foxlight";
+    public static final String  parameter_nif      = "nif";
+    public static final String  parameter_type     = "type";
 
-    public static Logger        LOG                 = Logger.getLogger(FoxCfg.class); ;
-    protected static Properties FoxProperties       = new Properties();
-    public static final String  CFG_FILE            = "fox.properties";
+    public static final Logger  LOG                = LogManager.getLogger(FoxCfg.class); ;
+
+    public static final String  LOG_FILE           = "log4j.properties";
+    public static final String  CFG_FILE           = "fox.properties";
+    protected static Properties FoxProperties      = new Properties();
 
     // loads CFG_FILE to FoxProperties
     static {
@@ -42,7 +45,7 @@ public class FoxCfg {
             try {
                 FoxProperties.load(in);
             } catch (IOException e) {
-                LOG.error("Can't read `fox.properties` file.");
+                LOG.error("Can't read `" + CFG_FILE + "` file.");
             }
             try {
                 in.close();
@@ -50,7 +53,7 @@ public class FoxCfg {
                 LOG.error("Something went wrong.\n", e);
             }
         } else {
-            LOG.error("Can't read `fox.properties` file.");
+            LOG.error("Can't read `" + CFG_FILE + "` file.");
         }
     }
 

@@ -25,6 +25,7 @@ import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.aksw.fox.utils.FoxWebLog;
 import org.apache.jena.riot.Lang;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
@@ -36,42 +37,44 @@ import org.jetlang.fibers.ThreadFiber;
  * 
  */
 public class Fox implements IFox {
+    public static final String  CFG_KEY_URI_LOOKUP        = Fox.class.getName().concat(".urilookup");
+    public static final String  CFG_KEY_DEFAULT_LIGHT_NER = Fox.class.getName().concat(".defaultLightNER");
 
-    public static Logger        logger         = Logger.getLogger(Fox.class);
-
-    /**
-     * 
-     */
-    protected ILookup           uriLookup      = null;
+    public static final Logger  LOG                       = LogManager.getLogger(Fox.class);
 
     /**
      * 
      */
-    protected FoxNERTools       nerTools       = null;
+    protected ILookup           uriLookup                 = null;
 
     /**
      * 
      */
-    protected TokenManager      tokenManager   = null;
+    protected FoxNERTools       nerTools                  = null;
 
     /**
      * 
      */
-    protected FoxJena           foxJena        = new FoxJena();
+    protected TokenManager      tokenManager              = null;
+
+    /**
+     * 
+     */
+    protected FoxJena           foxJena                   = new FoxJena();
 
     /**
      * Holds a tool for fox's light version.
      */
-    protected INER              nerLight       = null;
+    protected INER              nerLight                  = null;
 
     /**
      * 
      */
-    protected FoxWebLog         foxWebLog      = null;
+    protected FoxWebLog         foxWebLog                 = null;
 
-    private CountDownLatch      countDownLatch = null;
-    private Map<String, String> parameter      = null;
-    private String              response       = null;
+    private CountDownLatch      countDownLatch            = null;
+    private Map<String, String> parameter                 = null;
+    private String              response                  = null;
 
     /**
      * 
@@ -79,17 +82,17 @@ public class Fox implements IFox {
     public Fox() {
 
         // load class in fox.properties file
-        if (FoxCfg.get(FoxCfg.parameter_urilookup) != null) {
+        if (FoxCfg.get(CFG_KEY_URI_LOOKUP) != null)
             try {
-                uriLookup = (ILookup) FoxCfg.getClass(FoxCfg.get(FoxCfg.parameter_urilookup).trim());
+                uriLookup = (ILookup) FoxCfg.getClass(FoxCfg.get(CFG_KEY_URI_LOOKUP).trim());
             } catch (Exception e) {
-                logger.error("InterfaceURI not found. Check your fox.properties file.");
+                LOG.error("InterfaceURI not found. Check your " + FoxCfg.CFG_FILE + " file and the " + CFG_KEY_URI_LOOKUP + " key.");
             }
-        }
+
         if (uriLookup == null)
             uriLookup = new AGDISTISLookup();
 
-        this.nerTools = new FoxNERTools();
+        nerTools = new FoxNERTools();
     }
 
     /**
@@ -111,13 +114,13 @@ public class Fox implements IFox {
         foxWebLog.setMessage("Running Fox...");
 
         if (parameter == null) {
-            logger.error("Parameter not set.");
+            LOG.error("Parameter not set.");
         } else {
             final String input;
             Set<Entity> entities = null;
 
             if (parameter.get(FoxCfg.parameter_input) == null || parameter.get(FoxCfg.parameter_task) == null) {
-                logger.error("Input or task parameter not set.");
+                LOG.error("Input or task parameter not set.");
                 input = null;
             } else {
                 String task = parameter.get(FoxCfg.parameter_task);
@@ -131,13 +134,13 @@ public class Fox implements IFox {
                     switch (task.toLowerCase()) {
 
                     case "ke":
-                        logger.info("starting foxlight ke ...");
+                        LOG.info("starting foxlight ke ...");
                         // TODO:
                         break;
 
                     case "ner":
-                        logger.info("starting foxlight ner ...");
-                        foxWebLog.setMessage("Fox-Light start retrieving ner ...");
+                        LOG.info("starting foxlight ner ...");
+                        foxWebLog.setMessage("Start light version ...");
 
                         // set ner light tool
                         if (nerLight == null)
@@ -146,10 +149,20 @@ public class Fox implements IFox {
                                     nerLight = tool;
                                     break;
                                 }
-                        if (nerLight == null)
-                            nerLight = new NERStanford();
+                        if (nerLight == null) {
+                            if (FoxCfg.get(CFG_KEY_DEFAULT_LIGHT_NER) != null)
+                                try {
+                                    nerLight = (INER) FoxCfg.getClass(FoxCfg.get(CFG_KEY_DEFAULT_LIGHT_NER).trim());
+                                } catch (Exception e) {
+                                    LOG.error("INER not found. Check your " + FoxCfg.CFG_FILE + " file and the " + CFG_KEY_DEFAULT_LIGHT_NER + " key");
+                                }
 
-                        foxWebLog.setMessage("Fox-Light ner is: " + nerLight.getToolName());
+                            if (nerLight == null)
+                                nerLight = new NERStanford();
+
+                        }
+
+                        foxWebLog.setMessage("NER tool is: " + nerLight.getToolName());
                         final CountDownLatch latch = new CountDownLatch(1);
 
                         nerLight.setCountDownLatch(latch);
@@ -160,13 +173,13 @@ public class Fox implements IFox {
                         fiber.start();
                         fiber.execute(nerLight);
 
-                        int min = Integer.parseInt(FoxCfg.get("foxNERLifeTime"));
+                        int min = Integer.parseInt(FoxCfg.get(FoxNERTools.NERLIFETIME_KEY));
                         try {
                             latch.await(min, TimeUnit.MINUTES);
                         } catch (InterruptedException e) {
-                            logger.error("Timeout after " + min + "min.");
-                            logger.error("\n", e);
-                            logger.error("input:\n" + input);
+                            LOG.error("Timeout after " + min + "min.");
+                            LOG.error("\n", e);
+                            LOG.error("input:\n" + input);
                         }
 
                         // shutdown threads
@@ -176,13 +189,13 @@ public class Fox implements IFox {
                             entities = new HashSet<Entity>(nerLight.getResults());
 
                         } else {
-                            if (logger.isDebugEnabled())
-                                logger.debug("timeout after " + min + "min.");
+                            if (LOG.isDebugEnabled())
+                                LOG.debug("timeout after " + min + "min.");
 
                             // TODO: handle timeout
                         }
 
-                        foxWebLog.setMessage("Fox-Light start retrieving ner done.");
+                        foxWebLog.setMessage("Light version done.");
 
                         tokenManager.repairEntities(entities);
 
@@ -227,15 +240,15 @@ public class Fox implements IFox {
                     switch (task.toLowerCase()) {
 
                     case "ke":
-                        logger.info("starting ke ...");
+                        LOG.info("starting ke ...");
                         // TODO: ke fox
                         break;
 
                     case "ner":
-                        logger.info("starting ner ...");
-                        foxWebLog.setMessage("Start retrieving ner ...");
+                        LOG.info("starting ner ...");
+                        foxWebLog.setMessage("Start NER ...");
                         entities = nerTools.getEntities(input);
-                        foxWebLog.setMessage("Start retrieving ner done.");
+                        foxWebLog.setMessage("NER done.");
 
                         // remove duplicate annotations
                         // TODO: why they here?
@@ -244,8 +257,8 @@ public class Fox implements IFox {
                             if (wordEntityMap.get(entity.getText()) == null) {
                                 wordEntityMap.put(entity.getText(), entity);
                             } else {
-                                logger.debug("We have a duplicate annotation: " + entity.getText() + " " + entity.getType() + " " + wordEntityMap.get(entity.getText()).getType());
-                                logger.debug("We remove it ...");
+                                LOG.debug("We have a duplicate annotation: " + entity.getText() + " " + entity.getType() + " " + wordEntityMap.get(entity.getText()).getType());
+                                LOG.debug("We remove it ...");
                                 wordEntityMap.remove(entity.getText());
                             }
                         }
@@ -296,7 +309,7 @@ public class Fox implements IFox {
                             html += "<a class=\"" + entity.getType().toLowerCase() + "\" href=\"" + entity.uri + "\"  target=\"_blank\"  title=\"" + entity.getType().toLowerCase() + "\" >" + entity.getText() + "</a>";
                             last = index + entity.getText().length();
                         } else {
-                            logger.error("Entity has no URI: " + entity.getText());
+                            LOG.error("Entity has no URI: " + entity.getText());
                         }
                     }
 
@@ -304,7 +317,7 @@ public class Fox implements IFox {
                     parameter.put(FoxCfg.parameter_input, html);
 
                     // INFO TRACE
-                    if (logger.isTraceEnabled())
+                    if (LOG.isTraceEnabled())
                         infotrace(entities);
                     // INFO TRACE
                 }
@@ -320,19 +333,19 @@ public class Fox implements IFox {
     // debug infos
     private void infotrace(Set<Entity> entities) {
         // INFO TRACE
-        logger.info("Entities:");
+        LOG.info("Entities:");
         for (String toolname : this.nerTools.getToolResult().keySet()) {
             if (this.nerTools.getToolResult().get(toolname) == null)
                 return;
-            logger.info(toolname + ": " + this.nerTools.getToolResult().get(toolname).size());
-            if (logger.isTraceEnabled())
+            LOG.info(toolname + ": " + this.nerTools.getToolResult().get(toolname).size());
+            if (LOG.isTraceEnabled())
                 for (Entity e : this.nerTools.getToolResult().get(toolname))
-                    logger.trace(e);
+                    LOG.trace(e);
         }
-        logger.info("fox" + ": " + entities.size());
-        if (logger.isTraceEnabled())
+        LOG.info("fox" + ": " + entities.size());
+        if (LOG.isTraceEnabled())
             for (Entity e : entities)
-                logger.trace(e);
+                LOG.trace(e);
         // INFO TRACE
     }
 

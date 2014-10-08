@@ -2,6 +2,7 @@ package org.aksw.fox.ketools;
 
 import java.io.InputStream;
 
+import org.aksw.fox.utils.FoxCfg;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -13,7 +14,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 public class Yahooapis {
     public static void main(String[] a) throws Exception {
-        PropertyConfigurator.configure("log4j.properties");
+        PropertyConfigurator.configure(FoxCfg.LOG_FILE);
 
         String in = "University of Leipzig in Leipzig..";
 

@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.aksw.fox.CrossValidation;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.utils.FoxCfg;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -24,35 +26,37 @@ import au.com.bytecode.opencsv.CSVWriter;
  */
 public class FoxEvaluationHelper {
 
-    protected int             folds          = 10;
-    protected int             runs           = 10;
+    public static final String CFG_KEY_CROSSVALIDATION_RUNS = CrossValidation.class.getName().concat(".runs");
+
+    protected int              folds                        = 10;
+    protected int              runs                         = Integer.valueOf(FoxCfg.get(CFG_KEY_CROSSVALIDATION_RUNS));
 
     // columns
-    protected int             run            = 0;
-    protected int             classifier     = 1;
-    protected int             classs         = 2;
+    protected int              run                          = 0;
+    protected int              classifier                   = 1;
+    protected int              classs                       = 2;
 
     // row index (L,O,P,N)
-    protected int             a              = classs + 1;
-    protected int             b              = a + 1;
-    protected int             c              = b + 1;
-    protected int             d              = c + 1;
+    protected int              a                            = classs + 1;
+    protected int              b                            = a + 1;
+    protected int              c                            = b + 1;
+    protected int              d                            = c + 1;
 
     // measures
-    protected int             recallIndex    = d + 1;
-    protected int             precisionIndex = d + 2;
-    protected int             fscoreIndex    = d + 3;
+    protected int              recallIndex                  = d + 1;
+    protected int              precisionIndex               = d + 2;
+    protected int              fscoreIndex                  = d + 3;
 
     // in folder
-    protected String          inputFolder    = null;
+    protected String           inputFolder                  = null;
 
-    protected List<String>    files          = null;
+    protected List<String>     files                        = null;
 
     // out file
-    public String             outputFile     = null;
+    public String              outputFile                   = null;
 
-    public List<List<String>> values         = new ArrayList<>();
-    public List<List<String>> meanValues     = new ArrayList<>();
+    public List<List<String>>  values                       = new ArrayList<>();
+    public List<List<String>>  meanValues                   = new ArrayList<>();
 
     /**
      * 

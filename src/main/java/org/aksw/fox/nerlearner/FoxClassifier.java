@@ -14,6 +14,7 @@ import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import weka.classifiers.Classifier;
@@ -29,18 +30,23 @@ import weka.core.SerializationHelper;
  */
 public class FoxClassifier {
 
-    public static Logger   logger       = Logger.getLogger(FoxClassifier.class);
+    public static Logger       LOG                      = LogManager.getLogger(FoxClassifier.class);
 
-    protected Classifier   classifier   = null;
-    protected Instances    instances    = null;
-    protected FoxInstances foxInstances = null;
-    private boolean        isTrained    = false;
+    public static final String CFG_KEY_MODEL_PATH       = FoxClassifier.class.getName().concat(".modelPath");
+    public static final String CFG_KEY_LEARNER          = FoxClassifier.class.getName().concat(".learner");
+    public static final String CFG_KEY_LEARNER_OPTIONS  = FoxClassifier.class.getName().concat(".learnerOptions");
+    public static final String CFG_KEY_LEARNER_TRAINING = FoxClassifier.class.getName().concat(".training");
+
+    protected Classifier       classifier               = null;
+    protected Instances        instances                = null;
+    protected FoxInstances     foxInstances             = null;
+    private boolean            isTrained                = false;
 
     /**
      * FoxClassifier.
      */
     public FoxClassifier() {
-        logger.info("FoxClassifier ...");
+        LOG.info("FoxClassifier ...");
 
         this.foxInstances = new FoxInstances();
     }
@@ -51,14 +57,14 @@ public class FoxClassifier {
      * @throws Exception
      */
     protected void buildClassifier() throws Exception {
-        if (logger.isDebugEnabled())
-            logger.debug("buildClassifier ...");
+        if (LOG.isDebugEnabled())
+            LOG.debug("buildClassifier ...");
 
         if (instances != null) {
             classifier.buildClassifier(instances);
             isTrained = true;
         } else {
-            logger.error("Initialize instances first.");
+            LOG.error("Initialize instances first.");
         }
     }
 
@@ -70,7 +76,7 @@ public class FoxClassifier {
      * @param oracel
      */
     protected void initInstances(Set<String> input, Map<String, Set<Entity>> toolResults, Map<String, String> oracle) {
-        logger.info("initInstances ...");
+        LOG.info("initInstances ...");
 
         instances = (oracle == null) ? foxInstances.getInstances(input, toolResults) : foxInstances.getInstances(input, toolResults, oracle);
     }
@@ -81,19 +87,19 @@ public class FoxClassifier {
      * @param file
      */
     public void writeClassifier(String file) {
-        logger.info("writeClassifier ...");
+        LOG.info("writeClassifier ...");
 
         String path = FilenameUtils.getPath(file);
         try {
             FileUtils.forceMkdir(new File(path));
         } catch (IOException e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         }
 
         try {
             SerializationHelper.write(file, classifier);
         } catch (Exception e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         }
     }
 
@@ -104,14 +110,14 @@ public class FoxClassifier {
      *            path to model
      */
     public void readClassifier(String filename) {
-        logger.info("readClassifier ...");
+        LOG.info("readClassifier ...");
 
         try {
             classifier = (Classifier) SerializationHelper.read(filename);
         } catch (Exception e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         }
-        logger.info("readClassifier done.");
+        LOG.info("readClassifier done.");
     }
 
     /**
@@ -119,7 +125,9 @@ public class FoxClassifier {
      * properties.
      */
     public void readClassifier() {
-        readClassifier(FoxCfg.get("modelPath") + System.getProperty("file.separator") + FoxCfg.get("learner").trim());
+        String name = FoxCfg.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator + FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER);
+        LOG.debug(name);
+        readClassifier(name.trim());
     }
 
     /**
@@ -131,7 +139,7 @@ public class FoxClassifier {
      * @return classified token
      */
     public Set<Entity> classify(IPostProcessing pp) {
-        logger.info("classify ...");
+        LOG.info("classify ...");
 
         // rewrite to use labels
         initInstances(pp.getLabeledInput(), pp.getLabeledToolResults(), null);
@@ -141,18 +149,18 @@ public class FoxClassifier {
             try {
                 classified.instance(i).setClassValue(classifier.classifyInstance(instances.instance(i)));
             } catch (Exception e) {
-                logger.error("\n", e);
+                LOG.error("\n", e);
             }
         }
         // TRACE
-        if (logger.isTraceEnabled())
-            logger.trace("classified: \n" + classified);
+        if (LOG.isTraceEnabled())
+            LOG.trace("classified: \n" + classified);
         // TRACE
 
         Set<Entity> set = pp.instancesToEntities(classified);
-        logger.info("classify done, size: " + set.size());
-        if (logger.isDebugEnabled())
-            logger.debug(classifier);
+        LOG.info("classify done, size: " + set.size());
+        if (LOG.isDebugEnabled())
+            LOG.debug(classifier);
         return set;
     }
 
@@ -163,7 +171,7 @@ public class FoxClassifier {
      *            files to read as training data
      */
     public void training(String input, Map<String, Set<Entity>> toolResults, Map<String, String> oracle) throws Exception {
-        logger.info("training ...");
+        LOG.info("training ...");
 
         // init. training data
         IPostProcessing pp = new PostProcessing(new TokenManager(input), toolResults);
@@ -171,15 +179,15 @@ public class FoxClassifier {
         Map<String, Set<Entity>> labledToolResults = pp.getLabeledToolResults();
 
         // DEBUG
-        if (logger.isDebugEnabled()) {
-            logger.debug("labeled entity:");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("labeled entity:");
 
             Set<Entity> set = new LinkedHashSet<>();
             for (Entry<String, Set<Entity>> e : labledToolResults.entrySet())
                 set.addAll(e.getValue());
 
             for (Entity e : set)
-                logger.trace(e.getText());
+                LOG.trace(e.getText());
         }
         // DEBUG
 
@@ -199,7 +207,7 @@ public class FoxClassifier {
             eva.evaluateModel(classifier, instances);
 
             // print summary
-            logger.info("summary\n" + eva.toSummaryString());
+            LOG.info("summary\n" + eva.toSummaryString());
 
             // print the confusion matrix
             StringBuffer cm = new StringBuffer();
@@ -214,18 +222,18 @@ public class FoxClassifier {
                 cm.append("\n");
             }
 
-            logger.info("confusion matrix\n" + cm.toString());
+            LOG.info("confusion matrix\n" + cm.toString());
 
             // measure
             for (String cl : EntityClassMap.entityClasses) {
-                logger.info("class: " + cl);
-                logger.info("fMeasure: " + eva.fMeasure(EntityClassMap.entityClasses.indexOf(cl)));
-                logger.info("precision: " + eva.precision(EntityClassMap.entityClasses.indexOf(cl)));
-                logger.info("recall: " + eva.recall(EntityClassMap.entityClasses.indexOf(cl)));
+                LOG.info("class: " + cl);
+                LOG.info("fMeasure: " + eva.fMeasure(EntityClassMap.entityClasses.indexOf(cl)));
+                LOG.info("precision: " + eva.precision(EntityClassMap.entityClasses.indexOf(cl)));
+                LOG.info("recall: " + eva.recall(EntityClassMap.entityClasses.indexOf(cl)));
             }
 
         } else {
-            logger.error("Build/training a classifier first.");
+            LOG.error("Build/training a classifier first.");
         }
     }
 

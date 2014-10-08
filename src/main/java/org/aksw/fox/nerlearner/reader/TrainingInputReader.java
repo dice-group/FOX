@@ -15,7 +15,9 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.TokenManager;
+import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxTextUtil;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -25,15 +27,15 @@ import org.apache.log4j.PropertyConfigurator;
  * @author rspeck
  * 
  */
-public class TrainingInputReader {
+public class TrainingInputReader implements INERReader {
 
-    public static Logger logger = Logger.getLogger(TrainingInputReader.class);
+    public static Logger LOG = LogManager.getLogger(TrainingInputReader.class);
 
     /**
      * 
      */
     public static void main(String[] aa) throws Exception {
-        PropertyConfigurator.configure("log4j.properties");
+        PropertyConfigurator.configure(FoxCfg.LOG_FILE);
 
         List<String> files = new ArrayList<>();
         File file = new File("input/3");
@@ -57,18 +59,18 @@ public class TrainingInputReader {
         String[] a = files.toArray(new String[files.size()]);
 
         TrainingInputReader trainingInputReader = new TrainingInputReader(a);
-        TrainingInputReader.logger.info("input: ");
-        TrainingInputReader.logger.info(trainingInputReader.getInput());
-        TrainingInputReader.logger.info("oracle: ");
+        TrainingInputReader.LOG.info("input: ");
+        TrainingInputReader.LOG.info(trainingInputReader.getInput());
+        TrainingInputReader.LOG.info("oracle: ");
         for (Entry<String, String> e : trainingInputReader.getEntities().entrySet()) {
-            TrainingInputReader.logger.info(e.getValue() + "-" + e.getKey());
+            TrainingInputReader.LOG.info(e.getValue() + "-" + e.getKey());
         }
     }
 
-    protected File[] inputFiles;
-    protected StringBuffer taggedInput = new StringBuffer();
-    protected String input = "";
-    protected HashMap<String, String> entities = new HashMap<>();
+    protected File[]                  inputFiles;
+    protected StringBuffer            taggedInput = new StringBuffer();
+    protected String                  input       = "";
+    protected HashMap<String, String> entities    = new HashMap<>();
 
     /**
      * http://www-nlpir.nist.gov/related_projects/muc/proceedings/ne_task.html
@@ -77,13 +79,13 @@ public class TrainingInputReader {
      * @throws IOException
      */
     public TrainingInputReader(String[] inputPaths) throws IOException {
-        if (logger.isDebugEnabled())
-            logger.debug("TrainingInputReader ...");
+        if (LOG.isDebugEnabled())
+            LOG.debug("TrainingInputReader ...");
 
         inputFiles = new File[inputPaths.length];
 
-        if (logger.isDebugEnabled())
-            logger.debug("search files ...");
+        if (LOG.isDebugEnabled())
+            LOG.debug("search files ...");
 
         for (int i = 0; i < inputPaths.length; i++) {
             inputFiles[i] = new File(inputPaths[i]);
@@ -100,29 +102,27 @@ public class TrainingInputReader {
      * @return
      * @throws IOException
      */
-    public String getInput() throws IOException {
-        {
-            // DEBUG
-            if (logger.isDebugEnabled())
-                logger.debug("getInput ...\n" + input);
+    public String getInput() {
+        // DEBUG
+        if (LOG.isDebugEnabled())
+            LOG.debug("getInput ...\n" + input);
 
-            // INFO
-            logger.info("input length: " + input.length());
-        }
+        // INFO
+        LOG.info("input length: " + input.length());
 
         return input;
     }
 
-    public HashMap<String, String> getEntities() throws IOException {
+    public HashMap<String, String> getEntities() {
         {
             // DEBUG
-            if (logger.isDebugEnabled()) {
-                logger.debug("getEntities ...");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("getEntities ...");
                 for (Entry<String, String> e : entities.entrySet())
-                    logger.debug(e.getKey() + " -> " + e.getValue());
+                    LOG.debug(e.getKey() + " -> " + e.getValue());
             }
             // INFO
-            logger.info("oracle raw size: " + entities.size());
+            LOG.info("oracle raw size: " + entities.size());
         }
 
         {
@@ -144,7 +144,7 @@ public class TrainingInputReader {
 
         {
             // INFO
-            logger.info("oracle cleaned size: " + entities.size());
+            LOG.info("oracle cleaned size: " + entities.size());
             int l = 0, o = 0, p = 0;
             for (Entry<String, String> e : entities.entrySet()) {
                 if (e.getValue().equals(EntityClassMap.L))
@@ -154,10 +154,10 @@ public class TrainingInputReader {
                 if (e.getValue().equals(EntityClassMap.P))
                     p++;
             }
-            logger.info("oracle :");
-            logger.info(l + " LOCs found");
-            logger.info(o + " ORGs found");
-            logger.info(p + " PERs found");
+            LOG.info("oracle :");
+            LOG.info(l + " LOCs found");
+            LOG.info(o + " ORGs found");
+            LOG.info(p + " PERs found");
 
             l = 0;
             o = 0;
@@ -170,11 +170,11 @@ public class TrainingInputReader {
                 if (e.getValue().equals(EntityClassMap.P))
                     p += e.getKey().split(" ").length;
             }
-            logger.info("oracle (token):");
-            logger.info(l + " LOCs found");
-            logger.info(o + " ORGs found");
-            logger.info(p + " PERs found");
-            logger.info(l + o + p + " total found");
+            LOG.info("oracle (token):");
+            LOG.info(l + " LOCs found");
+            LOG.info(o + " ORGs found");
+            LOG.info(p + " PERs found");
+            LOG.info(l + o + p + " total found");
         }
 
         return entities;
@@ -185,8 +185,8 @@ public class TrainingInputReader {
      * 
      **/
     protected void readInputFromFiles() throws IOException {
-        if (logger.isDebugEnabled())
-            logger.debug("readInputFromFiles ...");
+        if (LOG.isDebugEnabled())
+            LOG.debug("readInputFromFiles ...");
 
         for (File file : inputFiles) {
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -228,8 +228,8 @@ public class TrainingInputReader {
      * @return
      */
     protected String parse() {
-        if (logger.isDebugEnabled())
-            logger.debug("parse ...");
+        if (LOG.isDebugEnabled())
+            LOG.debug("parse ...");
 
         input = taggedInput.toString().replaceAll("<p>|</p>", "");
 
@@ -275,7 +275,7 @@ public class TrainingInputReader {
                     input = input.replaceFirst("</ENAMEX>", "");
 
                 } catch (Exception e) {
-                    logger.error("\n", e);
+                    LOG.error("\n", e);
                 }
             }
         }
@@ -306,8 +306,8 @@ public class TrainingInputReader {
         if (!word.isEmpty()) {
             if (entities.get(word) != null) {
                 if (!entities.get(word).equals(classs) && !entities.get(word).equals(EntityClassMap.getNullCategory())) {
-                    logger.info("Oracle with a token with diff. annos. No disamb. for now. Ignore token.");
-                    logger.info(word + " : " + classs + " | " + entities.get(word));
+                    LOG.info("Oracle with a token with diff. annos. No disamb. for now. Ignore token.");
+                    LOG.info(word + " : " + classs + " | " + entities.get(word));
                     entities.put(word, EntityClassMap.getNullCategory());
                 }
             } else

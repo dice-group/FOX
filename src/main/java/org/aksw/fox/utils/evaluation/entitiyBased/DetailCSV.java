@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.aksw.fox.CrossValidation;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.utils.FoxCfg;
 
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -22,20 +24,21 @@ public class DetailCSV {
 
     // need to be set
     // private static final int classindex = 4;
-    public static int                        classindex        = 16;
+    public static int                        classindex                   = 16;
     // need to be set
-    public static String                     alg               = "Vote";
+    public static String                     alg                          = "Vote";
     // need to be set
-    public static String                     folder            = "evaluation/entityBased/1/" + alg + "/tmp";
+    public static String                     folder                       = "evaluation/entityBased/1/" + alg + "/tmp";
 
     // need to be set
-    public static int                        runs              = 3;
+    public static final String               CFG_KEY_CROSSVALIDATION_RUNS = CrossValidation.class.getName().concat(".runs");
+    protected static int                     runs                         = Integer.valueOf(FoxCfg.get(CFG_KEY_CROSSVALIDATION_RUNS));
 
     //
-    static int                               currentRow        = 0;
+    static int                               currentRow                   = 0;
 
-    static Map<String, Integer>              defaultmap        = new HashMap<String, Integer>();
-    static Map<String, Map<String, Integer>> matrix            = new HashMap<String, Map<String, Integer>>();
+    static Map<String, Integer>              defaultmap                   = new HashMap<String, Integer>();
+    static Map<String, Map<String, Integer>> matrix                       = new HashMap<String, Map<String, Integer>>();
     static {
         defaultmap.put(EntityClassMap.L, 0); // a
         defaultmap.put(EntityClassMap.O, 0); // b
@@ -43,12 +46,12 @@ public class DetailCSV {
         defaultmap.put(EntityClassMap.N, 0); // d
     }
 
-    static List<String>                      classifiedClasses = new ArrayList<>();
+    static List<String>                      classifiedClasses            = new ArrayList<>();
 
-    static StringBuffer                      csv_out           = null;
+    static StringBuffer                      csv_out                      = null;
 
-    static int                               nullRows          = 0;                                          // just//
-                                                                                                              // debugging
+    static int                               nullRows                     = 0;                                                        // just
+                                                                                                                                       // debugging
 
     public static void init() {
         matrix.put(EntityClassMap.L, new HashMap<String, Integer>(defaultmap));

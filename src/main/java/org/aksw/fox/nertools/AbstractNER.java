@@ -7,14 +7,15 @@ import java.util.concurrent.CountDownLatch;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.utils.FoxTextUtil;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 public abstract class AbstractNER implements INER {
 
-    public static Logger logger = Logger.getLogger(AbstractNER.class);
-    protected List<Entity> entityList = null;
-    protected CountDownLatch cdl = null;
-    protected String input = null;
+    public static final Logger LOG        = LogManager.getLogger(AbstractNER.class);
+    protected List<Entity>     entityList = null;
+    protected CountDownLatch   cdl        = null;
+    protected String           input      = null;
 
     /*
      * @Override public List<Entity> retrieve(String input) { return new
@@ -32,12 +33,12 @@ public abstract class AbstractNER implements INER {
         if (input != null)
             entityList = clean(retrieve(input));
         else
-            logger.error("Input not set!");
+            LOG.error("Input not set!");
 
         if (cdl != null)
             cdl.countDown();
         else
-            logger.warn("CountDownLatch not set!");
+            LOG.warn("CountDownLatch not set!");
 
         logMsg();
     }
@@ -78,7 +79,7 @@ public abstract class AbstractNER implements INER {
      * @return
      */
     protected List<Entity> clean(List<Entity> list) {
-        logger.info("clean entities ...");
+        LOG.info("clean entities ...");
 
         // clean token with the tokenizer
         for (Entity entity : list) {
@@ -95,16 +96,16 @@ public abstract class AbstractNER implements INER {
         }
         list = new ArrayList<Entity>(list);
 
-        logger.info("clean entities done.");
+        LOG.info("clean entities done.");
         return list;
     }
 
     private void logMsg() {
         // DEBUG
         if (entityList.size() > 0)
-            logger.debug(entityList.size() + "(" + entityList.iterator().next().getTool() + ")");
+            LOG.debug(entityList.size() + "(" + entityList.iterator().next().getTool() + ")");
         for (Entity entity : entityList)
-            logger.debug(entity.getText() + "=>" + entity.getType() + "(" + entity.getTool() + ")");
+            LOG.debug(entity.getText() + "=>" + entity.getType() + "(" + entity.getTool() + ")");
 
         // INFO
         int l = 0, o = 0, p = 0;
@@ -120,11 +121,11 @@ public abstract class AbstractNER implements INER {
                 list.add(e.getText());
             }
         }
-        logger.info(this.getToolName() + ":");
-        logger.info(l + " LOCs found");
-        logger.info(o + " ORGs found");
-        logger.info(p + " PERs found");
-        logger.info(entityList.size() + " total found");
+        LOG.info(this.getToolName() + ":");
+        LOG.info(l + " LOCs found");
+        LOG.info(o + " ORGs found");
+        LOG.info(p + " PERs found");
+        LOG.info(entityList.size() + " total found");
         l = 0;
         o = 0;
         p = 0;
@@ -136,10 +137,10 @@ public abstract class AbstractNER implements INER {
             if (e.getType().equals(EntityClassMap.P))
                 p += e.getText().split(" ").length;
         }
-        logger.info(this.getToolName() + "(token):");
-        logger.info(l + " LOCs found");
-        logger.info(o + " ORGs found");
-        logger.info(p + " PERs found");
-        logger.info(l + o + p + " total found");
+        LOG.info(this.getToolName() + "(token):");
+        LOG.info(l + " LOCs found");
+        LOG.info(o + " ORGs found");
+        LOG.info(p + " PERs found");
+        LOG.info(l + o + p + " total found");
     }
 }

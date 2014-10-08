@@ -31,16 +31,16 @@ public class NERIllinoisExtended extends AbstractNER {
     NETaggerLevel2       tagger2;
 
     public static void main(String[] args) throws Exception {
-        PropertyConfigurator.configure("log4j.properties");
+        PropertyConfigurator.configure(FoxCfg.LOG_FILE);
         for (Entity e : new NERIllinoisExtended().retrieve(FoxConst.EXAMPLE_1))
-            NERIllinoisExtended.logger.info(e);
+            NERIllinoisExtended.LOG.info(e);
     }
 
     public NERIllinoisExtended() {
         try {
             Parameters.readConfigAndLoadExternalData(file, areWeTraining);
         } catch (Exception e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         }
         tagger1 = new NETaggerLevel1(
                 ParametersForLbjCode.currentParameters.pathToModelFile + ".level1",
@@ -52,7 +52,7 @@ public class NERIllinoisExtended extends AbstractNER {
 
     @Override
     public List<Entity> retrieve(String input) {
-        logger.info("retrieve ...");
+        LOG.info("retrieve ...");
 
         // parse input
         Vector<LinkedVector> sentences = PlainTextReader.parseText(input);
@@ -63,7 +63,7 @@ public class NERIllinoisExtended extends AbstractNER {
         try {
             ExpressiveFeaturesAnnotator.annotate(data);
         } catch (Exception e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         }
 
         // annotate input
@@ -72,7 +72,7 @@ public class NERIllinoisExtended extends AbstractNER {
             Decoder.annotateDataBIO(data, tagger1, tagger2);
             list = getEntities(sentences);
         } catch (Exception e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         }
 
         return list;

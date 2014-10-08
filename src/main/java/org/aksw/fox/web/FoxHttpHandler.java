@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.aksw.fox.Fox;
 import org.aksw.fox.IFox;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxJena;
@@ -25,13 +24,13 @@ import org.jetlang.fibers.ThreadFiber;
  */
 public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
-    protected Pool<IFox> pool = new Pool<IFox>(Fox.class.getName(), Integer.parseInt(FoxCfg.get("poolCount")));
+    public static final String CFG_KEY_FOX_LIFETIME = FoxHttpHandler.class.getName().concat(".lifetime");
 
     @Override
     protected void postService(Request request, Response response, Map<String, String> parameter) {
 
         // get a fox instance
-        IFox fox = pool.poll();
+        IFox fox = Server.pool.poll();
 
         // init. thread
         Fiber fiber = new ThreadFiber();
@@ -59,9 +58,9 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
         // wait 5min or till the fox instance is finished
         try {
-            latch.await(Integer.parseInt(FoxCfg.get("foxLifeTime")), TimeUnit.MINUTES);
+            latch.await(Integer.parseInt(FoxCfg.get(CFG_KEY_FOX_LIFETIME)), TimeUnit.MINUTES);
         } catch (InterruptedException e) {
-            LOG.error("Fox timeout after " + FoxCfg.get("foxLifeTime") + "min.");
+            LOG.error("Fox timeout after " + FoxCfg.get(CFG_KEY_FOX_LIFETIME) + "min.");
             LOG.error("\n", e);
             LOG.error("input: " + parameter.get("input"));
         }
@@ -74,12 +73,12 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
         if (latch.getCount() == 0) {
 
             output = fox.getResults();
-            pool.push(fox);
+            Server.pool.push(fox);
 
         } else {
 
             fox = null;
-            pool.add();
+            Server.pool.add();
             // TODO : error output
         }
         String in = null, out = null, log = null;

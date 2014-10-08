@@ -1,43 +1,55 @@
 ##################################################################
 # feedback                                                       #
 ##################################################################
-api_key : <YOUR API KEY>
+org.aksw.fox.web.feedback.FeedbackHttpHandler.apikey : <YOUR API KEY>
 ##################################################################
 # NER                                                            #
 ##################################################################
+#spotlight
+org.aksw.fox.nertools.NERSpotlight.endpoint : http://spotlight.sztaki.hu:2222
+#org.aksw.fox.nertools.NERSpotlight.endpoint : http://139.18.2.164:4442
+# double
+org.aksw.fox.nertools.NERSpotlight.confidence : 0.2
+# integer
+org.aksw.fox.nertools.NERSpotlight.support : 2
+#
+#
 #stanford
-serializedClassifier : edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz
+org.aksw.fox.nertools.NERStanford.classifier : edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz
 # uri lookup class
-urilookup: org.aksw.fox.uri.AGDISTISLookup
+org.aksw.fox.Fox.urilookup: org.aksw.fox.uri.AGDISTISLookup
 #AGDISTIS endpoint
-agdistisEndpoint: http://139.18.2.164:8080/AGDISTIS
+org.aksw.fox.uri.AGDISTISLookup.endpoint: http://139.18.2.164:8080/AGDISTIS
+#org.aksw.fox.uri.AGDISTISLookup.endpoint: http://139.18.2.164:4443/AGDISTIS
 #NER default light version class
-nerLight: org.aksw.fox.nertools.NERStanford
+org.aksw.fox.Fox.defaultLightNER: org.aksw.fox.nertools.NERStanford
 #NER tools to use
-nerTools: org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford, org.aksw.fox.nertools.NERIllinoisExtended, org.aksw.fox.nertools.NERBalie
+org.aksw.fox.nertools.FoxNERTools.nerTools : org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford, org.aksw.fox.nertools.NERIllinoisExtended, org.aksw.fox.nertools.NERBalie
+#org.aksw.fox.nertools.FoxNERTools.nerTools : org.aksw.fox.nertools.NEROpenNLP, org.aksw.fox.nertools.NERStanford, org.aksw.fox.nertools.NERIllinoisExtended, org.aksw.fox.nertools.NERBalie, org.aksw.fox.nertools.NERSpotlight
 # path to read / write trained model
-modelPath : data/fox
+org.aksw.fox.nerlearner.FoxClassifier.modelPath : data/fox
 # which learner to use, values are: {  result_vote | class_vote | weka.classifiers.functions.MultilayerPerceptron | weka.classifiers.trees.J48 | ...}
-learner : weka.classifiers.functions.MultilayerPerceptron
-#learneroptions: -C 0.25 -M 2
+org.aksw.fox.nerlearner.FoxClassifier.learner : weka.classifiers.functions.MultilayerPerceptron
+#org.aksw.fox.nerlearner.FoxClassifier.learnerOptions : -C 0.25 -M 2
 ##################################################################
 # fox settings                                                   #
 ##################################################################
+org.aksw.fox.CrossValidation.runs : 10
 # max time in min. before fox timeouts
-foxLifeTime : 5
+org.aksw.fox.web.FoxHttpHandler.lifetime : 5
 # `true` to train fox. tainFox: { true | false }
-tainFox : false
+org.aksw.fox.nerlearner.FoxClassifier.training : false
 # max time in min. for all ner tools
-foxNERLifeTime : 2
+org.aksw.fox.nertools.FoxNERTools.foxNERLifeTime : 2
 ##################################################################
 # web service                                                    #
 ##################################################################
-# pool instances
-poolCount : 5
+# pool fox instances
+org.aksw.fox.web.Server.poolsize : 5
 # static file cache
-staticFileCacheEnabled : false
-# http handler settings, values are: 'true' to enable somehting else to disable
-demo : true
-api : true
-feedback : true
+org.aksw.fox.web.Server.static_file_cache_on : false
+# http handler settings, values are: 'true' to enable
+org.aksw.fox.web.Server.demo_handler : true
+org.aksw.fox.web.Server.api_handler : true
+org.aksw.fox.web.Server.feedback_handler : true
 ##################################################################

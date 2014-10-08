@@ -49,11 +49,11 @@ public class MeanOverAll {
                     means.put(name, v);
                 }
             }
+            reader.close();
 
         }
 
         for (Entry<String, Double> e : means.entrySet()) {
-
             System.out.println(e.getKey() + "," + e.getValue() / 5);
         }
     }

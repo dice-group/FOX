@@ -14,9 +14,8 @@ import org.apache.log4j.PropertyConfigurator;
  * 
  */
 public class MainServer {
-
     static {
-        PropertyConfigurator.configure("log4j.properties");
+        PropertyConfigurator.configure(FoxCfg.LOG_FILE);
     }
 
     /**
@@ -27,13 +26,6 @@ public class MainServer {
      *            </p>
      */
     public static void main(String[] args) {
-
-        // test config
-        String poolCount = FoxCfg.get("poolCount");
-        if (poolCount == null) {
-            Server.LOG.error("Can't read poolCount key in `fox.properties` file.");
-            System.exit(0);
-        }
 
         final Getopt getopt = new Getopt("Fox", args, "p:x");
 
@@ -48,8 +40,22 @@ public class MainServer {
             }
         }
 
-        if (FoxServerUtil.isPortAvailable(port))
+        // test port
+        if (FoxServerUtil.isPortAvailable(port)) {
+
+            // test config
+            String poolCount = FoxCfg.get(Server.CFG_KEY_POOL_SIZE);
+            if (poolCount == null) {
+                Server.LOG.error(
+                        "Can't read " + Server.CFG_KEY_POOL_SIZE + " key in `" + FoxCfg.CFG_FILE + "` file."
+                        );
+                System.exit(0);
+            }
+
+            // start server
             new Server(port).start();
+
+        }
         else
             Server.LOG.error("Port " + port + " in use or wrong argument, try an other one!");
     }

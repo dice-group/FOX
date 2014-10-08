@@ -16,68 +16,54 @@ import java.util.Map;
  */
 public class EntityClassMap {
 
-    public static final String L = "LOCATION";
-    public static final String M = "MISCELLANEOUS";
-    public static final String N = "NULL";
-    public static final String O = "ORGANIZATION";
-    public static final String P = "PERSON";
+    public static final String                 L                     = "LOCATION";
+    public static final String                 N                     = "NULL";
+    public static final String                 O                     = "ORGANIZATION";
+    public static final String                 P                     = "PERSON";
 
-    public static final List<String> entityClasses = new ArrayList<String>();
+    public static final List<String>           entityClasses         = new ArrayList<>();
     static {
         entityClasses.add(L);
         entityClasses.add(O);
         entityClasses.add(P);
-        // entityClasses.add(M);
         entityClasses.add(N);
     }
 
-    protected static final Map<String, String> entityClassesOracel = new HashMap<String, String>();
+    protected static final Map<String, String> entityClassesOracel   = new HashMap<>();
     static {
         entityClassesOracel.put("ORGANIZATION", O);
         entityClassesOracel.put("LOCATION", L);
         entityClassesOracel.put("PERSON", P);
-        // entityClassesBalie.put("misc", M);
-        // entityClassesOracel.put("nothing", N);
     }
 
-    protected static final Map<String, String> entityClassesBalie = new HashMap<String, String>();
+    protected static final Map<String, String> entityClassesBalie    = new HashMap<>();
     static {
         entityClassesBalie.put("ORGANIZATION", O);
         entityClassesBalie.put("LOCATION", L);
         entityClassesBalie.put("PERSON", P);
-        // entityClassesBalie.put("misc", M);
         entityClassesBalie.put("nothing", N);
     }
 
-    protected static final Map<String, String> entityClassesSTAN = new HashMap<String, String>();
+    protected static final Map<String, String> entityClassesSTAN     = new HashMap<>();
     static {
         entityClassesSTAN.put("ORGANIZATION", O);
         entityClassesSTAN.put("LOCATION", L);
         entityClassesSTAN.put("PERSON", P);
-        // entityClassesSTAN.put("MISC", M);
         entityClassesSTAN.put("O", N);
     }
 
-    protected static final Map<String, String> entityClassesOpenNLP = new HashMap<String, String>();
+    protected static final Map<String, String> entityClassesOpenNLP  = new HashMap<>();
     static {
         entityClassesOpenNLP.put("location", L);
         entityClassesOpenNLP.put("organization", O);
         entityClassesOpenNLP.put("person", P);
     }
 
-    protected static final Map<String, String> entityClassesILLINOIS = new HashMap<String, String>();
+    protected static final Map<String, String> entityClassesILLINOIS = new HashMap<>();
     static {
         entityClassesILLINOIS.put("LOC", L);
         entityClassesILLINOIS.put("ORG", O);
         entityClassesILLINOIS.put("PER", P);
-        // entityClassesILLINOIS.put("MISC", M);
-    }
-    
-    protected static final Map<String, String> entityClassesSpotlight = new HashMap<String, String>();
-    static {
-    	entityClassesSpotlight.put("Person", P);
-    	entityClassesSpotlight.put("Place", L);
-    	entityClassesSpotlight.put("Organisation", O);
     }
 
     /**
@@ -129,24 +115,26 @@ public class EntityClassMap {
             t = getNullCategory();
         return t;
     }
-    
+
     /**
      * Gets the entity class for a spotlight entity type/class.
      */
     public static String spotlight(String spotlightTag) {
-    	// The response can hold multiple Types at the same time. All cases need to be checked independantly.
-    	String t = null;
-    	if (spotlightTag.contains(":Person,") == true) {
-    		t = entityClassesSpotlight.get("Person");
-    	} else if (spotlightTag.contains(":Place,") == true) {
-    		t = entityClassesSpotlight.get("Place");
-    	} else if (spotlightTag.contains(":Organisation,") == true) {
-    		t = entityClassesSpotlight.get("Organisation");
-    	} 
-    	if (t == null) {
-    	    t = getNullCategory();
-    	}
-    	return t;
+        if (spotlightTag == null)
+            return getNullCategory();
+        // The spotlightTag can hold multiple types at the same time.
+        String t = null;
+        if (spotlightTag.toLowerCase().contains("person")) {
+            t = P;
+        } else if (spotlightTag.toLowerCase().contains("organisation")) {
+            t = O;
+        } else if (spotlightTag.toLowerCase().contains("place")) {
+            t = L;
+        }
+
+        if (t == null)
+            t = getNullCategory();
+        return t;
     }
 
     /**

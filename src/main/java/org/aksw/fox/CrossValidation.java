@@ -15,6 +15,8 @@ import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.nerlearner.reader.TrainingInputReader;
 import org.aksw.fox.nertools.FoxNERTools;
+import org.aksw.fox.utils.FoxCfg;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import weka.classifiers.Classifier;
@@ -31,20 +33,23 @@ import au.com.bytecode.opencsv.CSVWriter;
  */
 public class CrossValidation {
 
-    public static Logger      logger         = Logger.getLogger(CrossValidation.class);
+    public static final Logger LOG                          = LogManager.getLogger(CrossValidation.class);
+    public static final String CFG_KEY_CROSSVALIDATION_RUNS = CrossValidation.class.getName().concat(".runs");
 
-    public static FoxNERTools foxNERTools    = new FoxNERTools();
+    public static FoxNERTools  foxNERTools                  = new FoxNERTools();
 
     // cross-validation options
-    static int                seed           = 1, folds = 10, runs = 10;
+    static int                 seed                         = 1;
+    static int                 folds                        = 10;
+    static int                 runs                         = Integer.valueOf(FoxCfg.get(CFG_KEY_CROSSVALIDATION_RUNS));
 
     // current states
-    static String             run            = "";
-    static String             fold           = "";
-    static String             classifierName = "";
+    static String              run                          = "";
+    static String              fold                         = "";
+    static String              classifierName               = "";
 
-    static StringBuffer       outDetail      = null;
-    static StringBuffer       outTotal       = null;
+    static StringBuffer        outDetail                    = null;
+    static StringBuffer        outTotal                     = null;
 
     public static void crossValidation(Classifier cls, String[] inputFiles) throws Exception {
         classifierName = cls.getClass().getName();
@@ -86,7 +91,7 @@ public class CrossValidation {
                 saver.setFile(new File("tmp/training.arff"));
                 saver.writeBatch();
             } catch (IOException e) {
-                logger.error("/n", e);
+                LOG.error("/n", e);
             }
         }
         // perform cross-validation runs
@@ -98,8 +103,8 @@ public class CrossValidation {
             // perform cross-validation
             Evaluation evalAll = new Evaluation(instances);
             for (int n = 0; n < folds; n++) {
-                logger.info("Validation run = " + (run));
-                logger.info("Validation fold k = " + (n + 1));
+                LOG.info("Validation run = " + (run));
+                LOG.info("Validation fold k = " + (n + 1));
                 fold = new Integer(n + 1).toString();
 
                 Instances train = instances.trainCV(folds, n);
@@ -124,7 +129,7 @@ public class CrossValidation {
                         saver.setFile(new File("tmp/classified_" + (i + 1) + "_" + (n + 1) + ".arff"));
                         saver.writeBatch();
                     } catch (IOException e) {
-                        logger.error("\n", e);
+                        LOG.error("\n", e);
                     }
                 }
 
@@ -133,10 +138,10 @@ public class CrossValidation {
 
                 printMeasures(eval);
                 try {
-                    logger.info(eval.toClassDetailsString());
-                    logger.info(eval.toMatrixString());
+                    LOG.info(eval.toClassDetailsString());
+                    LOG.info(eval.toMatrixString());
                 } catch (Exception e) {
-                    logger.error("\n", e);
+                    LOG.error("\n", e);
                 }
 
             }
@@ -228,33 +233,33 @@ public class CrossValidation {
             double p = eval.precision(cat.indexOf(cl));
             double r = eval.recall(cat.indexOf(cl));
 
-            logger.info("=== classes ===");
-            logger.info("class: " + cl);
-            logger.info("fMeasure: " + f1);
-            logger.info("precision: " + p);
-            logger.info("recall: " + r);
+            LOG.info("=== classes ===");
+            LOG.info("class: " + cl);
+            LOG.info("fMeasure: " + f1);
+            LOG.info("precision: " + p);
+            LOG.info("recall: " + r);
         }
     }
 
     public static void myprint(Evaluation eval, Classifier classifier, Instances instances) {
 
-        logger.info("=== Run information ===\n\n");
-        logger.info("Scheme: " + classifier.getClass().getName() + " Options: " + Utils.joinOptions(classifier.getOptions()));
-        logger.info("Relation: " + instances.relationName());
-        logger.info("Instances: " + instances.numInstances());
-        logger.info("Attributes: " + instances.numAttributes());
+        LOG.info("=== Run information ===\n\n");
+        LOG.info("Scheme: " + classifier.getClass().getName() + " Options: " + Utils.joinOptions(classifier.getOptions()));
+        LOG.info("Relation: " + instances.relationName());
+        LOG.info("Instances: " + instances.numInstances());
+        LOG.info("Attributes: " + instances.numAttributes());
 
-        logger.info("=== Classifier model ===\n\n");
-        logger.info(classifier.toString());
+        LOG.info("=== Classifier model ===\n\n");
+        LOG.info(classifier.toString());
 
-        logger.info("=== Summary ===\n");
-        logger.info(eval.toSummaryString());
+        LOG.info("=== Summary ===\n");
+        LOG.info(eval.toSummaryString());
 
         try {
-            logger.info(eval.toClassDetailsString());
-            logger.info(eval.toMatrixString());
+            LOG.info(eval.toClassDetailsString());
+            LOG.info(eval.toMatrixString());
         } catch (Exception e) {
-            logger.error("\n", e);
+            LOG.error("\n", e);
         }
     }
 

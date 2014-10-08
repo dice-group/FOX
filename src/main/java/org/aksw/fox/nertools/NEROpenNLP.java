@@ -19,7 +19,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 public class NEROpenNLP extends AbstractNER {
 
-    private final String[] modelPath = { "data/openNLP/en-ner-person.bin", "data/openNLP/en-ner-location.bin", "data/openNLP/en-ner-organization.bin" };
+    private final String[]               modelPath             = { "data/openNLP/en-ner-person.bin", "data/openNLP/en-ner-location.bin", "data/openNLP/en-ner-organization.bin" };
 
     private final TokenNameFinderModel[] tokenNameFinderModels = new TokenNameFinderModel[modelPath.length];
 
@@ -36,14 +36,14 @@ public class NEROpenNLP extends AbstractNER {
                     tokenNameFinderModels[i] = new TokenNameFinderModel(modelIn[i]);
 
             } catch (IOException e) {
-                logger.error("\n", e);
+                LOG.error("\n", e);
             } finally {
 
                 try {
                     if (modelIn[i] != null)
                         modelIn[i].close();
                 } catch (IOException e) {
-                    logger.error("\n", e);
+                    LOG.error("\n", e);
                 }
             }
         }
@@ -52,7 +52,7 @@ public class NEROpenNLP extends AbstractNER {
     // TODO: do parallel for each model
     @Override
     public List<Entity> retrieve(String input) {
-        logger.info("retrieve ...");
+        LOG.info("retrieve ...");
 
         List<Entity> list = new ArrayList<>();
         String[] sentences = FoxTextUtil.getSentences(input);
@@ -92,15 +92,15 @@ public class NEROpenNLP extends AbstractNER {
             }
         }
         // TRACE
-        if (logger.isTraceEnabled()) {
-            logger.trace(list);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(list);
         } // TRACE
         return list;
     }
 
     public static void main(String[] a) {
-        PropertyConfigurator.configure("log4j.properties");
+        PropertyConfigurator.configure(FoxCfg.LOG_FILE);
         for (Entity e : new NEROpenNLP().retrieve(FoxConst.EXAMPLE_1))
-            NEROpenNLP.logger.info(e);
+            NEROpenNLP.LOG.info(e);
     }
 }
