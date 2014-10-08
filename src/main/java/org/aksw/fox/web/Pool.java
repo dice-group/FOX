@@ -3,6 +3,7 @@ package org.aksw.fox.web;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 /**
@@ -15,7 +16,7 @@ import org.apache.log4j.Logger;
  */
 public class Pool<T> {
 
-    protected static Logger  LOG       = Logger.getLogger(Pool.class);
+    protected static Logger  LOG       = LogManager.getLogger(Pool.class);
 
     /**
      * Holds objects.
@@ -51,7 +52,7 @@ public class Pool<T> {
     /**
      * 
      */
-    public void add() {
+    public synchronized void add() {
         push(getInstance());
     }
 
@@ -59,7 +60,7 @@ public class Pool<T> {
      * 
      * @param t
      */
-    public void push(T t) {
+    public synchronized void push(T t) {
         if (t != null) {
             if (queue.size() < max) {
                 queue.add(t);
@@ -75,7 +76,7 @@ public class Pool<T> {
      * 
      * @return
      */
-    public T poll() {
+    public synchronized T poll() {
         T t = null;
         while ((t = queue.poll()) == null) {
             try {
@@ -92,7 +93,7 @@ public class Pool<T> {
      * 
      * @return
      */
-    protected T getInstance() {
+    protected synchronized T getInstance() {
         return getInstance(className);
     }
 
@@ -103,7 +104,7 @@ public class Pool<T> {
      * @return new instance
      */
     @SuppressWarnings("unchecked")
-    protected T getInstance(String className) {
+    protected synchronized T getInstance(String className) {
         try {
             return (T) Class.forName(className).newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
