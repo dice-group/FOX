@@ -158,20 +158,20 @@
         <!-- <dependency> <groupId>junit</groupId> <artifactId>junit</artifactId> 
             <version>4.11</version> </dependency> -->
         <!-- grizzly -->
-        <dependency>
-            <groupId>org.glassfish.grizzly</groupId>
-            <artifactId>grizzly-framework</artifactId>
-            <version>2.3.14</version>
+         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.grizzly</groupId>
-            <artifactId>grizzly-http</artifactId>
-            <version>2.3.14</version>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-grizzly2-servlet</artifactId>
+            <version>2.9.1</version>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.grizzly</groupId>
-            <artifactId>grizzly-http-server</artifactId>
-            <version>2.3.14</version>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-processing</artifactId>
+            <version>2.11</version>
         </dependency>
         <!-- -->
         <dependency>
