@@ -11,23 +11,23 @@ In its current version, it integrates and merges the results of Named Entity Rec
 Keyword Extraction and Relation Extraction tools will be merged soon.
 
 ##Requirements
-Java 7, Maven 3, graphviz
+Java 7, Maven 3, graphviz (for JavaDoc only)
 
 
 ##Installation
 :one: Clone the latest version: `git clone -b master https://github.com/AKSW/FOX.git`
 
-:two: Download [NETagger][2]. This archive contains a `data` and `config` folder. Copy both to the root folder `FOX`.
+:two: Download [NETagger][2]. This archive contains the `data` and `config` folder. Copy both to the root folder of your clone.
 
-:three: Build the release: `./fox_build.sh` (This will download [stanford models][1] to `FOX/lib`.)
+:three: Build the release: `./build.sh` (Among others, it downloads [stanford models][1] to the `lib` folder.)
 
 :four: Go into the `release` folder and rename `fox.properties-dist` to `fox.properties` and change the file to your needs.
 
-:five: Learn with trainings data (optional with default properties file): `./fox_train.sh` (set training to true in  `fox.properties`)
+:five: Learn with trainings data (optional with default properties file): `./learn.sh` (set training to true in  `fox.properties`)
 
-:six: Start the server: `./fox_run.sh`
+:six: Start the server: `./run.sh`
 
-:seven: Stop the server: `./fox_close.sh`
+:seven: Stop the server: `./close.sh`
 
 ##Demo and Documentation
 Project Page: [http://fox.aksw.org][4]
@@ -35,9 +35,9 @@ Project Page: [http://fox.aksw.org][4]
 Live Demo: [http://fox-demo.aksw.org (Version 2.2.2) ][5]
 
 ##Datasets
-The training and testing datasets are in the `FOX/input` folder.
+The training and testing datasets are in the `input` folder.
 
-The resulting raw data from the learning and testing process are in the `FOX/evaluation` folder.
+The resulting raw data from the learning and testing process are in the `evaluation` folder.
 
 ##License
 FOX is licensed under the [GNU General Public License Version 2, June 1991](http://www.gnu.org/licenses/gpl-2.0.txt) (license document is in the application folder).
