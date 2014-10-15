@@ -25,8 +25,6 @@ import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
 
 @Path("ner")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 public class ApiResource {
 
     public static Logger LOG = LogManager.getLogger(ApiResource.class);
@@ -34,7 +32,7 @@ public class ApiResource {
     // http://0.0.0.0:8080/api/entities
     @Path("entities")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_XML)
+    @Produces(MediaType.APPLICATION_XML)
     @POST
     public String postApi(final JsonObject properties, @Context Request request, @Context HttpHeaders hh, @Context UriInfo ui) {
 

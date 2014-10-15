@@ -1,5 +1,6 @@
 package org.aksw.fox.web;
 
+import javax.json.stream.JsonGenerator;
 import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.aksw.fox.Fox;
@@ -13,6 +14,7 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpContainer;
+import org.glassfish.jersey.jsonp.JsonProcessingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
@@ -49,7 +51,11 @@ public class Server {
      * @return Jersey server-side application configuration.
      */
     public static ResourceConfig createApiResourceConfig() {
-        return new ResourceConfig().registerClasses(ApiResource.class);
+        return new ResourceConfig()
+                .registerClasses(ApiResource.class)
+                .register(JsonProcessingFeature.class)
+                .packages("org.glassfish.jersey.examples.jsonp")
+                .property(JsonGenerator.PRETTY_PRINTING, true);
     }
 
     /**
