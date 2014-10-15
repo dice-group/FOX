@@ -284,7 +284,7 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/balie/Balie.jar lib/stanford-corenlp-3.2.0-models.jar</Class-Path>
+                            <Class-Path>lib/balie/Balie.jar lib/stanford-corenlp-3.2.0-models.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -304,7 +304,7 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/balie/Balie.jar lib/stanford-corenlp-3.2.0-models.jar</Class-Path>
+                            <Class-Path>lib/balie/Balie.jar lib/stanford-corenlp-3.2.0-models.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
