@@ -39,6 +39,20 @@ The training and testing datasets are in the `input` folder.
 
 The resulting raw data from the learning and testing process are in the `evaluation` folder.
 
+## How to cite
+```Tex
+@incollection{
+  year={2014},
+  isbn={978-3-319-11963-2},
+  booktitle={The Semantic Web – ISWC 2014},
+  volume={8796},
+  series={Lecture Notes in Computer Science},
+  title={Ensemble Learning for Named Entity Recognition},
+  publisher={Springer International Publishing},
+  author={Speck, René and Ngonga Ngomo, Axel-Cyrille}
+}
+```
+
 ##License
 FOX is licensed under the [GNU General Public License Version 2, June 1991](http://www.gnu.org/licenses/gpl-2.0.txt) (license document is in the application folder).
 
