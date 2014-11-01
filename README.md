@@ -17,17 +17,15 @@ Java 7, Maven 3, graphviz (for JavaDoc only)
 ##Installation
 :one: Clone the latest version: `git clone -b master https://github.com/AKSW/FOX.git`
 
-:two: Download [NETagger][2]. This archive contains the `data` and `config` folder. Copy both to the root folder of your clone.
+:two: Build the release: `./build.sh` (Among others, it downloads [stanford models][1] to the `lib` folder.)
 
-:three: Build the release: `./build.sh` (Among others, it downloads [stanford models][1] to the `lib` folder.)
+:three: Go into the `release` folder and rename `fox.properties-dist` to `fox.properties` and change the file to your needs.
 
-:four: Go into the `release` folder and rename `fox.properties-dist` to `fox.properties` and change the file to your needs.
+:four: Learn with trainings data (optional with default properties file): `./learn.sh` (set `org.aksw.fox.nerlearner.FoxClassifier.training` to true in  `fox.properties`)
 
-:five: Learn with trainings data (optional with default properties file): `./learn.sh` (set training to true in  `fox.properties`)
+:five: Start the server: `./run.sh`
 
-:six: Start the server: `./run.sh`
-
-:seven: Stop the server: `./close.sh`
+:six: Stop the server: `./close.sh`
 
 ##Demo and Documentation
 Project Page: [http://fox.aksw.org][4]
@@ -61,6 +59,8 @@ Found a :bug: bug? [Open an issue](https://github.com/AKSW/fox/issues/new) with 
 
 ##Changelog
 ### [v2.2.2]
+* Illinois update and installation fixed
+* RESTful api path /call/ner/entities
 * AGDISTIS endpoint in `fox.properties` file
 * server framework version update
 * error pages
