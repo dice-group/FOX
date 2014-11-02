@@ -17,7 +17,7 @@ Java 7, Maven 3, graphviz (for JavaDoc only)
 ##Installation
 :one: Clone the latest version: `git clone -b master https://github.com/AKSW/FOX.git`
 
-:two: Build the release: `./build.sh` (Among others, it downloads [stanford models][1] to the `lib` folder.)
+:two: Build the release: `./build.sh`
 
 :three: Go into the `release` folder and rename `fox.properties-dist` to `fox.properties` and change the file to your needs.
 
@@ -59,6 +59,7 @@ Found a :bug: bug? [Open an issue](https://github.com/AKSW/fox/issues/new) with 
 
 ##Changelog
 ### [v2.2.2]
+* Adds Stanfords models to pom.xml
 * Illinois update and installation fixed
 * RESTful api path /call/ner/entities
 * AGDISTIS endpoint in `fox.properties` file

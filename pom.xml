@@ -24,14 +24,6 @@
     <dependencies>
         <!-- external dependencies -->
         <!-- -->
-        <!-- stanford models -->
-        <dependency>
-            <groupId>stanford-corenlp-3.2.0-models</groupId>
-            <artifactId>models</artifactId>
-            <version>3.2.0</version>
-            <scope>system</scope>
-            <systemPath>${system.libs}/stanford-corenlp-3.2.0-models.jar</systemPath>
-        </dependency>
         <!-- http://sourceforge.net/projects/balie -->
         <dependency>
             <groupId>ca.uottawa</groupId>
@@ -117,6 +109,12 @@
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
             <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.2.0</version>
+            <classifier>models</classifier>
         </dependency>
         <!-- apache -->
         <dependency>
@@ -296,7 +294,7 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/balie/Balie.jar lib/stanford-corenlp-3.2.0-models.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
+                            <Class-Path>lib/balie/Balie.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -316,7 +314,7 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/balie/Balie.jar lib/stanford-corenlp-3.2.0-models.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
+                            <Class-Path>lib/balie/Balie.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
