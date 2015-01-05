@@ -24,14 +24,6 @@
     <dependencies>
         <!-- external dependencies -->
         <!-- -->
-        <!-- stanford models -->
-        <dependency>
-            <groupId>stanford-corenlp-3.2.0-models</groupId>
-            <artifactId>models</artifactId>
-            <version>3.2.0</version>
-            <scope>system</scope>
-            <systemPath>${system.libs}/stanford-corenlp-3.2.0-models.jar</systemPath>
-        </dependency>
         <!-- http://sourceforge.net/projects/balie -->
         <dependency>
             <groupId>ca.uottawa</groupId>
@@ -52,6 +44,11 @@
         <!-- Illinois -->
         <dependency>
             <groupId>edu.illinois.cs.cogcomp</groupId>
+            <artifactId>illinois-ner-extended</artifactId>
+            <version>2.8</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.illinois.cs.cogcomp</groupId>
             <artifactId>illinois-common-resources</artifactId>
             <version>1.1</version>
         </dependency>
@@ -60,6 +57,19 @@
             <artifactId>illinois-ner</artifactId>
             <version>2.8.1</version>
         </dependency>
+        <!--
+        <dependency>
+            <artifactId>IllinoisNerExtended</artifactId>
+            <version>2.7</version>
+            <classifier>models-conll</classifier>
+        </dependency> 
+        <dependency>
+            <groupId>edu.illinois.cs.cogcomp</groupId>
+            <artifactId>IllinoisNerExtended</artifactId>
+            <version>2.7</version>
+            <classifier>models-ontonotes</classifier>
+        </dependency> 
+        -->
         <!-- -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -105,6 +115,12 @@
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
             <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.2.0</version>
+            <classifier>models</classifier>
         </dependency>
         <!-- apache -->
         <dependency>
@@ -284,7 +300,7 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/balie/Balie.jar lib/stanford-corenlp-3.2.0-models.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
+                            <Class-Path>lib/balie/Balie.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -304,7 +320,7 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/balie/Balie.jar lib/stanford-corenlp-3.2.0-models.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
+                            <Class-Path>lib/balie/Balie.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
