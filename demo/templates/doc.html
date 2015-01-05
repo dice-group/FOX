@@ -50,9 +50,11 @@
         <h3>Response</h3>
         <pre data-ng-bind-html-unsafe="responseExp"></pre>
         Each value is urlencoded.
-        <h3>Example requests with curl</h3>
+        <h2>Example requests with curl</h2>
         <h5>Content-Type: application/json</h5>
         <pre>curl -d @demo/examples/nerExp.json -H "Content-Type: application/json" http://{{host}}/api > response.txt</pre>
+        <pre>curl -d @demo/examples/nerExp.json -H "Content-Type: application/json" http://{{host}}/call/ner/entities > response.txt</pre>
+
         <a href="/demo/examples/nerExp.json">/demo/examples/nerExp.json</a>
         <pre data-ng-bind-html-unsafe="nerExp"></pre>
         <h5>Content-Type: application/x-www-form-urlencoded</h5>
