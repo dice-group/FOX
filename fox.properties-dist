@@ -19,8 +19,8 @@ org.aksw.fox.nertools.NERStanford.classifier : edu/stanford/nlp/models/ner/engli
 # uri lookup class
 org.aksw.fox.Fox.urilookup: org.aksw.fox.uri.AGDISTISLookup
 #AGDISTIS endpoint
-org.aksw.fox.uri.AGDISTISLookup.endpoint: http://139.18.2.164:8080/AGDISTIS
-#org.aksw.fox.uri.AGDISTISLookup.endpoint: http://139.18.2.164:4443/AGDISTIS
+#org.aksw.fox.uri.AGDISTISLookup.endpoint: http://139.18.2.164:8080/AGDISTIS
+org.aksw.fox.uri.AGDISTISLookup.endpoint: http://139.18.2.164:4443/AGDISTIS
 #NER default light version class
 org.aksw.fox.Fox.defaultLightNER: org.aksw.fox.nertools.NERStanford
 #NER tools to use
