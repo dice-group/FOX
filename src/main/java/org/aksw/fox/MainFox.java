@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.FoxClassifierFactory;
+import org.aksw.fox.nerlearner.reader.INERReader;
 import org.aksw.fox.nerlearner.reader.TrainingInputReader;
 import org.aksw.fox.nertools.FoxNERTools;
 import org.aksw.fox.utils.FoxCfg;
@@ -179,7 +180,7 @@ public class MainFox {
         setClassifier(foxClassifier, prefix);
 
         // read training data
-        TrainingInputReader trainingInputReader = new TrainingInputReader(inputFiles);
+        INERReader trainingInputReader = new TrainingInputReader(inputFiles);
         String input = trainingInputReader.getInput();
         Map<String, String> oracle = trainingInputReader.getEntities();
 

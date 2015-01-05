@@ -13,6 +13,7 @@ import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.nerlearner.IPostProcessing;
 import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
+import org.aksw.fox.nerlearner.reader.INERReader;
 import org.aksw.fox.nerlearner.reader.TrainingInputReader;
 import org.aksw.fox.nertools.FoxNERTools;
 import org.aksw.fox.utils.FoxCfg;
@@ -56,7 +57,7 @@ public class CrossValidation {
         classifierName = classifierName.substring(classifierName.lastIndexOf('.') == -1 ? 0 : classifierName.lastIndexOf('.') + 1);
 
         // read data
-        TrainingInputReader trainingInputReader = new TrainingInputReader(inputFiles);
+        INERReader trainingInputReader = new TrainingInputReader(inputFiles);
         TokenManager tokenManager = new TokenManager(trainingInputReader.getInput());
 
         // prepare data

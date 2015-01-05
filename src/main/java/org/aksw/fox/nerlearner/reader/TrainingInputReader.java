@@ -58,7 +58,7 @@ public class TrainingInputReader implements INERReader {
 
         String[] a = files.toArray(new String[files.size()]);
 
-        TrainingInputReader trainingInputReader = new TrainingInputReader(a);
+        INERReader trainingInputReader = new TrainingInputReader(a);
         TrainingInputReader.LOG.info("input: ");
         TrainingInputReader.LOG.info(trainingInputReader.getInput());
         TrainingInputReader.LOG.info("oracle: ");
