@@ -4,21 +4,30 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.utils.FoxCfg;
-import org.aksw.fox.utils.FoxConst;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.PropertyConfigurator;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ie.crf.CRFCliqueTree;
+import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations.RelationMentionsAnnotation;
+import edu.stanford.nlp.ie.machinereading.structure.RelationMention;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.RelationExtractorAnnotator;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
+import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
+import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Pair;
 import edu.stanford.nlp.util.Triple;
 
@@ -133,23 +142,47 @@ public class NERStanford extends AbstractNER {
 
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
+
+        /*
         for (Entity e : new NERStanford().retrieve(FoxConst.EXAMPLE_1))
             NERStanford.LOG.info(e);
+            */
 
-        // Properties props = new Properties();
-        // props.setProperty("annotators",
-        // "tokenize, ssplit, pos, lemma, ner, parse, dcoref"
-        // );
-        // StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-        //
-        // Annotation ann = new Annotation(
-        // "Stanford University is located in California. It is a great university."
-        // );
-        // pipeline.annotate(ann);
-        // for (CoreMap sentence : ann.get(SentencesAnnotation.class)) {
-        // Tree tree = sentence.get(TreeAnnotation.class);
-        // System.out.println(tree);
-        // System.out.println(tree.score());
-        // }
+        Properties props = new Properties();
+        props.setProperty("annotators",
+                "tokenize, ssplit, pos, lemma, ner, parse, dcoref, relation"
+                );
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+
+        Annotation ann = new Annotation(
+                "Stanford University is located in California. It is a great university."
+                );
+        pipeline.annotate(ann);
+        for (CoreMap sentence : ann.get(SentencesAnnotation.class)) {
+            Tree tree = sentence.get(TreeAnnotation.class);
+
+            System.out.println(tree);
+            System.out.println(tree.score());
+        }
+
+        try {
+            props = new Properties();
+            props.setProperty("annotators", "tokenize,ssplit,lemma,pos,parse,ner");
+            pipeline = new StanfordCoreNLP();
+            String sentence = "Barack Obama lives in America. Obama works for the Federal Goverment.";
+            Annotation doc = new Annotation(sentence);
+            pipeline.annotate(doc);
+            RelationExtractorAnnotator r = new RelationExtractorAnnotator(props);
+            r.annotate(doc);
+            for (CoreMap s : doc.get(CoreAnnotations.SentencesAnnotation.class)) {
+                System.out.println("For sentence " + s.get(CoreAnnotations.TextAnnotation.class));
+                List<RelationMention> rls = s.get(RelationMentionsAnnotation.class);
+                for (RelationMention rl : rls) {
+                    System.out.println(rl.toString());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
