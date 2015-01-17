@@ -89,21 +89,19 @@ public class FoxServerUtil {
         String id = FoxServerUtil.getProcessId();
         if (id == null)
             return false;
-        // find OS version
+
         String cmd = "";
         String fileExtension = "";
         if (SystemUtils.IS_OS_WINDOWS) {
             cmd = "taskkill /F /PID " + id + System.getProperty("line.separator") + "DEL " + fileName + ".bat";
             fileExtension = "bat";
-        } else if (SystemUtils.IS_OS_LINUX) {
+        } else {
             cmd = "kill " + id + System.getProperty("line.separator") + "rm " + fileName + ".sh";
             fileExtension = "sh";
-        } else
-            return false;
+        }
         logger.info(fileName + "." + fileExtension);
 
         File file = new File(fileName + "." + fileExtension);
-
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
             out.write(cmd);
