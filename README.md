@@ -52,7 +52,13 @@ The resulting raw data from the learning and testing process are in the `evaluat
 ```
 
 ##License
-FOX is licensed under the [GNU General Public License Version 2, June 1991](http://www.gnu.org/licenses/gpl-2.0.txt) (license document is in the application folder).
+FOX is licensed under the [GNU GPL Version 2, June 1991](http://www.gnu.org/licenses/gpl-2.0.txt) (license document is in the application folder).
+
+FOX uses several other libraries. An incomplete list is as follows:
+* Illinois NLP Pipeline  (University of Illinois Research and Academic Use License)
+* Stanford CoreNLP (GNU GPL Version 2)
+* Apache OpenNLP (Apache License, Version 2)
+* Balie (GNU GPL Version 2)
 
 ##Bugs
 Found a :bug: bug? [Open an issue](https://github.com/AKSW/fox/issues/new) with some [emojis](http://emoji.muan.co). Issues without emojis are not valid. :trollface:
