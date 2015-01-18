@@ -219,6 +219,12 @@
             <artifactId>json</artifactId>
             <version>20140107</version>
         </dependency>
+        <!-- language detector -->
+        <dependency>
+            <groupId>com.optimaize.languagedetector</groupId>
+            <artifactId>language-detector</artifactId>
+            <version>0.4</version>
+        </dependency>
     </dependencies>
     <!-- build -->
     <build>
