@@ -29,7 +29,6 @@ public class ApiResource {
 
     public static Logger LOG = LogManager.getLogger(ApiResource.class);
 
-    // http://0.0.0.0:8080/api/entities
     @Path("entities")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_XML)
@@ -113,7 +112,7 @@ public class ApiResource {
         return output;
     }
 
-    // http://0.0.0.0:8080/api/entitiesFeedback
+    // TODO
     @Path("entitiesFeedback")
     @POST
     public JsonObject postText() {

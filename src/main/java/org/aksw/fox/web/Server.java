@@ -1,5 +1,7 @@
 package org.aksw.fox.web;
 
+import java.io.IOException;
+
 import javax.json.stream.JsonGenerator;
 import javax.ws.rs.ext.RuntimeDelegate;
 
@@ -24,26 +26,29 @@ import org.glassfish.jersey.server.ResourceConfig;
  */
 public class Server {
 
-    public static final String     CFG_KEY_POOL_SIZE    = Server.class.getName().concat(".poolsize");
-    public static final int        poolsize             = Integer.parseInt(FoxCfg.get(CFG_KEY_POOL_SIZE));
+    public static final String  CFG_KEY_POOL_SIZE    = Server.class.getName().concat(".poolsize");
 
     // TODO
-    public static final Pool<IFox> pool                 = new Pool<IFox>(Fox.class.getName(), poolsize);
+    public static Pool<IFox>    pool                 = null;
 
-    public final static Logger     LOG                  = LogManager.getLogger(Server.class);
+    public final static Logger  LOG                  = LogManager.getLogger(Server.class);
 
     /* Cfg file key. */
-    public final static String     DEMO_HANDLER_KEY     = Server.class.getName().concat(".demo_handler");
+    public final static String  DEMO_HANDLER_KEY     = Server.class.getName().concat(".demo_handler");
     /* Cfg file key. */
-    public final static String     API_HANDLER_KEY      = Server.class.getName().concat(".api_handler");
+    public final static String  API_HANDLER_KEY      = Server.class.getName().concat(".api_handler");
     /* Cfg file key. */
-    public final static String     FEEDBACK_HANDLER_KEY = Server.class.getName().concat(".feedback_handler");
+    public final static String  FEEDBACK_HANDLER_KEY = Server.class.getName().concat(".feedback_handler");
     /* Cfg file key. */
-    public final static String     STATIC_CACHE         = Server.class.getName().concat(".static_file_cache_on");
+    public final static String  STATIC_CACHE         = Server.class.getName().concat(".static_file_cache_on");
 
-    protected final HttpServer     server               = new HttpServer();
+    protected HttpServer        server               = null;
 
-    private final static String    LISTENER_NAME        = "FoxNetworkListener";
+    private final static String LISTENER_NAME        = "FoxNetworkListener";
+
+    public static boolean       running              = false;
+    public String               host                 = null;
+    public int                  port                 = -1;
 
     /**
      * Create Jersey server-side application resource configuration.
@@ -65,7 +70,9 @@ public class Server {
      *            the servers port
      */
     public Server(int port) {
+        pool = new Pool<IFox>(Fox.class.getName(), Integer.parseInt(FoxCfg.get(CFG_KEY_POOL_SIZE))); // TODO
 
+        server = new HttpServer();
         server.getServerConfiguration().setDefaultErrorPageGenerator(new ErrorPages());
         server.addListener(new NetworkListener(LISTENER_NAME, NetworkListener.DEFAULT_NETWORK_HOST, port));
 
@@ -127,40 +134,48 @@ public class Server {
     /**
      * Starts the server and write a shut down file.
      */
-    public void start() {
+    public boolean start() {
 
-        int port = server.getListener(LISTENER_NAME).getPort();
-        String host = server.getListener(LISTENER_NAME).getHost();
+        port = server.getListener(LISTENER_NAME).getPort();
+        host = server.getListener(LISTENER_NAME).getHost();
 
         try {
             server.start();
+            running = true;
+        } catch (IOException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+        if (running) {
             FoxServerUtil.writeShutDownFile("close");
             LOG.info("----------------------------------------------------------\n");
             LOG.info("http://" + host + ":" + port + "/api");
             LOG.info("http://" + host + ":" + port + "/api/ner/feedback");
             LOG.info("http://" + host + ":" + port + "/demo/index.html");
             LOG.info("----------------------------------------------------------\n");
-        } catch (Exception e) {
-            LOG.error("\n", e);
-        }
 
-        // shutdown hook
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                LOG.info("Checking data before shutting down server...");
-                // TODO: check data then shut down server.
-                LOG.info("Stopping server with shutdownHook.");
+            // shutdown hook
+            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    LOG.info("Checking data before shutting down server...");
+                    // TODO: check data then shut down server.
+                    LOG.info("Stopping server with shutdownHook.");
+                    server.shutdownNow();
+                }
+            }, "ServerShutdownHook"));
+
+            try {
+                Thread.currentThread().join();
+            } catch (Exception e) {
+                LOG.error("\n", e);
+            } finally {
                 server.shutdownNow();
             }
-        }, "ServerShutdownHook"));
-
-        try {
-            Thread.currentThread().join();
-        } catch (Exception e) {
-            LOG.error("\n", e);
-        } finally {
-            server.shutdownNow();
         }
+        return running;
+    }
+
+    public void stop() {
+        server.shutdownNow();
     }
 }

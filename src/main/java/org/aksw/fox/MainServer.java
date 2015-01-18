@@ -34,29 +34,12 @@ public class MainServer {
             switch (arg) {
             case 'p':
                 port = Integer.valueOf(getopt.getOptarg());
-                break;
-            default:
-
             }
         }
 
-        // test port
-        if (FoxServerUtil.isPortAvailable(port)) {
-
-            // test config
-            String poolCount = FoxCfg.get(Server.CFG_KEY_POOL_SIZE);
-            if (poolCount == null) {
-                Server.LOG.error(
-                        "Can't read " + Server.CFG_KEY_POOL_SIZE + " key in `" + FoxCfg.CFG_FILE + "` file."
-                        );
-                System.exit(0);
-            }
-
-            // start server
+        if (!FoxServerUtil.isPortAvailable(port))
+            Server.LOG.error("Port " + port + " in use or wrong argument, try another one!");
+        else if (FoxCfg.loadFile(FoxCfg.CFG_FILE))
             new Server(port).start();
-
-        }
-        else
-            Server.LOG.error("Port " + port + " in use or wrong argument, try an other one!");
     }
 }

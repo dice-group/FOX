@@ -1,7 +1,7 @@
 package org.aksw.fox.web;
 
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -130,11 +130,6 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
     @Override
     public List<String> getMappings() {
-        return new ArrayList<String>() {
-            private static final long serialVersionUID = 8208244078508063707L;
-            {
-                add("/api");
-            }
-        };
+        return Arrays.asList("/api");
     }
 }

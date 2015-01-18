@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -368,9 +369,7 @@ public class FeedbackHttpHandler extends HttpHandler {
     }
 
     public List<String> getMappings() {
-        List<String> l = new ArrayList<>();
-        l.add("/api/ner/feedback");
-        return l;
+        return Arrays.asList("/api/ner/feedback");
     }
 
     /**
