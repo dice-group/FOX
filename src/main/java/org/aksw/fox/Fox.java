@@ -14,9 +14,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.TokenManager;
-import org.aksw.fox.nertools.FoxNERTools;
-import org.aksw.fox.nertools.INER;
-import org.aksw.fox.nertools.NERStanford;
+import org.aksw.fox.tools.ner.FoxNERTools;
+import org.aksw.fox.tools.ner.INER;
+import org.aksw.fox.tools.ner.en.NERStanford;
 import org.aksw.fox.uri.AGDISTISLookup;
 import org.aksw.fox.uri.ILookup;
 import org.aksw.fox.utils.FoxCfg;

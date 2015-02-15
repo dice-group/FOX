@@ -13,7 +13,7 @@ import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.FoxClassifierFactory;
 import org.aksw.fox.nerlearner.reader.INERReader;
 import org.aksw.fox.nerlearner.reader.TrainingInputReader;
-import org.aksw.fox.nertools.FoxNERTools;
+import org.aksw.fox.tools.ner.FoxNERTools;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
