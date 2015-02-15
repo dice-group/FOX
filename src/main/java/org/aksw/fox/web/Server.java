@@ -64,13 +64,23 @@ public class Server {
     }
 
     /**
-     * Adds HttpHandler.
      * 
      * @param port
      *            the servers port
      */
     public Server(int port) {
-        pool = new Pool<IFox>(Fox.class.getName(), Integer.parseInt(FoxCfg.get(CFG_KEY_POOL_SIZE))); // TODO
+        this(port, Integer.parseInt(FoxCfg.get(CFG_KEY_POOL_SIZE)));
+    }
+
+    /**
+     * 
+     * @param port
+     *            the servers port
+     * @param poolsize
+     *            the amount of fox instances
+     */
+    public Server(int port, int poolsize) {
+        pool = new Pool<IFox>(Fox.class.getName(), poolsize); // TODO
 
         server = new HttpServer();
         server.getServerConfiguration().setDefaultErrorPageGenerator(new ErrorPages());
