@@ -1,10 +1,11 @@
-package org.aksw.fox.nertools;
+package org.aksw.fox.tools.ner.en;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.log4j.PropertyConfigurator;

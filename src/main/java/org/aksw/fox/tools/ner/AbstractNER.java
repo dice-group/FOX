@@ -1,4 +1,4 @@
-package org.aksw.fox.nertools;
+package org.aksw.fox.tools.ner;
 
 import java.util.ArrayList;
 import java.util.List;

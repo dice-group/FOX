@@ -1,4 +1,4 @@
-package org.aksw.fox.nertools;
+package org.aksw.fox.tools.ner.en;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,6 +12,7 @@ import opennlp.tools.util.Span;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.aksw.fox.utils.FoxTextUtil;

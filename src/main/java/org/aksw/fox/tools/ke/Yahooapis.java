@@ -1,4 +1,4 @@
-package org.aksw.fox.ketools;
+package org.aksw.fox.tools.ke;
 
 import java.io.InputStream;
 

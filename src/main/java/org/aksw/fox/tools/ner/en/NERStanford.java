@@ -1,4 +1,4 @@
-package org.aksw.fox.nertools;
+package org.aksw.fox.tools.ner.en;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -8,20 +8,19 @@ import java.util.Properties;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.utils.FoxConst;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.PropertyConfigurator;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ie.crf.CRFCliqueTree;
-import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations.RelationMentionsAnnotation;
-import edu.stanford.nlp.ie.machinereading.structure.RelationMention;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.RelationExtractorAnnotator;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
@@ -70,7 +69,7 @@ public class NERStanford extends AbstractNER {
     public List<Entity> retrieve(String input) {
 
         LOG.info("retrieve ...");
-        List<Entity> list = new ArrayList<Entity>();
+        List<Entity> list = new ArrayList<>();
 
         for (String sentence : FoxTextUtil.getSentences(input)) {
             // DEBUG
@@ -141,6 +140,11 @@ public class NERStanford extends AbstractNER {
     }
 
     public static void main(String[] a) {
+        NERStanford n = new NERStanford();
+        n.retrieve(FoxConst.EXAMPLE_1);
+    }
+
+    public static void test2(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
 
         /*
@@ -165,24 +169,5 @@ public class NERStanford extends AbstractNER {
             System.out.println(tree.score());
         }
 
-        try {
-            props = new Properties();
-            props.setProperty("annotators", "tokenize,ssplit,lemma,pos,parse,ner");
-            pipeline = new StanfordCoreNLP();
-            String sentence = "Barack Obama lives in America. Obama works for the Federal Goverment.";
-            Annotation doc = new Annotation(sentence);
-            pipeline.annotate(doc);
-            RelationExtractorAnnotator r = new RelationExtractorAnnotator(props);
-            r.annotate(doc);
-            for (CoreMap s : doc.get(CoreAnnotations.SentencesAnnotation.class)) {
-                System.out.println("For sentence " + s.get(CoreAnnotations.TextAnnotation.class));
-                List<RelationMention> rls = s.get(RelationMentionsAnnotation.class);
-                for (RelationMention rl : rls) {
-                    System.out.println(rl.toString());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
