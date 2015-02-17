@@ -3,11 +3,13 @@ package org.aksw.fox.utils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.optimaize.langdetect.DetectedLanguage;
 import com.optimaize.langdetect.LanguageDetector;
 import com.optimaize.langdetect.LanguageDetectorBuilder;
 import com.optimaize.langdetect.ngram.NgramExtractors;
@@ -74,8 +76,15 @@ public class FoxLanguageDetector {
 
     public Langs detect(String text) {
         TextObject textObject = CommonTextObjectFactories.forDetectingOnLargeText().forText(text);
-        String lang = languageDetector.getProbabilities(textObject).get(0).getLanguage();
-        return Langs.fromString(lang);
+        List<DetectedLanguage> probs = languageDetector.getProbabilities(textObject);
+        Langs lang = null;
+        for (DetectedLanguage prob : probs) {
+            lang = Langs.fromString(prob.getLanguage());
+            if (lang != null) {
+                break;
+            }
+        }
+        return lang;
     }
 
     /*

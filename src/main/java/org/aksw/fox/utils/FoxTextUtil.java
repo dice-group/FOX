@@ -24,6 +24,7 @@ import opennlp.tools.sentdetect.SentenceModel;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 /**
@@ -34,7 +35,7 @@ import org.apache.log4j.Logger;
  */
 public class FoxTextUtil {
 
-    public static Logger logger = Logger.getLogger(FoxTextUtil.class);
+    public static Logger       logger       = LogManager.getLogger(FoxTextUtil.class);
     /**
      * Defines token.
      */
@@ -45,6 +46,9 @@ public class FoxTextUtil {
 
     /**
      * Gets the content from html/text as plain text.
+     *
+     * @param url
+     * @return plain text
      */
     public static synchronized String urlToText(String url) {
         logger.info("extractFromUrl ... ");

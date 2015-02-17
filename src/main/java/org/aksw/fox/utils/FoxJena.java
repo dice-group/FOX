@@ -2,7 +2,7 @@ package org.aksw.fox.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -25,20 +25,17 @@ public class FoxJena {
 
     public static Logger             logger = Logger.getLogger(FoxJena.class);
 
-    public static final List<String> prints = new ArrayList<String>() {
-                                                private static final long serialVersionUID = 7210007132876173878L;
-                                                {
-                                                    add(Lang.RDFXML.getName());
-                                                    /* add(FileUtils.langXMLAbbrev);*/
-                                                    add(Lang.TURTLE.getName());
-                                                    add(Lang.NTRIPLES.getName());
-                                                    // add(Lang.N3.getName());
-                                                    add(Lang.RDFJSON.getName());
-                                                    add(Lang.JSONLD.getName());
-                                                    add(Lang.TRIG.getName());
-                                                    add(Lang.NQUADS.getName());
-                                                }
-                                            };
+    public static final List<String> prints = Arrays.asList(
+                                                    Lang.RDFXML.getName(),
+                                                    /* FileUtils.langXMLAbbrev,*/
+                                                    Lang.TURTLE.getName(),
+                                                    Lang.NTRIPLES.getName(),
+                                                    // Lang.N3.getName(),
+                                                    Lang.RDFJSON.getName(),
+                                                    Lang.JSONLD.getName(),
+                                                    Lang.TRIG.getName(),
+                                                    Lang.NQUADS.getName()
+                                                    );
 
     public static enum RelationEnum {
         employeeOf("employeeOf"), hasPosition("hasPosition"), hasDegree("hasDegree");

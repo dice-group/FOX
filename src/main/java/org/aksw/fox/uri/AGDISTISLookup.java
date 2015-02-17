@@ -7,7 +7,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -180,7 +179,7 @@ public class AGDISTISLookup implements ILookup {
     }
 
     public static void main(String[] a) {
-
+        /*
         AGDISTISLookup aa = new AGDISTISLookup();
 
         Entity e = new Entity("Uni of Lpz", "LOCATION");
@@ -195,5 +194,6 @@ public class AGDISTISLookup implements ILookup {
 
         System.out.println(e);
         System.out.println(ee);
+        */
     }
 }
