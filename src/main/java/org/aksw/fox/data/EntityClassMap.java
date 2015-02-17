@@ -49,6 +49,7 @@ public class EntityClassMap {
         entityClassesSTAN.put("ORGANIZATION", O);
         entityClassesSTAN.put("LOCATION", L);
         entityClassesSTAN.put("PERSON", P);
+        entityClassesSTAN.put("PEOPLE", P);
         entityClassesSTAN.put("O", N);
     }
 
