@@ -36,6 +36,13 @@ public class EntityClassMap {
         entityClassesOracel.put("PERSON", P);
     }
 
+    protected static final Map<String, String> entityClassesNEEL     = new HashMap<>();
+    static {
+        entityClassesNEEL.put("Organization", O);
+        entityClassesNEEL.put("Location", L);
+        entityClassesNEEL.put("Person", P);
+    }
+
     protected static final Map<String, String> entityClassesBalie    = new HashMap<>();
     static {
         entityClassesBalie.put("ORGANIZATION", O);
@@ -82,6 +89,16 @@ public class EntityClassMap {
      */
     public static String balie(String tag) {
         String t = entityClassesBalie.get(tag);
+        if (t == null)
+            t = getNullCategory();
+        return t;
+    }
+
+    /**
+     * Gets the entity class for a NEEL challenge entity type/class.
+     */
+    public static String neel(String tag) {
+        String t = entityClassesNEEL.get(tag);
         if (t == null)
             t = getNullCategory();
         return t;
