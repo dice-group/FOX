@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.aksw</groupId>
     <artifactId>fox</artifactId>
-    <version>2.2.2</version>
+    <version>2.3.0</version>
     <name>FOX</name>
     <packaging>jar</packaging>
     <properties>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-        <java.version>1.7</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <system.libs>${basedir}/lib</system.libs>
         <system.data>${basedir}/data</system.data>
@@ -24,6 +24,15 @@
     <dependencies>
         <!-- external dependencies -->
         <!-- -->
+        <!-- https://github.com/giusepperizzo/nerd4java -->
+        <dependency>
+            <groupId>fr.eurecom</groupId>
+            <artifactId>nerd</artifactId>
+            <version>0.0.1</version>
+            <scope>system</scope>
+            <!-- <systemPath>${system.libs}/nerd/client-0.0.1-SNAPSHOT-jar-with-dependencies.jar</systemPath> -->
+            <systemPath>${system.libs}/nerd/client-0.0.1-SNAPSHOT.jar</systemPath>
+        </dependency>
         <!-- http://sourceforge.net/projects/balie -->
         <dependency>
             <groupId>ca.uottawa</groupId>
@@ -182,6 +191,18 @@
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
+        <!-- nerdml dependency -->
+         <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-core</artifactId>
+            <version>1.17.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>1.17.1</version>
+        </dependency>
+        <!-- nerdml dependency end -->
         <!-- <dependency> <groupId>org.nlp2rdf.software</groupId> <artifactId>jena</artifactId> 
             <version>2.0.1-SNAPSHOT</version> </dependency> -->
         <dependency>
@@ -251,7 +272,7 @@
                 <version>1.7</version>
                 <executions>
                     <execution>
-                        <phase> package</phase>
+                        <phase>package</phase>
                         <configuration>
                             <target>
                                 <copy todir="${project.build.directory}/input">
