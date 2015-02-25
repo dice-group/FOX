@@ -5,15 +5,10 @@
 /log
 /demo/doc
 /fox.properties
-/target
 /foxFeedback.db
-/lib/stanford-corenlp-3.2.0-models.jar
-/lib/illinois
-/data/ner-ext
 /eval
 /tmp
 /release
-/corpus/
 /evaluation/tokenBased
 /evaluation/entityBased
 /evaluation/tokenBasedAll
