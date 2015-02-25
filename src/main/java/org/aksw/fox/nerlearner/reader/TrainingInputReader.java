@@ -79,22 +79,28 @@ public class TrainingInputReader implements INERReader {
      * @throws IOException
      */
     public TrainingInputReader(String[] inputPaths) throws IOException {
+        initFiles(inputPaths);
+    }
+
+    @Override
+    public void initFiles(String[] initFiles) throws IOException {
         if (LOG.isDebugEnabled())
             LOG.debug("TrainingInputReader ...");
 
-        inputFiles = new File[inputPaths.length];
+        inputFiles = new File[initFiles.length];
 
         if (LOG.isDebugEnabled())
             LOG.debug("search files ...");
 
-        for (int i = 0; i < inputPaths.length; i++) {
-            inputFiles[i] = new File(inputPaths[i]);
+        for (int i = 0; i < initFiles.length; i++) {
+            inputFiles[i] = new File(initFiles[i]);
             if (!inputFiles[i].exists())
-                throw new FileNotFoundException(inputPaths[i]);
+                throw new FileNotFoundException(initFiles[i]);
         }
 
         readInputFromFiles();
         parse();
+
     }
 
     /**
@@ -314,4 +320,5 @@ public class TrainingInputReader implements INERReader {
                 entities.put(word, classs);
         }
     }
+
 }
