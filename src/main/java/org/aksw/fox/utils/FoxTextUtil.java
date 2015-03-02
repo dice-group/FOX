@@ -237,7 +237,7 @@ public class FoxTextUtil {
         if (token != null && tokenInput != null && token.length() < tokenInput.length()) {
 
             token = new StringBuilder().append(" ").append(token.trim()).append(" ").toString();
-            tokenInput = new StringBuilder().append(" ").append(tokenInput.trim()).append(" ").toString();
+            tokenInput = new StringBuilder().append(" ").append(tokenInput).append(" ").toString();
 
             token = Pattern.quote(token);
             Matcher matcher = Pattern.compile(token).matcher(tokenInput);
