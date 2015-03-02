@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 /**
@@ -17,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 public class TokenManager {
 
-    public static Logger           logger     = Logger.getLogger(TokenManager.class);
+    public static Logger           LOG     = LogManager.getLogger(TokenManager.class);
 
     protected String               input      = "";
 
@@ -36,9 +37,9 @@ public class TokenManager {
      */
     public TokenManager(String sentences) {
 
-        logger.info("TokenManager ...");
-        if (logger.isDebugEnabled())
-            logger.debug(sentences);
+        LOG.info("TokenManager ...");
+        if (LOG.isDebugEnabled())
+            LOG.debug(sentences);
 
         // clean sentences
         input = StringUtils.join(FoxTextUtil.getSentences(sentences), " ").trim();
@@ -62,12 +63,9 @@ public class TokenManager {
         if (tokenInput.length() > 1)
             tokenInput = tokenInput.substring(1, tokenInput.length());
 
-        // remove last char
-        // tokenInput = tokenInput.substring(0, tokenInput.length() - 1);
-
-        if (logger.isDebugEnabled()) {
-            logger.debug(sentences);
-            logger.debug(tokenInput);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(input);
+            LOG.debug(tokenInput);
         }
 
         // initializes indexToken, indexLabel and labelIndex
@@ -76,14 +74,12 @@ public class TokenManager {
             String token = tokenSplit[i].trim();
             if (!token.isEmpty()) {
                 int index = tokenInput.substring(pointer, tokenInput.length()).indexOf(token);
-
                 if (index != -1) {
                     pointer = index + pointer;
                     indexToken.put(pointer, token);
                     setlabel(pointer, token + SEP + pointer);
-
                 } else {
-                    logger.debug("token not found:" + token);
+                    LOG.debug("token not found:" + token);
                 }
             }
         }
@@ -102,21 +98,21 @@ public class TokenManager {
         if (occurrence.size() != 0) {
 
         } else {
-            logger.debug("can't find entity:" + entity.getText() + "(" + entity.getTool() + "), try to fix ...");
+            LOG.debug("can't find entity:" + entity.getText() + "(" + entity.getTool() + "), try to fix ...");
 
             String fix = entity.getText().replaceAll("([\\p{Punct}&&[^\")\\]}.]])(\\s+)", "$1");
             occurrence = FoxTextUtil.getIndices(fix, tokenInput);
 
             if (occurrence.size() != 0) {
                 entity.setText(fix);
-                logger.debug("fixed.");
+                LOG.debug("fixed.");
             } else {
                 fix = fix.replaceAll("(\\s+)([\\p{Punct}&&[^\"(\\[{]])", "$2");
                 occurrence = FoxTextUtil.getIndices(fix, tokenInput);
 
                 if (occurrence.size() != 0) {
                     entity.setText(fix);
-                    logger.debug("fixed.");
+                    LOG.debug("fixed.");
                 } else {
 
                     if (entity.getText().endsWith("."))
@@ -127,9 +123,9 @@ public class TokenManager {
                     occurrence = FoxTextUtil.getIndices(fix, tokenInput);
                     if (occurrence.size() != 0) {
                         entity.setText(fix);
-                        logger.debug("fixed.");
+                        LOG.debug("fixed.");
                     } else {
-                        logger.debug("can't fix it.");
+                        LOG.debug("can't fix it.");
 
                         // TODO: remove this
                         entity.setText("");

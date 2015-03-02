@@ -1,6 +1,7 @@
 package org.aksw.fox.nerlearner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +15,7 @@ import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.utils.FoxTextUtil;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import weka.core.Instances;
@@ -26,10 +28,9 @@ import weka.core.Instances;
  */
 public class PostProcessing implements IPostProcessing {
 
-    public static Logger               logger       = Logger.getLogger(PostProcessing.class);
+    public static Logger               LOG          = LogManager.getLogger(PostProcessing.class);
 
     protected Map<String, Set<Entity>> toolResults  = null;
-
     protected TokenManager             tokenManager = null;
 
     /**
@@ -42,8 +43,7 @@ public class PostProcessing implements IPostProcessing {
      *            tool name to result set
      */
     public PostProcessing(TokenManager tokenManager, Map<String, Set<Entity>> toolResults) {
-        logger.info("PostProcessing ...");
-
+        LOG.info("PostProcessing ...");
         this.tokenManager = tokenManager;
 
         // check entities and try to repair entities
@@ -51,6 +51,9 @@ public class PostProcessing implements IPostProcessing {
             tokenManager.repairEntities(entites);
 
         this.toolResults = toolResults;
+
+        if (LOG.isDebugEnabled())
+            LOG.debug(toolResults);
     }
 
     /**
@@ -70,39 +73,55 @@ public class PostProcessing implements IPostProcessing {
      */
     @Override
     public Map<String, String> getLabeledMap(Map<String, String> map) {
-
-        Map<String, String> labeledMap = new HashMap<>();
+        Map<String, String> rtn = new HashMap<>();
 
         // 1. label MWU
-        // remember token entities
-        List<Entry<String, String>> tokenEntry = new ArrayList<>();
-
-        for (Entry<String, String> entry : map.entrySet())
-            // mwu entities 1st
-            if (entry.getKey().contains(" "))
-                labeledMap = labeledEntry(entry, labeledMap);
-            else
-                tokenEntry.add(entry);
+        List<Entry<String, String>> tokenEntities = new ArrayList<>();
+        for (Entry<String, String> mapEntry : map.entrySet()) {
+            if (mapEntry.getKey().contains(" ")) {
+                if (LOG.isDebugEnabled())
+                    LOG.debug(rtn);
+                rtn = labeledEntry(mapEntry, rtn);
+                if (LOG.isDebugEnabled())
+                    LOG.debug(rtn);
+            } else {
+                tokenEntities.add(mapEntry);
+            }
+        }
 
         // 2. remember used labels of MWU
         Set<String> usedLabels = new HashSet<>();
-        for (String label : labeledMap.keySet())
+        for (String label : rtn.keySet()) {
+            if (LOG.isDebugEnabled())
+                LOG.debug(label);
             Collections.addAll(usedLabels, FoxTextUtil.getSentencesToken(label));
+            if (LOG.isDebugEnabled())
+                LOG.debug(usedLabels);
+
+        }
 
         // 3. label token (non MWU)
-        for (Entry<String, String> entry : tokenEntry)
-            labeledMap = labeledEntry(entry, labeledMap);
+        for (Entry<String, String> mapEntry : tokenEntities) {
+            if (LOG.isDebugEnabled())
+                LOG.debug(rtn);
+            rtn = labeledEntry(mapEntry, rtn);
+            if (LOG.isDebugEnabled())
+                LOG.debug(rtn);
+        }
 
         // 4. remove labels used in mwu
         List<String> remove = new ArrayList<>();
-        for (String labeledtoken : labeledMap.keySet())
-            if (usedLabels.contains(labeledtoken))
+        for (String labeledtoken : rtn.keySet()) {
+            if (usedLabels.contains(labeledtoken)) {
                 remove.add(labeledtoken);
-
+            }
+        }
+        if (LOG.isDebugEnabled())
+            LOG.debug(remove);
         for (String r : remove)
-            labeledMap.remove(r);
+            rtn.remove(r);
 
-        return labeledMap;
+        return rtn;
     }
 
     /**
@@ -111,8 +130,12 @@ public class PostProcessing implements IPostProcessing {
      */
     @Override
     public Map<String, Set<Entity>> getLabeledToolResults() {
-        Map<String, Set<Entity>> labeledToolResults = new HashMap<>();
+        Map<String, Set<Entity>> rtn = new HashMap<>();
 
+        if (LOG.isDebugEnabled())
+            LOG.debug(toolResults);
+
+        // for each tool
         for (Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
 
             // entities to map
@@ -120,21 +143,29 @@ public class PostProcessing implements IPostProcessing {
             for (Entity entity : entry.getValue())
                 resutlsMap.put(entity.getText(), entity.getType());
 
+            if (LOG.isTraceEnabled())
+                LOG.trace(resutlsMap);
+
             // label map
             resutlsMap = getLabeledMap(resutlsMap);
+
+            if (LOG.isTraceEnabled())
+                LOG.trace(resutlsMap);
 
             // label to entity
             Set<Entity> labeledEntities = new HashSet<>();
             for (Entry<String, String> e : resutlsMap.entrySet()) {
-                labeledEntities.add(new Entity(e.getKey(), e.getValue(), Entity.DEFAULT_RELEVANCE, entry.getKey()));
+                labeledEntities.add(
+                        new Entity(e.getKey(), e.getValue(), Entity.DEFAULT_RELEVANCE, entry.getKey())
+                        );
             }
 
             // add to labeled result map
             String toolName = entry.getKey();
-            labeledToolResults.put(toolName, labeledEntities);
+            rtn.put(toolName, labeledEntities);
 
         }
-        return labeledToolResults;
+        return rtn;
     }
 
     @Override
@@ -147,14 +178,14 @@ public class PostProcessing implements IPostProcessing {
      */
     @Override
     public Set<Entity> instancesToEntities(Instances instances) {
-        logger.info("instancesToEntities ...");
+        LOG.info("instancesToEntities ...");
 
         // get token in input order
         Set<String> labeledToken = getLabeledInput();
 
         // check size
         if (labeledToken.size() != instances.numInstances())
-            logger.error("\ntoken size != instance data");
+            LOG.error("\ntoken size != instance data");
 
         // fill labeledEntityToken
         Map<String, String> labeledEntityToken = new LinkedHashMap<>();
@@ -196,7 +227,7 @@ public class PostProcessing implements IPostProcessing {
                 try {
                     index = Integer.valueOf(label.split(TokenManager.SEP)[1]);
                 } catch (Exception e) {
-                    logger.error("\n label: " + label, e);
+                    LOG.error("\n label: " + label, e);
                 }
                 if (index > -1) {
                     Entity entity = new Entity(token, category, Entity.DEFAULT_RELEVANCE, "fox");
@@ -208,9 +239,9 @@ public class PostProcessing implements IPostProcessing {
             // remember last label
             previousLabel = label;
         }
-        if (logger.isDebugEnabled())
-            logger.debug("result: " + results.toString());
-        logger.info("result size: " + results.size());
+        if (LOG.isDebugEnabled())
+            LOG.debug("result: " + results.toString());
+        LOG.info("result size: " + results.size());
 
         // result set
         // Set<Entity> set = new HashSet<>(results);
@@ -222,13 +253,14 @@ public class PostProcessing implements IPostProcessing {
                 if (e.getText().equals(ee.getText()) && e.getType().equals(ee.getType())) {
                     e.addAllIndicies(ee.getIndices());
                 } else if (e.getText().equals(ee.getText()) && !e.getType().equals(ee.getType())) {
-                    logger.debug("one word 2 classes: " + e.getText());
+                    if (LOG.isDebugEnabled())
+                        LOG.debug("one word 2 classes: " + e.getText());
                 }
 
             }
-        if (logger.isDebugEnabled())
-            logger.debug("set: " + set.toString());
-        logger.info("result set size: " + set.size());
+        if (LOG.isDebugEnabled())
+            LOG.debug("set: " + set.toString());
+        LOG.info("result set size: " + set.size());
         return set;
     }
 
@@ -237,33 +269,37 @@ public class PostProcessing implements IPostProcessing {
 
         // token of an entity
         String[] entityToken = FoxTextUtil.getToken(entity.getKey());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(entity);
+            LOG.debug(Arrays.asList(entityToken));
+        }
 
         // all entity occurrence
         Set<Integer> occurrence = FoxTextUtil.getIndices(entity.getKey(), tokenManager.getTokenInput());
         if (occurrence.size() == 0) {
-            logger.error("entity not found:" + entity.getKey());
-        }
+            LOG.error("entity not found:" + entity.getKey());
+        } else {
+            for (Integer index : occurrence) {
+                // for each occurrence token length
+                StringBuffer sb = new StringBuffer();
+                for (int i = 0; i < entityToken.length; i++) {
 
-        for (Integer index : occurrence) {
-            // for each occurrence token length
-            StringBuffer labeledToken = new StringBuffer();
-
-            for (int i = 0; i < entityToken.length; i++) {
-
-                String label = tokenManager.getLabel(index);
-                if (label != null) {
-                    labeledToken.append(label);
-
-                    if (entityToken[entityToken.length - 1] != label)
-                        labeledToken.append(" ");
+                    String label = tokenManager.getLabel(index);
+                    if (LOG.isDebugEnabled())
+                        LOG.debug(label);
+                    if (label != null) {
+                        sb.append(label);
+                        if (entityToken[entityToken.length - 1] != label)
+                            sb.append(" ");
+                    }
+                    index += entityToken[i].length() + 1;
                 }
-
-                index += entityToken[i].length() + 1;
+                // add labeled entity
+                labeledMap.put(sb.toString().trim(), entity.getValue());
             }
-
-            // add labeled entity
-            labeledMap.put(labeledToken.toString().trim(), entity.getValue());
         }
+        if (LOG.isDebugEnabled())
+            LOG.debug(labeledMap);
         return labeledMap;
     }
 }
