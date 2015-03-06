@@ -1,6 +1,6 @@
 package org.aksw.fox.data;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,13 +21,7 @@ public class EntityClassMap {
     public static final String                 O                     = "ORGANIZATION";
     public static final String                 P                     = "PERSON";
 
-    public static final List<String>           entityClasses         = new ArrayList<>();
-    static {
-        entityClasses.add(L);
-        entityClasses.add(O);
-        entityClasses.add(P);
-        entityClasses.add(N);
-    }
+    public static final List<String>           entityClasses         = Arrays.asList(L, O, P, N);
 
     protected static final Map<String, String> entityClassesOracel   = new HashMap<>();
     static {
@@ -50,7 +44,17 @@ public class EntityClassMap {
         entityClassesBalie.put("PERSON", P);
         entityClassesBalie.put("nothing", N);
     }
+    // stanford DE
+    protected static final Map<String, String> entityClassesSTANde   = new HashMap<>();
+    static {
+        entityClassesSTANde.put("I-ORG", O);
+        entityClassesSTANde.put("I-LOC", L);
+        entityClassesSTANde.put("I-PER", P);
+        entityClassesSTANde.put("O", N);
+        entityClassesSTANde.put("I-MISC", N);
 
+    }
+    // stanford EN
     protected static final Map<String, String> entityClassesSTAN     = new HashMap<>();
     static {
         entityClassesSTAN.put("ORGANIZATION", O);
@@ -119,6 +123,16 @@ public class EntityClassMap {
      */
     public static String illinois(String illinoisTag) {
         String t = entityClassesILLINOIS.get(illinoisTag);
+        if (t == null)
+            t = getNullCategory();
+        return t;
+    }
+
+    /**
+     * Gets the entity class for a stanford de entity type/class.
+     */
+    public static String stanfordde(String stanfordTag) {
+        String t = entityClassesSTANde.get(stanfordTag);
         if (t == null)
             t = getNullCategory();
         return t;
