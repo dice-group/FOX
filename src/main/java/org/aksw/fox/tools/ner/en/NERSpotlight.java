@@ -97,7 +97,7 @@ public class NERSpotlight extends AbstractNER {
 
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-        for (Entity e : new NERSpotlight().retrieve(FoxConst.EXAMPLE_1))
+        for (Entity e : new NERSpotlight().retrieve(FoxConst.NER_EN_EXAMPLE_1))
             LOG.info(e);
     }
 }

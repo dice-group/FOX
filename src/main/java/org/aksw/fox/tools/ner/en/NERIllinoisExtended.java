@@ -33,7 +33,7 @@ public class NERIllinoisExtended extends AbstractNER {
 
     public static void main(String[] args) throws Exception {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-        for (Entity e : new NERIllinoisExtended().retrieve(FoxConst.EXAMPLE_1))
+        for (Entity e : new NERIllinoisExtended().retrieve(FoxConst.NER_EN_EXAMPLE_1))
             NERIllinoisExtended.LOG.info(e);
     }
 

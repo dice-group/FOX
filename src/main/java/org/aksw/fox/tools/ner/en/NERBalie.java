@@ -73,7 +73,7 @@ public class NERBalie extends AbstractNER {
 
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-        for (Entity e : new NERBalie().retrieve(FoxConst.EXAMPLE_1))
+        for (Entity e : new NERBalie().retrieve(FoxConst.NER_EN_EXAMPLE_1))
             NERBalie.LOG.info(e);
     }
 }

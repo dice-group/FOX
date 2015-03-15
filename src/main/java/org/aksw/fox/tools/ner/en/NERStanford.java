@@ -10,7 +10,6 @@ import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.fox.utils.FoxCfg;
-import org.aksw.fox.utils.FoxConst;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -18,14 +17,14 @@ import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ie.crf.CRFCliqueTree;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Pair;
 import edu.stanford.nlp.util.Triple;
@@ -140,11 +139,10 @@ public class NERStanford extends AbstractNER {
     }
 
     public static void main(String[] a) {
-        NERStanford n = new NERStanford();
-        n.retrieve(FoxConst.EXAMPLE_1);
+        // NERStanford.en(null);
     }
 
-    public static void test2(String[] a) {
+    public static void en(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
 
         /*
@@ -157,16 +155,21 @@ public class NERStanford extends AbstractNER {
                 "tokenize, ssplit, pos, lemma, ner, parse, dcoref, relation"
                 );
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-
         Annotation ann = new Annotation(
                 "Stanford University is located in California. It is a great university."
                 );
         pipeline.annotate(ann);
-        for (CoreMap sentence : ann.get(SentencesAnnotation.class)) {
-            Tree tree = sentence.get(TreeAnnotation.class);
 
-            System.out.println(tree);
-            System.out.println(tree.score());
+        for (CoreMap sentence : ann.get(SentencesAnnotation.class)) {
+            for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+                System.out.println(token.get(NamedEntityTagAnnotation.class));
+                System.out.println(token.get(CoreAnnotations.AnswerAnnotation.class));
+                /*
+                Tree tree = sentence.get(TreeAnnotation.class);
+                System.out.println(tree);
+                System.out.println(tree.score());
+                */
+            }
         }
 
     }

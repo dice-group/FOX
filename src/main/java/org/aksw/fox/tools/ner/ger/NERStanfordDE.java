@@ -1,4 +1,4 @@
-package org.aksw.fox.tools.ner.de;
+package org.aksw.fox.tools.ner.ger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class NERStanfordDE extends AbstractNER {
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
         NERStanfordDE n = new NERStanfordDE();
-        n.retrieve(FoxConst.DE_EXAMPLE_1);
+        n.retrieve(FoxConst.NER_GER_EXAMPLE_1);
     }
 
     @Override

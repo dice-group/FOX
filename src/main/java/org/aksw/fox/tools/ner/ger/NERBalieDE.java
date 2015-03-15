@@ -1,4 +1,4 @@
-package org.aksw.fox.tools.ner.de;
+package org.aksw.fox.tools.ner.ger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +70,7 @@ public class NERBalieDE extends AbstractNER {
 
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-        for (Entity e : new NERBalieDE().retrieve(FoxConst.DE_EXAMPLE_1))
+        for (Entity e : new NERBalieDE().retrieve(FoxConst.NER_GER_EXAMPLE_1))
             NERBalieDE.LOG.info(e);
     }
 }

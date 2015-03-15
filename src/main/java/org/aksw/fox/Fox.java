@@ -367,7 +367,7 @@ public class Fox implements IFox {
     @Override
     public Map<String, String> getDefaultParameter() {
         Map<String, String> map = new HashMap<>();
-        map.put(FoxCfg.parameter_input, FoxConst.EXAMPLE_1);
+        map.put(FoxCfg.parameter_input, FoxConst.NER_EN_EXAMPLE_1);
         map.put(FoxCfg.parameter_task, "NER");
         map.put(FoxCfg.parameter_output, Lang.RDFXML.getName());
         map.put(FoxCfg.parameter_nif, "false");
