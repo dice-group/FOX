@@ -1,10 +1,10 @@
 ##################################################################
 # RE #
 ################################################################## 
-org.aksw.fox.tools.re.REStanford.liveIn: http: //dbpedia.org/ontology/populationPlace,http: //dbpedia.org/ontology/residence
-org.aksw.fox.tools.re.REStanford.locatedIn: http: //dbpedia.org/ontology/city,http: //dbpedia.org/ontology/province,http: //dbpedia.org/ontology/canton
-org.aksw.fox.tools.re.REStanford.orgbasedIn: http: //dbpedia.org/ontology/homeArena
-org.aksw.fox.tools.re.REStanford.workFor: http: //test/#re
+org.aksw.fox.tools.re.REStanford.liveIn: http://dbpedia.org/ontology/populationPlace,http: //dbpedia.org/ontology/residence
+org.aksw.fox.tools.re.REStanford.locatedIn: http://dbpedia.org/ontology/city,http: //dbpedia.org/ontology/province,http: //dbpedia.org/ontology/canton
+org.aksw.fox.tools.re.REStanford.orgbasedIn: http://dbpedia.org/ontology/homeArena
+org.aksw.fox.tools.re.REStanford.workFor: http://test/#re
 ##################################################################
 # NER feedback #
 ##################################################################
@@ -15,8 +15,8 @@ org.aksw.fox.web.feedback.FeedbackHttpHandler.apikey: <YOUR API KEY>
 # INERReader training reader
 org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.NEEL2014Reader
 #spotlight
-#org.aksw.fox.tools.ner.en.NERSpotlight.endpoint: http: //spotlight.sztaki.hu: 2222
-org.aksw.fox.tools.ner.en.NERSpotlight.endpoint: http: //139.18.2.164: 4442
+#org.aksw.fox.tools.ner.en.NERSpotlight.endpoint: http://spotlight.sztaki.hu: 2222
+org.aksw.fox.tools.ner.en.NERSpotlight.endpoint: http://139.18.2.164:4442
 org.aksw.fox.tools.ner.en.NERSpotlight.confidence: 0.2
 org.aksw.fox.tools.ner.en.NERSpotlight.support: 2
 #nerdMl
@@ -27,10 +27,10 @@ org.aksw.fox.tools.ner.en.NERNerdML.documentType: PLAINTEXT
 org.aksw.fox.tools.ner.en.NERStanford.classifier: edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz
 #
 # uri lookup class
-org.aksw.fox.Fox.urilookup: org.aksw.fox.uri.AGDISTISLookup
+org.aksw.fox.Fox.urilookup: org.aksw.fox.uri.NullLookup
 #AGDISTIS endpoint
-#org.aksw.fox.uri.AGDISTISLookup.endpoint: http: //139.18.2.164: 8080/AGDISTIS
-org.aksw.fox.uri.AGDISTISLookup.endpoint: http: //139.18.2.164: 4443/AGDISTIS
+#org.aksw.fox.uri.AGDISTISLookup.endpoint: http://139.18.2.164:8080/AGDISTIS
+org.aksw.fox.uri.AGDISTISLookup.endpoint: http://139.18.2.164:4443/AGDISTIS
 #NER default light version class
 org.aksw.fox.Fox.defaultLightNER: org.aksw.fox.tools.ner.en.NERStanford
 #NER tools to use
@@ -44,6 +44,7 @@ org.aksw.fox.nerlearner.FoxClassifier.learner: weka.classifiers.functions.Multil
 ##################################################################
 # fox settings #
 ##################################################################
+org.aksw.fox.utils.tweets.Preprocessor.enabled: true
 org.aksw.fox.CrossValidation.runs: 10
 # max time in min. before fox timeouts
 org.aksw.fox.web.FoxHttpHandler.lifetime: 5
@@ -55,7 +56,7 @@ org.aksw.fox.tools.ner.FoxNERTools.foxNERLifeTime: 2
 # web service #
 ##################################################################
 # pool fox instances
-org.aksw.fox.web.Server.poolsize: 2
+org.aksw.fox.web.Server.poolsize: 1
 # static file cache
 org.aksw.fox.web.Server.static_file_cache_on: false
 # http handler settings, values are: 'true' to enable
