@@ -9,19 +9,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 public class Preprocessor {
-    private Map<String, String> slang = new HashMap<>();
-    public final static Logger  LOG   = LogManager.getLogger(Preprocessor.class);
 
-    /*
-     TODO:
-     
-     @Barack Obama goes to the #WhiteHouse :) ASAP 2018
-      Barack Obama goes to the  White House    asap 2018
-     */
+    protected final static String TWEET_PREPROCESSING_ON = Preprocessor.class.getName().concat(".enabled");
+
+    public static boolean         enabled                = Boolean.parseBoolean(FoxCfg.get(TWEET_PREPROCESSING_ON));
+
+    private Map<String, String>   slang                  = new HashMap<>();
+    public final static Logger    LOG                    = LogManager.getLogger(Preprocessor.class);
 
     public String preprocess(String text) {
 
@@ -86,6 +85,7 @@ public class Preprocessor {
 
     public static void main(String[] a) {
 
+        System.out.println(Preprocessor.enabled);
         Preprocessor pp = new Preprocessor();
         String tweet =
                 "@Barack Obama goes to the #WhiteHouse :) ASAP 2018";
