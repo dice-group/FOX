@@ -47,8 +47,8 @@ public class NERNerdML extends AbstractNER {
 
         NERD nerd = new NERD(FoxCfg.get(CFG_KEY_API_KEY));
         List<Entity> nerdlist = nerd.annotate(
-                ExtractorType.NERDML,
-                // ExtractorType.valueOf(FoxCfg.get(CFG_KEY_ExtractorType)),
+                // ExtractorType.NERDML,
+                ExtractorType.valueOf(FoxCfg.get(CFG_KEY_ExtractorType)),
                 DocumentType.valueOf(FoxCfg.get(CFG_KEY_DocumentType)),
                 input
                 );
