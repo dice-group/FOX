@@ -1,10 +1,10 @@
 ##################################################################
 # RE #
 ################################################################## 
-org.aksw.fox.tools.re.REStanford.liveIn: http://dbpedia.org/ontology/populationPlace,http://dbpedia.org/ontology/residence
-org.aksw.fox.tools.re.REStanford.locatedIn: http://dbpedia.org/ontology/city,http://dbpedia.org/ontology/province,http://dbpedia.org/ontology/canton
-org.aksw.fox.tools.re.REStanford.orgbasedIn: http://dbpedia.org/ontology/homeArena
-org.aksw.fox.tools.re.REStanford.workFor: http://dbpedia.org/ontology/profession
+org.aksw.fox.tools.re.en.REStanford.liveIn: http://dbpedia.org/ontology/populationPlace,http://dbpedia.org/ontology/residence
+org.aksw.fox.tools.re.en.REStanford.locatedIn: http://dbpedia.org/ontology/city,http://dbpedia.org/ontology/province,http://dbpedia.org/ontology/canton
+org.aksw.fox.tools.re.en.REStanford.orgbasedIn: http://dbpedia.org/ontology/homeArena
+org.aksw.fox.tools.re.en.REStanford.workFor: http://dbpedia.org/ontology/profession
 ##################################################################
 # NER feedback #
 ##################################################################
@@ -13,7 +13,8 @@ org.aksw.fox.web.feedback.FeedbackHttpHandler.apikey: <YOUR API KEY>
 # NER #
 ################################################################## 
 # INERReader training reader
-org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.NEEL2014Reader
+#org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.NEEL2014Reader
+org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.TrainingInputReader
 #spotlight
 #org.aksw.fox.tools.ner.en.NERSpotlight.endpoint: http://spotlight.sztaki.hu: 2222
 org.aksw.fox.tools.ner.en.NERSpotlight.endpoint: http://139.18.2.164:4442
