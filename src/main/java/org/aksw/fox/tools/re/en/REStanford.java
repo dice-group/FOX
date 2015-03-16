@@ -1,4 +1,4 @@
-package org.aksw.fox.tools.re;
+package org.aksw.fox.tools.re.en;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -12,6 +12,7 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.Relation;
+import org.aksw.fox.tools.re.IRE;
 import org.aksw.fox.utils.Converter;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
@@ -37,7 +38,7 @@ import edu.stanford.nlp.util.CoreMap;
  * @author rspeck
  *
  */
-public class REStanford {
+public class REStanford implements IRE {
 
     public enum StanfordRelations {
 
@@ -270,6 +271,7 @@ public class REStanford {
                         Relation relation = new Relation(
                                 a,
                                 relationLabel,
+                                StanfordRelations.fromString(relationMention.getType()).name(),
                                 b,
                                 relationURIs.get(StanfordRelations.fromString(relationMention.getType())),
                                 getToolName(),

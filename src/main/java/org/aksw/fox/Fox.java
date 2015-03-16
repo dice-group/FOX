@@ -8,15 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.aksw.fox.data.Entity;
+import org.aksw.fox.data.Relation;
 import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.tools.ner.FoxNERTools;
 import org.aksw.fox.tools.ner.INER;
 import org.aksw.fox.tools.ner.en.NERStanford;
+import org.aksw.fox.tools.re.FoxRETools;
 import org.aksw.fox.uri.AGDISTISLookup;
 import org.aksw.fox.uri.ILookup;
 import org.aksw.fox.utils.FoxCfg;
@@ -51,6 +52,7 @@ public class Fox implements IFox {
      * 
      */
     protected FoxNERTools       nerTools                  = null;
+    protected FoxRETools        reTools                   = null;
 
     /**
      * 
@@ -93,10 +95,14 @@ public class Fox implements IFox {
             uriLookup = new AGDISTISLookup();
 
         nerTools = new FoxNERTools();
+
+        reTools = new FoxRETools();
     }
 
     /**
-     *
+     * 
+     * @param uriLookup
+     * @param nerLight
      */
     public Fox(ILookup uriLookup, INER nerLight) {
         this.uriLookup = uriLookup;
@@ -105,223 +111,284 @@ public class Fox implements IFox {
     }
 
     /**
+     * Searches for an instance in FoxNERTools to set the NER light version.
+     */
+    protected void setLightVersionNER() {
+        if (nerLight == null)
+            for (INER tool : nerTools.getNerTools())
+                if (parameter.get(FoxCfg.parameter_foxlight).equals(tool.getClass().getName())) {
+                    nerLight = tool;
+                    break;
+                }
+        if (nerLight == null) {
+            if (FoxCfg.get(CFG_KEY_DEFAULT_LIGHT_NER) != null)
+                try {
+                    nerLight = (INER) FoxCfg.getClass(FoxCfg.get(CFG_KEY_DEFAULT_LIGHT_NER).trim());
+                } catch (Exception e) {
+                    LOG.error("INER not found. Check your " + FoxCfg.CFG_FILE + " file and the " + CFG_KEY_DEFAULT_LIGHT_NER + " key");
+                }
+
+            if (nerLight == null)
+                nerLight = new NERStanford();
+
+        }
+    }
+
+    protected Set<Entity> doNER() {
+        LOG.info("starting ner ...");
+        foxWebLog.setMessage("Start NER ...");
+        Set<Entity> entities = nerTools.getEntities(parameter.get(FoxCfg.parameter_input));
+        foxWebLog.setMessage("NER done.");
+
+        // remove duplicate annotations
+        // TODO: why they here?
+        Map<String, Entity> wordEntityMap = new HashMap<>();
+        for (Entity entity : entities) {
+            if (wordEntityMap.get(entity.getText()) == null) {
+                wordEntityMap.put(entity.getText(), entity);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("We have a duplicate annotation and removing those: "
+                            + entity.getText() + " "
+                            + entity.getType() + " "
+                            + wordEntityMap.get(entity.getText()).getType());
+                }
+                wordEntityMap.remove(entity.getText());
+            }
+        }
+        // remove
+        entities.retainAll(wordEntityMap.values());
+        return entities;
+    }
+
+    protected Set<Relation> doRE(Set<Entity> entities) {
+
+        Set<Relation> relations = reTools.getRETool().extract(parameter.get(FoxCfg.parameter_input));
+
+        return relations;
+
+    }
+
+    protected Set<Entity> doNERLight() {
+        LOG.info("Starting light NER version ...");
+        foxWebLog.setMessage("Starting light NER version ...");
+        Set<Entity> entities = null;
+        setLightVersionNER();
+        foxWebLog.setMessage("NER tool is: " + nerLight.getToolName());
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        nerLight.setCountDownLatch(latch);
+        nerLight.setInput(tokenManager.getInput());
+        // nerLight.setTokenManager(tokenManager);
+
+        Fiber fiber = new ThreadFiber();
+        fiber.start();
+        fiber.execute(nerLight);
+
+        int min = Integer.parseInt(FoxCfg.get(FoxNERTools.NERLIFETIME_KEY));
+        try {
+            latch.await(min, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            LOG.error("Timeout after " + min + "min.");
+            LOG.error("\n", e);
+            LOG.error("input:\n" + parameter.get(FoxCfg.parameter_input));
+        }
+
+        // shutdown threads
+        fiber.dispose();
+        // get results
+        if (latch.getCount() == 0) {
+            entities = new HashSet<Entity>(nerLight.getResults());
+
+        } else {
+            if (LOG.isDebugEnabled())
+                LOG.debug("timeout after " + min + "min.");
+
+            // TODO: handle timeout
+        }
+
+        foxWebLog.setMessage("Light version done.");
+
+        tokenManager.repairEntities(entities);
+
+        /* make an index for each entity */
+
+        // make index map
+        Map<Integer, Entity> indexMap = new HashMap<>();
+        /*  
+         for (Entity entity : entities)
+              for (Integer i : FoxTextUtil.getIndices(entity.getText(), tokenManager.getTokenInput()))
+                  indexMap.put(i, entity);
+        */
+        entities.forEach(
+                entity -> FoxTextUtil.getIndices(entity.getText(), tokenManager.getTokenInput())
+                        .forEach(
+                                index -> indexMap.put(index, entity))
+                );
+
+        // sort
+        List<Integer> sortedIndices = new ArrayList<>(indexMap.keySet());
+        Collections.sort(sortedIndices);
+
+        // loop index in sorted order
+        int offset = -1;
+        for (Integer i : sortedIndices) {
+            Entity e = indexMap.get(i);
+            if (offset < i) {
+                offset = i + e.getText().length();
+                e.addIndicies(i);
+            }
+        }
+
+        // remove entity without an index
+        Set<Entity> cleanEntity = new HashSet<>();
+        for (Entity e : entities) {
+            if (e.getIndices() != null && e.getIndices().size() > 0) {
+                cleanEntity.add(e);
+            }
+        }
+        entities = cleanEntity;
+        nerLight = null;
+        return entities;
+    }
+
+    protected void setURIs(Set<Entity> entities) {
+        if (entities == null) {
+            LOG.warn("Entities are empty.");
+            return;
+        }
+        // TODO: use interface for all tools
+        // 4. set URIs
+        foxWebLog.setMessage("Start looking up uri ...");
+        uriLookup.setUris(entities, parameter.get(FoxCfg.parameter_input));
+        foxWebLog.setMessage("Start looking up uri done.");
+        // for (Entity e : entities)
+        // e.uri = uriLookup.getUri(e.getText(), e.getType());
+    }
+
+    protected void setOutput(Set<Entity> entities, Set<Relation> relations) {
+        if (entities == null) {
+            LOG.warn("Entities are empty.");
+            return;
+        }
+
+        String input = parameter.get(FoxCfg.parameter_input);
+
+        // switch output
+        final boolean useNIF = Boolean.parseBoolean(parameter.get(FoxCfg.parameter_nif));
+
+        String out = parameter.get(FoxCfg.parameter_output);
+        foxWebLog.setMessage("Preparing output format ...");
+
+        foxJena.clearGraph();
+        foxJena.setAnnotations(entities);
+
+        if (relations != null) {
+            foxJena.setRelations(relations);
+        }
+
+        response = foxJena.print(out, useNIF, input);
+        foxWebLog.setMessage("Preparing output format done.");
+
+        if (parameter.get("returnHtml") != null && parameter.get("returnHtml").toLowerCase().endsWith("true")) {
+
+            Map<Integer, Entity> indexEntityMap = new HashMap<>();
+            for (Entity entity : entities) {
+                for (Integer startIndex : entity.getIndices()) {
+                    // TODO : check contains
+                    indexEntityMap.put(startIndex, entity);
+                }
+            }
+
+            Set<Integer> startIndices = new TreeSet<>(indexEntityMap.keySet());
+
+            String html = "";
+
+            int last = 0;
+            for (Integer index : startIndices) {
+                Entity entity = indexEntityMap.get(index);
+                if (entity.uri != null && !entity.uri.trim().isEmpty()) {
+                    html += input.substring(last, index);
+                    html += "<a class=\"" + entity.getType().toLowerCase() + "\" href=\"" + entity.uri + "\"  target=\"_blank\"  title=\"" + entity.getType().toLowerCase() + "\" >" + entity.getText() + "</a>";
+                    last = index + entity.getText().length();
+                } else {
+                    LOG.error("Entity has no URI: " + entity.getText());
+                }
+            }
+
+            html += input.substring(last);
+            parameter.put(FoxCfg.parameter_input, html);
+
+            if (LOG.isTraceEnabled())
+                infotrace(entities);
+        }
+    }
+
+    /**
      * 
      */
     @Override
     public void run() {
 
-        foxWebLog = new FoxWebLog(UUID.randomUUID().toString());
+        foxWebLog = new FoxWebLog();
         foxWebLog.setMessage("Running Fox...");
 
         if (parameter == null) {
             LOG.error("Parameter not set.");
         } else {
-            final String input;
-            Set<Entity> entities = null;
+            String input = parameter.get(FoxCfg.parameter_input);
+            String task = parameter.get(FoxCfg.parameter_task);
+            String light = parameter.get(FoxCfg.parameter_foxlight);
 
-            if (parameter.get(FoxCfg.parameter_input) == null || parameter.get(FoxCfg.parameter_task) == null) {
+            Set<Entity> entities = null;
+            Set<Relation> relations = null;
+
+            if (input == null || task == null) {
                 LOG.error("Input or task parameter not set.");
-                input = null;
             } else {
-                String task = parameter.get(FoxCfg.parameter_task);
-                tokenManager = new TokenManager(parameter.get(FoxCfg.parameter_input));
+                tokenManager = new TokenManager(input);
                 // clean input
                 input = tokenManager.getInput();
                 parameter.put(FoxCfg.parameter_input, input);
 
-                if (parameter.get(FoxCfg.parameter_foxlight) != null && !parameter.get(FoxCfg.parameter_foxlight).equals("OFF")) {
+                // light version
+                if (light != null && !light.equals("OFF")) {
                     // switch task
                     switch (task.toLowerCase()) {
 
                     case "ke":
-                        LOG.info("starting foxlight ke ...");
-                        // TODO:
+                        // TODO: ke fox
+                        LOG.info("Starting light KE version ...");
                         break;
 
                     case "ner":
-                        LOG.info("starting foxlight ner ...");
-                        foxWebLog.setMessage("Start light version ...");
-
-                        // set ner light tool
-                        if (nerLight == null)
-                            for (INER tool : nerTools.getNerTools())
-                                if (parameter.get(FoxCfg.parameter_foxlight).equals(tool.getClass().getName())) {
-                                    nerLight = tool;
-                                    break;
-                                }
-                        if (nerLight == null) {
-                            if (FoxCfg.get(CFG_KEY_DEFAULT_LIGHT_NER) != null)
-                                try {
-                                    nerLight = (INER) FoxCfg.getClass(FoxCfg.get(CFG_KEY_DEFAULT_LIGHT_NER).trim());
-                                } catch (Exception e) {
-                                    LOG.error("INER not found. Check your " + FoxCfg.CFG_FILE + " file and the " + CFG_KEY_DEFAULT_LIGHT_NER + " key");
-                                }
-
-                            if (nerLight == null)
-                                nerLight = new NERStanford();
-
-                        }
-
-                        foxWebLog.setMessage("NER tool is: " + nerLight.getToolName());
-                        final CountDownLatch latch = new CountDownLatch(1);
-
-                        nerLight.setCountDownLatch(latch);
-                        nerLight.setInput(tokenManager.getInput());
-                        // nerLight.setTokenManager(tokenManager);
-
-                        Fiber fiber = new ThreadFiber();
-                        fiber.start();
-                        fiber.execute(nerLight);
-
-                        int min = Integer.parseInt(FoxCfg.get(FoxNERTools.NERLIFETIME_KEY));
-                        try {
-                            latch.await(min, TimeUnit.MINUTES);
-                        } catch (InterruptedException e) {
-                            LOG.error("Timeout after " + min + "min.");
-                            LOG.error("\n", e);
-                            LOG.error("input:\n" + input);
-                        }
-
-                        // shutdown threads
-                        fiber.dispose();
-                        // get results
-                        if (latch.getCount() == 0) {
-                            entities = new HashSet<Entity>(nerLight.getResults());
-
-                        } else {
-                            if (LOG.isDebugEnabled())
-                                LOG.debug("timeout after " + min + "min.");
-
-                            // TODO: handle timeout
-                        }
-
-                        foxWebLog.setMessage("Light version done.");
-
-                        tokenManager.repairEntities(entities);
-
-                        /* make an index for each entity */
-
-                        // make index map
-                        Map<Integer, Entity> indexMap = new HashMap<>();
-                        for (Entity entity : entities) {
-                            for (Integer i : FoxTextUtil.getIndices(entity.getText(), tokenManager.getTokenInput())) {
-                                indexMap.put(i, entity);
-                            }
-                        }
-
-                        // sort
-                        List<Integer> sortedIndices = new ArrayList<>(indexMap.keySet());
-                        Collections.sort(sortedIndices);
-
-                        // loop index in sorted order
-                        int offset = -1;
-                        for (Integer i : sortedIndices) {
-                            Entity e = indexMap.get(i);
-                            if (offset < i) {
-                                offset = i + e.getText().length();
-                                e.addIndicies(i);
-                            }
-                        }
-
-                        // remove entity without an index
-                        Set<Entity> cleanEntity = new HashSet<>();
-                        for (Entity e : entities) {
-                            if (e.getIndices() != null && e.getIndices().size() > 0) {
-                                cleanEntity.add(e);
-                            }
-                        }
-                        entities = cleanEntity;
-                        nerLight = null;
+                        entities = doNERLight();
+                        break;
                     }
 
                 } else {
-
                     // switch task
                     switch (task.toLowerCase()) {
-
                     case "ke":
-                        LOG.info("starting ke ...");
                         // TODO: ke fox
+                        LOG.info("starting ke ...");
                         break;
 
                     case "ner":
-                        LOG.info("starting ner ...");
-                        foxWebLog.setMessage("Start NER ...");
-                        entities = nerTools.getEntities(input);
-                        foxWebLog.setMessage("NER done.");
+                        entities = doNER();
+                        break;
 
-                        // remove duplicate annotations
-                        // TODO: why they here?
-                        Map<String, Entity> wordEntityMap = new HashMap<>();
-                        for (Entity entity : entities) {
-                            if (wordEntityMap.get(entity.getText()) == null) {
-                                wordEntityMap.put(entity.getText(), entity);
-                            } else {
-                                LOG.debug("We have a duplicate annotation: " + entity.getText() + " " + entity.getType() + " " + wordEntityMap.get(entity.getText()).getType());
-                                LOG.debug("We remove it ...");
-                                wordEntityMap.remove(entity.getText());
-                            }
-                        }
-                        // remove them
-                        entities.retainAll(wordEntityMap.values());
+                    case "re":
+                        entities = doNER();
+                        relations = doRE(entities);
+                        break;
                     }
                 }
             }
 
-            if (entities != null) {
-                // TODO: use interface for all tools
-                // 4. set URIs
-                foxWebLog.setMessage("Start looking up uri ...");
-                uriLookup.setUris(entities, input);
-                foxWebLog.setMessage("Start looking up uri done.");
-                // for (Entity e : entities)
-                // e.uri = uriLookup.getUri(e.getText(), e.getType());
-                // switch output
-                final boolean useNIF = Boolean.parseBoolean(parameter.get(FoxCfg.parameter_nif));
-
-                String out = parameter.get(FoxCfg.parameter_output);
-                foxWebLog.setMessage("Preparing output format ...");
-
-                foxJena.clearGraph();
-                foxJena.setAnnotations(entities);
-                response = foxJena.print(out, useNIF, input);
-                foxWebLog.setMessage("Preparing output format done.");
-
-                if (parameter.get("returnHtml") != null && parameter.get("returnHtml").toLowerCase().endsWith("true")) {
-
-                    Map<Integer, Entity> indexEntityMap = new HashMap<>();
-                    for (Entity entity : entities) {
-                        for (Integer startIndex : entity.getIndices()) {
-                            // TODO : check contains
-                            indexEntityMap.put(startIndex, entity);
-                        }
-                    }
-
-                    Set<Integer> startIndices = new TreeSet<>(indexEntityMap.keySet());
-
-                    String html = "";
-
-                    int last = 0;
-                    for (Integer index : startIndices) {
-                        Entity entity = indexEntityMap.get(index);
-                        if (entity.uri != null && !entity.uri.trim().isEmpty()) {
-                            html += input.substring(last, index);
-                            html += "<a class=\"" + entity.getType().toLowerCase() + "\" href=\"" + entity.uri + "\"  target=\"_blank\"  title=\"" + entity.getType().toLowerCase() + "\" >" + entity.getText() + "</a>";
-                            last = index + entity.getText().length();
-                        } else {
-                            LOG.error("Entity has no URI: " + entity.getText());
-                        }
-                    }
-
-                    html += input.substring(last);
-                    parameter.put(FoxCfg.parameter_input, html);
-
-                    // INFO TRACE
-                    if (LOG.isTraceEnabled())
-                        infotrace(entities);
-                    // INFO TRACE
-                }
-            }
+            setURIs(entities);
+            setOutput(entities, relations);
         }
 
         // done
@@ -330,23 +397,30 @@ public class Fox implements IFox {
             countDownLatch.countDown();
     }
 
-    // debug infos
+    /**
+     * Prints debug infos about entities for each tool and final entities in
+     * fox.
+     * 
+     * @param entities
+     *            final entities
+     */
     private void infotrace(Set<Entity> entities) {
-        // INFO TRACE
-        LOG.info("Entities:");
-        for (String toolname : this.nerTools.getToolResult().keySet()) {
-            if (this.nerTools.getToolResult().get(toolname) == null)
-                return;
-            LOG.info(toolname + ": " + this.nerTools.getToolResult().get(toolname).size());
-            if (LOG.isTraceEnabled())
-                for (Entity e : this.nerTools.getToolResult().get(toolname))
+        if (LOG.isTraceEnabled()) {
+
+            LOG.trace("entities:");
+            for (String toolname : nerTools.getToolResult().keySet()) {
+                if (nerTools.getToolResult().get(toolname) == null)
+                    return;
+
+                LOG.trace(toolname + ": " + nerTools.getToolResult().get(toolname).size());
+                for (Entity e : nerTools.getToolResult().get(toolname))
                     LOG.trace(e);
-        }
-        LOG.info("fox" + ": " + entities.size());
-        if (LOG.isTraceEnabled())
+            }
+
+            LOG.trace("fox" + ": " + entities.size());
             for (Entity e : entities)
                 LOG.trace(e);
-        // INFO TRACE
+        }
     }
 
     @Override

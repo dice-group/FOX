@@ -1,42 +1,50 @@
 package org.aksw.fox.utils;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
+import org.aksw.fox.data.Relation;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
+// for future: http://www.w3.org/ns/oa#
+/**
+ * 
+ * 
+ * @author rspeck
+ *
+ */
 public class FoxJena {
 
-    public static Logger             logger = Logger.getLogger(FoxJena.class);
+    public static Logger             LOG          = LogManager.getLogger(FoxJena.class);
 
-    public static final List<String> prints = Arrays.asList(
-                                                    Lang.RDFXML.getName(),
-                                                    /* FileUtils.langXMLAbbrev,*/
-                                                    Lang.TURTLE.getName(),
-                                                    Lang.NTRIPLES.getName(),
-                                                    // Lang.N3.getName(),
-                                                    Lang.RDFJSON.getName(),
-                                                    Lang.JSONLD.getName(),
-                                                    Lang.TRIG.getName(),
-                                                    Lang.NQUADS.getName()
-                                                    );
-
+    public static final List<String> prints       = Arrays.asList(
+                                                          Lang.RDFXML.getName(),
+                                                          /* FileUtils.langXMLAbbrev,*/
+                                                          Lang.TURTLE.getName(),
+                                                          Lang.NTRIPLES.getName(),
+                                                          // Lang.N3.getName(),
+                                                          Lang.RDFJSON.getName(),
+                                                          Lang.JSONLD.getName(),
+                                                          Lang.TRIG.getName(),
+                                                          Lang.NQUADS.getName()
+                                                          );
+    /*
     public static enum RelationEnum {
         employeeOf("employeeOf"), hasPosition("hasPosition"), hasDegree("hasDegree");
 
@@ -46,29 +54,44 @@ public class FoxJena {
             this.label = label;
         }
     };
+    */
 
     /* namespace */
-    public static final String nsAnn        = "http://www.w3.org/2000/10/annotation-ns#";
-    public static final String nsCTag       = "http://commontag.org/ns#";
-    public static final String nsScms       = "http://ns.aksw.org/scms/";
-    public static final String nsScmsann    = "http://ns.aksw.org/scms/annotations/";
-    public static final String nsScmssource = "http://ns.aksw.org/scms/tools/";
-
-    // TODO
-    public static final String prefix_ann   = "ann";
+    public static final String       nsDBpediaOwl = "http://dbpedia.org/ontology/";
+    public static final String       nsAnn        = "http://www.w3.org/2000/10/annotation-ns#";
+    public static final String       nsCTag       = "http://commontag.org/ns#";
+    public static final String       nsScms       = "http://ns.aksw.org/scms/";
+    public static final String       nsScmsann    = "http://ns.aksw.org/scms/annotations/";
+    public static final String       nsScmssource = "http://ns.aksw.org/scms/tools/";
 
     /* properties */
-    protected Property         beginIndex, endIndex, means, source, body, ctagLabel, ctagMeans, ctagAutoTag, relation;
-    protected Property[]       scmsRelationLabels;
+    protected Property               annotation,
+                                     beginIndex,
+                                     endIndex,
+                                     means,
+                                     source,
+                                     body,
+                                     ctagLabel,
+                                     ctagMeans,
+                                     ctagAutoTag,
+                                     relationProperty,
+                                     s,
+                                     t;
+
+    protected Property[]             scmsRelationLabels;
 
     /* model */
-    protected Model            graph        = null;
+    protected Model                  graph        = null;
+
+    protected UrlValidator           urlValidator = new UrlValidator();
 
     public void initGraph() {
 
         graph = ModelFactory.createDefaultModel();
+
         // create namespace prefix
-        graph.setNsPrefix(prefix_ann, nsAnn);
+        graph.setNsPrefix("dbpedia-owl", nsDBpediaOwl);
+        graph.setNsPrefix("ann", nsAnn);
         graph.setNsPrefix("scms", nsScms);
         graph.setNsPrefix("rdf", RDF.getURI());
         graph.setNsPrefix("ctag", nsCTag);
@@ -76,11 +99,14 @@ public class FoxJena {
         graph.setNsPrefix("scmsann", nsScmsann);
 
         // NER properties
+        annotation = graph.createProperty(nsAnn + "Annotation");
         beginIndex = graph.createProperty(nsScms + "beginIndex");
         endIndex = graph.createProperty(nsScms + "endIndex");
         means = graph.createProperty(nsScms + "means");
         source = graph.createProperty(nsScms + "source");
         body = graph.createProperty(nsAnn + "body");
+        s = graph.createProperty(nsScms + "s");
+        t = graph.createProperty(nsScms + "t");
 
         // KE properties
         ctagLabel = graph.createProperty(nsCTag + "label");
@@ -88,12 +114,13 @@ public class FoxJena {
         ctagAutoTag = graph.createProperty(nsCTag + "AutoTag");
 
         // RE
-        relation = graph.createProperty(nsScms + "relation");
-
+        relationProperty = graph.createProperty(nsScms + "relation");
+        /*
         RelationEnum[] relationEnum = RelationEnum.values();
         scmsRelationLabels = new Property[relationEnum.length];
         for (int i = 0; i < scmsRelationLabels.length; i++)
             scmsRelationLabels[relationEnum[i].ordinal()] = graph.createProperty(nsScms + relationEnum[i].label);
+        */
     }
 
     public void clearGraph() {
@@ -102,6 +129,87 @@ public class FoxJena {
 
     public Model getGraph() {
         return graph;
+    }
+
+    /**
+     * Adds entities to graph.
+     */
+    public void setAnnotations(Set<Entity> set) {
+
+        if (graph == null)
+            initGraph();
+
+        if (set == null)
+            return;
+
+        for (Entity entity : set)
+            if (!urlValidator.isValid(entity.uri))
+                LOG.error("uri isn't valid: " + entity.uri);
+
+            else {
+                Resource resource = graph.createResource();
+
+                resource.addProperty(RDF.type, annotation);
+                resource.addProperty(RDF.type, graph.createProperty(nsScmsann + entity.getType()));
+
+                for (Integer index : entity.getIndices()) {
+                    resource.addLiteral(beginIndex, graph.createTypedLiteral(new Integer(index)));
+                    resource.addLiteral(endIndex, graph.createTypedLiteral(new Integer(index + entity.getText().length())));
+                }
+
+                resource.addProperty(means, graph.createResource(entity.uri));
+                resource.addProperty(source, graph.createResource(nsScmssource + entity.getTool()));
+                resource.addLiteral(body, entity.getText());
+            }
+    }
+
+    /**
+     * Adds relations to graph.
+     */
+    public void setRelations(Set<Relation> relations) {
+        if (graph == null)
+            initGraph();
+
+        if (relations == null)
+            return;
+
+        for (Relation relation : relations) {
+            Entity oe = relation.getObjectEntity();
+            Entity se = relation.getSubjectEntity();
+
+            Resource roe = null;
+            Resource rse = null;
+
+            boolean foundoe = false;
+            boolean foundse = false;
+
+            ResIterator iter = graph.listSubjects();
+            while (iter.hasNext()) {
+                Resource resource = iter.nextResource();
+                int index = resource.getProperty(beginIndex).getLiteral().getInt();
+
+                if (oe.getIndices().contains(index)) {
+                    foundoe = true;
+                    roe = resource;
+                } else if (se.getIndices().contains(index)) {
+                    foundse = true;
+                    rse = resource;
+                }
+            }
+
+            if (foundse && foundoe && roe != null && rse != null) {
+                Resource resource = graph.createResource();
+                resource.addProperty(RDF.type, annotation);
+                resource.addProperty(RDF.type, graph.createProperty(relation.getRelation().get(0).toString()));
+                resource.addLiteral(body, relation.getRelationLabel());
+                resource.addProperty(source, graph.createResource(nsScmssource + relation.getTool()));
+                resource.addProperty(t, roe);
+                resource.addProperty(s, rse);
+
+            } else {
+                LOG.info("Not found.");
+            }
+        }
     }
 
     /**
@@ -128,56 +236,44 @@ public class FoxJena {
             try {
                 graph.write(sw, kind);
             } catch (Exception e) {
-                logger.error("\n Output format " + kind + " is not supported.", e);
+                LOG.error("\n Output format " + kind + " is not supported.", e);
             }
         }
         return sw.toString();
     }
 
-    /**
-     * Adds entities to graph.
-     */
-    public void setAnnotations(Set<Entity> set) {
+    public static void main(String args[]) {
 
-        if (graph == null)
-            initGraph();
+        // test data
+        DataTestFactory dtf = new DataTestFactory();
+        Set<Entity> entities = dtf.getTestEntities().entrySet().iterator().next().getValue();
+        Set<Relation> relations = dtf.getTestRelations().entrySet().iterator().next().getValue();
 
-        if (set == null || set.isEmpty())
-            return;
+        String input = dtf.getTestEntities().entrySet().iterator().next().getKey();
 
-        UrlValidator urlValidator = new UrlValidator();
-        for (Entity entity : set) {
+        // test
+        FoxJena fj = new FoxJena();
 
-            if (!urlValidator.isValid(entity.uri)) {
-                logger.error("uri isn't valid: " + entity.uri);
-            } else {
+        fj.setAnnotations(entities);
+        fj.setRelations(relations);
 
-                Resource annotation = graph.createResource();
+        String out = fj.print(FoxJena.prints.get(1), false, input);
+        System.out.println(out);
 
-                annotation.addProperty(RDF.type, graph.createProperty(nsAnn + "Annotation"));
-                annotation.addProperty(RDF.type, graph.createProperty(nsScmsann + entity.getType()));
-
-                for (Integer index : entity.getIndices()) {
-                    annotation.addLiteral(beginIndex, graph.createTypedLiteral(new Integer(index)));
-                    annotation.addLiteral(endIndex, graph.createTypedLiteral(new Integer(index + entity.getText().length())));
-                }
-
-                annotation.addProperty(means, graph.createResource(entity.uri));
-                annotation.addProperty(source, graph.createResource(nsScmssource + entity.getTool()));
-                annotation.addLiteral(body, entity.getText());
-            }
-        }
     }
-
+    /*
     public static void main(String args[]) {
         // create an empty graph
         Model graph = ModelFactory.createDefaultModel();
 
         // create the resource
-        Resource r = graph.createResource();
+        Resource resource = graph.createResource();
 
         // add the property
-        r.addProperty(RDFS.label, graph.createLiteral("chat", "en")).addProperty(RDFS.label, graph.createLiteral("chat", "fr")).addProperty(RDFS.label, graph.createLiteral("<em>chat</em>", true));
+        resource
+                .addProperty(RDFS.label, graph.createLiteral("chat", "en"))
+                .addProperty(RDFS.label, graph.createLiteral("chat", "fr"))
+                .addProperty(RDFS.label, graph.createLiteral("<em>chat</em>", true));
 
         // write out the graph
         graph.write(new PrintWriter(System.out));
@@ -187,12 +283,15 @@ public class FoxJena {
         graph = ModelFactory.createDefaultModel();
 
         // create the resource
-        r = graph.createResource();
+        resource = graph.createResource();
 
         // add the property
-        r.addProperty(RDFS.label, "11").addLiteral(RDFS.label, 11);
+        resource
+                .addProperty(RDFS.label, "11")
+                .addLiteral(RDFS.label, 11);
 
         // write out the graph
-        graph.write(System.out, FoxJena.prints.get(0));
+        graph.write(System.out, FoxJena.prints.get(3));
     }
+    */
 }
