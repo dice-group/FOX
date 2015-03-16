@@ -16,6 +16,7 @@ import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
+import org.json.JSONObject;
 
 /**
  * 
@@ -71,24 +72,30 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
         // get output
         String output = "";
         if (latch.getCount() == 0) {
-
             output = fox.getResults();
             Server.pool.push(fox);
-
         } else {
-
             fox = null;
             Server.pool.add();
             // TODO : error output
         }
+
         String in = null, out = null, log = null;
         if (fox != null) {
-            // set response
             in = FoxStringUtil.encodeURLComponent(parameter.get("input"));
             out = FoxStringUtil.encodeURLComponent(output);
             log = FoxStringUtil.encodeURLComponent(fox.getLog());
         }
-        setResponse(response, "{\"input\" : \"" + in + "\" , \"output\" : \"" + out + "\", \"log\" : \"" + log + "\" }", HttpURLConnection.HTTP_OK, "text/plain");
+        // set response
+        setResponse(
+                response,
+                new JSONObject()
+                        .put("input", in == null ? "" : in)
+                        .put("output", out == null ? "" : out)
+                        .put("log", log == null ? "" : log)
+                        .toString(),
+                HttpURLConnection.HTTP_OK,
+                "application/json");
     }
 
     @Override
