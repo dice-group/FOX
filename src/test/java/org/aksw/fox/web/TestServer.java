@@ -19,7 +19,7 @@ public class TestServer {
     public final static Logger LOG         = LogManager.getLogger(TestServer.class);
 
     private Server             server      = null;
-    private int                port        = 8080;
+    private int                port        = 4444;
 
     long                       waitingTime = 5 * 60 * 1000;                         // ms
 
