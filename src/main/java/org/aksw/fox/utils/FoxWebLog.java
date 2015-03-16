@@ -1,6 +1,7 @@
 package org.aksw.fox.utils;
 
 import java.io.StringWriter;
+import java.util.UUID;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -14,7 +15,16 @@ public class FoxWebLog {
     private StringWriter consoleWriter = new StringWriter();
 
     /**
+     * Sets a random name.
      * 
+     */
+    public FoxWebLog() {
+        this(UUID.randomUUID().toString());
+    }
+
+    /**
+     * 
+     * @param name
      */
     public FoxWebLog(String name) {
         logger = Logger.getLogger(name);
