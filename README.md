@@ -11,7 +11,7 @@ In its current version, it integrates and merges the results of Named Entity Rec
 Keyword Extraction and Relation Extraction tools will be merged soon.
 
 ##Requirements
-Java 7, Maven 3, graphviz (for JavaDoc only)
+Java 8, Maven 3, graphviz (for JavaDoc only)
 
 
 ##Installation
