@@ -82,6 +82,9 @@ public class TrainingInputReader implements INERReader {
         initFiles(inputPaths);
     }
 
+    public TrainingInputReader() {
+    }
+
     @Override
     public void initFiles(String[] initFiles) throws IOException {
         if (LOG.isDebugEnabled())
