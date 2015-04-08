@@ -82,7 +82,6 @@ public class Fox implements IFox {
      * 
      */
     public Fox() {
-
         // load class in fox.properties file
         if (FoxCfg.get(CFG_KEY_URI_LOOKUP) != null)
             try {
@@ -95,7 +94,6 @@ public class Fox implements IFox {
             uriLookup = new AGDISTISLookup();
 
         nerTools = new FoxNERTools();
-
         reTools = new FoxRETools();
     }
 
@@ -431,6 +429,18 @@ public class Fox implements IFox {
     @Override
     public void setParameter(Map<String, String> parameter) {
         this.parameter = parameter;
+
+        String paraUriLookup = parameter.get(FoxCfg.parameter_disamb);
+        if (paraUriLookup != null) {
+            if (paraUriLookup.equalsIgnoreCase("off"))
+                paraUriLookup = "org.aksw.fox.uri.NullLookup";
+
+            try {
+                uriLookup = (ILookup) FoxCfg.getClass(paraUriLookup.trim());
+            } catch (Exception e) {
+                LOG.error("InterfaceURI not found. Check parameter: " + FoxCfg.parameter_disamb);
+            }
+        }
     }
 
     @Override
@@ -446,6 +456,7 @@ public class Fox implements IFox {
         map.put(FoxCfg.parameter_output, Lang.RDFXML.getName());
         map.put(FoxCfg.parameter_nif, "false");
         map.put(FoxCfg.parameter_foxlight, "OFF");
+        map.put(FoxCfg.parameter_disamb, "org.aksw.fox.uri.AGDISTISLookup");
         return map;
     }
 

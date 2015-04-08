@@ -24,6 +24,7 @@ public class FoxCfg {
     public static final String  parameter_foxlight = "foxlight";
     public static final String  parameter_nif      = "nif";
     public static final String  parameter_type     = "type";
+    public static final String  parameter_disamb   = "disamb";
 
     public static final Logger  LOG                = LogManager.getLogger(FoxCfg.class); ;
 
