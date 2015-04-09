@@ -440,6 +440,9 @@ public class Fox implements IFox {
             } catch (Exception e) {
                 LOG.error("InterfaceURI not found. Check parameter: " + FoxCfg.parameter_disamb);
             }
+        }else{
+            //TODO: clean code
+            uriLookup = new AGDISTISLookup();
         }
     }
 
