@@ -76,7 +76,7 @@ public class Pool<T> {
      * 
      * @return
      */
-    public synchronized T poll() {
+    public T poll() {
         T t = null;
         while ((t = queue.poll()) == null) {
             try {
