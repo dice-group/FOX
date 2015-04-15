@@ -12,7 +12,7 @@ public class NERReaderFactory {
     public static INERReader getINERReader() {
 
         if (FoxCfg.get(INER_READER_KEY) != null) {
-            String classes = FoxCfg.get(INER_READER_KEY);
+            String classes = FoxCfg.get(INER_READER_KEY).trim();
             return (INERReader) FoxCfg.getClass(classes);
         } else
             return null;

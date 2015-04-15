@@ -128,9 +128,12 @@ public class FileUtil {
         List<String> results = new ArrayList<String>();
         try {
             String line;
-            while ((line = br.readLine()) != null)
-                if (!commentSymbol.isEmpty() && !line.startsWith(commentSymbol))
+            while ((line = br.readLine()) != null) {
+                if (!commentSymbol.isEmpty() && line.startsWith(commentSymbol)) {
+
+                } else
                     results.add(line);
+            }
             br.close();
         } catch (IOException e) {
             LOG.error("\n", e);

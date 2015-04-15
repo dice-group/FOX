@@ -51,6 +51,8 @@ org.aksw.fox.CrossValidation.runs: 10
 org.aksw.fox.web.FoxHttpHandler.lifetime: 5
 # `true` to train fox. tainFox: { true | false }
 org.aksw.fox.nerlearner.FoxClassifier.training: false
+# an integer, 0 for all sentences
+org.aksw.fox.nerlearner.reader.INERReader.maxSentences:0
 # max time in min. for all ner tools
 org.aksw.fox.tools.ner.FoxNERTools.foxNERLifeTime: 2
 ##################################################################
