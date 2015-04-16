@@ -14,7 +14,7 @@ import org.aksw.fox.nerlearner.IPostProcessing;
 import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.nerlearner.reader.INERReader;
-import org.aksw.fox.nerlearner.reader.TrainingInputReader;
+import org.aksw.fox.nerlearner.reader.NERReaderFactory;
 import org.aksw.fox.tools.ner.FoxNERTools;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.LogManager;
@@ -57,8 +57,11 @@ public class CrossValidation {
         classifierName = classifierName.substring(classifierName.lastIndexOf('.') == -1 ? 0 : classifierName.lastIndexOf('.') + 1);
 
         // read data
-        INERReader trainingInputReader = new TrainingInputReader(inputFiles);
-        TokenManager tokenManager = new TokenManager(trainingInputReader.getInput());
+        // read training data
+        INERReader reader = NERReaderFactory.getINERReader();
+        reader.initFiles(inputFiles);
+
+        TokenManager tokenManager = new TokenManager(reader.getInput());
 
         // prepare data
         IPostProcessing pp = null;
@@ -72,7 +75,7 @@ public class CrossValidation {
         Instances instances = null;
         {
             FoxInstances foxInstances = new FoxInstances();
-            Map<String, String> oracle = pp.getLabeledMap(trainingInputReader.getEntities());
+            Map<String, String> oracle = pp.getLabeledMap(reader.getEntities());
             Map<String, Set<Entity>> toolResults = pp.getLabeledToolResults();
             Set<String> token = pp.getLabeledInput();
 
