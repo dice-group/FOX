@@ -1,6 +1,6 @@
 FOX - Datasets
 ===============
-
+* Wikiner - Automatic training data from Wikipedia (more in the readme file the folder)
 * 1 - news dataset (created manually)
 * 2 - Illinois dataset ([NERWebpagesColumns] (http://cogcomp.cs.illinois.edu/page/resource_view/28))
 * 3 - subset of news dataset
