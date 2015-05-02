@@ -24,24 +24,24 @@ import com.hp.hpl.jena.query.ResultSet;
  * @author ngonga, rspeck
  * 
  */
-public class UriLookup implements ILookup {
+public class UriLookup extends AbstractUriLookup {
 
-    public static double SIM_THRESHOLD = 0.9;
+    public static double    SIM_THRESHOLD             = 0.9;
 
-    public static String dbpedia_resource = "http://dbpedia.org/resource/";
-    public static String dbpedia_sparql = "http://live.dbpedia.org/sparql";
+    public static String    dbpedia_resource          = "http://dbpedia.org/resource/";
+    public static String    dbpedia_sparql            = "http://live.dbpedia.org/sparql";
 
-    protected static String dbpedia_aksw_solr = "http://dbpedia.aksw.org:8080/solr/dbpedia_resources/select/?q=";
+    protected static String dbpedia_aksw_solr         = "http://dbpedia.aksw.org:8080/solr/dbpedia_resources/select/?q=";
     protected static String dbpedia_aksw_solr_postUrl = "&version=2.2&indent=on&start=0&sort=score+desc,pagerank+desc&rows=";
 
-    public static Logger logger = Logger.getLogger(UriLookup.class);
+    public static Logger    logger                    = Logger.getLogger(UriLookup.class);
 
     @Override
     public void setUris(Set<Entity> entities, String input) {
         for (Entity e : entities) {
             e.uri = lookup(e.getText(), e.getType(), "");
-
         }
+        this.entities = entities;
     }
 
     /**

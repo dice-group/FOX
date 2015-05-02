@@ -20,7 +20,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-public class AGDISTISLookup implements ILookup {
+public class AGDISTISLookup extends AbstractUriLookup {
 
     public static final String CFG_KEY_AGDISTIS_ENDPOINT = AGDISTISLookup.class.getName().concat(".endpoint");
 
@@ -64,6 +64,8 @@ public class AGDISTISLookup implements ILookup {
 
         LOG.info("AGDISTISLookup done..");
         indexMap.clear();
+
+        this.entities = entities;
     }
 
     private String makeInput(Set<Entity> entities, String input) {

@@ -1,6 +1,7 @@
 package org.aksw.fox;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import org.aksw.fox.tools.ner.en.NERStanford;
 import org.aksw.fox.tools.re.FoxRETools;
 import org.aksw.fox.uri.AGDISTISLookup;
 import org.aksw.fox.uri.ILookup;
+import org.aksw.fox.uri.NullLookup;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.aksw.fox.utils.FoxJena;
@@ -112,12 +114,21 @@ public class Fox implements IFox {
      * Searches for an instance in FoxNERTools to set the NER light version.
      */
     protected void setLightVersionNER() {
-        if (nerLight == null)
+        if (nerLight == null) {
+            // old version
+            String lightversionner = parameter.get(FoxCfg.parameter_foxlight).trim();
+            List<String> old = Arrays.asList("org.aksw.fox.nertools.NERSpotlight", "org.aksw.fox.nertools.NERBalie", "org.aksw.fox.nertools.NERIllinoisExtended", "org.aksw.fox.nertools.NERStanford", "org.aksw.fox.nertools.NEROpenNLP");
+            if (old.contains(lightversionner)) {
+                lightversionner = lightversionner.replace("fox.nertools", "fox.tools.ner.en");
+            }
+
             for (INER tool : nerTools.getNerTools())
-                if (parameter.get(FoxCfg.parameter_foxlight).equals(tool.getClass().getName())) {
+                if (lightversionner.equals(tool.getClass().getName())) {
                     nerLight = tool;
                     break;
                 }
+        }
+
         if (nerLight == null) {
             if (FoxCfg.get(CFG_KEY_DEFAULT_LIGHT_NER) != null)
                 try {
@@ -188,7 +199,7 @@ public class Fox implements IFox {
         try {
             latch.await(min, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
-            LOG.error("Timeout after " + min + "min.");
+            LOG.error("Timeout after " + min + " min.");
             LOG.error("\n", e);
             LOG.error("input:\n" + parameter.get(FoxCfg.parameter_input));
         }
@@ -252,17 +263,46 @@ public class Fox implements IFox {
     }
 
     protected void setURIs(Set<Entity> entities) {
-        if (entities == null) {
-            LOG.warn("Entities are empty.");
-            return;
+        if (entities != null && !entities.isEmpty()) {
+            foxWebLog.setMessage("Start looking up uri ...");
+            final CountDownLatch latch = new CountDownLatch(1);
+
+            uriLookup.setCountDownLatch(latch);
+            uriLookup.setInput(entities, parameter.get(FoxCfg.parameter_input));
+
+            Fiber fiber = new ThreadFiber();
+            fiber.start();
+            fiber.execute(uriLookup);
+
+            // use another time for the uri lookup?
+            int min = Integer.parseInt(FoxCfg.get(FoxNERTools.NERLIFETIME_KEY));
+            try {
+                latch.await(min, TimeUnit.MINUTES);
+            } catch (InterruptedException e) {
+                LOG.error("Timeout after " + min + "min.");
+                LOG.error("\n", e);
+            }
+
+            // shutdown threads
+            fiber.dispose();
+            // get results
+            if (latch.getCount() == 0) {
+                entities = new HashSet<Entity>(uriLookup.getResults());
+            } else {
+
+                String s = "Timeout after " + min + " min (" + uriLookup.getClass().getName() + ").";
+                if (LOG.isDebugEnabled())
+                    LOG.debug(s);
+                foxWebLog.setMessage(s);
+
+                // use dev lookup after timeout
+                new NullLookup().setUris(entities, parameter.get(FoxCfg.parameter_input));
+            }
+
+            // for (Entity e : entities)
+            // e.uri = uriLookup.getUri(e.getText(), e.getType());
+            foxWebLog.setMessage("Start looking up uri done.");
         }
-        // TODO: use interface for all tools
-        // 4. set URIs
-        foxWebLog.setMessage("Start looking up uri ...");
-        uriLookup.setUris(entities, parameter.get(FoxCfg.parameter_input));
-        foxWebLog.setMessage("Start looking up uri done.");
-        // for (Entity e : entities)
-        // e.uri = uriLookup.getUri(e.getText(), e.getType());
     }
 
     protected void setOutput(Set<Entity> entities, Set<Relation> relations) {
@@ -440,8 +480,8 @@ public class Fox implements IFox {
             } catch (Exception e) {
                 LOG.error("InterfaceURI not found. Check parameter: " + FoxCfg.parameter_disamb);
             }
-        }else{
-            //TODO: clean code
+        } else {
+            // TODO: clean code
             uriLookup = new AGDISTISLookup();
         }
     }
