@@ -191,9 +191,10 @@ public class FoxJena {
             Resource roe = null;
             Resource rse = null;
 
-            ResIterator iter = graph.listSubjects();
-            while (iter.hasNext()) {
-                Resource resource = iter.nextResource();
+            ResIterator iterEntities = graph.listSubjectsWithProperty(RDF.type, annotation);
+            while (iterEntities.hasNext()) {
+                Resource resource = iterEntities.nextResource();
+
                 int index = resource.getProperty(beginIndex).getLiteral().getInt();
 
                 if (oe.getIndices().contains(index)) {
@@ -204,48 +205,19 @@ public class FoxJena {
             }
 
             if (roe != null && rse != null) {
-                /*
-                {
-                    for (URI uri : relation.getRelation()) {
-                        rse.addProperty(relationTypeProperty, uri.toString());
-                    }
-                    rse.addProperty(relationProperty, roe.getPropertyResourceValue(means));
-                }
-                */
-                Resource resRel = graph.createResource(rse.getPropertyResourceValue(means));
+
+                Resource resRel = graph.createResource(rse.getProperty(means).getObject().toString());
                 for (URI uri : relation.getRelation()) {
-                    resRel.addProperty(relationTypeProperty, graph.createResource(uri.toString()));
+                    Property proBlank = graph.createProperty("");
+                    Resource blank = graph.createResource();
+                    resRel.addProperty(proBlank, blank);
+                    blank.addProperty(relationTypeProperty, graph.createResource(uri.toString()));
+                    blank.addProperty(relationProperty, roe.getPropertyResourceValue(means));
                 }
-                resRel.addProperty(relationProperty, roe.getPropertyResourceValue(means));
 
             }
         }
     }
-
-    /*
-    public void setRelation(Relation relation){ 
-
-        Resource resRel = model.createResource(relation.kword.uri.id);  
-        Property proBlank = model.createProperty("");
-        Resource blank =  model.createResource();   
-
-        for( Entry<RelationEnum, Map<String, Keyword>> e : relation.relationMap.entrySet()){
-
-            //TODO
-            Keyword keyword = null;
-            if( e.getValue().values().iterator().hasNext())
-                keyword = e.getValue().values().iterator().next();          
-
-            if(keyword != null){
-                String id = keyword.uri.id;         
-                int index = e.getKey().ordinal();
-                blank.addProperty(scmsRelationLabels[index], model.createResource(id));
-
-                resRel.addProperty(proBlank, blank);
-            }
-        }   
-    }
-     */
 
     /**
      * Prints the model in a given format.
