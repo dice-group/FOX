@@ -12,11 +12,10 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.Relation;
-import org.aksw.fox.tools.re.IRE;
+import org.aksw.fox.tools.re.AbstractRE;
 import org.aksw.fox.utils.Converter;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
-import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -38,7 +37,7 @@ import edu.stanford.nlp.util.CoreMap;
  * @author rspeck
  *
  */
-public class REStanford implements IRE {
+public class REStanford extends AbstractRE {
 
     public enum StanfordRelations {
 
@@ -211,18 +210,17 @@ public class REStanford implements IRE {
             LOG.info("Start...");
 
             Annotation doc = new Annotation(text);
-            LOG.info("Annotate the doc...");
+            LOG.debug("Annotate the doc...");
             stanfordNLP.annotate(doc);
-            LOG.info("RelationExtractorAnnotator the doc...");
+            LOG.debug("RelationExtractorAnnotator the doc...");
             relationExtractorAnnotator.annotate(doc);
-            LOG.info("For all...");
+            LOG.debug("For all relation ...");
             for (CoreMap sentenceAnnotation : doc.get(CoreAnnotations.SentencesAnnotation.class)) {
                 List<RelationMention> relationMentions = (sentenceAnnotation.get(RelationMentionsAnnotation.class));
-                LOG.info("relationMentions.size():" + relationMentions.size());
+                LOG.debug("relationMentions.size():" + relationMentions.size());
                 for (RelationMention relationMention : relationMentions) {
 
                     boolean c = checkrules(relationMention);
-                    // LOG.info(c);
                     if (c) {
                         List<EntityMention> entities = relationMention.getEntityMentionArgs();
 
@@ -251,7 +249,9 @@ public class REStanford implements IRE {
                             end = index_a - 1;
                         }
 
-                        String relationLabel = text.substring(start, end).trim();
+                        // not working
+                        // String relationLabel = text.substring(start,
+                        // end).trim();
 
                         /*
                         StringBuffer labelBuffer = new StringBuffer();
@@ -270,7 +270,7 @@ public class REStanford implements IRE {
                         */
                         Relation relation = new Relation(
                                 a,
-                                relationLabel,
+                                "",
                                 StanfordRelations.fromString(relationMention.getType()).name(),
                                 b,
                                 relationURIs.get(StanfordRelations.fromString(relationMention.getType())),
@@ -287,6 +287,7 @@ public class REStanford implements IRE {
         } catch (Exception e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
+        this.relations = set;
         return set;
     }
 
@@ -298,8 +299,7 @@ public class REStanford implements IRE {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
 
         String text = FoxConst.RE_EN_EXAMPLE_1;
-        text = FoxTextUtil.urlToText("http://en.wikipedia.org/wiki/Leipzig");
-        text = text.substring(0, 1000);
+
         REStanford r = new REStanford();
         r.init();
 

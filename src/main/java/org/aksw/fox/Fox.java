@@ -19,6 +19,7 @@ import org.aksw.fox.tools.ner.FoxNERTools;
 import org.aksw.fox.tools.ner.INER;
 import org.aksw.fox.tools.ner.en.NERStanford;
 import org.aksw.fox.tools.re.FoxRETools;
+import org.aksw.fox.tools.re.IRE;
 import org.aksw.fox.uri.AGDISTISLookup;
 import org.aksw.fox.uri.ILookup;
 import org.aksw.fox.uri.NullLookup;
@@ -170,11 +171,49 @@ public class Fox implements IFox {
         return entities;
     }
 
-    protected Set<Relation> doRE(Set<Entity> entities) {
+    protected Set<Relation> doRE() {
+        // info
+        {
+            String info = "Start RE ...";
+            LOG.info(info);
+            foxWebLog.setMessage(info);
+        }
+        final CountDownLatch latch = new CountDownLatch(1);
+        IRE reTool = reTools.getRETool();
+        reTool.setCountDownLatch(latch);
+        reTool.setInput(parameter.get(FoxCfg.parameter_input));
 
-        Set<Relation> relations = reTools.getRETool().extract(parameter.get(FoxCfg.parameter_input));
+        Fiber fiber = new ThreadFiber();
+        fiber.start();
+        fiber.execute(reTool);
 
-        return relations;
+        int min = Integer.parseInt(FoxCfg.get(FoxNERTools.NERLIFETIME_KEY));
+        try {
+            latch.await(min, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+        // shutdown threads
+        fiber.dispose();
+
+        // get results
+        Set<Relation> relations = null;
+        if (latch.getCount() == 0) {
+            relations = reTool.getResults();
+        } else {
+            // info
+            String info = "Timeout after " + min + " min.";
+            LOG.error(info);
+            foxWebLog.setMessage(info);
+        }
+
+        // info
+        {
+            String info = "RE done.";
+            LOG.info(info);
+            foxWebLog.setMessage(info);
+        }
+        return relations == null ? new HashSet<Relation>() : relations;
 
     }
 
@@ -419,7 +458,7 @@ public class Fox implements IFox {
 
                     case "re":
                         entities = doNER();
-                        relations = doRE(entities);
+                        relations = doRE();
                         break;
                     }
                 }

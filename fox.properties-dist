@@ -1,10 +1,13 @@
 ##################################################################
 # RE #
+# it is a list of URIs
+# e.g.: 
+# org.aksw.fox.tools.re.en.REStanford.liveIn: http://ns.aksw.org/scms/annotations/StanfordLiveIn, http://ns.aksw.org/scms/annotations/somethingElse
 ################################################################## 
-org.aksw.fox.tools.re.en.REStanford.liveIn: http://dbpedia.org/ontology/populationPlace,http://dbpedia.org/ontology/residence
-org.aksw.fox.tools.re.en.REStanford.locatedIn: http://dbpedia.org/ontology/city,http://dbpedia.org/ontology/province,http://dbpedia.org/ontology/canton
-org.aksw.fox.tools.re.en.REStanford.orgbasedIn: http://dbpedia.org/ontology/homeArena
-org.aksw.fox.tools.re.en.REStanford.workFor: http://dbpedia.org/ontology/profession
+org.aksw.fox.tools.re.en.REStanford.liveIn: http://ns.aksw.org/scms/annotations/stanford/livein
+org.aksw.fox.tools.re.en.REStanford.locatedIn: http://ns.aksw.org/scms/annotations/stanford/locatedin
+org.aksw.fox.tools.re.en.REStanford.orgbasedIn: http://ns.aksw.org/scms/annotations/stanford/orgbasedin
+org.aksw.fox.tools.re.en.REStanford.workFor: http://ns.aksw.org/scms/annotations/stanford/workfor
 ##################################################################
 # NER feedback #
 ##################################################################
