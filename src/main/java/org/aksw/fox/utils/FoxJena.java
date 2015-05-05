@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.XSD;
 
@@ -174,10 +176,8 @@ public class FoxJena {
             }
     }
 
-    /**
-     * Adds relations to graph.
-     */
-    public void setRelations(Set<Relation> relations) {
+    /*
+    public void setRelations2(Set<Relation> relations) {
         if (graph == null)
             initGraph();
 
@@ -207,16 +207,66 @@ public class FoxJena {
             if (roe != null && rse != null) {
 
                 Resource resRel = graph.createResource(rse.getProperty(means).getObject().toString());
+                Property proBlank = graph.createProperty("");
+                Resource blank = graph.createResource();
+                resRel.addProperty(proBlank, blank);
                 for (URI uri : relation.getRelation()) {
-                    Property proBlank = graph.createProperty("");
-                    Resource blank = graph.createResource();
-                    resRel.addProperty(proBlank, blank);
                     blank.addProperty(relationTypeProperty, graph.createResource(uri.toString()));
-                    blank.addProperty(relationProperty, roe.getPropertyResourceValue(means));
                 }
-
+                blank.addProperty(relationProperty, roe.getPropertyResourceValue(means));
             }
         }
+    }
+    */
+
+    /**
+     * Adds relations to graph.
+     * 
+     * @param relations
+     */
+    public void setRelations(Set<Relation> relations) {
+        if (graph == null)
+            initGraph();
+
+        if (relations == null || relations.isEmpty())
+            return;
+
+        Set<Relation> nofound = new HashSet<>();
+        for (Relation relation : relations) {
+            Entity oe = relation.getObjectEntity();
+            Entity se = relation.getSubjectEntity();
+
+            Resource roe = null;
+            Resource rse = null;
+
+            ResIterator iterEntities = graph.listSubjectsWithProperty(RDF.type, annotation);
+            while (iterEntities.hasNext()) {
+                Resource resource = iterEntities.nextResource();
+
+                for (Statement indicies : resource.listProperties(beginIndex).toSet()) {
+                    int index = indicies.getInt();
+                    if (oe.getIndices().contains(index)) {
+                        roe = resource;
+                    } else if (se.getIndices().contains(index)) {
+                        rse = resource;
+                    }
+                }
+            }
+
+            if (roe != null && rse != null) {
+                Resource resRel = graph.createResource(rse.getProperty(means).getObject().toString());
+                for (URI uri : relation.getRelation()) {
+                    resRel.addProperty(graph.createProperty(uri.toString()), roe.getPropertyResourceValue(means));
+                }
+            } else {
+                nofound.add(relation);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("not found: ");
+                    LOG.debug(relation);
+                }
+            }
+        }
+        relations.removeAll(nofound);
     }
 
     /**
