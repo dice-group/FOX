@@ -106,7 +106,7 @@ public class AGDISTISLookup extends AbstractUriLookup {
     private String send(String agdistis_input) throws Exception {
 
         // String data = parameter + agdistis_input;
-        String urlParameters = "text=" + URLEncoder.encode(agdistis_input, "UTF-8") + "&type=agdistis";
+        String urlParameters = "text=" + URLEncoder.encode(agdistis_input, "UTF-8") + "&type=agdistis&heuristic=false";
 
         URL url = new URL(FoxCfg.get(CFG_KEY_AGDISTIS_ENDPOINT));
 
