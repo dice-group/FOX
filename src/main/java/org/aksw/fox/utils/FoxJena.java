@@ -98,16 +98,15 @@ public class FoxJena {
         graph = ModelFactory.createDefaultModel();
 
         // create namespace prefix
-        graph.setNsPrefix("dbpedia-owl", nsDBpediaOwl);
+        // graph.setNsPrefix("dbpedia-owl", nsDBpediaOwl);
         graph.setNsPrefix("dbpedia", nsDBpedia);
         graph.setNsPrefix("ann", nsAnn);
         graph.setNsPrefix("scms", nsScms);
-        graph.setNsPrefix("rdf", RDF.getURI());
-        graph.setNsPrefix("ctag", nsCTag);
+        // graph.setNsPrefix("rdf", RDF.getURI());
+        // graph.setNsPrefix("ctag", nsCTag);
         graph.setNsPrefix("xsd", XSD.getURI());
         graph.setNsPrefix("scmsann", nsScmsann);
         graph.setNsPrefix("stanford", nsScmsannStanford);
-
         graph.setNsPrefix("source", nsScmssource);
 
         // NER properties
