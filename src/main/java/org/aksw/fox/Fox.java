@@ -364,6 +364,7 @@ public class Fox implements IFox {
 
         if (relations != null) {
             foxJena.setRelations(relations);
+            foxWebLog.setMessage("Found " + relations.size() + " relations.");
         }
 
         response = foxJena.print(out, useNIF, input);
@@ -403,7 +404,7 @@ public class Fox implements IFox {
         }
 
         foxWebLog.setMessage("Found " + entities.size() + " entities.");
-        foxWebLog.setMessage("Found " + relations.size() + " relations.");
+
     }
 
     /**
