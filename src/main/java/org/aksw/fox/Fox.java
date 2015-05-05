@@ -148,7 +148,6 @@ public class Fox implements IFox {
         LOG.info("starting ner ...");
         foxWebLog.setMessage("Start NER ...");
         Set<Entity> entities = nerTools.getEntities(parameter.get(FoxCfg.parameter_input));
-        foxWebLog.setMessage("NER done.");
 
         // remove duplicate annotations
         // TODO: why they here?
@@ -168,6 +167,7 @@ public class Fox implements IFox {
         }
         // remove
         entities.retainAll(wordEntityMap.values());
+        foxWebLog.setMessage("NER done.");
         return entities;
     }
 
@@ -200,6 +200,7 @@ public class Fox implements IFox {
         Set<Relation> relations = null;
         if (latch.getCount() == 0) {
             relations = reTool.getResults();
+
         } else {
             // info
             String info = "Timeout after " + min + " min.";
@@ -400,6 +401,9 @@ public class Fox implements IFox {
             if (LOG.isTraceEnabled())
                 infotrace(entities);
         }
+
+        foxWebLog.setMessage("Found " + entities.size() + " entities.");
+        foxWebLog.setMessage("Found " + relations.size() + " relations.");
     }
 
     /**
