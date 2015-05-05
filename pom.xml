@@ -199,8 +199,8 @@
         <!-- jena dependency -->
         <dependency>
             <groupId>com.github.jsonld-java</groupId>
-            <artifactId>jsonld-java-jena</artifactId>
-            <version>0.4</version>
+            <artifactId>jsonld-java</artifactId>
+            <version>0.5.1</version>
         </dependency>
         <!-- grizzly -->
          <dependency>
