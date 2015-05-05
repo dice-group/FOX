@@ -28,8 +28,6 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.RelationExtractorAnnotator;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
-// http://www.ontobee.org/browser/index.php?o=RO
-// http://www.ontobee.org/browser/rdf.php?o=RO&iri=http://purl.obolibrary.org/obo/RO_0002303
 
 // https://github.com/stanfordnlp/CoreNLP/blob/672d43a9677272fdef79ef15f3caa9ed7bc26164/src/edu/stanford/nlp/ie/machinereading/domains/roth/RothCONLL04Reader.java
 /**
@@ -41,8 +39,8 @@ public class REStanford extends AbstractRE {
 
     public enum StanfordRelations {
 
-        Live_In("Live_In"), // http://dbpedia.org/ontology/populationPlace
-        Located_In("Located_In"), // http://dbpedia.org/ontology/canton
+        Live_In("Live_In"),
+        Located_In("Located_In"),
         OrgBased_In("OrgBased_In"),
         Work_For("Work_For"),
         NoRelation("_NR");
@@ -102,29 +100,34 @@ public class REStanford extends AbstractRE {
     }
 
     /**
-     * 
-     * @return
-     */
-    public String getToolName() {
-        return REStanford.class.getSimpleName();
-    }
-
-    /**
      * Maps relations to uris from properties file.
      * 
      * @param cfgkey
      * @param relation
      */
     private void initURIs(StanfordRelations relation, String cfgkey) {
-        URI[] urisc = Converter.convertArray(
-                FoxCfg.get(cfgkey).split(","),
-                URI::create,
-                URI[]::new
-                );
-        relationURIs.put(
-                relation,
-                Arrays.asList(urisc)
-                );
+        try {
+            URI[] urisc = Converter.convertArray(
+                    FoxCfg.get(cfgkey).replaceAll(" ", "").split(","),
+                    URI::create,
+                    URI[]::new
+                    );
+            relationURIs.put(
+                    relation,
+                    Arrays.asList(urisc)
+                    );
+        } catch (Exception e) {
+            LOG.error("Check the config file. Something went wrong.");
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public String getToolName() {
+        return REStanford.class.getSimpleName();
     }
 
     /*
@@ -240,6 +243,7 @@ public class REStanford extends AbstractRE {
                         a.addIndicies(index_a);
                         b.addIndicies(index_b);
 
+                        /*
                         int start = -1, end = -1;
                         if (emOne.getSyntacticHeadToken().endPosition() < emTwo.getSyntacticHeadToken().endPosition()) {
                             start = emOne.getSyntacticHeadToken().endPosition() + 1;
@@ -248,7 +252,7 @@ public class REStanford extends AbstractRE {
                             start = emTwo.getSyntacticHeadToken().endPosition() + 1;
                             end = index_a - 1;
                         }
-
+                        */
                         // not working
                         // String relationLabel = text.substring(start,
                         // end).trim();
@@ -278,36 +282,32 @@ public class REStanford extends AbstractRE {
                                 Relation.DEFAULT_RELEVANCE
                                 );
 
-                        LOG.info(relationMention);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(relationMention);
+                            LOG.debug(relation);
+                        }
                         set.add(relation);
                     }
                 }
             }
-            LOG.info("For all done.");
+            LOG.info("Relations done.");
         } catch (Exception e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
-        this.relations = set;
+        relations = set;
+        LOG.info(relations);
         return set;
     }
 
     /**
+     * Test.
      * 
-     * @param a
+     * @param args
      */
-    public static void main(String[] a) {
+    public static void main(String[] args) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
 
-        String text = FoxConst.RE_EN_EXAMPLE_1;
-
-        REStanford r = new REStanford();
-        r.init();
-
-        Set<Relation> set = r.extract(text);
-        LOG.info(text);
-        LOG.info("input len. " + text.length());
-        for (Relation rr : set) {
+        for (Relation rr : new REStanford().extract(FoxConst.RE_EN_EXAMPLE_1))
             LOG.info(rr);
-        }
     }
 }
