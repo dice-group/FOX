@@ -5,6 +5,7 @@
 [5]: http://titan.informatik.uni-leipzig.de:4444
 [6]: http://fox-demo.aksw.org
 
+[![Build Status](https://travis-ci.org/AKSW/FOX.svg?branch=master)](https://travis-ci.org/AKSW/FOX)
 ##FOX - Federated Knowledge Extraction Framework
 FOX is a framework that integrates the Linked Data Cloud and makes use of the diversity of NLP algorithms to extract RDF triples of high accuracy out of NL. 
 In its current version, it integrates and merges the results of Named Entity Recognition tools. 

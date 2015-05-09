@@ -1,7 +1,10 @@
 *.class
-.*
 *.log
-
+*.settings
+.classpath
+.directory
+.project
+.svn
 /log
 /demo/doc
 /fox.properties
