@@ -4,7 +4,6 @@ jdk:
 branches:
   only:
     - master
-install: /release
 script: "./build.sh"
 notifications:
   email:
