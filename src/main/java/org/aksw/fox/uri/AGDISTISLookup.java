@@ -168,34 +168,33 @@ public class AGDISTISLookup extends AbstractUriLookup {
     }
 
     private String urlencode(String disambiguatedURL) {
-
-        String encode = "";
         try {
-            encode = URLEncoder.encode(disambiguatedURL.substring(disambiguatedURL.lastIndexOf('/') + 1, disambiguatedURL.length()), "UTF-8");
+            String encode = URLEncoder.encode(
+                    disambiguatedURL.substring(disambiguatedURL.lastIndexOf('/') + 1, disambiguatedURL.length())
+                    , "UTF-8");
+            return disambiguatedURL.substring(0, disambiguatedURL.lastIndexOf('/') + 1).concat(encode);
+
         } catch (Exception e) {
-            encode = disambiguatedURL;
-
-            LOG.error(encode + "\n", e);
+            LOG.error(disambiguatedURL + "\n", e);
+            return disambiguatedURL;
         }
-        return "http://dbpedia.org/resource/" + encode;
     }
-
+    /*
     public static void main(String[] a) {
-        /*
+
         AGDISTISLookup aa = new AGDISTISLookup();
 
-        Entity e = new Entity("Uni of Lpz", "LOCATION");
+        Entity e = new Entity("University of Leipzig", "LOCATION");
         e.addIndicies(0);
-        Entity ee = new Entity("Lpz", "LOCATION");
-        ee.addIndicies(18);
+        Entity ee = new Entity("Leipzig", "LOCATION");
+        ee.addIndicies(25);
 
         Set<Entity> s = new HashSet<Entity>();
         s.add(e);
         s.add(ee);
-        aa.setUris(s, "Uni of Lpz in Lpz Lpz's.");
-
-        System.out.println(e);
-        System.out.println(ee);
-        */
+        aa.setUris(s, "University of Leipzig in Leipzig.");
+        System.out.println(e + " " + e.uri);
+        System.out.println(ee + " " + ee.uri);
     }
+    */
 }
