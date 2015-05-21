@@ -29,7 +29,8 @@ public class FoxConst {
                                                                     + "Hussiten-Bewegung der bÃ¶hmische KÃ¶nig Wenzel IV.";
     
     public static String       NER_ES_EXAMPLE_1             = "Leipzig es la cuna de muchas personalidades famosas, tales como el filósofo y científico Gottfried Wilhelm Leibniz (1646), " + 
-    																"el compositor Richard Wagner (1813), el historiador de arte Nikolaus Pevsner (1902), el tipógrafo Jan Tschichold (1902), el pintor Max Beckmann o el socialista Karl Liebknecht (1871).";
+    																"el compositor Richard Wagner (1813), el historiador de arte Nikolaus Pevsner (1902), el tipógrafo Jan Tschichold (1902), " +
+    																"el pintor Max Beckmann o el socialista Karl Liebknecht (1871).";
  
     public static String       RE_EN_EXAMPLE_1              =
                                                                     "The philosopher and mathematician Gottfried Wilhelm Leibniz was born in Leipzig in 1646, and attended the university from 1661 to 1666. "
