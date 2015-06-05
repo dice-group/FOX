@@ -34,8 +34,9 @@ public class NERStanfordES extends AbstractNER {
          props.setProperty("annotators","tokenize, ssplit, pos, lemma, ner, parse");
          */
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
-      //  props.setProperty("tokenize.language", "es");
+        props.setProperty("tokenize.language", "es");
       //  props.setProperty("pos.model", "data/stanford/models/german-hgc.tagger");
+      //  http://nlp.stanford.edu/software/corenlp.shtml#Demo
       //  props.setProperty("ner.model", "data/stanford/models/hgc_175m_600.crf.ser.gz");
         props.setProperty("ner.applyNumericClassifiers", "false");
         props.setProperty("ner.useSUTime", "false");
@@ -64,6 +65,7 @@ public class NERStanfordES extends AbstractNER {
             for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
                 tokensentence += token.word() + " ";
                 String type = EntityClassMap.stanfordde(token.get(NamedEntityTagAnnotation.class));
+                // EntityClassMap.stanfordde -> string type, wo kommt es her?
                 String currentToken = token.originalText();
                 // check for multiword entities
                 boolean contains = false;
