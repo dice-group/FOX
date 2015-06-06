@@ -35,9 +35,11 @@ public class NERStanfordES extends AbstractNER {
          */
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
         props.setProperty("tokenize.language", "es");
-      //  props.setProperty("pos.model", "data/stanford/models/german-hgc.tagger");
-      //  http://nlp.stanford.edu/software/corenlp.shtml#Demo
-      //  props.setProperty("ner.model", "data/stanford/models/hgc_175m_600.crf.ser.gz");
+        props.setProperty("pos.model", "data/stanford/models/spanish.tagger");
+        props.setProperty("ner.model", "data/stanford/models/spanish.ancora.s512.crf.ser.gz");
+        
+        // Datei anpassen: Pfade (siehe Deutsche datei)
+        
         props.setProperty("ner.applyNumericClassifiers", "false");
         props.setProperty("ner.useSUTime", "false");
         /* 
