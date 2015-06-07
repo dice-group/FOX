@@ -1,12 +1,12 @@
 
 trainFile = /u/nlp/data/spanish/ner/ancora.ner.train.tsv
 testFile = /u/nlp/data/spanish/ner/ancora.ner.dev.tsv
-serializeTo = spanish.ancora.s512.crf.ser.gz
+serializeTo = spanish.ancora.distsim.s512.crf.ser.gz
 
-distSimLexicon = /u/nlp/data/spanish/ner/spanish.ancora.s512
+distSimLexicon = /u/nlp/data/spanish/distsim/spanish.spence512.cls
 useDistSim = true
 
-map = word=0,answer=4
+map = word=0,answer=1
 
 saveFeatureIndexToDisk = true
 
@@ -37,7 +37,7 @@ disjunctionWidth=5
 type=crf
 
 saveFeatureIndexToDisk=true
-#readerAndWriter=edu.stanford.nlp.sequences.ColumnDocumentReaderAndWriter
+readerAndWriter=edu.stanford.nlp.sequences.ColumnDocumentReaderAndWriter
 
 useObservedSequencesOnly=true
 

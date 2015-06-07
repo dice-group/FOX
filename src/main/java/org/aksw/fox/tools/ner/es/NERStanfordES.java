@@ -25,7 +25,7 @@ import edu.stanford.nlp.util.CoreMap;
  * 
  */
 public class NERStanfordES extends AbstractNER {
-    // https://github.com/stanfordnlp/CoreNLP/blob/master/src/edu/stanford/nlp/pipeline/StanfordCoreNLP-german.properties
+    // https://github.com/stanfordnlp/CoreNLP/blob/master/src/edu/stanford/nlp/pipeline/StanfordCoreNLP-spanish.properties
     Properties      props    = new Properties();
     StanfordCoreNLP pipeline = null;
 
@@ -36,10 +36,7 @@ public class NERStanfordES extends AbstractNER {
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
         props.setProperty("tokenize.language", "es");
         props.setProperty("pos.model", "data/stanford/models/spanish.tagger");
-        props.setProperty("ner.model", "data/stanford/models/spanish.ancora.s512.crf.ser.gz");
-        
-        // Datei anpassen: Pfade (siehe Deutsche datei)
-        
+        props.setProperty("ner.model", "data/stanford/models/spanish.ancora.distsim.s512.crf.ser.gz");
         props.setProperty("ner.applyNumericClassifiers", "false");
         props.setProperty("ner.useSUTime", "false");
         /* 

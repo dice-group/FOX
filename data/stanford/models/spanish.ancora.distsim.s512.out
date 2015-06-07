@@ -1,9 +1,9 @@
 nohup: ignoring input
 CRFClassifier invoked on Mon Aug 25 12:09:10 PDT 2014 with arguments:
-   -prop spanish.ancora.s512.prop
+   -prop spanish.ancora.distsim.s512.prop
 useDisjunctive=true
 useSequences=true
-serializeTo=spanish.ancora.s512.crf.ser.gz
+serializeTo=spanish.ancora.distsim.s512.crf.ser.gz
 useOccurrencePatterns=true
 sigma=1
 useClassFeature=true
