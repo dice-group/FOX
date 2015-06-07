@@ -39,9 +39,7 @@ public class NERStanfordES extends AbstractNER {
         props.setProperty("ner.model", "data/stanford/models/spanish.ancora.distsim.s512.crf.ser.gz");
         props.setProperty("ner.applyNumericClassifiers", "false");
         props.setProperty("ner.useSUTime", "false");
-        /* 
-        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz");
-        */
+        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz");
         pipeline = new StanfordCoreNLP(props);
     }
 
