@@ -29,7 +29,7 @@ Fox.DemoCtrl = function($routeParams, $scope, $http) {
 
         } else if (newValue == 1) {
             $scope.foxRequest.type = 'text';
-            $scope.foxRequest.input = "Colonia (en alemán: Ltspkr.png Köln; en kölsch: Kölle; en neerlandés: Keulen) es la cuarta ciudad más grande de Alemania, precedida por Berlín, Hamburgo y Múnich, y la más poblada dentro del Estado federado de Renania del Norte-Westfalia, aunque Düsseldorf es la capital del Estado. Fundada en el año 38 a. C. como Oppidum Ubiorum (Ciudad de los Ubios), fue posteriormente declarada colonia romana con el nombre de Colonia Claudia Ara Agrippinensium en alusión a la emperatriz Agripina, esposa del emperador Claudio y madre de Nerón. Colonia se asienta a orillas del río Rin. En tiempos del Sacro Imperio Romano Germánico, fue residencia del Arzobispo de Colonia, uno de los principales cargos eclesiásticos por aquellos entonces: era Príncipe elector del Imperio y ejerció en numerosas ocasiones el cargo del Canciller del Imperio.";
+            $scope.foxRequest.input = "Colonia (en alemán: Ltspkr.png Köln; en kölsch: Kölle; en neerlandés: Keulen) es la cuarta ciudad más grande de Alemania, precedida por Berlín, Hamburgo y Múnich, y la más poblada dentro del Estado federado de Renania del Norte-Westfalia, aunque Düsseldorf es la capital del Estado. Fundada en el año 38 a. C. como Oppidum Ubiorum (Ciudad de los Ubios), fue posteriormente declarada colonia romana con el nombre de Colonia Claudia Ara Agrippinensium en alusión a la emperatriz Agripina, esposa del emperador Claudio y madre de Nerón.";
             $scope.foxRequest.output = 'Turtle';
 
         } else if (newValue == 4) {
