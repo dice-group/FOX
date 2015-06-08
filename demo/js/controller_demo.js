@@ -24,12 +24,12 @@ Fox.DemoCtrl = function($routeParams, $scope, $http) {
 
         } else if (newValue == 2) {
             $scope.foxRequest.type = 'url';
-            $scope.foxRequest.input = "https://es.wikipedia.org/wiki/Universidad_de_Leipzig";
+            $scope.foxRequest.input = "http://en.wikipedia.org/wiki/Leipzig_University";
             $scope.foxRequest.output = 'JSON-LD';
 
         } else if (newValue == 1) {
             $scope.foxRequest.type = 'text';
-            $scope.foxRequest.input = "Colonia (en alemán: Ltspkr.png Köln; en kölsch: Kölle; en neerlandés: Keulen) es la cuarta ciudad más grande de Alemania, precedida por Berlín, Hamburgo y Múnich, y la más poblada dentro del Estado federado de Renania del Norte-Westfalia, aunque Düsseldorf es la capital del Estado. Fundada en el año 38 a. C. como Oppidum Ubiorum (Ciudad de los Ubios), fue posteriormente declarada colonia romana con el nombre de Colonia Claudia Ara Agrippinensium en alusión a la emperatriz Agripina, esposa del emperador Claudio y madre de Nerón.";
+            $scope.foxRequest.input = "Cologne German: Köln, Kölsch: Kölle is Germany's fourth-largest city (after Berlin, Hamburg, and Munich), and is the largest city both in the German Federal State of North Rhine-Westphalia and within the Rhine-Ruhr Metropolitan Area, one of the major European metropolitan areas with more than ten million inhabitants. Cologne is located on both sides of the Rhine River. The city's famous Cologne Cathedral (Kölner Dom) is the seat of the Catholic Archbishop of Cologne. The University of Cologne (Universität zu Köln) is one of Europe's oldest and largest universities.";
             $scope.foxRequest.output = 'Turtle';
 
         } else if (newValue == 4) {
@@ -39,7 +39,7 @@ Fox.DemoCtrl = function($routeParams, $scope, $http) {
 
         } else { // default 0 or not def.
             $scope.foxRequest.type = 'text';
-            $scope.foxRequest.input = "Gottfried Wilhelm Leibniz, a veces von Leibniz1 (Leipzig, 1 de julio de 1646 - Hannover, 14 de noviembre de 1716) fue un filósofo, lógico, matemático, jurista, bibliotecario y político alemán. Fue uno de los grandes pensadores de los siglos XVII y XVIII, y se le reconoce como 'El último genio universal'. Realizó profundas e importantes contribuciones en las áreas de metafísica, epistemología, lógica, filosofía de la religión, así como en la matemática, física, geología, jurisprudencia e historia. Incluso Denis Diderot, el filósofo deísta francés del siglo XVIII, cuyas opiniones no podrían estar en mayor oposición a las de Leibniz, no podía evitar sentirse sobrecogido ante sus logros, y escribió en la Enciclopedia: 'Quizás nunca haya un hombre leído tanto, estudiado tanto, meditado más y escrito más que Leibniz... Lo que ha elaborado sobre el mundo, sobre Dios, la naturaleza y el alma es de la más sublime elocuencia. Si sus ideas hubiesen sido expresadas con el olfato de Platón, el filósofo de Leipzig no cedería en nada al filósofo de Atenas.'";
+            $scope.foxRequest.input = "The philosopher and mathematician Leibniz was born in Leipzig in 1646 and attended the University of Leipzig from 1661-1666. The current chancellor of Germany, Angela Merkel, also attended this university. ";
             $scope.foxRequest.output = 'JSON-LD';
         }
     });
