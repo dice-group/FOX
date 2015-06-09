@@ -54,6 +54,16 @@ public class EntityClassMap {
         entityClassesSTANde.put("I-MISC", N);
 
     }
+ // stanford ES
+    protected static final Map<String, String> entityClassesSTANes   = new HashMap<>();
+    static {
+        entityClassesSTANes.put("I-ORG", O);
+        entityClassesSTANes.put("I-LOC", L);
+        entityClassesSTANes.put("I-PER", P);
+        entityClassesSTANes.put("O", N);
+        entityClassesSTANes.put("I-MISC", N);
+
+    }
     // stanford EN
     protected static final Map<String, String> entityClassesSTAN     = new HashMap<>();
     static {
@@ -133,6 +143,16 @@ public class EntityClassMap {
      */
     public static String stanfordde(String stanfordTag) {
         String t = entityClassesSTANde.get(stanfordTag);
+        if (t == null)
+            t = getNullCategory();
+        return t;
+    }
+    
+    /**
+     * Gets the entity class for a stanford es entity type/class.
+     */
+    public static String stanfordes(String stanfordTag) {
+        String t = entityClassesSTANes.get(stanfordTag);
         if (t == null)
             t = getNullCategory();
         return t;

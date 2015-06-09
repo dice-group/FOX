@@ -61,8 +61,7 @@ public class NERStanfordES extends AbstractNER {
             String tokensentence = "";
             for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
                 tokensentence += token.word() + " ";
-                String type = EntityClassMap.stanfordde(token.get(NamedEntityTagAnnotation.class));
-                // EntityClassMap.stanfordde -> string type, wo kommt es her?
+                String type = EntityClassMap.stanfordes(token.get(NamedEntityTagAnnotation.class));
                 String currentToken = token.originalText();
                 // check for multiword entities
                 boolean contains = false;
