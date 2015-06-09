@@ -39,11 +39,7 @@ Fox.DemoCtrl = function($routeParams, $scope, $http) {
 
         } else { // default 0 or not def.
             $scope.foxRequest.type = 'text';
-<<<<<<< HEAD
             $scope.foxRequest.input = "The philosopher and mathematician Leibniz was born in Leipzig in 1646 and attended the University of Leipzig from 1661-1666. The current chancellor of Germany, Angela Merkel, also attended this university. ";
-=======
-            $scope.foxRequest.input = "Gottfried Wilhelm Leibniz, a veces von Leibniz1 (Leipzig, 1 de julio de 1646 - Hannover, 14 de noviembre de 1716) fue un filósofo, lógico, matemático, jurista, bibliotecario y político alemán. Fue uno de los grandes pensadores de los siglos XVII y XVIII, y se le reconoce como "El último genio universal". Realizó profundas e importantes contribuciones en las áreas de metafísica, epistemología, lógica, filosofía de la religión, así como en la matemática, física, geología, jurisprudencia e historia. Incluso Denis Diderot, el filósofo deísta francés del siglo XVIII, cuyas opiniones no podrían estar en mayor oposición a las de Leibniz, no podía evitar sentirse sobrecogido ante sus logros, y escribió en la Enciclopedia: 'Quizás nunca haya un hombre leído tanto, estudiado tanto, meditado más y escrito más que Leibniz... Lo que ha elaborado sobre el mundo, sobre Dios, la naturaleza y el alma es de la más sublime elocuencia. Si sus ideas hubiesen sido expresadas con el olfato de Platón, el filósofo de Leipzig no cedería en nada al filósofo de Atenas.'";
->>>>>>> parent of ed55150... controller
             $scope.foxRequest.output = 'JSON-LD';
         }
     });
