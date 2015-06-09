@@ -37,7 +37,7 @@ org.aksw.fox.Fox.urilookup: org.aksw.fox.uri.AGDISTISLookup
 org.aksw.fox.uri.AGDISTISLookup.endpoint: http://139.18.2.164:8080/AGDISTIS_DE
 #
 #NER default light version class
-org.aksw.fox.Fox.defaultLightNER: org.aksw.fox.tools.ner.es.NERStanfordES
+org.aksw.fox.Fox.defaultLightNER: org.aksw.fox.tools.ner.es.NERBalieES
 #NER tools to use
 org.aksw.fox.tools.ner.FoxNERTools.nerTools: org.aksw.fox.tools.ner.en.NEROpenNLP, org.aksw.fox.tools.ner.en.NERStanford, org.aksw.fox.tools.ner.en.NERIllinoisExtended, org.aksw.fox.tools.ner.en.NERBalie, org.aksw.fox.tools.ner.ger.NERStanfordDE, org.aksw.fox.tools.ner.ger.NERBalieDE, org.aksw.fox.tools.ner.ger.NERSpotlight, org.aksw.fox.tools.ner.es.NEROpenNLPES, org.aksw.fox.tools.ner.es.NERBalieES, org.aksw.fox.tools.ner.es.NERStanfordES
 # path to read / write trained model
