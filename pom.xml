@@ -147,11 +147,12 @@
             <version>3.5.2</version>
             <classifier>models</classifier>
         </dependency>
-        <!-- stanford for Spanish --> 
+        <!-- stanford for Spanish -->
         <dependency>
             <groupId>edu.stanford.nlp</groupId>
-            <artifactId>stanford-corenlp-spanish</artifactId>
+            <artifactId>stanford-corenlp</artifactId>
             <version>3.5.2</version>
+            <classifier>models-spanish</classifier>
             <scope>system</scope>
             <systemPath>${system.libs}/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</systemPath>
         </dependency>
