@@ -31,9 +31,9 @@ public class NERStanfordES extends AbstractNER {
 
     public NERStanfordES() {
         /*
-         props.setProperty("annotators","tokenize, ssplit, pos, lemma, ner, parse");
+         props.setProperty("annotators","tokenize, ssplit, pos, ner, parse");
          */
-        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
+        props.setProperty("annotators", "tokenize, ssplit, pos, ner");
         props.setProperty("tokenize.language", "es");
         props.setProperty("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger");
         props.setProperty("ner.model", "edu/stanford/nlp/models/ner/spanish.ancora.distsim.s512.crf.ser.gz");
