@@ -88,12 +88,44 @@
                                 id="foxlight"
                                 data-ng-model="foxRequest.foxlight">
                                 <option>OFF</option>
-                                <option>org.aksw.fox.tools.ner.es.NERBalieES</option>
-                                <!-- <option>org.aksw.fox.tools.ner.en.NERIllinoisExtended</option> -->
-                                 <option>org.aksw.fox.tools.ner.es.NEROpenNLPES</option>
-                                <!-- <option>org.aksw.fox.nertools.NERSpotlight</option> -->
-                                <option>org.aksw.fox.tools.ner.es.NERStanfordES</option>
+                                <optgroup label="EN">
+                                	<option>org.aksw.fox.tools.ner.en.NERBalie</option>
+                                	<!-- <option>org.aksw.fox.tools.ner.en.NERIllinoisExtended</option> -->
+                                 	<option>org.aksw.fox.tools.ner.en.NEROpenNLP</option>
+                                	<!-- <option>org.aksw.fox.nertools.NERSpotlight</option> -->
+                                	<option>org.aksw.fox.tools.ner.en.NERStanford</option>
+                                </optgroup>
+                                <optgroup label="DE">
+                                	<option>org.aksw.fox.tools.ner.ger.NERBalieDE</option>
+                                	<option>org.aksw.fox.tools.ner.ger.NERSpotlight</option>
+                                	<option>org.aksw.fox.tools.ner.ger.NERStanfordDE</option>
+                                </optgroup>
+                                <optgroup label="ES">
+                                	<option>org.aksw.fox.tools.ner.es.NERBalieES</option>
+                                	<option>org.aksw.fox.tools.ner.es.NEROpenNLPES</option>
+                                	<option>org.aksw.fox.tools.ner.es.NERStanfordES</option>                           
+                                </optgroup>
                             </select>
+                            
+                            <select name="select">
+   <optgroup label="Italienische Gerichte">
+      <option> Pizza </option>
+      <option> Tortelloni </option>
+      <option> Bifsteca </option>
+      </optgroup>
+   <optgroup label="Deutsche Gerichte">
+      <option> Pfannkuchen </option>
+      <option> Tafelspitz </option>
+      <option> Fischstäbchen </option>
+   </optgroup>
+   <optgroup label="Süssigkeiten" disabled="disabled">
+      <option> Schokoriegel </option>
+      <option> Sahneeis </option>
+      <option> Kaugummi </option>
+      <option> Pfefferminz </option>
+   </optgroup>
+</select>
+                            
                         </div>
                     </div>
                 </div>
