@@ -48,7 +48,8 @@ public class NERStanfordDE extends AbstractNER {
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
         NERStanfordDE n = new NERStanfordDE();
-        n.retrieve(FoxConst.NER_GER_EXAMPLE_1);
+        List<Entity> x = n.retrieve(FoxConst.NER_GER_EXAMPLE_1);
+        System.out.println(x.size());
     }
 
     @Override
@@ -63,7 +64,7 @@ public class NERStanfordDE extends AbstractNER {
             String tokensentence = "";
             for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
                 tokensentence += token.word() + " ";
-                String type = EntityClassMap.stanfordde(token.get(NamedEntityTagAnnotation.class));
+                String type = EntityClassMap.stanfordes(token.get(NamedEntityTagAnnotation.class));
                 String currentToken = token.originalText();
                 // check for multiword entities
                 boolean contains = false;

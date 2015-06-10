@@ -46,7 +46,8 @@ public class NERStanfordES extends AbstractNER {
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
         NERStanfordES n = new NERStanfordES();
-        n.retrieve(FoxConst.NER_ES_EXAMPLE_1);
+        List<Entity> x = n.retrieve(FoxConst.NER_ES_EXAMPLE_1);
+        System.out.println(x.size());
     }
 
     @Override
