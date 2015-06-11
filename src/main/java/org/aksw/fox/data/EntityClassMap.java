@@ -57,11 +57,11 @@ public class EntityClassMap {
  // stanford ES
     protected static final Map<String, String> entityClassesSTANes   = new HashMap<>();
     static {
-        entityClassesSTANes.put("I-ORG", O);
-        entityClassesSTANes.put("I-LOC", L);
-        entityClassesSTANes.put("I-PER", P);
+        entityClassesSTANes.put("ORG", O);
+        entityClassesSTANes.put("LUG", L);
+        entityClassesSTANes.put("PERS", P);
         entityClassesSTANes.put("O", N);
-        entityClassesSTANes.put("I-MISC", N);
+        entityClassesSTANes.put("OTROS", N);
 
     }
     // stanford EN

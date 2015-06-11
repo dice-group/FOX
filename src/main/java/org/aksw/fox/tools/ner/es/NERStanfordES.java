@@ -46,8 +46,7 @@ public class NERStanfordES extends AbstractNER {
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
         NERStanfordES n = new NERStanfordES();
-        List<Entity> x = n.retrieve(FoxConst.NER_ES_EXAMPLE_1);
-        System.out.println(x.size());
+        n.retrieve(FoxConst.NER_ES_EXAMPLE_1);
     }
 
     @Override
@@ -61,6 +60,7 @@ public class NERStanfordES extends AbstractNER {
         for (CoreMap sentence : ann.get(SentencesAnnotation.class)) {
             String tokensentence = "";
             for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+            System.out.println(token);
                 tokensentence += token.word() + " ";
                 String type = EntityClassMap.stanfordes(token.get(NamedEntityTagAnnotation.class));
                 String currentToken = token.originalText();
@@ -68,6 +68,7 @@ public class NERStanfordES extends AbstractNER {
                 boolean contains = false;
                 boolean equalTypes = false;
                 Entity lastEntity = null;
+                //System.out.println(token.get(NamedEntityTagAnnotation.class));
                 if (!list.isEmpty()) {
                     lastEntity = list.get(list.size() - 1);
                     contains = tokensentence.contains(lastEntity.getText() + " " + currentToken + " ");
