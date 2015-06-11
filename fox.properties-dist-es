@@ -29,7 +29,7 @@ org.aksw.fox.tools.ner.en.NERNerdML.extractorType: NERDML
 org.aksw.fox.tools.ner.en.NERNerdML.documentType: PLAINTEXT
 #stanford
 #org.aksw.fox.tools.ner.en.NERStanford.classifier: edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz
-#
+org.aksw.fox.tools.ner.en.NERStanford.classifier: edu/stanford/nlp/models/ner/edu/stanford/nlp/models/ner/spanish.ancora.distsim.s512.crf.ser.gz
 # uri lookup class
 org.aksw.fox.Fox.urilookup: org.aksw.fox.uri.AGDISTISLookup
 #AGDISTIS endpoint
