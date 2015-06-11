@@ -28,7 +28,7 @@ org.aksw.fox.tools.ner.en.NERNerdML.apiKey: 551t91ndhg4jhaeqa4pcskvkj74dsnhr
 org.aksw.fox.tools.ner.en.NERNerdML.extractorType: NERDML
 org.aksw.fox.tools.ner.en.NERNerdML.documentType: PLAINTEXT
 #stanford
-org.aksw.fox.tools.ner.en.NERStanford.classifier: edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz
+#org.aksw.fox.tools.ner.en.NERStanford.classifier: edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz
 #
 # uri lookup class
 org.aksw.fox.Fox.urilookup: org.aksw.fox.uri.AGDISTISLookup
@@ -41,7 +41,7 @@ org.aksw.fox.Fox.defaultLightNER: org.aksw.fox.tools.ner.es.NERStanfordES
 #NER tools to use
 org.aksw.fox.tools.ner.FoxNERTools.nerTools: org.aksw.fox.tools.ner.es.NEROpenNLPES, org.aksw.fox.tools.ner.es.NERBalieES, org.aksw.fox.tools.ner.es.NERStanfordES
 # path to read / write trained model
-org.aksw.fox.nerlearner.FoxClassifier.modelPath: data/fox/es/model
+org.aksw.fox.nerlearner.FoxClassifier.modelPath: data/fox/ml
 # which learner to use, values are: { result_vote | class_vote | weka.classifiers.functions.MultilayerPerceptron | weka.classifiers.trees.J48 | ...}
 org.aksw.fox.nerlearner.FoxClassifier.learner: weka.classifiers.functions.MultilayerPerceptron
 #org.aksw.fox.nerlearner.FoxClassifier.learnerOptions: -C 0.25 -M 2
@@ -55,9 +55,9 @@ org.aksw.fox.web.FoxHttpHandler.lifetime: 5
 # `true` to train fox. tainFox: { true | false }
 org.aksw.fox.nerlearner.FoxClassifier.training: false
 # an integer, 0 for all sentences
-org.aksw.fox.nerlearner.reader.INERReader.maxSentences: 30000
+org.aksw.fox.nerlearner.reader.INERReader.maxSentences: 0
 # max time in min. for all ner tools
-org.aksw.fox.tools.ner.FoxNERTools.foxNERLifeTime: 600
+org.aksw.fox.tools.ner.FoxNERTools.foxNERLifeTime: 2
 ##################################################################
 # web service #
 ##################################################################
