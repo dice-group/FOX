@@ -133,30 +133,20 @@
         <dependency>
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
-            <version>3.5.2</version>
+            <version>3.5.0</version>
         </dependency>
         <dependency>
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
-            <version>3.5.2</version>
+            <version>3.5.0</version>
             <classifier>models</classifier>
         </dependency>
         <dependency>
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-parser</artifactId>
-            <version>3.5.2</version>
+            <version>3.5.0</version>
             <classifier>models</classifier>
         </dependency>
-        <!-- stanford for Spanish -->
-        <dependency>
-            <groupId>edu.stanford.nlp</groupId>
-            <artifactId>stanford-corenlp-spanish</artifactId>
-            <version>3.5.2</version>
-            <classifier>models</classifier>
-            <scope>system</scope>
-            <systemPath>${system.libs}/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</systemPath>
-        </dependency> <!-- -->
-        
         <!-- apache -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -365,12 +355,12 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/balie/Balie.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar lib/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</Class-Path>
+                            <Class-Path>lib/balie/Balie.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
                 <!-- nothing here -->
-            </plugin>         
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -385,7 +375,7 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>lib/balie/Balie.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar lib/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</Class-Path>
+                            <Class-Path>lib/balie/Balie.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -397,7 +387,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>           
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
