@@ -2,8 +2,7 @@
 [2]: http://cogcomp.cs.illinois.edu/download/software/45
 [3]: http://sourceforge.net/projects/balie
 [4]: http://fox.aksw.org
-[5]: http://titan.informatik.uni-leipzig.de:4444
-[6]: http://fox-demo.aksw.org
+[5]: http://fox-demo.aksw.org
 
 [![Build Status](https://travis-ci.org/AKSW/FOX.svg?branch=master)](https://travis-ci.org/AKSW/FOX)
 ##FOX - Federated Knowledge Extraction Framework

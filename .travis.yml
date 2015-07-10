@@ -4,12 +4,9 @@ jdk:
 branches:
   only:
     - master
-script: "./build.sh"
 notifications:
   email:
     recipients:
       - speck@informatik.uni-leipzig.de
     on_success: change
     on_failure: change
-after_success:
-  - mvn clean
