@@ -9,7 +9,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.PropertyConfigurator;
 
 public class Yahooapis {
@@ -24,11 +24,10 @@ public class Yahooapis {
         builder.setScheme("http").setHost("query.yahooapis.com").setPath("/v1/public/yql").setParameter("diagnostics", "false").setParameter("q", query + "'" + in + "'");
         HttpGet httpget = new HttpGet(builder.build());
         System.out.println(httpget.getURI());
-        
-        HttpClient httpclient = HttpClientBuilder.create().build();
+
+        HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response = httpclient.execute(httpget);
-		HttpEntity entity = response.getEntity();
-		
+        HttpEntity entity = response.getEntity();
         if (entity != null) {
             InputStream instream = entity.getContent();
             try {
