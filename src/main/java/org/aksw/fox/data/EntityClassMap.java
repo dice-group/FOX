@@ -37,50 +37,6 @@ public class EntityClassMap {
         entityClassesNEEL.put("Person", P);
     }
 
-    protected static final Map<String, String> entityClassesBalie    = new HashMap<>();
-    static {
-        entityClassesBalie.put("ORGANIZATION", O);
-        entityClassesBalie.put("LOCATION", L);
-        entityClassesBalie.put("PERSON", P);
-        entityClassesBalie.put("nothing", N);
-    }
-    // stanford DE
-    protected static final Map<String, String> entityClassesSTANde   = new HashMap<>();
-    static {
-        entityClassesSTANde.put("I-ORG", O);
-        entityClassesSTANde.put("I-LOC", L);
-        entityClassesSTANde.put("I-PER", P);
-        entityClassesSTANde.put("O", N);
-        entityClassesSTANde.put("I-MISC", N);
-
-    }
- // stanford ES
-    protected static final Map<String, String> entityClassesSTANes   = new HashMap<>();
-    static {
-        entityClassesSTANes.put("ORG", O);
-        entityClassesSTANes.put("LUG", L);
-        entityClassesSTANes.put("PERS", P);
-        entityClassesSTANes.put("O", N);
-        entityClassesSTANes.put("OTROS", N);
-
-    }
-    // stanford EN
-    protected static final Map<String, String> entityClassesSTAN     = new HashMap<>();
-    static {
-        entityClassesSTAN.put("ORGANIZATION", O);
-        entityClassesSTAN.put("LOCATION", L);
-        entityClassesSTAN.put("PERSON", P);
-        entityClassesSTAN.put("PEOPLE", P);
-        entityClassesSTAN.put("O", N);
-    }
-
-    protected static final Map<String, String> entityClassesOpenNLP  = new HashMap<>();
-    static {
-        entityClassesOpenNLP.put("location", L);
-        entityClassesOpenNLP.put("organization", O);
-        entityClassesOpenNLP.put("person", P);
-    }
-
     protected static final Map<String, String> entityClassesILLINOIS = new HashMap<>();
     static {
         entityClassesILLINOIS.put("LOC", L);
@@ -99,16 +55,6 @@ public class EntityClassMap {
     }
 
     /**
-     * Gets the entity class for a Balie entity type/class.
-     */
-    public static String balie(String tag) {
-        String t = entityClassesBalie.get(tag);
-        if (t == null)
-            t = getNullCategory();
-        return t;
-    }
-
-    /**
      * Gets the entity class for a NEEL challenge entity type/class.
      */
     public static String neel(String tag) {
@@ -119,50 +65,10 @@ public class EntityClassMap {
     }
 
     /**
-     * Gets the entity class for a openNLP entity type/class.
-     */
-    public static String openNLP(String tag) {
-        String t = entityClassesOpenNLP.get(tag);
-        if (t == null)
-            t = getNullCategory();
-        return t;
-    }
-
-    /**
      * Gets the entity class for a illinois entity type/class.
      */
     public static String illinois(String illinoisTag) {
         String t = entityClassesILLINOIS.get(illinoisTag);
-        if (t == null)
-            t = getNullCategory();
-        return t;
-    }
-
-    /**
-     * Gets the entity class for a stanford de entity type/class.
-     */
-    public static String stanfordde(String stanfordTag) {
-        String t = entityClassesSTANde.get(stanfordTag);
-        if (t == null)
-            t = getNullCategory();
-        return t;
-    }
-    
-    /**
-     * Gets the entity class for a stanford es entity type/class.
-     */
-    public static String stanfordes(String stanfordTag) {
-        String t = entityClassesSTANes.get(stanfordTag);
-        if (t == null)
-            t = getNullCategory();
-        return t;
-    }
-
-    /**
-     * Gets the entity class for a stanford entity type/class.
-     */
-    public static String stanford(String stanfordTag) {
-        String t = entityClassesSTAN.get(stanfordTag);
         if (t == null)
             t = getNullCategory();
         return t;
