@@ -103,7 +103,7 @@ public class NERStanford extends AbstractNER {
                 // DEBUG
                 for (Pair<CoreLabel, Double> prob : probs) {
 
-                    String type = EntityClassMap.stanford(prob.first().getString(AnswerAnnotation.class));
+                    String type = stanford(prob.first().getString(AnswerAnnotation.class));
                     // String txt = p.first().word().replaceAll("\\s+",
                     // " ").trim();
                     String currentToken = prob.first().get(CoreAnnotations.TextAnnotation.class);
@@ -136,6 +136,22 @@ public class NERStanford extends AbstractNER {
             LOG.trace(list);
         } // TRACE
         return list;
+    }
+
+    public static String stanford(String stanfordTag) {
+        switch (stanfordTag) {
+        case "ORGANIZATION":
+            return (EntityClassMap.O);
+        case "LOCATION":
+            return (EntityClassMap.L);
+        case "PERSON":
+            return (EntityClassMap.P);
+        case "PEOPLE":
+            return (EntityClassMap.P);
+        case "O":
+            return (EntityClassMap.N);
+        }
+        return EntityClassMap.N;
     }
 
     public static void main(String[] a) {
