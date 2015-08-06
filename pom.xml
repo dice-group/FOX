@@ -173,6 +173,12 @@
             <artifactId>httpclient</artifactId>
             <version>4.4</version>
         </dependency>
+            <!-- NERcFr 
+    <dependency>
+  <groupId>org.vicomtech</groupId>
+  <artifactId>opennlp-tools</artifactId>
+  <version>custom-0.0.1</version>
+</dependency>-->
         <!-- open nlp -->
         <dependency>
             <groupId>org.apache.opennlp</groupId>
@@ -289,7 +295,7 @@
             <artifactId>language-detector</artifactId>
             <version>0.4</version>
         </dependency>
-    </dependencies>
+</dependencies>
     <!-- build -->
     <build>
         <directory>release</directory>

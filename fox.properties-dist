@@ -1,3 +1,19 @@
+#spotlight
+org.aksw.fox.tools.ner.it.NERSpotlight.endpoint: http://titan.informatik.uni-leipzig.de:4442
+org.aksw.fox.tools.ner.it.NERSpotlight.confidence: 0.2
+org.aksw.fox.tools.ner.it.NERSpotlight.support: 2
+#TextPro
+org.aksw.fox.tools.ner.it.NERTextPro.path: /home/TextPro/TextPro2.0
+#TagMe
+org.aksw.fox.tools.ner.it.NERTagMe.key: <key>
+org.aksw.fox.tools.ner.it.NERTagMe.sparqlEndpoint: http://dbpedia.org/sparql
+org.aksw.fox.tools.ner.it.NERTagMe.rdfsPrefix: http://www.w3.org/2000/01/rdf-schema#
+org.aksw.fox.tools.ner.it.NERTagMe.rdfPrefix: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+#tags with a weight < minWeight will get filtered
+#scope of minWeight is [0,1]
+#set to 0 to disable filtering
+org.aksw.fox.tools.ner.it.NERTagMe.minWeight: 0.1
+
 ##################################################################
 # RE #
 # it is a list of URIs
@@ -38,8 +54,7 @@ org.aksw.fox.uri.AGDISTISLookup.endpoint: http://139.18.2.164:8080/AGDISTIS
 #NER default light version class
 org.aksw.fox.Fox.defaultLightNER: org.aksw.fox.tools.ner.en.NERStanford
 #NER tools to use
-org.aksw.fox.tools.ner.FoxNERTools.nerTools: org.aksw.fox.tools.ner.en.NEROpenNLP, org.aksw.fox.tools.ner.en.NERStanford, org.aksw.fox.tools.ner.en.NERIllinoisExtended, org.aksw.fox.tools.ner.en.NERBalie
-#org.aksw.fox.nertools.FoxNERTools.nerTools: org.aksw.fox.tools.ner.en.NEROpenNLP, org.aksw.fox.tools.ner.en.NERStanford, org.aksw.fox.tools.ner.en.NERIllinoisExtended, org.aksw.fox.tools.ner.en.NERBalie, org.aksw.fox.tools.ner.en.NERSpotlight
+org.aksw.fox.tools.ner.FoxNERTools.nerTools: org.aksw.fox.tools.ner.en.NEROpenNLP, org.aksw.fox.tools.ner.en.NERStanfordEn, org.aksw.fox.tools.ner.en.NERIllinoisExtended, org.aksw.fox.tools.ner.en.NERBalie
 # path to read / write trained model
 org.aksw.fox.nerlearner.FoxClassifier.modelPath: data/fox/ml
 # which learner to use, values are: { result_vote | class_vote | weka.classifiers.functions.MultilayerPerceptron | weka.classifiers.trees.J48 | ...}
