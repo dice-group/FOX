@@ -66,7 +66,6 @@ public class DataTestFactory {
             Relation r = new Relation(getE2(), "was born in", "BornIn", getE3(), Arrays.asList(new URI("http://ns.aksw.org/scms/annotations/stanford/liveIn")), "REfoxTool", 1f);
             map.get(input).add(r);
         } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

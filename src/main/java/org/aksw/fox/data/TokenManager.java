@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 public class TokenManager {
 
-    public static Logger           LOG     = LogManager.getLogger(TokenManager.class);
+    public static Logger           LOG        = LogManager.getLogger(TokenManager.class);
 
     protected String               input      = "";
 
@@ -126,8 +126,6 @@ public class TokenManager {
                         LOG.debug("fixed.");
                     } else {
                         LOG.debug("can't fix it.");
-
-                        // TODO: remove this
                         entity.setText("");
                     }
                 }

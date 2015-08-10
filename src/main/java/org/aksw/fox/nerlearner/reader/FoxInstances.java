@@ -32,9 +32,9 @@ import weka.core.Instances;
  */
 public class FoxInstances {
 
-    public static Logger logger = Logger.getLogger(FoxInstances.class);
+    public static Logger  logger = Logger.getLogger(FoxInstances.class);
 
-    protected Set<String> token = null;
+    protected Set<String> token  = null;
 
     /**
      * Gets instances from the given toolResults and oracle.
@@ -175,7 +175,7 @@ public class FoxInstances {
             fibers.add(fiber);
         }
 
-        // TODO: time?
+        // TODO: time to cfg
         try {
             latch.await(Long.MAX_VALUE, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
