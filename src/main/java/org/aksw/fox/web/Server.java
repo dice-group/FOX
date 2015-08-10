@@ -1,15 +1,19 @@
 package org.aksw.fox.web;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.json.stream.JsonGenerator;
 import javax.ws.rs.ext.RuntimeDelegate;
 
-import org.aksw.fox.Fox;
 import org.aksw.fox.IFox;
+import org.aksw.fox.utils.CfgManager;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxServerUtil;
 import org.aksw.fox.web.feedback.FeedbackHttpHandler;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -26,29 +30,31 @@ import org.glassfish.jersey.server.ResourceConfig;
  */
 public class Server {
 
-    public static final String  CFG_KEY_POOL_SIZE    = Server.class.getName().concat(".poolsize");
+    protected final XMLConfiguration      CFG                  = CfgManager.getCfg(this.getClass());
+    protected String                      langs;
 
-    // TODO
-    public static Pool<IFox>    pool                 = null;
+    public static final String            CFG_KEY_POOL_SIZE    = Server.class.getName().concat(".poolsize");
 
-    public final static Logger  LOG                  = LogManager.getLogger(Server.class);
+    public static Map<String, Pool<IFox>> pool                 = null;
 
-    /* Cfg file key. */
-    public final static String  DEMO_HANDLER_KEY     = Server.class.getName().concat(".demo_handler");
-    /* Cfg file key. */
-    public final static String  API_HANDLER_KEY      = Server.class.getName().concat(".api_handler");
-    /* Cfg file key. */
-    public final static String  FEEDBACK_HANDLER_KEY = Server.class.getName().concat(".feedback_handler");
-    /* Cfg file key. */
-    public final static String  STATIC_CACHE         = Server.class.getName().concat(".static_file_cache_on");
+    public final static Logger            LOG                  = LogManager.getLogger(Server.class);
 
-    protected HttpServer        server               = null;
+    public final static String            DEMO_HANDLER_KEY     = Server.class.getName().concat(".demo_handler");
+    public final static String            API_HANDLER_KEY      = Server.class.getName().concat(".api_handler");
+    public final static String            FEEDBACK_HANDLER_KEY = Server.class.getName().concat(".feedback_handler");
+    public final static String            STATIC_CACHE         = Server.class.getName().concat(".static_file_cache_on");
 
-    private final static String LISTENER_NAME        = "FoxNetworkListener";
+    protected HttpServer                  server               = null;
 
-    public static boolean       running              = false;
-    public String               host                 = null;
-    public int                  port                 = -1;
+    private final static String           LISTENER_NAME        = "FoxNetworkListener";
+
+    public static boolean                 running              = false;
+    public String                         host                 = null;
+    public int                            port                 = -1;
+
+    // TODO: init this with data from cfg file
+    // which lang we support???
+    protected Map<String, Integer>        langToPoolsize       = new HashMap<>();
 
     /**
      * Create Jersey server-side application resource configuration.
@@ -67,20 +73,34 @@ public class Server {
      * 
      * @param port
      *            the servers port
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws NumberFormatException
      */
-    public Server(int port) {
-        this(port, Integer.parseInt(FoxCfg.get(CFG_KEY_POOL_SIZE)));
+    public Server(int port)
+            throws NumberFormatException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+
+        initPools();
+        init(port);
     }
 
-    /**
-     * 
-     * @param port
-     *            the servers port
-     * @param poolsize
-     *            the amount of fox instances
-     */
-    public Server(int port, int poolsize) {
-        pool = new Pool<IFox>(Fox.class.getName(), poolsize); // TODO
+    protected void initPools() {
+        pool = new HashMap<>();
+
+        // TODO: read lang and pool size from cfg
+        //
+        // CollectionUtil.toList()
+        String lang = "";
+        int poolsize = Integer.parseInt(FoxCfg.get(CFG_KEY_POOL_SIZE));
+        // TODO: lang init pools
+        // new Pool<IFox>(Fox.class.getName(), lang, poolsize);
+
+    }
+
+    protected void init(int port)
+            throws IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
         server = new HttpServer();
         server.getServerConfiguration().setDefaultErrorPageGenerator(new ErrorPages());
@@ -177,7 +197,7 @@ public class Server {
             try {
                 Thread.currentThread().join();
             } catch (Exception e) {
-                LOG.error("\n", e);
+                LOG.error(e.getLocalizedMessage(), e);
             } finally {
                 server.shutdownNow();
             }

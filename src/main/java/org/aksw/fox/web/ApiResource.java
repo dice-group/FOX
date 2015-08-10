@@ -51,8 +51,11 @@ public class ApiResource {
                 LOG.info(p.getKey() + ":" + p.getValue());
             });
 
+            // TODO: lang
+            String lang = "";
+
             // get a fox instance
-            IFox fox = Server.pool.poll();
+            IFox fox = Server.pool.get(lang).poll();
 
             // init. thread
             Fiber fiber = new ThreadFiber();
@@ -93,12 +96,12 @@ public class ApiResource {
             if (latch.getCount() == 0) {
 
                 output = fox.getResults();
-                Server.pool.push(fox);
+                Server.pool.get(lang).push(fox);
 
             } else {
 
                 fox = null;
-                Server.pool.add();
+                Server.pool.get(lang).add();
                 // TODO : error output
             }
 
@@ -120,7 +123,7 @@ public class ApiResource {
         return output;
     }
 
-    // TODO
+    // TODO: entitiesFeedback
     @Path("entitiesFeedback")
     @POST
     public JsonObject postText() {

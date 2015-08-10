@@ -1,5 +1,6 @@
 package org.aksw.fox.web;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -32,24 +33,39 @@ public class Pool<T> {
      * 
      */
     protected String         className = "";
+    protected String         lang      = "";
+
+    public String getLang() {
+        return lang;
+    }
 
     /**
      * 
      * @param className
      * @param count
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
      */
-    public Pool(String className, int count) {
+    public Pool(String className, String lang, int count) throws IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         this.className = className;
+        this.lang = lang;
+
         if (count > 0) {
             max = count;
             while (queue.size() < max) {
                 LOG.info("Creates an instance " + (queue.size() + 1) + "/" + max + "...");
-                queue.add(getInstance(className));
+                queue.add(getInstance());
             }
         }
     }
 
     /**
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
      * 
      */
     public synchronized void add() {
@@ -83,18 +99,10 @@ public class Pool<T> {
                 LOG.warn("pool queue empty, sleep 20s ...");
                 Thread.sleep(20000);
             } catch (InterruptedException e) {
-                LOG.error("\n", e);
+                LOG.error(e.getLocalizedMessage(), e);
             }
         }
         return t;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    protected synchronized T getInstance() {
-        return getInstance(className);
     }
 
     /**
@@ -102,13 +110,17 @@ public class Pool<T> {
      * 
      * @param className
      * @return new instance
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
      */
     @SuppressWarnings("unchecked")
-    protected synchronized T getInstance(String className) {
+    protected synchronized T getInstance() {
         try {
-            return (T) Class.forName(className).newInstance();
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            LOG.error("\n", e);
+            return (T) Class.forName(className).getConstructor(String.class).newInstance(lang);
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage(), e);
         }
         return null;
     }

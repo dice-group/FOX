@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
+import org.aksw.fox.data.exception.LoadingNotPossibleException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -30,7 +31,7 @@ public class FoxCfg {
 
     public static final String  LOG_FILE           = "log4j.properties";
     public static final String  CFG_FILE           = "fox.properties";
-    protected static Properties FoxProperties      = null;
+    protected static Properties foxProperties      = null;
 
     /**
      * Loads a given file to use as properties.
@@ -42,7 +43,7 @@ public class FoxCfg {
         boolean loaded = false;
         LOG.info("Loads cfg ...");
 
-        FoxProperties = new Properties();
+        foxProperties = new Properties();
         FileInputStream in = null;
         try {
             in = new FileInputStream(cfgFile);
@@ -51,7 +52,7 @@ public class FoxCfg {
         }
         if (in != null) {
             try {
-                FoxProperties.load(in);
+                foxProperties.load(in);
                 loaded = true;
             } catch (IOException e) {
                 LOG.error("Can't read `" + cfgFile + "` file.");
@@ -76,9 +77,9 @@ public class FoxCfg {
      * @return property value
      */
     public static String get(String key) {
-        if (FoxProperties == null)
+        if (foxProperties == null)
             loadFile(CFG_FILE);
-        return FoxProperties.getProperty(key);
+        return foxProperties.getProperty(key);
     }
 
     /**
@@ -87,24 +88,22 @@ public class FoxCfg {
      * @param classPath
      *            path to class
      * @return object of a class
+     * @throws LoadingNotPossibleException
      */
-    public synchronized static Object getClass(String classPath) {
-        LOG.info("Load class: " + classPath);
+    public synchronized static Object getClass(String classPath) throws LoadingNotPossibleException {
+        LOG.info("Loading class: " + classPath);
 
         Class<?> clazz = null;
         try {
             clazz = Class.forName(classPath.trim());
-            if (clazz != null) {
-                Constructor<?> constructor = clazz.getConstructor();
-                return constructor.newInstance();
-            }
-        } catch (ClassNotFoundException e) {
-            LOG.error("\n", e);
-        } catch (NoSuchMethodException | SecurityException e) {
-            LOG.error("\n", e);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            LOG.error("\n", e);
+            Constructor<?> constructor = clazz.getConstructor();
+            return constructor.newInstance();
+
+        } catch (ClassNotFoundException | NoSuchMethodException |
+                SecurityException | InstantiationException |
+                IllegalAccessException | IllegalArgumentException |
+                InvocationTargetException e) {
+            throw new LoadingNotPossibleException("Could not load class: " + classPath);
         }
-        return null;
     }
 }
