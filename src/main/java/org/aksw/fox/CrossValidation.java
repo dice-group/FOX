@@ -15,7 +15,7 @@ import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.nerlearner.reader.INERReader;
 import org.aksw.fox.nerlearner.reader.NERReaderFactory;
-import org.aksw.fox.tools.ner.FoxNERTools;
+import org.aksw.fox.tools.ner.Tools;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -37,7 +37,7 @@ public class CrossValidation {
     public static final Logger LOG                          = LogManager.getLogger(CrossValidation.class);
     public static final String CFG_KEY_CROSSVALIDATION_RUNS = CrossValidation.class.getName().concat(".runs");
 
-    public static FoxNERTools  foxNERTools                  = new FoxNERTools();
+    protected Tools            tools;
 
     // cross-validation options
     static int                 seed                         = 1;
@@ -52,7 +52,15 @@ public class CrossValidation {
     static StringBuffer        outDetail                    = null;
     static StringBuffer        outTotal                     = null;
 
-    public static void crossValidation(Classifier cls, String[] inputFiles) throws Exception {
+    public CrossValidation(Tools tools) {
+        this.tools = tools;
+    }
+
+    public Tools getTools() {
+        return tools;
+    }
+
+    public void crossValidation(Classifier cls, String[] inputFiles) throws Exception {
         classifierName = cls.getClass().getName();
         classifierName = classifierName.substring(classifierName.lastIndexOf('.') == -1 ? 0 : classifierName.lastIndexOf('.') + 1);
 
@@ -66,9 +74,9 @@ public class CrossValidation {
         // prepare data
         IPostProcessing pp = null;
         {
-            foxNERTools.setTraining(true);
-            foxNERTools.getEntities(tokenManager.getInput());
-            pp = new PostProcessing(tokenManager, foxNERTools.getToolResult());
+            tools.setTraining(true);
+            tools.getEntities(tokenManager.getInput());
+            pp = new PostProcessing(tokenManager, tools.getToolResult());
         }
 
         // init. instances
