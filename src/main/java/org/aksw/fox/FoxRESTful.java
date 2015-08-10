@@ -2,6 +2,9 @@ package org.aksw.fox;
 
 import gnu.getopt.Getopt;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.aksw.fox.data.exception.PortInUseException;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxServerUtil;
 import org.aksw.fox.web.Server;
@@ -15,13 +18,13 @@ import org.apache.log4j.PropertyConfigurator;
  * @author rspeck
  * 
  */
-public class MainServer {
+public class FoxRESTful {
 
     static {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
     }
 
-    public static Logger LOG = LogManager.getLogger(MainServer.class);
+    public static Logger LOG = LogManager.getLogger(FoxRESTful.class);
 
     /**
      * Starts FOX web service.
@@ -30,8 +33,17 @@ public class MainServer {
      *            <p>
      *            -p port, default is 8080
      *            </p>
+     * 
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws NumberFormatException
+     * @throws PortInUseException
      */
-    public static void main(String[] args) {
+    public static void main(String[] args)
+            throws NumberFormatException, IllegalArgumentException,
+            InvocationTargetException, NoSuchMethodException, SecurityException, PortInUseException {
 
         final Getopt getopt = new Getopt("Fox", args, "p:x");
 
@@ -44,8 +56,9 @@ public class MainServer {
         }
 
         if (!FoxServerUtil.isPortAvailable(port))
-            LOG.error("Port " + port + " in use or wrong argument, try another one!");
-        else if (FoxCfg.loadFile(FoxCfg.CFG_FILE))
+            throw new PortInUseException(port);
+
+        if (FoxCfg.loadFile(FoxCfg.CFG_FILE))
             new Server(port).start();
     }
 }

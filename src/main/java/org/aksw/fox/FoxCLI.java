@@ -9,11 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.fox.data.exception.LoadingNotPossibleException;
+import org.aksw.fox.data.exception.UnsupportedLangException;
 import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.FoxClassifierFactory;
 import org.aksw.fox.nerlearner.reader.INERReader;
 import org.aksw.fox.nerlearner.reader.NERReaderFactory;
-import org.aksw.fox.tools.ner.FoxNERTools;
+import org.aksw.fox.tools.ner.Tools;
+import org.aksw.fox.tools.ner.ToolsGenerator;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -27,13 +30,13 @@ import weka.classifiers.Classifier;
  * @author rspeck
  * 
  */
-public class MainFox {
+public class FoxCLI {
 
     static {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
     }
 
-    public static Logger LOG = LogManager.getLogger(MainFox.class);
+    public static Logger LOG = LogManager.getLogger(FoxCLI.class);
 
     /**
      * 
@@ -49,12 +52,15 @@ public class MainFox {
      */
     public static void main(String[] args) throws Exception {
 
-        final Getopt getopt = new Getopt("Fox", args, "i:x a:x");
-
+        final Getopt getopt = new Getopt("Fox", args, "l:x i:x a:x");
         int arg;
-        String in = "", a = "";
+        // input, action, lang
+        String in = "", a = "", l = "";
         while ((arg = getopt.getopt()) != -1) {
             switch (arg) {
+            case 'l':
+                l = String.valueOf(getopt.getOptarg());
+                break;
             case 'i':
                 in = String.valueOf(getopt.getOptarg());
                 break;
@@ -63,7 +69,9 @@ public class MainFox {
                 if (a.toLowerCase().startsWith("tr")) {
                     a = "train";
                     if (FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER_TRAINING).toLowerCase().startsWith("false")) {
-                        throw new Exception("You need to change the fox.properties file and set " + FoxClassifier.CFG_KEY_LEARNER_TRAINING + " to true. Also you should set an output file for the new model.");
+                        throw new Exception(
+                                "You need to change the fox.properties file and set " + FoxClassifier.CFG_KEY_LEARNER_TRAINING + " to true. "
+                                        + "Also you should set an output file for the new model.");
                     }
                     /*} else if (a.toLowerCase().startsWith("re")) {
                         a = "retrieve";
@@ -106,7 +114,7 @@ public class MainFox {
 
         switch (a) {
         case "train": {
-            MainFox.training(files_array);
+            FoxCLI.training(files_array, l);
             break;
         }
         /*        case "retrieve": {
@@ -114,7 +122,7 @@ public class MainFox {
                     break;
                 }*/
         case "validate": {
-            MainFox.validate(files_array);
+            FoxCLI.validate(files_array, l);
             break;
         }
         default:
@@ -122,9 +130,10 @@ public class MainFox {
         }
     }
 
-    public static void validate(String[] inputFiles) {
-
-        Set<String> toolResultKeySet = CrossValidation.foxNERTools.getToolResult().keySet();
+    public static void validate(String[] inputFiles, String lang) throws UnsupportedLangException, LoadingNotPossibleException {
+        ToolsGenerator toolsGenerator = new ToolsGenerator();
+        CrossValidation cv = new CrossValidation(toolsGenerator.getNERTools(lang));
+        Set<String> toolResultKeySet = cv.getTools().getToolResult().keySet();
         String[] prefix = toolResultKeySet.toArray(new String[toolResultKeySet.size()]);
 
         LOG.info("tools used: " + toolResultKeySet);
@@ -136,7 +145,7 @@ public class MainFox {
         Classifier cls = foxClassifier.getClassifier();
 
         try {
-            CrossValidation.crossValidation(cls, inputFiles);
+            cv.crossValidation(cls, inputFiles);
         } catch (Exception e) {
             LOG.error("\n", e);
         }
@@ -166,11 +175,14 @@ public class MainFox {
      * 
      * @param inputFiles
      *            files
+     * @throws UnsupportedLangException
+     * @throws LoadingNotPossibleException
      * @throws Exception
      */
-    public static void training(String[] inputFiles) throws IOException {
+    public static void training(String[] inputFiles, String lang) throws IOException, UnsupportedLangException, LoadingNotPossibleException {
+        ToolsGenerator toolsGenerator = new ToolsGenerator();
 
-        FoxNERTools foxNERTools = new FoxNERTools();
+        Tools foxNERTools = toolsGenerator.getNERTools(lang);
         FoxClassifier foxClassifier = new FoxClassifier();
 
         Set<String> toolResultKeySet = foxNERTools.getToolResult().keySet();
@@ -200,7 +212,7 @@ public class MainFox {
         }
     }
 
-    private static void setClassifier(FoxClassifier foxClassifier, String[] prefix) {
+    private static void setClassifier(FoxClassifier foxClassifier, String[] prefix) throws LoadingNotPossibleException {
         switch (FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER).trim()) {
         case "result_vote": {
             foxClassifier.setIsTrained(true);
