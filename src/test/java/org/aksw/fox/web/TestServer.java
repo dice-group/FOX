@@ -1,6 +1,7 @@
 package org.aksw.fox.web;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -34,7 +35,11 @@ public class TestServer {
         long startTime = System.currentTimeMillis();
         new Thread(new Runnable() {
             public void run() {
-                server = new Server(port, 1);
+                try {
+                    server = new Server(port);
+                } catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                    LOG.error(e.getLocalizedMessage(), e);
+                }
                 Assert.assertTrue(server.start());
             }
         }).start();
@@ -73,7 +78,8 @@ public class TestServer {
         urls.put(path, 200);
         urls.put(path + "/demo/index.html", 200);
         urls.put(path + "/public/img/errors.png", 200);
-        /* TODO
+
+        /* TODO: endpoint paths
         urls.put(path + "/call/ner/entities", 405);
         urls.put(path + "/call/ner/entities/", 405);
         urls.put(path + "/api", 405);
