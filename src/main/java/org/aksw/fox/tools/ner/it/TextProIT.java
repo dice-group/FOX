@@ -16,47 +16,44 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.aksw.fox.data.Entity;
+import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.log4j.PropertyConfigurator;
 
-public class NERTextPro extends AbstractNER {
+public class TextProIT extends AbstractNER {
 
-    public static final String               CFG_KEY_TEXTPRO_PATH = NERTextPro.class.getName().concat(".path");
-
+    public static final String               CFG_KEY_TEXTPRO_PATH = TextProIT.class.getName().concat(".path");
     private static final String              TEXTPRO_PATH         = FoxCfg.get(CFG_KEY_TEXTPRO_PATH);
-    private static final Map<String, String> ENTITY_MAP           = new HashMap<String, String>()
-                                                                  {
-                                                                      {
-                                                                          put("ORG", "ORGANIZATION");
-                                                                          put("LOC", "LOCATION");
-                                                                          put("PER", "PERSON");
-                                                                          put("GPE", "LOCATION"); /*@to discuss: leave out or not?
-                                                                                                  //GPE = geo-political entity
-                                                                                                  //not necessarily location, however in most cases*/
-                                                                      }
-                                                                  };
+
+    private static final Map<String, String> ENTITY_MAP           = new HashMap<>();
+    static {
+        ENTITY_MAP.put("ORG", EntityClassMap.O);
+        ENTITY_MAP.put("LOC", EntityClassMap.L);
+        ENTITY_MAP.put("PER", EntityClassMap.P);
+        ENTITY_MAP.put("GPE", EntityClassMap.L);
+    };
 
     @Override
     public List<Entity> retrieve(String input) {
         LOG.info("writing input to temporary file");
 
         Writer writer = null;
-
-        try
-        {
+        LOG.info(input);
+        try {
             writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(TEXTPRO_PATH + "/FoxInput.tmp"), "utf-8"));
             writer.write(input);
+
         } catch (IOException e) {
-            LOG.error("\n", e);
+            LOG.error(e.getLocalizedMessage(), e);
         } finally
         {
             try {
                 writer.close();
             } catch (Exception e) {
-                LOG.error("\n", e);
+                LOG.error(e.getLocalizedMessage(), e);
             }
         }
 
@@ -64,25 +61,25 @@ public class NERTextPro extends AbstractNER {
 
         Process p = null;
         try {
-            p = Runtime.getRuntime().exec(TEXTPRO_PATH
-                    + "/./textpro.sh -l ita -c token+entity -o"
-                    + TEXTPRO_PATH + " "
-                    + TEXTPRO_PATH + "/FoxInput.tmp");
+            p = Runtime.getRuntime().exec(
+                    TEXTPRO_PATH
+                            + "/./textpro.sh -l ita -c token+entity -o"
+                            + TEXTPRO_PATH + " "
+                            + TEXTPRO_PATH + "/FoxInput.tmp");
+
         } catch (IOException e) {
-            LOG.error(e);
+            LOG.error(e.getLocalizedMessage());
         }
         try {
             int exitVal = p.waitFor();
         } catch (InterruptedException e) {
-            LOG.error(e);
+            LOG.error(e.getLocalizedMessage());
         }
 
         LOG.info("reading request answer output");
 
         String answer = null;
-
-        try
-        {
+        try {
             File file = new File(TEXTPRO_PATH + "/FoxInput.tmp.txp");
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -111,21 +108,19 @@ public class NERTextPro extends AbstractNER {
 
             answer = stringBuffer.toString();
         } catch (IOException e) {
-            LOG.error("\n", e);
+            LOG.error(e.getLocalizedMessage());
         }
 
         LOG.info("deleting temporary files");
 
         try {
-            p = Runtime.getRuntime().exec("rm " + TEXTPRO_PATH + "/tmp/FoxInput.tmp"
-                    + " && rm " + TEXTPRO_PATH + "/tmp/FoxInput.tmp.txp");
-        } catch (IOException e) {
-            LOG.error(e);
-        }
-        try {
+            p = Runtime.getRuntime().exec(
+                    "rm " + TEXTPRO_PATH + "/tmp/FoxInput.tmp  && " +
+                            "rm " + TEXTPRO_PATH + "/tmp/FoxInput.tmp.txp");
+
             int exitVal = p.waitFor();
-        } catch (InterruptedException e) {
-            LOG.error(e);
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage());
         }
 
         LOG.info("creating entity list");
@@ -162,7 +157,7 @@ public class NERTextPro extends AbstractNER {
                     entity_list.add(new Entity(current_entity,
                             current_entity_type,
                             1,
-                            "NERTextPro"));
+                            getToolName()));
                     current_entity = retval;
                 }
                 break;
@@ -178,20 +173,13 @@ public class NERTextPro extends AbstractNER {
         entity_list.add(new Entity(current_entity,
                 current_entity_type,
                 1,
-                "NERTextPro"));
+                getToolName()));
         entity_list.remove(0);
         return entity_list;
     }
 
-    public static void main(String[] a) {
-
+    public static void main(String[] a) throws IOException {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-        try
-        {
-            for (Entity e : new NERTextPro().retrieve(FoxConst.NER_IT_EXAMPLE_1))
-                LOG.info(e);
-        } catch (NullPointerException e) {
-            LOG.info("no entities found");
-        }
+        LOG.info(new TextProIT().retrieve(FoxConst.NER_IT_EXAMPLE_1));
     }
 }

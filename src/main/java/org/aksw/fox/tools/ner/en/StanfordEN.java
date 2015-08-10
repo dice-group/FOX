@@ -2,9 +2,8 @@ package org.aksw.fox.tools.ner.en;
 
 import java.util.Properties;
 
-import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
-import org.aksw.fox.tools.ner.StanfordTool;
+import org.aksw.fox.tools.ner.common.StanfordCommon;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.log4j.PropertyConfigurator;
@@ -14,7 +13,7 @@ import org.apache.log4j.PropertyConfigurator;
  * @author rspeck
  * 
  */
-public class NERStanfordEn extends StanfordTool {
+public class StanfordEN extends StanfordCommon {
 
     private static Properties props = new Properties();
     static {
@@ -22,9 +21,10 @@ public class NERStanfordEn extends StanfordTool {
         props.setProperty("tokenize.language", "en");
         props.setProperty("ner.applyNumericClassifiers", "false");
         props.setProperty("ner.useSUTime", "false");
+        props.setProperty("ner.model", "edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz");
     }
 
-    public NERStanfordEn() {
+    public StanfordEN() {
         super(props);
 
         entityClasses.put("ORGANIZATION", EntityClassMap.O);
@@ -36,7 +36,6 @@ public class NERStanfordEn extends StanfordTool {
 
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-        for (Entity e : new NERStanfordEn().retrieve(FoxConst.NER_EN_EXAMPLE_1))
-            LOG.info(e);
+        LOG.info(new StanfordEN().retrieve(FoxConst.NER_EN_EXAMPLE_1));
     }
 }

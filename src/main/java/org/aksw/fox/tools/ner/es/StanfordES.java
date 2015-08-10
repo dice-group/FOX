@@ -2,10 +2,8 @@ package org.aksw.fox.tools.ner.es;
 
 import java.util.Properties;
 
-import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
-import org.aksw.fox.tools.ner.StanfordTool;
-import org.aksw.fox.tools.ner.ger.NERBalieDE;
+import org.aksw.fox.tools.ner.common.StanfordCommon;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.log4j.PropertyConfigurator;
@@ -15,7 +13,7 @@ import org.apache.log4j.PropertyConfigurator;
  * @author rspeck
  * 
  */
-public class NERStanfordES extends StanfordTool {
+public class StanfordES extends StanfordCommon {
     // https://github.com/stanfordnlp/CoreNLP/blob/master/src/edu/stanford/nlp/pipeline/StanfordCoreNLP-spanish.properties
     private static Properties props = new Properties();
     static {
@@ -32,7 +30,7 @@ public class NERStanfordES extends StanfordTool {
 
     }
 
-    public NERStanfordES() {
+    public StanfordES() {
         super(props);
 
         entityClasses.put("ORG", EntityClassMap.O);
@@ -44,8 +42,6 @@ public class NERStanfordES extends StanfordTool {
 
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-        for (Entity e : new NERStanfordES().retrieve(FoxConst.NER_ES_EXAMPLE_1))
-            NERBalieDE.LOG.info(e);
+        LOG.info(new StanfordES().retrieve(FoxConst.NER_ES_EXAMPLE_1));
     }
-
 }

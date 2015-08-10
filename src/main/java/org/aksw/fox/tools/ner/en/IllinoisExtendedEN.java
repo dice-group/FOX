@@ -23,7 +23,7 @@ import edu.illinois.cs.cogcomp.LbjNer.LbjTagger.ParametersForLbjCode;
 import edu.illinois.cs.cogcomp.LbjNer.ParsingProcessingData.PlainTextReader;
 import edu.illinois.cs.cogcomp.lbjava.parse.LinkedVector;
 
-public class NERIllinoisExtended extends AbstractNER {
+public class IllinoisExtendedEN extends AbstractNER {
 
     public static String file          = "config/conll.config";
     boolean              areWeTraining = false;
@@ -33,11 +33,10 @@ public class NERIllinoisExtended extends AbstractNER {
 
     public static void main(String[] args) throws Exception {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-        for (Entity e : new NERIllinoisExtended().retrieve(FoxConst.NER_EN_EXAMPLE_1))
-            NERIllinoisExtended.LOG.info(e);
+        LOG.info(new IllinoisExtendedEN().retrieve(FoxConst.NER_EN_EXAMPLE_1));
     }
 
-    public NERIllinoisExtended() {
+    public IllinoisExtendedEN() {
         try {
             Parameters.readConfigAndLoadExternalData(file, areWeTraining);
         } catch (Exception e) {

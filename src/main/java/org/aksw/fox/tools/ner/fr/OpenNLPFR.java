@@ -1,12 +1,11 @@
 package org.aksw.fox.tools.ner.fr;
 
-import org.aksw.fox.data.Entity;
-import org.aksw.fox.tools.ner.OpenNLPTool;
+import org.aksw.fox.tools.ner.common.OpenNLPCommon;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.log4j.PropertyConfigurator;
 
-public class NEROpenNLPFR extends OpenNLPTool {
+public class OpenNLPFR extends OpenNLPCommon {
 
     static final String[] modelPath =
                                     {
@@ -15,13 +14,12 @@ public class NEROpenNLPFR extends OpenNLPTool {
                                     "data/openNLP/fr-ner-person.bin"
                                     };
 
-    public NEROpenNLPFR() {
+    public OpenNLPFR() {
         super(modelPath);
     }
 
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-        for (Entity e : new NEROpenNLPFR().retrieve(FoxConst.NER_FR_EXAMPLE_1))
-            LOG.info(e);
+        LOG.info(new OpenNLPFR().retrieve(FoxConst.NER_FR_EXAMPLE_1));
     }
 }

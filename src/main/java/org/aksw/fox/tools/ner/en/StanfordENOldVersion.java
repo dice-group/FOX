@@ -34,9 +34,9 @@ import edu.stanford.nlp.util.Triple;
  * @author rspeck
  * 
  */
-public class NERStanford extends AbstractNER {
+public class StanfordENOldVersion extends AbstractNER {
 
-    public static final String         CFG_KEY_STANFORD_CLASSIFIER = NERStanford.class.getName().concat(".classifier");
+    public static final String         CFG_KEY_STANFORD_CLASSIFIER = StanfordENOldVersion.class.getName().concat(".classifier");
 
     protected CRFClassifier<CoreLabel> classifier                  = CRFClassifier.getClassifierNoExceptions(FoxCfg.get(CFG_KEY_STANFORD_CLASSIFIER));
 

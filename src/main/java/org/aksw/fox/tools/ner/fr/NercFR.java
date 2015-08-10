@@ -10,7 +10,7 @@ import opennlp.tools.util.Span;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
-import org.aksw.fox.tools.ner.OpenNLPTool;
+import org.aksw.fox.tools.ner.common.OpenNLPCommon;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.aksw.fox.utils.FoxTextUtil;
@@ -21,7 +21,7 @@ import org.vicomtech.opennlp.tools.namefind.TokenNameFinderModel;
 /**
  * NER tool using nerc-fr extention of Apache OpenNLP.
  */
-public class NERNercFR extends OpenNLPTool {
+public class NercFR extends OpenNLPCommon {
     protected TokenNameFinderModel[] tokenNameFinderModels;
 
     static final String[]            modelPath =
@@ -29,11 +29,11 @@ public class NERNercFR extends OpenNLPTool {
                                                "data/nerc-fr/nerc-fr.bin"
                                                };
 
-    public NERNercFR() {
+    public NercFR() {
         this(modelPath);
     }
 
-    public NERNercFR(String[] modelPath) {
+    public NercFR(String[] modelPath) {
         super(modelPath);
 
         entityClasses.put("location", EntityClassMap.L);
@@ -113,7 +113,6 @@ public class NERNercFR extends OpenNLPTool {
 
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-        for (Entity e : new NERNercFR().retrieve(FoxConst.NER_FR_EXAMPLE_1))
-            LOG.info(e);
+        LOG.info(new NercFR().retrieve(FoxConst.NER_FR_EXAMPLE_1));
     }
 }
