@@ -1,11 +1,11 @@
-package org.aksw.fox.uri;
+package org.aksw.fox.tools.ner.linking;
 
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import org.aksw.fox.data.Entity;
 
-public abstract class AbstractUriLookup implements ILookup {
+public abstract class AbstractLinking implements ILinking {
 
     protected Set<Entity>    entities = null;
     protected CountDownLatch cdl      = null;

@@ -1,4 +1,4 @@
-package org.aksw.fox.uri;
+package org.aksw.fox.tools.ner.linking;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,7 +24,7 @@ import com.hp.hpl.jena.query.ResultSet;
  * @author ngonga, rspeck
  * 
  */
-public class UriLookup extends AbstractUriLookup {
+public class DirectLinking extends AbstractLinking {
 
     public static double    SIM_THRESHOLD             = 0.9;
 
@@ -34,7 +34,7 @@ public class UriLookup extends AbstractUriLookup {
     protected static String dbpedia_aksw_solr         = "http://dbpedia.aksw.org:8080/solr/dbpedia_resources/select/?q=";
     protected static String dbpedia_aksw_solr_postUrl = "&version=2.2&indent=on&start=0&sort=score+desc,pagerank+desc&rows=";
 
-    public static Logger    logger                    = Logger.getLogger(UriLookup.class);
+    public static Logger    logger                    = Logger.getLogger(DirectLinking.class);
 
     @Override
     public void setUris(Set<Entity> entities, String input) {

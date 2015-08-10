@@ -1,4 +1,4 @@
-package org.aksw.fox.uri;
+package org.aksw.fox.tools.ner.linking;
 
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -20,11 +20,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-public class AGDISTISLookup extends AbstractUriLookup {
+public class Agdistis extends AbstractLinking {
 
-    public static final String CFG_KEY_AGDISTIS_ENDPOINT = AGDISTISLookup.class.getName().concat(".endpoint");
+    public static final String CFG_KEY_AGDISTIS_ENDPOINT = Agdistis.class.getName().concat(".endpoint");
 
-    public static final Logger LOG                       = LogManager.getLogger(AGDISTISLookup.class);
+    public static final Logger LOG                       = LogManager.getLogger(Agdistis.class);
 
     // maps AGDISTIS index to real index
     Map<Integer, Entity>       indexMap                  = new HashMap<>();
