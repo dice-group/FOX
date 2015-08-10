@@ -1,5 +1,6 @@
 package org.aksw.fox.nerlearner;
 
+import org.aksw.fox.data.exception.LoadingNotPossibleException;
 import org.aksw.fox.nerlearner.classifier.ClassVoteClassifier;
 import org.aksw.fox.nerlearner.classifier.FoxVote;
 import org.aksw.fox.nerlearner.classifier.ResultVoteClassifier;
@@ -56,6 +57,8 @@ public class FoxClassifierFactory {
 
     /**
      * Sets MultilayerPerceptron as classifier.
+     * 
+     * @throws LoadingNotPossibleException
      */
     // public static Classifier getClassifierMultilayerPerceptron() {
     // MultilayerPerceptron multilayerPerceptron = new MultilayerPerceptron();
@@ -69,7 +72,7 @@ public class FoxClassifierFactory {
     // return multilayerPerceptron;
     // }
 
-    public static Classifier get(String wekaClassifier, String quotedOptionString) {
+    public static Classifier get(String wekaClassifier, String quotedOptionString) throws LoadingNotPossibleException {
         String[] options = null;
         if (quotedOptionString != null) {
             try {
