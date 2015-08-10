@@ -75,27 +75,6 @@ public class EntityClassMap {
     }
 
     /**
-     * Gets the entity class for a spotlight entity type/class.
-     */
-    public static String spotlight(String spotlightTag) {
-        if (spotlightTag == null)
-            return getNullCategory();
-        // The spotlightTag can hold multiple types at the same time.
-        String t = null;
-        if (spotlightTag.toLowerCase().contains("person")) {
-            t = P;
-        } else if (spotlightTag.toLowerCase().contains("organisation")) {
-            t = O;
-        } else if (spotlightTag.toLowerCase().contains("place")) {
-            t = L;
-        }
-
-        if (t == null)
-            t = getNullCategory();
-        return t;
-    }
-
-    /**
      * Gets the null type/class.
      */
     public static String getNullCategory() {
