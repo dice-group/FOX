@@ -39,6 +39,12 @@ public class WikinerReader implements INERReader {
 
     }
 
+    /**
+     * Constructor for loading class.
+     */
+    public WikinerReader() {
+    }
+
     public WikinerReader(String[] inputPaths) throws IOException {
         initFiles(inputPaths);
     }
