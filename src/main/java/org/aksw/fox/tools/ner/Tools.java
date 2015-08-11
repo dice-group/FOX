@@ -47,6 +47,7 @@ public class Tools {
     protected FoxClassifier            foxClassifier    = new FoxClassifier();
 
     private boolean                    doTraining       = false;
+    private String                     lang;
 
     /**
      * Initializes {@link #tools} and fills {@link #toolResults} with the tool
@@ -54,9 +55,10 @@ public class Tools {
      * 
      * @throws LoadingNotPossibleException
      */
-    public Tools(List<String> toolsList) throws LoadingNotPossibleException {
+    public Tools(List<String> toolsList, String lang) throws LoadingNotPossibleException {
         LOG.info(Tools.class.getName().concat(" ..."));
         LOG.info("tools list" + toolsList);
+        this.lang = lang;
 
         // init tools
         if (toolsList != null && !toolsList.isEmpty())
@@ -129,7 +131,7 @@ public class Tools {
         }
 
         if (!doTraining) {
-            foxClassifier.readClassifier();
+            foxClassifier.readClassifier(lang);
             // post
             IPostProcessing pp = new PostProcessing(new TokenManager(input), toolResults);
             // cleaned tool results

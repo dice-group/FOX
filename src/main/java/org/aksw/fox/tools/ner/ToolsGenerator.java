@@ -73,7 +73,7 @@ public class ToolsGenerator {
      */
     public Tools getNERTools(String lang) throws UnsupportedLangException, LoadingNotPossibleException {
         if (usedLang.contains(lang) && nerTools.get(lang) != null && !nerTools.get(lang).isEmpty()) {
-            Tools tools = new Tools(nerTools.get(lang));
+            Tools tools = new Tools(nerTools.get(lang), lang);
             return tools;
         } else
             throw new UnsupportedLangException("Language " + lang + " is not supported.");
