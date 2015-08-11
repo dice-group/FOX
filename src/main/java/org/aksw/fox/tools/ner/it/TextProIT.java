@@ -8,26 +8,36 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
+import org.aksw.fox.utils.CfgManager;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.PropertyConfigurator;
 
 public class TextProIT extends AbstractNER {
 
-    public static final String               CFG_KEY_TEXTPRO_PATH = TextProIT.class.getName().concat(".path");
-    private static final String              TEXTPRO_PATH         = FoxCfg.get(CFG_KEY_TEXTPRO_PATH);
+    public static final XMLConfiguration    CFG                  = CfgManager.getCfg(TextProIT.class);
+    public static final Charset             UTF_8                = Charset.forName("UTF-8");
 
-    private static final Map<String, String> ENTITY_MAP           = new HashMap<>();
+    public static final String              CFG_KEY_TEXTPRO_PATH = "textPro.path";
+    public static final String              CFG_KEY_TMP_FOLDER   = "textPro.tmpFolder";
+
+    public static final String              TEXTPRO_PATH         = CFG.getString(CFG_KEY_TEXTPRO_PATH);
+    public static final String              TMP_FOLDER           = CFG.getString(CFG_KEY_TMP_FOLDER);
+
+    public static final Map<String, String> ENTITY_MAP           = new HashMap<>();
     static {
         ENTITY_MAP.put("ORG", EntityClassMap.O);
         ENTITY_MAP.put("LOC", EntityClassMap.L);
@@ -35,53 +45,72 @@ public class TextProIT extends AbstractNER {
         ENTITY_MAP.put("GPE", EntityClassMap.L);
     };
 
+    /**
+     * 
+     */
     @Override
     public List<Entity> retrieve(String input) {
-        LOG.info("writing input to temporary file");
-
-        Writer writer = null;
         LOG.info(input);
+        String file = TMP_FOLDER + File.separator + "input" + UUID.randomUUID().toString() + ".tmp";
+        writeInputFile(input, file);
+        runTextPro(file);
+        String answer = readResultFile(file);
+        // removeFiles(file);
+        return createEntities(answer);
+    }
+
+    /**
+     * 
+     * @param input
+     * @param filename
+     */
+    protected void writeInputFile(String input, String filename) {
+        Writer writer = null;
         try {
-            writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(TEXTPRO_PATH + "/FoxInput.tmp"), "utf-8"));
+            writer = new BufferedWriter(
+                    new OutputStreamWriter(
+                            new FileOutputStream(filename),
+                            UTF_8.name()));
             writer.write(input);
 
         } catch (IOException e) {
             LOG.error(e.getLocalizedMessage(), e);
-        } finally
-        {
+        } finally {
             try {
                 writer.close();
             } catch (Exception e) {
                 LOG.error(e.getLocalizedMessage(), e);
             }
         }
+    }
 
-        LOG.info("executing command prompt request");
-
+    /**
+     * 
+     * @param filename
+     */
+    protected void runTextPro(String filename) {
         Process p = null;
         try {
             p = Runtime.getRuntime().exec(
                     TEXTPRO_PATH
                             + "/./textpro.sh -l ita -c token+entity -o"
-                            + TEXTPRO_PATH + " "
-                            + TEXTPRO_PATH + "/FoxInput.tmp");
-
-        } catch (IOException e) {
-            LOG.error(e.getLocalizedMessage());
-        }
-        try {
+                            + TMP_FOLDER + " "
+                            + filename);
             int exitVal = p.waitFor();
-        } catch (InterruptedException e) {
-            LOG.error(e.getLocalizedMessage());
+        } catch (IOException | InterruptedException e) {
+            LOG.error(e.getLocalizedMessage(), e);
         }
+    }
 
-        LOG.info("reading request answer output");
-
+    /**
+     * 
+     * @param file
+     * @return
+     */
+    protected String readResultFile(String file) {
         String answer = null;
         try {
-            File file = new File(TEXTPRO_PATH + "/FoxInput.tmp.txp");
-            FileReader fileReader = new FileReader(file);
+            FileReader fileReader = new FileReader(new File(file + ".txp"));
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             StringBuffer stringBuffer = new StringBuffer();
             String line;
@@ -94,8 +123,7 @@ public class TextProIT extends AbstractNER {
                 Matcher m_entity = p_entity.matcher(line);
                 Matcher m_entity_start = p_entity_start.matcher(line);
 
-                if (!line.startsWith("#") && m_entity.matches())
-                {
+                if (!line.startsWith("#") && m_entity.matches()) {
                     if (m_entity_start.matches())
                         entity_ID++;
 
@@ -110,39 +138,40 @@ public class TextProIT extends AbstractNER {
         } catch (IOException e) {
             LOG.error(e.getLocalizedMessage());
         }
+        LOG.debug(answer);
+        return answer;
+    }
 
-        LOG.info("deleting temporary files");
+    /**
+     * 
+     * @param file
+     */
+    protected void removeFiles(String file) {
+        new File(file).delete();
+        new File(file + ".txp").delete();
+    }
 
-        try {
-            p = Runtime.getRuntime().exec(
-                    "rm " + TEXTPRO_PATH + "/tmp/FoxInput.tmp  && " +
-                            "rm " + TEXTPRO_PATH + "/tmp/FoxInput.tmp.txp");
+    /**
+     * 
+     * @param answer
+     * @return
+     */
+    protected List<Entity> createEntities(String answer) {
+        entityList = new ArrayList<Entity>();
 
-            int exitVal = p.waitFor();
-        } catch (Exception e) {
-            LOG.error(e.getLocalizedMessage());
-        }
-
-        LOG.info("creating entity list");
-
-        List<Entity> entity_list = new ArrayList<Entity>();
-        Integer mode = 0;
-        Integer current_entity_ID = 0;
+        int mode = 0;
+        int current_entity_ID = 0;
         String current_entity_type = "";
         String current_entity = "";
-        Boolean is_part = false;
+        boolean is_part = false;
 
-        for (String retval : answer.split("(\t|\n)"))
-        {
-            switch (mode)
-            {
+        for (String retval : answer.split("(\t|\n)")) {
+            switch (mode) {
             case 0:
-                if (Integer.parseInt(retval) == current_entity_ID)
-                {
+                if (Integer.parseInt(retval) == current_entity_ID) {
                     is_part = true;
                 }
-                else
-                {
+                else {
                     is_part = false;
                     current_entity_ID = Integer.parseInt(retval);
                 }
@@ -152,9 +181,8 @@ public class TextProIT extends AbstractNER {
                 if (is_part) {
                     current_entity += " " + retval;
                 }
-                else
-                {
-                    entity_list.add(new Entity(current_entity,
+                else {
+                    entityList.add(new Entity(current_entity,
                             current_entity_type,
                             1,
                             getToolName()));
@@ -170,12 +198,13 @@ public class TextProIT extends AbstractNER {
             mode = (mode + 1) % 3;
         }
 
-        entity_list.add(new Entity(current_entity,
+        entityList.add(new Entity(current_entity,
                 current_entity_type,
                 1,
                 getToolName()));
-        entity_list.remove(0);
-        return entity_list;
+
+        entityList.remove(0);
+        return entityList;
     }
 
     public static void main(String[] a) throws IOException {
