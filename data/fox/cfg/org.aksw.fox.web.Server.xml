@@ -1,1 +1,21 @@
- 
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <server>
+        <poolSize 
+            de="1" 
+            en="2" 
+            es="1" 
+            fr="1" 
+            it="1" 
+            nl="1"
+            >
+        </poolSize>
+        <listenerName>FoxNetworkListener</listenerName>
+        <port>4444</port>
+        <host>0.0.0.0</host>
+        <demo>true</demo>
+        <api>true</api>
+        <feedback>true</feedback>
+        <staticFileCache>true</staticFileCache>
+    </server>
+</config>
