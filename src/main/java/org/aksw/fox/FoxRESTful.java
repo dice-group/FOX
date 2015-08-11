@@ -1,12 +1,11 @@
 package org.aksw.fox;
 
-import gnu.getopt.Getopt;
-
 import java.lang.reflect.InvocationTargetException;
 
+import org.aksw.fox.data.exception.LoadingNotPossibleException;
 import org.aksw.fox.data.exception.PortInUseException;
+import org.aksw.fox.data.exception.UnsupportedLangException;
 import org.aksw.fox.utils.FoxCfg;
-import org.aksw.fox.utils.FoxServerUtil;
 import org.aksw.fox.web.Server;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -40,11 +39,15 @@ public class FoxRESTful {
      * @throws IllegalArgumentException
      * @throws NumberFormatException
      * @throws PortInUseException
+     * @throws UnsupportedLangException
+     * @throws LoadingNotPossibleException
      */
     public static void main(String[] args)
             throws NumberFormatException, IllegalArgumentException,
-            InvocationTargetException, NoSuchMethodException, SecurityException, PortInUseException {
+            InvocationTargetException, NoSuchMethodException, SecurityException,
+            PortInUseException, LoadingNotPossibleException, UnsupportedLangException {
 
+        /*
         final Getopt getopt = new Getopt("Fox", args, "p:x");
 
         int arg, port = 8080;
@@ -54,11 +57,8 @@ public class FoxRESTful {
                 port = Integer.valueOf(getopt.getOptarg());
             }
         }
-
-        if (!FoxServerUtil.isPortAvailable(port))
-            throw new PortInUseException(port);
-
+        */
         if (FoxCfg.loadFile(FoxCfg.CFG_FILE))
-            new Server(port).start();
+            new Server().start();
     }
 }

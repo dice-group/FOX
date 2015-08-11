@@ -205,7 +205,7 @@ public class FoxCLI {
         try {
             foxClassifier.training(input, foxNERTools.getToolResult(), oracle);
             String file = FoxCfg.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator + FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER).trim();
-            foxClassifier.writeClassifier(file);
+            foxClassifier.writeClassifier(file, lang);
             foxClassifier.eva();
         } catch (Exception e) {
             e.printStackTrace();
