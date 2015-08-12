@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <tagMe>
+    <key>yourkeyhere</key>
+    <sparqlEndpoint>http://dbpedia.org/sparql</sparqlEndpoint>
+    <rdfsPrefix>http://www.w3.org/2000/01/rdf-schema#</rdfsPrefix>
+    <rdfPrefix>http://www.w3.org/1999/02/22-rdf-syntax-ns#</rdfPrefix>
+    <minWeight>0.1</minWeight>
+    <url>http://tagme.di.unipi.it/tag</url>
+    <lang>it</lang>
+    </tagMe>
+</config>

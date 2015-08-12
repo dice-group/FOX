@@ -15,14 +15,17 @@ import java.util.concurrent.TimeUnit;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.data.TokenManager;
-import org.aksw.fox.tools.ner.FoxNERTools;
+import org.aksw.fox.data.exception.LoadingNotPossibleException;
+import org.aksw.fox.data.exception.UnsupportedLangException;
 import org.aksw.fox.tools.ner.INER;
-import org.aksw.fox.tools.ner.en.NERStanford;
+import org.aksw.fox.tools.ner.Tools;
+import org.aksw.fox.tools.ner.ToolsGenerator;
+import org.aksw.fox.tools.ner.en.StanfordENOldVersion;
+import org.aksw.fox.tools.ner.linking.ILinking;
+import org.aksw.fox.tools.ner.linking.NoLinking;
+import org.aksw.fox.tools.ner.linking.en.AgdistisEN;
 import org.aksw.fox.tools.re.FoxRETools;
 import org.aksw.fox.tools.re.IRE;
-import org.aksw.fox.uri.AGDISTISLookup;
-import org.aksw.fox.uri.ILookup;
-import org.aksw.fox.uri.NullLookup;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.aksw.fox.utils.FoxJena;
@@ -41,20 +44,25 @@ import org.jetlang.fibers.ThreadFiber;
  * 
  */
 public class Fox implements IFox {
+
     public static final String  CFG_KEY_URI_LOOKUP        = Fox.class.getName().concat(".urilookup");
     public static final String  CFG_KEY_DEFAULT_LIGHT_NER = Fox.class.getName().concat(".defaultLightNER");
+    public static final String  CFG_KEY_LANG              = Fox.class.getName().concat(".lang");
 
     public static final Logger  LOG                       = LogManager.getLogger(Fox.class);
 
-    /**
-     * 
-     */
-    protected ILookup           uriLookup                 = null;
+    private String              lang;
 
     /**
      * 
      */
-    protected FoxNERTools       nerTools                  = null;
+    protected ILinking          uriLookup                 = null;
+
+    /**
+     * 
+     */
+    protected ToolsGenerator    toolsGenerator            = null;
+    protected Tools             nerTools                  = null;
     protected FoxRETools        reTools                   = null;
 
     /**
@@ -81,22 +89,19 @@ public class Fox implements IFox {
     private Map<String, String> parameter                 = null;
     private String              response                  = null;
 
+    @SuppressWarnings("unused")
+    private Fox() {
+    }
+
     /**
+     * @throws UnsupportedLangException
+     * @throws LoadingNotPossibleException
      * 
      */
-    public Fox() {
-        // load class in fox.properties file
-        if (FoxCfg.get(CFG_KEY_URI_LOOKUP) != null)
-            try {
-                uriLookup = (ILookup) FoxCfg.getClass(FoxCfg.get(CFG_KEY_URI_LOOKUP).trim());
-            } catch (Exception e) {
-                LOG.error("InterfaceURI not found. Check your " + FoxCfg.CFG_FILE + " file and the " + CFG_KEY_URI_LOOKUP + " key.");
-            }
-
-        if (uriLookup == null)
-            uriLookup = new AGDISTISLookup();
-
-        nerTools = new FoxNERTools();
+    public Fox(String lang) throws UnsupportedLangException, LoadingNotPossibleException {
+        toolsGenerator = new ToolsGenerator();
+        uriLookup = toolsGenerator.getDisambiguationTool(lang);
+        nerTools = toolsGenerator.getNERTools(lang);
         reTools = new FoxRETools();
     }
 
@@ -104,11 +109,13 @@ public class Fox implements IFox {
      * 
      * @param uriLookup
      * @param nerLight
+     * @throws UnsupportedLangException
      */
-    public Fox(ILookup uriLookup, INER nerLight) {
+    public Fox(ILinking uriLookup, INER nerLight, String lang) throws UnsupportedLangException, LoadingNotPossibleException {
+        toolsGenerator = new ToolsGenerator();
         this.uriLookup = uriLookup;
         this.nerLight = nerLight;
-        this.nerTools = new FoxNERTools();
+        this.nerTools = toolsGenerator.getNERTools(lang);
     }
 
     /**
@@ -139,7 +146,7 @@ public class Fox implements IFox {
                 }
 
             if (nerLight == null)
-                nerLight = new NERStanford();
+                nerLight = new StanfordENOldVersion();
 
         }
     }
@@ -187,7 +194,7 @@ public class Fox implements IFox {
         fiber.start();
         fiber.execute(reTool);
 
-        int min = Integer.parseInt(FoxCfg.get(FoxNERTools.NERLIFETIME_KEY));
+        int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
         try {
             latch.await(min, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
@@ -235,7 +242,7 @@ public class Fox implements IFox {
         fiber.start();
         fiber.execute(nerLight);
 
-        int min = Integer.parseInt(FoxCfg.get(FoxNERTools.NERLIFETIME_KEY));
+        int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
         try {
             latch.await(min, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
@@ -315,7 +322,7 @@ public class Fox implements IFox {
             fiber.execute(uriLookup);
 
             // use another time for the uri lookup?
-            int min = Integer.parseInt(FoxCfg.get(FoxNERTools.NERLIFETIME_KEY));
+            int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
             try {
                 latch.await(min, TimeUnit.MINUTES);
             } catch (InterruptedException e) {
@@ -336,7 +343,7 @@ public class Fox implements IFox {
                 foxWebLog.setMessage(s);
 
                 // use dev lookup after timeout
-                new NullLookup().setUris(entities, parameter.get(FoxCfg.parameter_input));
+                new NoLinking().setUris(entities, parameter.get(FoxCfg.parameter_input));
             }
 
             // for (Entity e : entities)
@@ -520,13 +527,12 @@ public class Fox implements IFox {
                 paraUriLookup = "org.aksw.fox.uri.NullLookup";
 
             try {
-                uriLookup = (ILookup) FoxCfg.getClass(paraUriLookup.trim());
+                uriLookup = (ILinking) FoxCfg.getClass(paraUriLookup.trim());
             } catch (Exception e) {
                 LOG.error("InterfaceURI not found. Check parameter: " + FoxCfg.parameter_disamb);
             }
         } else {
-            // TODO: clean code
-            uriLookup = new AGDISTISLookup();
+            uriLookup = new AgdistisEN();
         }
     }
 
@@ -550,5 +556,10 @@ public class Fox implements IFox {
     @Override
     public String getLog() {
         return foxWebLog.getConsoleOutput();
+    }
+
+    @Override
+    public String getLang() {
+        return lang;
     }
 }

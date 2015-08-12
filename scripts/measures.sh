@@ -1,3 +1,4 @@
+That script needs an update
 #!/bin/sh
 #
 # That script helps you to calculate the measures. 

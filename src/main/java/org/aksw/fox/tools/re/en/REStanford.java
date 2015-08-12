@@ -12,6 +12,7 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.Relation;
+import org.aksw.fox.tools.ner.en.StanfordENOldVersion;
 import org.aksw.fox.tools.re.AbstractRE;
 import org.aksw.fox.utils.Converter;
 import org.aksw.fox.utils.FoxCfg;
@@ -156,24 +157,24 @@ public class REStanford extends AbstractRE {
 
                 switch (stanfordRelation) {
                 case Live_In:
-                    if (EntityClassMap.P.equals(EntityClassMap.stanford(emOne.getType())) &&
-                            EntityClassMap.L.equals(EntityClassMap.stanford(emTwo.getType())))
+                    if (EntityClassMap.P.equals(StanfordENOldVersion.stanford(emOne.getType())) &&
+                            EntityClassMap.L.equals(StanfordENOldVersion.stanford(emTwo.getType())))
                         valid = true;
                     break;
 
                 case Work_For:
-                    if (EntityClassMap.P.equals(EntityClassMap.stanford(emOne.getType())) &&
-                            EntityClassMap.O.equals(EntityClassMap.stanford(emTwo.getType())))
+                    if (EntityClassMap.P.equals(StanfordENOldVersion.stanford(emOne.getType())) &&
+                            EntityClassMap.O.equals(StanfordENOldVersion.stanford(emTwo.getType())))
                         valid = true;
                     break;
                 case OrgBased_In:
-                    if (EntityClassMap.O.equals(EntityClassMap.stanford(emOne.getType())) &&
-                            EntityClassMap.L.equals(EntityClassMap.stanford(emTwo.getType())))
+                    if (EntityClassMap.O.equals(StanfordENOldVersion.stanford(emOne.getType())) &&
+                            EntityClassMap.L.equals(StanfordENOldVersion.stanford(emTwo.getType())))
                         valid = true;
                     break;
                 case Located_In:
-                    if (EntityClassMap.L.equals(EntityClassMap.stanford(emOne.getType())) &&
-                            EntityClassMap.L.equals(EntityClassMap.stanford(emTwo.getType())))
+                    if (EntityClassMap.L.equals(StanfordENOldVersion.stanford(emOne.getType())) &&
+                            EntityClassMap.L.equals(StanfordENOldVersion.stanford(emTwo.getType())))
                         valid = true;
                     break;
                 default: {
@@ -230,8 +231,8 @@ public class REStanford extends AbstractRE {
                         EntityMention emOne = entities.get(0);
                         EntityMention emTwo = entities.get(1);
 
-                        Entity a = new Entity(emOne.getExtentString(), EntityClassMap.stanford(emOne.getType()), Entity.DEFAULT_RELEVANCE, getToolName());
-                        Entity b = new Entity(emTwo.getExtentString(), EntityClassMap.stanford(emTwo.getType()), Entity.DEFAULT_RELEVANCE, getToolName());
+                        Entity a = new Entity(emOne.getExtentString(), StanfordENOldVersion.stanford(emOne.getType()), Entity.DEFAULT_RELEVANCE, getToolName());
+                        Entity b = new Entity(emTwo.getExtentString(), StanfordENOldVersion.stanford(emTwo.getType()), Entity.DEFAULT_RELEVANCE, getToolName());
 
                         /*
                         for (Class classs : emOne.getSentence().keySet()) {

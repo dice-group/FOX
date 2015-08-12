@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <textPro>
+        <path>externTools/TextPro2.0</path>
+        <tmpFolder>externTools/TextPro2.0/tmp</tmpFolder>
+    </textPro>
+</config>

@@ -1,15 +1,23 @@
 package org.aksw.fox.web;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.json.stream.JsonGenerator;
 import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.aksw.fox.Fox;
 import org.aksw.fox.IFox;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.data.exception.LoadingNotPossibleException;
+import org.aksw.fox.data.exception.PortInUseException;
+import org.aksw.fox.data.exception.UnsupportedLangException;
+import org.aksw.fox.tools.ner.ToolsGenerator;
+import org.aksw.fox.utils.CfgManager;
 import org.aksw.fox.utils.FoxServerUtil;
 import org.aksw.fox.web.feedback.FeedbackHttpHandler;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -25,66 +33,79 @@ import org.glassfish.jersey.server.ResourceConfig;
  * 
  */
 public class Server {
+    public final static Logger            LOG                      = LogManager.getLogger(Server.class);
+    public static final XMLConfiguration  CFG                      = CfgManager.getCfg(Server.class);
 
-    public static final String  CFG_KEY_POOL_SIZE    = Server.class.getName().concat(".poolsize");
+    public static Map<String, Pool<IFox>> pool                     = null;
 
-    // TODO
-    public static Pool<IFox>    pool                 = null;
+    public static final String            CFG_KEY_POOL_SIZE        = "server.poolSize";
+    public final static String            KEY_DEMO                 = "server.demo";
+    public final static String            KEY_API                  = "server.api";
+    public final static String            KEY_FEEDBACK             = "server.feedback";
+    public final static String            KEY_CACHE                = "server.staticFileCache";
+    public final static String            KEY_LISTENER_NAME        = "server.listenerName";
+    public final static String            KEY_PORT                 = "server.port";
+    public final static String            KEY_DEFAULT_NETWORK_HOST = "server.host";
 
-    public final static Logger  LOG                  = LogManager.getLogger(Server.class);
+    protected HttpServer                  server                   = null;
+    public static boolean                 running                  = false;
 
-    /* Cfg file key. */
-    public final static String  DEMO_HANDLER_KEY     = Server.class.getName().concat(".demo_handler");
-    /* Cfg file key. */
-    public final static String  API_HANDLER_KEY      = Server.class.getName().concat(".api_handler");
-    /* Cfg file key. */
-    public final static String  FEEDBACK_HANDLER_KEY = Server.class.getName().concat(".feedback_handler");
-    /* Cfg file key. */
-    public final static String  STATIC_CACHE         = Server.class.getName().concat(".static_file_cache_on");
-
-    protected HttpServer        server               = null;
-
-    private final static String LISTENER_NAME        = "FoxNetworkListener";
-
-    public static boolean       running              = false;
-    public String               host                 = null;
-    public int                  port                 = -1;
-
-    /**
-     * Create Jersey server-side application resource configuration.
-     * 
-     * @return Jersey server-side application configuration.
-     */
-    public static ResourceConfig createApiResourceConfig() {
-        return new ResourceConfig()
-                .registerClasses(ApiResource.class)
-                .register(JsonProcessingFeature.class)
-                .packages("org.glassfish.jersey.examples.jsonp")
-                .property(JsonGenerator.PRETTY_PRINTING, true);
-    }
+    public int                            port                     = CFG.getInt(KEY_PORT);
+    public String                         host                     = CFG.getString(KEY_DEFAULT_NETWORK_HOST);
 
     /**
      * 
      * @param port
      *            the servers port
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws NumberFormatException
+     * @throws PortInUseException
      */
-    public Server(int port) {
-        this(port, Integer.parseInt(FoxCfg.get(CFG_KEY_POOL_SIZE)));
+    public Server()
+            throws LoadingNotPossibleException, UnsupportedLangException,
+            NumberFormatException, IllegalArgumentException, InvocationTargetException,
+            NoSuchMethodException, SecurityException, PortInUseException {
+
+        int port = CFG.getInt(KEY_PORT);
+        if (!FoxServerUtil.isPortAvailable(port))
+            throw new PortInUseException(port);
+
+        initPools();
+        init();
     }
 
-    /**
-     * 
-     * @param port
-     *            the servers port
-     * @param poolsize
-     *            the amount of fox instances
-     */
-    public Server(int port, int poolsize) {
-        pool = new Pool<IFox>(Fox.class.getName(), poolsize); // TODO
+    protected void initPools()
+            throws UnsupportedLangException, LoadingNotPossibleException,
+            IllegalArgumentException, InvocationTargetException,
+            NoSuchMethodException, SecurityException {
+        pool = new HashMap<>();
+        for (String lang : ToolsGenerator.usedLang) {
+            int poolsize = CFG.getInt(CFG_KEY_POOL_SIZE.concat("[@").concat(lang).concat("]"));
+            if (poolsize < 1) {
+                LOG.error("Could not find pool size for the given lang" + lang + ". We use a poolsize of 1.");
+                poolsize = 1;
+            }
+            pool.put(
+                    lang,
+                    new Pool<IFox>(Fox.class.getName(), lang, poolsize));
+        }
+    }
+
+    protected void init()
+            throws IllegalArgumentException, InvocationTargetException,
+            NoSuchMethodException, SecurityException {
 
         server = new HttpServer();
         server.getServerConfiguration().setDefaultErrorPageGenerator(new ErrorPages());
-        server.addListener(new NetworkListener(LISTENER_NAME, NetworkListener.DEFAULT_NETWORK_HOST, port));
+        server.addListener(
+                new NetworkListener(
+                        CFG.getString(KEY_LISTENER_NAME),
+                        CFG.getString(KEY_DEFAULT_NETWORK_HOST),
+                        CFG.getInt(KEY_PORT)
+                ));
 
         server.getServerConfiguration().addHttpHandler(
                 RuntimeDelegate.getInstance().createEndpoint(createApiResourceConfig(), GrizzlyHttpContainer.class),
@@ -101,14 +122,14 @@ public class Server {
         }
 
         // demoHttpHandler
-        state = FoxCfg.get(DEMO_HANDLER_KEY);
+        state = CFG.getString(KEY_DEMO);
         if (state != null && state.equalsIgnoreCase("true")) {
             LOG.info("Adds demo handler ...");
             StaticHttpHandler shl = new StaticHttpHandler("demo");
 
             boolean on = false;
             try {
-                on = Boolean.valueOf(FoxCfg.get(STATIC_CACHE));
+                on = CFG.getBoolean(KEY_CACHE);
             } catch (Exception e) {
                 on = false;
             }
@@ -117,7 +138,7 @@ public class Server {
         }
 
         // apiHttpHandler
-        state = FoxCfg.get(API_HANDLER_KEY);
+        state = CFG.getString(KEY_API);
         if (state != null && state.equalsIgnoreCase("true")) {
             LOG.info("Adds api handler ...");
             FoxHttpHandler foxhttp = new FoxHttpHandler();
@@ -127,7 +148,7 @@ public class Server {
         }
 
         // feedbackHttpHandler
-        state = FoxCfg.get(FEEDBACK_HANDLER_KEY);
+        state = CFG.getString(KEY_FEEDBACK);
         if (state != null && state.equalsIgnoreCase("true")) {
             LOG.info("Adds feedback handler ...");
             FeedbackHttpHandler fb = new FeedbackHttpHandler();
@@ -145,9 +166,8 @@ public class Server {
      * Starts the server and write a shut down file.
      */
     public boolean start() {
-
-        port = server.getListener(LISTENER_NAME).getPort();
-        host = server.getListener(LISTENER_NAME).getHost();
+        String host = server.getListener(CFG.getString(KEY_LISTENER_NAME)).getHost();
+        int port = server.getListener(CFG.getString(KEY_LISTENER_NAME)).getPort();
 
         try {
             server.start();
@@ -177,7 +197,7 @@ public class Server {
             try {
                 Thread.currentThread().join();
             } catch (Exception e) {
-                LOG.error("\n", e);
+                LOG.error(e.getLocalizedMessage(), e);
             } finally {
                 server.shutdownNow();
             }
@@ -187,5 +207,18 @@ public class Server {
 
     public void stop() {
         server.shutdownNow();
+    }
+
+    /**
+     * Create Jersey server-side application resource configuration.
+     * 
+     * @return Jersey server-side application configuration.
+     */
+    public static ResourceConfig createApiResourceConfig() {
+        return new ResourceConfig()
+                .registerClasses(ApiResource.class)
+                .register(JsonProcessingFeature.class)
+                .packages("org.glassfish.jersey.examples.jsonp")
+                .property(JsonGenerator.PRETTY_PRINTING, true);
     }
 }

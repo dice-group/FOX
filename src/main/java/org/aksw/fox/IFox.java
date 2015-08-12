@@ -42,6 +42,13 @@ public interface IFox extends Runnable {
     public String getResults();
 
     /**
+     * Returns lang.
+     * 
+     * @return lang
+     */
+    public String getLang();
+
+    /**
      * Returns log messages.
      * 
      * @return log

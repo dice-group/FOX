@@ -28,8 +28,7 @@ public class WikinerReader implements INERReader {
         String[] files = new String[1];
         files[0] = "input/Wikiner/aij-wikiner-de-wp2.bz2";
 
-        WikinerReader r = new WikinerReader();
-        r.initFiles(files);
+        WikinerReader r = new WikinerReader(files);
         LOG.info(r.getEntities().size());
         /*
         for (Entry<?, ?> e : r.getEntities().entrySet()) {
@@ -40,6 +39,9 @@ public class WikinerReader implements INERReader {
 
     }
 
+    /**
+     * Constructor for loading class.
+     */
     public WikinerReader() {
     }
 
@@ -167,22 +169,10 @@ public class WikinerReader implements INERReader {
                 inputLine = new StringBuilder();
                 sentenceCount++;
             }
-
         }
         // removes disambs
         for (Entry<String, List<SimpleEntry<String, Integer>>> entry : disambEntities.entrySet())
             entities.remove(entry.getKey());
-
-        // TODO
-        // adds most often occurrence
-        /*
-        for (Entry<String, List<SimpleEntry<String, Integer>>> entry : disambEntities.entrySet()) {
-            LOG.info(entry.getKey() + " : ");
-            for (SimpleEntry<String, Integer> value : entry.getValue()) {
-                LOG.info(value.getKey() + " : " + value.getValue());
-            }
-        }
-        */
     }
 
     @Override

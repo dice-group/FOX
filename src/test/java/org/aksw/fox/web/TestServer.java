@@ -1,6 +1,7 @@
 package org.aksw.fox.web;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -8,7 +9,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.data.exception.LoadingNotPossibleException;
+import org.aksw.fox.data.exception.PortInUseException;
+import org.aksw.fox.data.exception.UnsupportedLangException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
@@ -19,7 +22,6 @@ public class TestServer {
     public final static Logger LOG         = LogManager.getLogger(TestServer.class);
 
     private Server             server      = null;
-    private int                port        = 4444;
 
     long                       waitingTime = 5 * 60 * 1000;                         // ms
 
@@ -27,14 +29,27 @@ public class TestServer {
     public void serverTest() {
 
         // fox.properties need to be available
-        Assert.assertTrue(FoxCfg.loadFile("fox.properties-dist"));
-        Assert.assertNotNull(FoxCfg.get(Server.CFG_KEY_POOL_SIZE));
+        // Assert.assertTrue(FoxCfg.loadFile("fox.properties-dist"));
+        // Assert.assertNotNull(FoxCfg.get(Server.CFG_KEY_POOL_SIZE));
 
         // start server
         long startTime = System.currentTimeMillis();
         new Thread(new Runnable() {
             public void run() {
-                server = new Server(port, 1);
+                try {
+                    server = new Server();
+                } catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                    LOG.error(e.getLocalizedMessage(), e);
+                } catch (LoadingNotPossibleException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (UnsupportedLangException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (PortInUseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 Assert.assertTrue(server.start());
             }
         }).start();
@@ -73,7 +88,8 @@ public class TestServer {
         urls.put(path, 200);
         urls.put(path + "/demo/index.html", 200);
         urls.put(path + "/public/img/errors.png", 200);
-        /* TODO
+
+        /* TODO: endpoint paths
         urls.put(path + "/call/ner/entities", 405);
         urls.put(path + "/call/ner/entities/", 405);
         urls.put(path + "/api", 405);

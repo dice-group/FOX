@@ -1,7 +1,6 @@
 package org.aksw.fox.nerlearner;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,9 +45,8 @@ public class FoxClassifier {
      * FoxClassifier.
      */
     public FoxClassifier() {
-        LOG.info("FoxClassifier ...");
-
-        this.foxInstances = new FoxInstances();
+        LOG.info(FoxClassifier.class + " ...");
+        foxInstances = new FoxInstances();
     }
 
     /**
@@ -86,48 +84,31 @@ public class FoxClassifier {
      * @param classifier
      * @param file
      */
-    public void writeClassifier(String file) {
+    public void writeClassifier(String file, String lang) {
         LOG.info("writeClassifier ...");
 
-        String path = FilenameUtils.getPath(file);
+        String path = FilenameUtils.getPath(file + File.separator + lang);
         try {
             FileUtils.forceMkdir(new File(path));
-        } catch (IOException e) {
-            LOG.error("\n", e);
-        }
-
-        try {
             SerializationHelper.write(file, classifier);
         } catch (Exception e) {
-            LOG.error("\n", e);
+            LOG.error(e.getLocalizedMessage(), e);
         }
-    }
-
-    /**
-     * Reads a serialized MultilayerPerceptron.
-     * 
-     * @param filename
-     *            path to model
-     */
-    public void readClassifier(String filename) {
-        LOG.info("readClassifier ...");
-
-        try {
-            classifier = (Classifier) SerializationHelper.read(filename);
-        } catch (Exception e) {
-            LOG.error("\n", e);
-        }
-        LOG.info("readClassifier done.");
     }
 
     /**
      * Reads a serialized Classifier from file that is specified in the fox
      * properties.
      */
-    public void readClassifier() {
-        String name = FoxCfg.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator + FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER);
-        LOG.debug(name);
-        readClassifier(name.trim());
+    public void readClassifier(String lang) {
+        String name = FoxCfg.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator + lang + File.separator + FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER);
+        LOG.info("readClassifier ...");
+        try {
+            classifier = (Classifier) SerializationHelper.read(name.trim());
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+        LOG.info("readClassifier done.");
     }
 
     /**

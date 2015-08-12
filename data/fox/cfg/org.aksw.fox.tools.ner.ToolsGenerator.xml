@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <toolsGenerator>
+        <lang>de, en, es, fr, it, nl</lang>
+        <usedLang>de, en, es, fr, it, nl</usedLang>
+        <disambiguationTool 
+            de="org.aksw.fox.tools.ner.linking.de.Agdistis" 
+            en="org.aksw.fox.tools.ner.linking.en.Agdistis" 
+            es="org.aksw.fox.tools.ner.linking.en.Agdistis" 
+            fr="org.aksw.fox.tools.ner.linking.en.Agdistis" 
+            it="org.aksw.fox.tools.ner.linking.en.Agdistis" 
+            nl="org.aksw.fox.tools.ner.linking.en.Agdistis"
+            >
+        </disambiguationTool>
+        <nerTools 
+            de="
+            org.aksw.fox.tools.ner.de.StanfordDE, 
+            org.aksw.fox.tools.ner.de.SpotlightDE, 
+            org.aksw.fox.tools.ner.de.BalieDE
+            " 
+            en="
+            org.aksw.fox.tools.ner.en.OpenNLPEN, 
+            org.aksw.fox.tools.ner.en.StanfordEN, 
+            org.aksw.fox.tools.ner.en.IllinoisExtendedEN, 
+            org.aksw.fox.tools.ner.en.BalieEN,
+            org.aksw.fox.tools.ner.en.SpotlightEN,
+            org.aksw.fox.tools.ner.en.TagMeEN
+            " 
+            es="
+            org.aksw.fox.tools.ner.es.OpenNLPES, 
+            org.aksw.fox.tools.ner.es.StanfordES, 
+            org.aksw.fox.tools.ner.es.BalieES
+            " 
+            fr="
+            org.aksw.fox.tools.ner.fr.OpenNLPFR, 
+            org.aksw.fox.tools.ner.fr.NercFR, 
+            org.aksw.fox.tools.ner.fr.SpotlightFR, 
+            org.aksw.fox.tools.ner.fr.BalieFR,
+            org.aksw.fox.tools.ner.fr.NerdMLFR
+            " 
+            it="
+            org.aksw.fox.tools.ner.it.SpotlightIT,
+            org.aksw.fox.tools.ner.it.TagMeIT, 
+            org.aksw.fox.tools.ner.it.TextProIT
+            " 
+            nl="
+            org.aksw.fox.tools.ner.nl.OpenNLPNL,
+            org.aksw.fox.tools.ner.nl.SpotlightNL
+            "
+            >
+        </nerTools>
+
+    </toolsGenerator>
+</config>

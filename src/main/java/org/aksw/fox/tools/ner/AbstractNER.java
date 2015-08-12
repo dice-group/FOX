@@ -1,7 +1,9 @@
 package org.aksw.fox.tools.ner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.aksw.fox.data.Entity;
@@ -12,16 +14,31 @@ import org.apache.log4j.Logger;
 
 public abstract class AbstractNER implements INER {
 
-    public static final Logger LOG        = LogManager.getLogger(AbstractNER.class);
-    protected List<Entity>     entityList = null;
-    protected CountDownLatch   cdl        = null;
-    protected String           input      = null;
+    public static final Logger    LOG           = LogManager.getLogger(AbstractNER.class);
+
+    protected CountDownLatch      cdl           = null;
+    protected String              input         = null;
+
+    protected List<Entity>        entityList    = null;
+    protected Map<String, String> entityClasses = new HashMap<>();
 
     /*
      * @Override public List<Entity> retrieve(String input) { return new
      * ArrayList<>(); }
      */
     abstract public List<Entity> retrieve(String input);
+
+    /**
+     * Gets the supported entity type for tool entity type.
+     */
+    public String mapTypeToSupportedType(String toolType) {
+        if (entityClasses.isEmpty())
+            LOG.warn("No entity types know. Please fill the entity classes map with types to map.");
+        String t = entityClasses.get(toolType);
+        if (t == null)
+            t = EntityClassMap.N;
+        return t;
+    }
 
     @Override
     public String getToolName() {

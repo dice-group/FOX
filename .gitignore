@@ -5,6 +5,7 @@
 .directory
 .project
 .svn
+
 /log
 /demo/doc
 /fox.properties
@@ -17,3 +18,5 @@
 /evaluation/tokenBasedAll
 /evaluation/entityBasedAll
 /src/main/java/org/aksw/fox/binding
+/externTools
+/!delme
