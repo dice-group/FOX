@@ -21,9 +21,9 @@ import org.aksw.fox.tools.ner.INER;
 import org.aksw.fox.tools.ner.Tools;
 import org.aksw.fox.tools.ner.ToolsGenerator;
 import org.aksw.fox.tools.ner.en.StanfordENOldVersion;
-import org.aksw.fox.tools.ner.linking.Agdistis;
 import org.aksw.fox.tools.ner.linking.ILinking;
 import org.aksw.fox.tools.ner.linking.NoLinking;
+import org.aksw.fox.tools.ner.linking.en.AgdistisEN;
 import org.aksw.fox.tools.re.FoxRETools;
 import org.aksw.fox.tools.re.IRE;
 import org.aksw.fox.utils.FoxCfg;
@@ -532,7 +532,7 @@ public class Fox implements IFox {
                 LOG.error("InterfaceURI not found. Check parameter: " + FoxCfg.parameter_disamb);
             }
         } else {
-            uriLookup = new Agdistis();
+            uriLookup = new AgdistisEN();
         }
     }
 

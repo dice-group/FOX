@@ -1,4 +1,4 @@
-package org.aksw.fox.tools.ner.linking;
+package org.aksw.fox.tools.ner.linking.common;
 
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.tools.ner.linking.AbstractLinking;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -22,12 +22,15 @@ import org.json.simple.JSONValue;
 
 public class Agdistis extends AbstractLinking {
 
-    public static final String CFG_KEY_AGDISTIS_ENDPOINT = Agdistis.class.getName().concat(".endpoint");
-
     public static final Logger LOG                       = LogManager.getLogger(Agdistis.class);
-
+    public static final String CFG_KEY_AGDISTIS_ENDPOINT = "agdistis.endpoint";
     // maps AGDISTIS index to real index
     Map<Integer, Entity>       indexMap                  = new HashMap<>();
+    public String              endpoint;
+
+    public Agdistis(String endpoint) {
+        this.endpoint = endpoint;
+    }
 
     @Override
     public void setUris(Set<Entity> entities, String input) {
@@ -108,7 +111,7 @@ public class Agdistis extends AbstractLinking {
         // String data = parameter + agdistis_input;
         String urlParameters = "text=" + URLEncoder.encode(agdistis_input, "UTF-8") + "&type=agdistis&heuristic=false";
 
-        URL url = new URL(FoxCfg.get(CFG_KEY_AGDISTIS_ENDPOINT));
+        URL url = new URL(endpoint);
 
         HttpURLConnection http = (HttpURLConnection) url.openConnection();
 

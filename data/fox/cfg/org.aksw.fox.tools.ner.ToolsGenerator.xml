@@ -4,12 +4,12 @@
         <lang>de, en, es, fr, it, nl</lang>
         <usedLang>de, en, es, fr, it, nl</usedLang>
         <disambiguationTool 
-            de="org.aksw.fox.uri.AGDISTISLookup" 
-            en="org.aksw.fox.uri.AGDISTISLookup" 
-            es="org.aksw.fox.uri.AGDISTISLookup" 
-            fr="org.aksw.fox.uri.AGDISTISLookup" 
-            it="org.aksw.fox.uri.AGDISTISLookup" 
-            nl="org.aksw.fox.uri.AGDISTISLookup"
+            de="org.aksw.fox.tools.ner.linking.de.Agdistis" 
+            en="org.aksw.fox.tools.ner.linking.en.Agdistis" 
+            es="org.aksw.fox.tools.ner.linking.en.Agdistis" 
+            fr="org.aksw.fox.tools.ner.linking.en.Agdistis" 
+            it="org.aksw.fox.tools.ner.linking.en.Agdistis" 
+            nl="org.aksw.fox.tools.ner.linking.en.Agdistis"
             >
         </disambiguationTool>
         <nerTools 
