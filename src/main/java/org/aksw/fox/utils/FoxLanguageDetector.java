@@ -28,7 +28,10 @@ public class FoxLanguageDetector {
     public static Set<Langs>   lang             = new HashSet<>(Arrays.asList(
                                                         Langs.DE,
                                                         Langs.EN,
-                                                        Langs.FR
+                                                        Langs.FR,
+                                                        Langs.ES,
+                                                        Langs.IT,
+                                                        Langs.NL
                                                         ));
 
     protected LanguageDetector languageDetector = null;
@@ -40,7 +43,7 @@ public class FoxLanguageDetector {
      */
     public static void main(String[] a) {
         FoxLanguageDetector ld = new FoxLanguageDetector();
-        Langs lang = ld.detect("That is a test.");
+        Langs lang = ld.detect(FoxConst.NER_NL_EXAMPLE_1);
         LOG.info(lang.toString() + " text.");
     }
 
@@ -93,7 +96,10 @@ public class FoxLanguageDetector {
     public enum Langs {
 
         DE("de"),
+        ES("es"),
+        IT("it"),
         EN("en"),
+        NL("nl"),
         FR("fr");
 
         private String label;
