@@ -18,5 +18,6 @@
 /evaluation/tokenBasedAll
 /evaluation/entityBasedAll
 /src/main/java/org/aksw/fox/binding
-/externTools
-/!delme
+/externTools/TextPro2.0/*
+!/externTools/TextPro2.0/LICENCE
+!/externTools/TextPro2.0/NOTICE
