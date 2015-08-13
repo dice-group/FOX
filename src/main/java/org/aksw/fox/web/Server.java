@@ -37,6 +37,15 @@ public class Server {
     public static final XMLConfiguration  CFG                      = CfgManager.getCfg(Server.class);
 
     public static Map<String, Pool<IFox>> pool                     = null;
+    static {
+        try {
+            Server.initPools();
+        } catch (IllegalArgumentException | InvocationTargetException |
+                NoSuchMethodException | SecurityException |
+                UnsupportedLangException | LoadingNotPossibleException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+    }
 
     public static final String            CFG_KEY_POOL_SIZE        = "server.poolSize";
     public final static String            KEY_DEMO                 = "server.demo";
@@ -73,11 +82,10 @@ public class Server {
         if (!FoxServerUtil.isPortAvailable(port))
             throw new PortInUseException(port);
 
-        initPools();
         init();
     }
 
-    protected void initPools()
+    protected static void initPools()
             throws UnsupportedLangException, LoadingNotPossibleException,
             IllegalArgumentException, InvocationTargetException,
             NoSuchMethodException, SecurityException {

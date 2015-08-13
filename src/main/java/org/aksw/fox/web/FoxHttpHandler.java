@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 import org.aksw.fox.IFox;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxJena;
+import org.aksw.fox.utils.FoxLanguageDetector;
+import org.aksw.fox.utils.FoxLanguageDetector.Langs;
 import org.aksw.fox.utils.FoxStringUtil;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.glassfish.grizzly.http.server.Request;
@@ -26,18 +28,10 @@ import org.json.JSONObject;
 public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
     public static final String CFG_KEY_FOX_LIFETIME = FoxHttpHandler.class.getName().concat(".lifetime");
+    FoxLanguageDetector        languageDetector     = new FoxLanguageDetector();
 
     @Override
     protected void postService(Request request, Response response, Map<String, String> parameter) {
-        // TODO: lang
-        String lang = "";
-        // get a fox instance
-        IFox fox = Server.pool.get(lang).poll();
-
-        // init. thread
-        Fiber fiber = new ThreadFiber();
-        fiber.start();
-        final CountDownLatch latch = new CountDownLatch(1);
 
         // get input data
         switch (parameter.get("type").toLowerCase()) {
@@ -51,52 +45,77 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
             break;
         }
 
-        // set up fox
-        fox.setCountDownLatch(latch);
-        fox.setParameter(parameter);
-
-        // run fox
-        fiber.execute(fox);
-
-        // wait 5min or till the fox instance is finished
-        try {
-            latch.await(Integer.parseInt(FoxCfg.get(CFG_KEY_FOX_LIFETIME)), TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            LOG.error("Fox timeout after " + FoxCfg.get(CFG_KEY_FOX_LIFETIME) + "min.");
-            LOG.error("\n", e);
-            LOG.error("input: " + parameter.get("input"));
+        String lang = parameter.get("lang");
+        Langs l = Langs.fromString(lang);
+        if (l == null) {
+            l = languageDetector.detect(parameter.get("input"));
+            if (l != null)
+                lang = l.toString();
+            else
+                lang = "";
         }
+        LOG.info("lang: " + lang);
+        if (!lang.isEmpty()) {
+            LOG.info(Server.pool);
+            // get a fox instance
+            IFox fox = Server.pool.get(lang).poll();
+            LOG.info(fox);
+            if (fox != null) {
 
-        // shutdown thread
-        fiber.dispose();
+                // init. thread
+                Fiber fiber = new ThreadFiber();
+                fiber.start();
+                final CountDownLatch latch = new CountDownLatch(1);
+                fox.setCountDownLatch(latch);
+                fox.setParameter(parameter);
+                fiber.execute(fox);
 
-        // get output
-        String output = "";
-        if (latch.getCount() == 0) {
-            output = fox.getResults();
-            Server.pool.get(lang).push(fox);
-        } else {
-            fox = null;
-            Server.pool.get(lang).add();
-            // TODO : error output
-        }
+                // wait
+                try {
+                    latch.await(Integer.parseInt(FoxCfg.get(CFG_KEY_FOX_LIFETIME)), TimeUnit.MINUTES);
+                } catch (InterruptedException e) {
+                    LOG.error("Fox timeout after " + FoxCfg.get(CFG_KEY_FOX_LIFETIME) + "min.");
+                    LOG.error("\n", e);
+                    LOG.error("input: " + parameter.get("input"));
+                }
 
-        String in = null, out = null, log = null;
-        if (fox != null) {
-            in = FoxStringUtil.encodeURLComponent(parameter.get("input"));
-            out = FoxStringUtil.encodeURLComponent(output);
-            log = FoxStringUtil.encodeURLComponent(fox.getLog());
-        }
-        // set response
-        setResponse(
-                response,
-                new JSONObject()
-                        .put("input", in == null ? "" : in)
-                        .put("output", out == null ? "" : out)
-                        .put("log", log == null ? "" : log)
-                        .toString(),
-                HttpURLConnection.HTTP_OK,
-                "application/json");
+                // shutdown thread
+                fiber.dispose();
+
+                // get output
+                String output = "";
+                if (latch.getCount() == 0) {
+                    output = fox.getResults();
+                    Server.pool.get(lang).push(fox);
+                } else {
+                    fox = null;
+                    Server.pool.get(lang).add();
+                    // TODO : error output
+                }
+
+                String in = null, out = null, log = null;
+                if (fox != null) {
+                    in = FoxStringUtil.encodeURLComponent(parameter.get("input"));
+                    out = FoxStringUtil.encodeURLComponent(output);
+                    log = FoxStringUtil.encodeURLComponent(fox.getLog());
+                }
+                setResponse(
+                        response,
+                        new JSONObject()
+                                .put("input", in == null ? "" : in)
+                                .put("output", out == null ? "" : out)
+                                .put("log", log == null ? "" : log)
+                                .toString(),
+                        HttpURLConnection.HTTP_OK,
+                        "application/json");
+            } else
+                LOG.warn("Could not found fox from pool");
+        } else
+            setResponse(
+                    response,
+                    new JSONObject().toString(),
+                    HttpURLConnection.HTTP_BAD_REQUEST,
+                    "application/json");
     }
 
     @Override
