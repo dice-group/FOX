@@ -2,8 +2,8 @@
 <config>
     <spotlight>
         <url>http://139.18.2.164:4448/rest/annotate</url>
-        <confidence>0.2</confidence>
-        <support>2</support>
+        <confidence>0.4</confidence>
+        <support>10</support>
         <spotter>Default</spotter>
         <disambiguator>Default</disambiguator>
         <policy>whitelist</policy>

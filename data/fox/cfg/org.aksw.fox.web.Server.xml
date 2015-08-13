@@ -3,7 +3,7 @@
     <server>
         <poolSize 
             de="1" 
-            en="2" 
+            en="1" 
             es="1" 
             fr="1" 
             it="1" 
@@ -15,7 +15,7 @@
         <host>0.0.0.0</host>
         <demo>true</demo>
         <api>true</api>
-        <feedback>true</feedback>
-        <staticFileCache>true</staticFileCache>
+        <feedback>false</feedback>
+        <staticFileCache>false</staticFileCache>
     </server>
 </config>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <agdistis>
+        <endpoint>http://139.18.2.164:8080/AGDISTIS_DE</endpoint>
+    </agdistis>
+</config>
