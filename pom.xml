@@ -37,6 +37,16 @@
             <name>Cognitive Computation Group</name>
             <url>http://cogcomp.cs.illinois.edu/m2repo</url>
         </repository>
+        <repository>
+            <id>maven.aksw.internal</id>
+            <name>University Leipzig, AKSW Maven2 Repository</name>
+            <url>http://maven.aksw.org/archiva/repository/internal</url>
+        </repository>
+        <repository>
+            <id>maven.aksw.snapshots</id>
+            <name>University Leipzig, AKSW Maven2 Repository</name>
+            <url>http://maven.aksw.org/archiva/repository/snapshots</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- external dependencies -->
@@ -72,6 +82,12 @@
             <systemPath>${system.libs}/simmetrics_jar_v1_6_2_d07_02_07.jar</systemPath>
         </dependency>
         <!-- regular dependencies -->
+                 <!-- cache -->
+        <dependency>
+          <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+          <artifactId>concurrentlinkedhashmap-lru</artifactId>
+          <version>1.4.2</version>
+        </dependency>
         <!-- -->
         <!-- Illinois -->
         <dependency>
@@ -212,6 +228,12 @@
             <groupId>com.github.jsonld-java</groupId>
             <artifactId>jsonld-java</artifactId>
             <version>0.5.1</version>
+        </dependency>
+                    <!-- jena-sparql-api -->
+        <dependency>
+            <groupId>org.aksw.jena-sparql-api</groupId>
+            <artifactId>jena-sparql-api-core</artifactId>
+            <version>2.12.1-8</version>
         </dependency>
         <!-- grizzly -->
         <dependency>
