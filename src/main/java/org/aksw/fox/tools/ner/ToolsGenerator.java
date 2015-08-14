@@ -25,6 +25,7 @@ public class ToolsGenerator {
     public static final String                    CFG_KEY_USED_LANG           = "toolsGenerator.usedLang";
     public static final String                    CFG_KEY_NER_TOOLS           = "toolsGenerator.nerTools";
     public static final String                    CFG_KEY_DISAMBIGUATION_TOOL = "toolsGenerator.disambiguationTool";
+    public static final String                    CFG_KEY_LIGHT_TOOL          = "toolsGenerator.lightTool";
 
     @SuppressWarnings("unchecked")
     public static final Set<String>               supportedLang               = new HashSet<String>(CFG.getList(CFG_KEY_SUPPORTED_LANG));
@@ -33,6 +34,7 @@ public class ToolsGenerator {
 
     public static final Map<String, String>       disambiguationTools         = new HashMap<>();
     public static final Map<String, List<String>> nerTools                    = new HashMap<>();
+    public static final Map<String, String>       nerLightTool                = new HashMap<>();
 
     /**
      * @throws UnsupportedLangException
@@ -52,6 +54,10 @@ public class ToolsGenerator {
                 Collections.sort(tools);
                 if (!tools.isEmpty())
                     nerTools.put(lang, tools);
+
+                String lightTool = CFG.getString(CFG_KEY_LIGHT_TOOL.concat("[@").concat(lang).concat("]"));
+                if (lightTool != null && !lightTool.isEmpty())
+                    nerLightTool.put(lang, lightTool);
             }
         } else {
             Set<String> l = new HashSet<>();
@@ -62,6 +68,14 @@ public class ToolsGenerator {
 
         LOG.info("disambiguationTools:" + disambiguationTools);
         LOG.info("nerTools" + nerTools);
+        LOG.info("nerLightTool" + nerLightTool);
+    }
+
+    public INER getNERLightTool(String lang) throws UnsupportedLangException, LoadingNotPossibleException {
+        if (usedLang.contains(lang) && nerLightTool.get(lang) != null && !nerLightTool.get(lang).isEmpty()) {
+            return (INER) FoxCfg.getClass(nerLightTool.get(lang));
+        } else
+            throw new UnsupportedLangException("Language " + lang + " is not supported.");
     }
 
     /**
