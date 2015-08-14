@@ -85,6 +85,28 @@ public class TrainingInputReader implements INERReader {
     public TrainingInputReader() {
     }
 
+    public void initFiles(String folder) throws IOException {
+        List<String> files = new ArrayList<>();
+
+        File file = new File(folder);
+        if (!file.exists()) {
+            throw new IOException("Can't find directory.");
+        } else {
+            if (file.isDirectory()) {
+                // read all files in a directory
+                for (File fileEntry : file.listFiles()) {
+                    if (fileEntry.isFile() && !fileEntry.isHidden()) {
+                        files.add(fileEntry.getAbsolutePath());
+                    }
+                }
+            } else {
+                throw new IOException("Input isn't a valid directory.");
+            }
+        }
+
+        initFiles(files.toArray(new String[files.size()]));
+    }
+
     @Override
     public void initFiles(String[] initFiles) throws IOException {
         if (LOG.isDebugEnabled())
@@ -315,8 +337,8 @@ public class TrainingInputReader implements INERReader {
         if (!word.isEmpty()) {
             if (entities.get(word) != null) {
                 if (!entities.get(word).equals(classs) && !entities.get(word).equals(EntityClassMap.getNullCategory())) {
-                    LOG.info("Oracle with a token with diff. annos. No disamb. for now. Ignore token.");
-                    LOG.info(word + " : " + classs + " | " + entities.get(word));
+                    LOG.debug("Oracle with a token with diff. annos. No disamb. for now. Ignore token.");
+                    LOG.debug(word + " : " + classs + " | " + entities.get(word));
                     entities.put(word, EntityClassMap.getNullCategory());
                 }
             } else
