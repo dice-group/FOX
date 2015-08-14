@@ -74,9 +74,12 @@ public class FoxClassifier {
      * @param oracel
      */
     protected void initInstances(Set<String> input, Map<String, Set<Entity>> toolResults, Map<String, String> oracle) {
-        LOG.info("initInstances ...");
-
+        LOG.info("init. instances ...");
         instances = (oracle == null) ? foxInstances.getInstances(input, toolResults) : foxInstances.getInstances(input, toolResults, oracle);
+    }
+
+    protected String getName(String lang) {
+        return FoxCfg.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator + lang + File.separator + FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER);
     }
 
     /**
@@ -85,12 +88,12 @@ public class FoxClassifier {
      * @param file
      */
     public void writeClassifier(String file, String lang) {
-        LOG.info("writeClassifier ...");
-
-        String path = FilenameUtils.getPath(file + File.separator + lang);
+        String name = getName(lang);
+        LOG.info("writeClassifier: " + name);
+        String path = FilenameUtils.getPath(name);
         try {
             FileUtils.forceMkdir(new File(path));
-            SerializationHelper.write(file, classifier);
+            SerializationHelper.write(name, classifier);
         } catch (Exception e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
@@ -101,8 +104,8 @@ public class FoxClassifier {
      * properties.
      */
     public void readClassifier(String lang) {
-        String name = FoxCfg.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator + lang + File.separator + FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER);
-        LOG.info("readClassifier ...");
+        String name = getName(lang);
+        LOG.info("readClassifier: " + name);
         try {
             classifier = (Classifier) SerializationHelper.read(name.trim());
         } catch (Exception e) {
