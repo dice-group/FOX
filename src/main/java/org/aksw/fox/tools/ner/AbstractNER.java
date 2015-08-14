@@ -1,20 +1,33 @@
 package org.aksw.fox.tools.ner;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.utils.FoxTextUtil;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.fluent.Form;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.client.fluent.Response;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 public abstract class AbstractNER implements INER {
 
     public static final Logger    LOG           = LogManager.getLogger(AbstractNER.class);
+    public static final Charset   UTF_8         = Charset.forName("UTF-8");
 
     protected CountDownLatch      cdl           = null;
     protected String              input         = null;
@@ -115,6 +128,37 @@ public abstract class AbstractNER implements INER {
 
         LOG.info("clean entities done.");
         return list;
+    }
+
+    public List<String> getSentences(String lang, String input) {
+        List<String> sentences = new ArrayList<>();
+        BreakIterator sentenceIterator = BreakIterator.getSentenceInstance(new Locale(lang));
+        sentenceIterator.setText(input);
+        int start = sentenceIterator.first();
+        int end = sentenceIterator.next();
+        while (end != BreakIterator.DONE) {
+            String sentence = input.substring(start, end);
+            if (sentence != null && !sentence.isEmpty())
+                sentences.add(sentence);
+            start = end;
+            end = sentenceIterator.next();
+        }
+        return sentences;
+    }
+
+    public String postToJSON(String url, Form form) throws ClientProtocolException, IOException {
+        Response response = Request
+                .Post(url)
+                .addHeader("Accept", "application/json;charset=".concat(UTF_8.name()))
+                .addHeader("Accept-Charset", UTF_8.name())
+                .bodyForm(form.build())
+                .execute();
+
+        HttpResponse httpResponse = response.returnResponse();
+        HttpEntity entry = httpResponse.getEntity();
+        String r = IOUtils.toString(entry.getContent(), UTF_8);
+        EntityUtils.consume(entry);
+        return r;
     }
 
     private void logMsg() {
