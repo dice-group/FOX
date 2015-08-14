@@ -27,38 +27,18 @@ public class FoxRESTful {
 
     /**
      * Starts FOX web service.
-     * 
-     * @param args
-     *            <p>
-     *            -p port, default is 8080
-     *            </p>
-     * 
-     * @throws SecurityException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalArgumentException
-     * @throws NumberFormatException
-     * @throws PortInUseException
-     * @throws UnsupportedLangException
-     * @throws LoadingNotPossibleException
      */
-    public static void main(String[] args)
-            throws NumberFormatException, IllegalArgumentException,
-            InvocationTargetException, NoSuchMethodException, SecurityException,
-            PortInUseException, LoadingNotPossibleException, UnsupportedLangException {
+    public static void main(String[] args) {
 
-        /*
-        final Getopt getopt = new Getopt("Fox", args, "p:x");
-
-        int arg, port = 8080;
-        while ((arg = getopt.getopt()) != -1) {
-            switch (arg) {
-            case 'p':
-                port = Integer.valueOf(getopt.getOptarg());
-            }
-        }
-        */
         if (FoxCfg.loadFile(FoxCfg.CFG_FILE))
-            new Server().start();
+            try {
+                new Server().start();
+            } catch (
+                    IllegalArgumentException | InvocationTargetException |
+                    NoSuchMethodException | SecurityException |
+                    LoadingNotPossibleException | UnsupportedLangException |
+                    PortInUseException e) {
+                LOG.error(e.getLocalizedMessage(), e);
+            }
     }
 }
