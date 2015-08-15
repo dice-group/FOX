@@ -6,6 +6,9 @@ import org.aksw.fox.utils.FoxConst;
 import org.apache.log4j.PropertyConfigurator;
 
 public class SpotlightDE extends SpotlightCommon {
+    public SpotlightDE() {
+        super("de");
+    }
 
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);

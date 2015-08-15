@@ -1,6 +1,5 @@
 package org.aksw.fox.tools.ner.common;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,22 +7,12 @@ import java.util.List;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.fox.tools.ner.de.SpotlightDE;
 import org.aksw.fox.utils.CfgManager;
-import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Form;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.client.fluent.Response;
-import org.apache.http.util.EntityUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,12 +29,9 @@ public class SpotlightCommon extends AbstractNER {
     protected String                 SPOTLIGHT_TYPES;
     protected String                 SPOTLIGHT_SPARQL;
 
-    public static void main(String[] a) {
-        PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-        LOG.info(new SpotlightDE().retrieve(FoxConst.NER_GER_EXAMPLE_1));
-    }
+    String                           lang;
 
-    public SpotlightCommon() {
+    public SpotlightCommon(String lang) {
         CFG = CfgManager.getCfg(this.getClass());
 
         SPOTLIGHT_URL = CFG.getString(FoxConst.CFG_KEY_SPOTLIGHT_URL);
@@ -53,89 +39,96 @@ public class SpotlightCommon extends AbstractNER {
         SPOTLIGHT_SUPPORT = CFG.getString(FoxConst.CFG_KEY_SPOTLIGHT_SUPPORT);
         SPOTLIGHT_TYPES = CFG.getString(FoxConst.CFG_KEY_SPOTLIGHT_TYPES);
         SPOTLIGHT_SPARQL = CFG.getString(FoxConst.CFG_KEY_SPOTLIGHT_SPARQL);
+
+        this.lang = lang;
     }
 
     @Override
     public List<Entity> retrieve(String input) {
-        List<Entity> list = new ArrayList<>();
-        String spotlightResponse = null;
-        try {
-            spotlightResponse = sendToSTring(input);
-        } catch (Exception e) {
-            LOG.error(e.getLocalizedMessage(), e);
-        }
 
-        JSONObject resultJSON = null;
-        JSONArray entities = null;
+        List<String> sentences = getSentences(lang, input);
+        LOG.info("sentences: " + sentences.size());
 
-        if (spotlightResponse != null)
-            try {
-                resultJSON = new JSONObject(spotlightResponse);
-                if (resultJSON.has("Resources")) {
-                    entities = resultJSON.getJSONArray("Resources");
-                } else {
-                    LOG.debug("No Resources found.");
-                }
-            } catch (JSONException e) {
-                LOG.error("\nJSON exception ", e);
+        int concatSentences = 10;
+        int counter = 1;
+        input = "";
+        entityList = new ArrayList<>();
+        for (String sentence : sentences) {
+            input += sentence;
+            if (counter % concatSentences != 0) {
+                counter++;
+                if (!sentences.get(sentences.size() - 1).equals(sentence))
+                    continue;
             }
+            counter = 1;
 
-        if (entities != null) {
-            for (int i = 0; i < entities.length(); i++) {
+            String spotlightResponse = null;
+            if (input.trim().isEmpty()) {
+                LOG.info("Empty input!");
+            }
+            else
                 try {
-                    JSONObject entity = entities.getJSONObject(i);
-                    String type = spotlight(entity.getString("@types"));
+                    spotlightResponse = postToJSON(SPOTLIGHT_URL, Form.form()
+                            .add("confidence", SPOTLIGHT_CONFIDENCE)
+                            .add("support", SPOTLIGHT_SUPPORT)
+                            .add("types", SPOTLIGHT_TYPES)
+                            .add("sparql", SPOTLIGHT_SPARQL)
+                            .add("text", input));
 
-                    if (!type.equals(EntityClassMap.getNullCategory())) {
-                        list.add(getEntity(
-                                entity.getString("@surfaceForm"),
-                                type,
-                                Entity.DEFAULT_RELEVANCE,
-                                getToolName()
-                                ));
+                    LOG.debug("spotlightResponse: " + spotlightResponse);
+                } catch (Exception e) {
+                    LOG.error(e.getLocalizedMessage(), e);
+                }
+            JSONObject resultJSON = null;
+            JSONArray entities = null;
+
+            if (spotlightResponse != null)
+                try {
+                    resultJSON = new JSONObject(spotlightResponse);
+                    if (resultJSON.has("Resources")) {
+                        entities = resultJSON.getJSONArray("Resources");
+                    } else {
+                        LOG.debug("No Resources found in spotlight response.");
                     }
                 } catch (JSONException e) {
-                    LOG.error("\nJSON exception ", e);
+                    LOG.error("JSON exception, spotlight response.", e);
+                }
+
+            if (entities != null) {
+                for (int i = 0; i < entities.length(); i++) {
+                    try {
+                        JSONObject entity = entities.getJSONObject(i);
+                        String type = spotlight(entity.getString("@types"));
+
+                        if (!type.equals(EntityClassMap.getNullCategory())) {
+                            entityList.add(getEntity(
+                                    entity.getString("@surfaceForm"),
+                                    type,
+                                    Entity.DEFAULT_RELEVANCE,
+                                    getToolName()
+                                    ));
+                        }
+                    } catch (JSONException e) {
+                        LOG.error("\nJSON exception ", e);
+                    }
                 }
             }
-        }
+            if (counter == 1)
+                input = "";
+        }// sentences
         if (LOG.isTraceEnabled())
-            LOG.trace(list);
-        return list;
-    }
-
-    public String sendToSTring(String input) throws ClientProtocolException, IOException {
-        Response response = Request
-                .Post(SPOTLIGHT_URL)
-                .addHeader("Accept", "application/json;charset=".concat(UTF_8.name()))
-                .addHeader("Accept-Charset", UTF_8.name())
-                .bodyForm(Form.form()
-                        .add("confidence", SPOTLIGHT_CONFIDENCE)
-                        .add("support", SPOTLIGHT_SUPPORT)
-                        .add("types", SPOTLIGHT_TYPES)
-                        .add("sparql", SPOTLIGHT_SPARQL)
-                        .add("text", input)
-                        .build())
-                .execute();
-
-        HttpResponse httpResponse = response.returnResponse();
-        HttpEntity entry = httpResponse.getEntity();
-
-        String spotlightResponse = IOUtils.toString(entry.getContent(), UTF_8);
-
-        EntityUtils.consume(entry);
-        return spotlightResponse;
+            LOG.trace(entityList);
+        return entityList;
     }
 
     /**
      * Gets the entity class for a spotlight entity type/class.
      */
     protected String spotlight(String spotlightTag) {
-
-        if (spotlightTag == null || spotlightTag.trim().isEmpty())
-            return EntityClassMap.getNullCategory();
-
         String t = EntityClassMap.getNullCategory();
+        if (spotlightTag == null || spotlightTag.trim().isEmpty())
+            return t;
+
         if (spotlightTag.toLowerCase().contains("person")) {
             t = EntityClassMap.P;
         } else if (spotlightTag.toLowerCase().contains("organisation")) {
