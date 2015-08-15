@@ -13,6 +13,7 @@ import java.util.TreeSet;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.tools.ner.linking.AbstractLinking;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -22,14 +23,19 @@ import org.json.simple.JSONValue;
 
 public class Agdistis extends AbstractLinking {
 
-    public static final Logger LOG                       = LogManager.getLogger(Agdistis.class);
-    public static final String CFG_KEY_AGDISTIS_ENDPOINT = "agdistis.endpoint";
-    // maps AGDISTIS index to real index
-    Map<Integer, Entity>       indexMap                  = new HashMap<>();
-    public String              endpoint;
+    public static final Logger     LOG                       = LogManager.getLogger(Agdistis.class);
+    public static final String     CFG_KEY_AGDISTIS_ENDPOINT = "agdistis.endpoint";
 
-    public Agdistis(String endpoint) {
-        this.endpoint = endpoint;
+    // maps AGDISTIS index to real index
+    protected Map<Integer, Entity> indexMap                  = new HashMap<>();
+    protected String               endpoint;
+
+    @SuppressWarnings("unused")
+    private Agdistis() {
+    }
+
+    public Agdistis(XMLConfiguration cfg) {
+        endpoint = cfg.getString(CFG_KEY_AGDISTIS_ENDPOINT);
     }
 
     @Override
@@ -110,7 +116,6 @@ public class Agdistis extends AbstractLinking {
 
         // String data = parameter + agdistis_input;
         String urlParameters = "text=" + URLEncoder.encode(agdistis_input, "UTF-8") + "&type=agdistis&heuristic=false";
-
         URL url = new URL(endpoint);
 
         HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -182,22 +187,4 @@ public class Agdistis extends AbstractLinking {
             return disambiguatedURL;
         }
     }
-    /*
-    public static void main(String[] a) {
-
-        AGDISTISLookup aa = new AGDISTISLookup();
-
-        Entity e = new Entity("University of Leipzig", "LOCATION");
-        e.addIndicies(0);
-        Entity ee = new Entity("Leipzig", "LOCATION");
-        ee.addIndicies(25);
-
-        Set<Entity> s = new HashSet<Entity>();
-        s.add(e);
-        s.add(ee);
-        aa.setUris(s, "University of Leipzig in Leipzig.");
-        System.out.println(e + " " + e.uri);
-        System.out.println(ee + " " + ee.uri);
-    }
-    */
 }
