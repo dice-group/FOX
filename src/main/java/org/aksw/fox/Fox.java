@@ -1,7 +1,6 @@
 package org.aksw.fox;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,10 +19,8 @@ import org.aksw.fox.data.exception.UnsupportedLangException;
 import org.aksw.fox.tools.ner.INER;
 import org.aksw.fox.tools.ner.Tools;
 import org.aksw.fox.tools.ner.ToolsGenerator;
-import org.aksw.fox.tools.ner.en.StanfordENOldVersion;
 import org.aksw.fox.tools.ner.linking.ILinking;
 import org.aksw.fox.tools.ner.linking.NoLinking;
-import org.aksw.fox.tools.ner.linking.en.AgdistisEN;
 import org.aksw.fox.tools.re.FoxRETools;
 import org.aksw.fox.tools.re.IRE;
 import org.aksw.fox.utils.FoxCfg;
@@ -45,115 +42,74 @@ import org.jetlang.fibers.ThreadFiber;
  */
 public class Fox implements IFox {
 
-    public static final String  CFG_KEY_URI_LOOKUP        = Fox.class.getName().concat(".urilookup");
-    public static final String  CFG_KEY_DEFAULT_LIGHT_NER = Fox.class.getName().concat(".defaultLightNER");
-    public static final String  CFG_KEY_LANG              = Fox.class.getName().concat(".lang");
-
-    public static final Logger  LOG                       = LogManager.getLogger(Fox.class);
+    public static final Logger  LOG            = LogManager.getLogger(Fox.class);
 
     private String              lang;
 
     /**
      * 
      */
-    protected ILinking          uriLookup                 = null;
+    protected ILinking          linking        = null;
 
     /**
      * 
      */
-    protected ToolsGenerator    toolsGenerator            = null;
-    protected Tools             nerTools                  = null;
-    protected FoxRETools        reTools                   = null;
+
+    protected Tools             nerTools       = null;
+    protected FoxRETools        reTools        = null;
 
     /**
      * 
      */
-    protected TokenManager      tokenManager              = null;
+    protected TokenManager      tokenManager   = null;
 
     /**
      * 
      */
-    protected FoxJena           foxJena                   = new FoxJena();
+    protected FoxJena           foxJena        = new FoxJena();
 
     /**
      * Holds a tool for fox's light version.
      */
-    protected INER              nerLight                  = null;
+    protected INER              nerLight       = null;
 
     /**
      * 
      */
-    protected FoxWebLog         foxWebLog                 = null;
+    protected FoxWebLog         foxWebLog      = null;
 
-    private CountDownLatch      countDownLatch            = null;
-    private Map<String, String> parameter                 = null;
-    private String              response                  = null;
+    private CountDownLatch      countDownLatch = null;
+    private Map<String, String> parameter      = null;
+    private String              response       = null;
 
     @SuppressWarnings("unused")
     private Fox() {
     }
 
-    /**
-     * @throws UnsupportedLangException
-     * @throws LoadingNotPossibleException
+    /*
      * 
      */
-    public Fox(String lang) throws UnsupportedLangException, LoadingNotPossibleException {
-        toolsGenerator = new ToolsGenerator();
-        uriLookup = toolsGenerator.getDisambiguationTool(lang);
-        nerTools = toolsGenerator.getNERTools(lang);
-        reTools = new FoxRETools();
-    }
+    public Fox(String lang) {
+        this.lang = lang;
 
-    /**
-     * 
-     * @param uriLookup
-     * @param nerLight
-     * @throws UnsupportedLangException
-     */
-    public Fox(ILinking uriLookup, INER nerLight, String lang) throws UnsupportedLangException, LoadingNotPossibleException {
-        toolsGenerator = new ToolsGenerator();
-        this.uriLookup = uriLookup;
-        this.nerLight = nerLight;
-        this.nerTools = toolsGenerator.getNERTools(lang);
-    }
-
-    /**
-     * Searches for an instance in FoxNERTools to set the NER light version.
-     */
-    protected void setLightVersionNER() {
-        if (nerLight == null) {
-            // old version
-            String lightversionner = parameter.get(FoxCfg.parameter_foxlight).trim();
-            List<String> old = Arrays.asList("org.aksw.fox.nertools.NERSpotlight", "org.aksw.fox.nertools.NERBalie", "org.aksw.fox.nertools.NERIllinoisExtended", "org.aksw.fox.nertools.NERStanford", "org.aksw.fox.nertools.NEROpenNLP");
-            if (old.contains(lightversionner)) {
-                lightversionner = lightversionner.replace("fox.nertools", "fox.tools.ner.en");
-            }
-
-            for (INER tool : nerTools.getNerTools())
-                if (lightversionner.equals(tool.getClass().getName())) {
-                    nerLight = tool;
-                    break;
-                }
+        try {
+            ToolsGenerator toolsGenerator = new ToolsGenerator();
+            linking = toolsGenerator.getDisambiguationTool(lang);
+            nerTools = toolsGenerator.getNERTools(lang);
+            nerLight = toolsGenerator.getNERLightTool(lang);
+        } catch (UnsupportedLangException | LoadingNotPossibleException e) {
+            LOG.error(e.getLocalizedMessage(), e);
         }
+        LOG.info("linking: " + linking.getClass());
+        LOG.info("ner light: " + nerLight.getClass());
 
-        if (nerLight == null) {
-            if (FoxCfg.get(CFG_KEY_DEFAULT_LIGHT_NER) != null)
-                try {
-                    nerLight = (INER) FoxCfg.getClass(FoxCfg.get(CFG_KEY_DEFAULT_LIGHT_NER).trim());
-                } catch (Exception e) {
-                    LOG.error("INER not found. Check your " + FoxCfg.CFG_FILE + " file and the " + CFG_KEY_DEFAULT_LIGHT_NER + " key");
-                }
-
-            if (nerLight == null)
-                nerLight = new StanfordENOldVersion();
-
-        }
+        // TODO: relation extraction
+        // reTools = new FoxRETools();
     }
 
     protected Set<Entity> doNER() {
-        LOG.info("starting ner ...");
-        foxWebLog.setMessage("Start NER ...");
+        LOG.info("Start ner ...");
+        foxWebLog.setMessage("Start NER (" + lang + ")...");
         Set<Entity> entities = nerTools.getEntities(parameter.get(FoxCfg.parameter_input));
 
         // remove duplicate annotations
@@ -225,18 +181,27 @@ public class Fox implements IFox {
 
     }
 
-    protected Set<Entity> doNERLight() {
-        LOG.info("Starting light NER version ...");
-        foxWebLog.setMessage("Starting light NER version ...");
+    protected Set<Entity> doNERLight(String name) {
+        {
+            String m = "Starting light NER version ...";
+            LOG.info(m);
+            foxWebLog.setMessage(m);
+        }
+
         Set<Entity> entities = null;
-        setLightVersionNER();
+        if (name != null && !name.isEmpty())
+            try {
+                nerLight = (INER) FoxCfg.getClass(name);
+            } catch (LoadingNotPossibleException e) {
+                LOG.error(e.getLocalizedMessage(), e);
+            }
+
         foxWebLog.setMessage("NER tool is: " + nerLight.getToolName());
 
         final CountDownLatch latch = new CountDownLatch(1);
 
         nerLight.setCountDownLatch(latch);
         nerLight.setInput(tokenManager.getInput());
-        // nerLight.setTokenManager(tokenManager);
 
         Fiber fiber = new ThreadFiber();
         fiber.start();
@@ -311,15 +276,15 @@ public class Fox implements IFox {
 
     protected void setURIs(Set<Entity> entities) {
         if (entities != null && !entities.isEmpty()) {
-            foxWebLog.setMessage("Start looking up uri ...");
-            final CountDownLatch latch = new CountDownLatch(1);
+            foxWebLog.setMessage("Start NE linking ...");
 
-            uriLookup.setCountDownLatch(latch);
-            uriLookup.setInput(entities, parameter.get(FoxCfg.parameter_input));
+            final CountDownLatch latch = new CountDownLatch(1);
+            linking.setCountDownLatch(latch);
+            linking.setInput(entities, parameter.get(FoxCfg.parameter_input));
 
             Fiber fiber = new ThreadFiber();
             fiber.start();
-            fiber.execute(uriLookup);
+            fiber.execute(linking);
 
             // use another time for the uri lookup?
             int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
@@ -334,10 +299,10 @@ public class Fox implements IFox {
             fiber.dispose();
             // get results
             if (latch.getCount() == 0) {
-                entities = new HashSet<Entity>(uriLookup.getResults());
+                entities = new HashSet<Entity>(linking.getResults());
             } else {
 
-                String s = "Timeout after " + min + " min (" + uriLookup.getClass().getName() + ").";
+                String s = "Timeout after " + min + " min (" + linking.getClass().getName() + ").";
                 if (LOG.isDebugEnabled())
                     LOG.debug(s);
                 foxWebLog.setMessage(s);
@@ -348,7 +313,7 @@ public class Fox implements IFox {
 
             // for (Entity e : entities)
             // e.uri = uriLookup.getUri(e.getText(), e.getType());
-            foxWebLog.setMessage("Start looking up uri done.");
+            foxWebLog.setMessage("Start NE linking done.");
         }
     }
 
@@ -419,7 +384,7 @@ public class Fox implements IFox {
      */
     @Override
     public void run() {
-
+        LOG.info("running fox...");
         foxWebLog = new FoxWebLog();
         foxWebLog.setMessage("Running Fox...");
 
@@ -452,12 +417,12 @@ public class Fox implements IFox {
                         break;
 
                     case "ner":
-                        entities = doNERLight();
+                        entities = doNERLight(light);
                         break;
                     }
 
                 } else {
-                    // switch task
+                    // no light version
                     switch (task.toLowerCase()) {
                     case "ke":
                         // TODO: ke fox
@@ -527,12 +492,10 @@ public class Fox implements IFox {
                 paraUriLookup = "org.aksw.fox.uri.NullLookup";
 
             try {
-                uriLookup = (ILinking) FoxCfg.getClass(paraUriLookup.trim());
+                linking = (ILinking) FoxCfg.getClass(paraUriLookup.trim());
             } catch (Exception e) {
                 LOG.error("InterfaceURI not found. Check parameter: " + FoxCfg.parameter_disamb);
             }
-        } else {
-            uriLookup = new AgdistisEN();
         }
     }
 
@@ -549,7 +512,7 @@ public class Fox implements IFox {
         map.put(FoxCfg.parameter_output, Lang.RDFXML.getName());
         map.put(FoxCfg.parameter_nif, "false");
         map.put(FoxCfg.parameter_foxlight, "OFF");
-        map.put(FoxCfg.parameter_disamb, "org.aksw.fox.uri.AGDISTISLookup");
+        // map.put(FoxCfg.parameter_disamb, "org.aksw.fox.uri.AGDISTISLookup");
         return map;
     }
 
