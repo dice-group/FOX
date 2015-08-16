@@ -130,24 +130,28 @@ public class FoxCLI {
         }
     }
 
-    public static void validate(String[] inputFiles, String lang) throws UnsupportedLangException, LoadingNotPossibleException {
-        ToolsGenerator toolsGenerator = new ToolsGenerator();
-        CrossValidation cv = new CrossValidation(toolsGenerator.getNERTools(lang));
-        Set<String> toolResultKeySet = cv.getTools().getToolResult().keySet();
-        String[] prefix = toolResultKeySet.toArray(new String[toolResultKeySet.size()]);
-
-        LOG.info("tools used: " + toolResultKeySet);
-
-        // TODO: remove FoxClassifier dependency?
-        FoxClassifier foxClassifier = new FoxClassifier();
-        setClassifier(foxClassifier, prefix);
-
-        Classifier cls = foxClassifier.getClassifier();
-
+    public static void validate(String[] inputFiles, String lang) {
+        if (lang == null || lang.isEmpty())
+            LOG.warn("Missing lang paramerter!");
         try {
+            ToolsGenerator toolsGenerator;
+
+            toolsGenerator = new ToolsGenerator();
+
+            CrossValidation cv = new CrossValidation(toolsGenerator.getNERTools(lang));
+            Set<String> toolResultKeySet = cv.getTools().getToolResult().keySet();
+            String[] prefix = toolResultKeySet.toArray(new String[toolResultKeySet.size()]);
+
+            LOG.info("tools used: " + toolResultKeySet);
+
+            // TODO: remove FoxClassifier dependency?
+            FoxClassifier foxClassifier = new FoxClassifier();
+            setClassifier(foxClassifier, prefix);
+            Classifier cls = foxClassifier.getClassifier();
             cv.crossValidation(cls, inputFiles);
+
         } catch (Exception e) {
-            LOG.error("\n", e);
+            LOG.error(e.getLocalizedMessage(), e);
         }
     }
 
