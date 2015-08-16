@@ -96,7 +96,7 @@ public class BalieCommon extends AbstractNER {
             String type = token.EntityType().GetLabel(NamedEntityTypeEnumMappingNerf.values());
             if (type != null && !type.equals("nothing")) {
                 type = type.toLowerCase();
-                LOG.info(type);
+                LOG.debug(token + ":" + type);
             }
 
             if (type != null && mapTypeToSupportedType(type) != EntityClassMap.getNullCategory() && type.equals(lastType) && list.size() > 0) {

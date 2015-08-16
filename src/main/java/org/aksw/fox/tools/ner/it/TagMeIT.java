@@ -8,7 +8,7 @@ import org.apache.log4j.PropertyConfigurator;
 public class TagMeIT extends TagMeCommon {
 
     public TagMeIT() {
-        super("it");
+        super("it", "http://it.dbpedia.org/sparql", "http://it.dbpedia.org");
     }
 
     public static void main(String[] a) {

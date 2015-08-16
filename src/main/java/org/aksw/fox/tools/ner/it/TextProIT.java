@@ -50,7 +50,7 @@ public class TextProIT extends AbstractNER {
      */
     @Override
     public List<Entity> retrieve(String input) {
-        LOG.info(input);
+        LOG.debug(input);
         String file = TMP_FOLDER + File.separator + "input" + UUID.randomUUID().toString() + ".tmp";
         writeInputFile(input, file);
         runTextPro(file);

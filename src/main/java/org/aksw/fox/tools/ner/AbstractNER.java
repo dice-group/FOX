@@ -5,9 +5,11 @@ import java.nio.charset.Charset;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import org.aksw.fox.data.Entity;
@@ -41,16 +43,12 @@ public abstract class AbstractNER implements INER {
      */
     abstract public List<Entity> retrieve(String input);
 
-    /**
-     * Gets the supported entity type for tool entity type.
-     */
-    public String mapTypeToSupportedType(String toolType) {
-        if (entityClasses.isEmpty())
-            LOG.warn("No entity types know. Please fill the entity classes map with types to map.");
-        String t = entityClasses.get(toolType);
-        if (t == null)
-            t = EntityClassMap.N;
-        return t;
+    public List<Entity> _retrieve(String input) {
+        List<Entity> list = new ArrayList<>();
+        Set<Entity> set = new HashSet<>(retrieve(input));
+        list.addAll(set);
+        entityList = clean(list);
+        return entityList;
     }
 
     @Override
@@ -61,7 +59,7 @@ public abstract class AbstractNER implements INER {
     @Override
     public void run() {
         if (input != null)
-            entityList = clean(retrieve(input));
+            _retrieve(input);
         else
             LOG.error("Input not set!");
 
@@ -159,6 +157,18 @@ public abstract class AbstractNER implements INER {
         String r = IOUtils.toString(entry.getContent(), UTF_8);
         EntityUtils.consume(entry);
         return r;
+    }
+
+    /**
+     * Gets the supported entity type for tool entity type.
+     */
+    public String mapTypeToSupportedType(String toolType) {
+        if (entityClasses.isEmpty())
+            LOG.warn("No entity types know. Please fill the entity classes map with types to map.");
+        String t = entityClasses.get(toolType);
+        if (t == null)
+            t = EntityClassMap.N;
+        return t;
     }
 
     private void logMsg() {

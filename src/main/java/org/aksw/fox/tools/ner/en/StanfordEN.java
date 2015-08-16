@@ -1,11 +1,12 @@
 package org.aksw.fox.tools.ner.en;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.nerlearner.reader.TrainingInputReader;
 import org.aksw.fox.tools.ner.common.StanfordCommon;
 import org.aksw.fox.utils.FoxCfg;
-import org.aksw.fox.utils.FoxConst;
 import org.apache.log4j.PropertyConfigurator;
 
 /**
@@ -36,6 +37,20 @@ public class StanfordEN extends StanfordCommon {
 
     public static void main(String[] a) {
         PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-        LOG.info(new StanfordEN().retrieve(FoxConst.NER_EN_EXAMPLE_1));
+        TrainingInputReader tr = new TrainingInputReader();
+        try {
+            tr.initFiles("input/4");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        LOG.info(
+                new StanfordEN().retrieve(
+                        tr.getInput()
+                        )
+                );
+
+        // LOG.info(new StanfordEN().retrieve(FoxConst.NER_EN_EXAMPLE_1));
     }
 }
