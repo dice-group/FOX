@@ -17,6 +17,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.aksw.fox.IFox;
 import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.utils.FoxLanguageDetector;
+import org.aksw.fox.utils.FoxLanguageDetector.Langs;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -27,7 +29,8 @@ import org.jetlang.fibers.ThreadFiber;
 @Path("ner")
 public class ApiResource {
 
-    public static Logger LOG = LogManager.getLogger(ApiResource.class);
+    public static Logger LOG              = LogManager.getLogger(ApiResource.class);
+    FoxLanguageDetector  languageDetector = new FoxLanguageDetector();
 
     @Path("entities")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -42,17 +45,23 @@ public class ApiResource {
             parameter.put(FoxCfg.parameter_type, properties.getString(FoxCfg.parameter_type));
             parameter.put(FoxCfg.parameter_task, properties.getString(FoxCfg.parameter_task));
             parameter.put(FoxCfg.parameter_output, properties.getString(FoxCfg.parameter_output));
-
             if (properties.get(FoxCfg.parameter_disamb) != null)
                 parameter.put(FoxCfg.parameter_disamb, properties.getString(FoxCfg.parameter_disamb));
+            String lang = properties.getString("lang");
+            Langs l = Langs.fromString(lang);
+            if (l == null) {
+                l = languageDetector.detect(parameter.get(FoxCfg.parameter_input));
+                if (l != null)
+                    lang = l.toString();
+                else
+                    lang = "";
+            }
+            parameter.put("lang", lang);
 
             LOG.info("parameter:");
             parameter.entrySet().forEach(p -> {
                 LOG.info(p.getKey() + ":" + p.getValue());
             });
-
-            // TODO: lang
-            String lang = "";
 
             // get a fox instance
             IFox fox = Server.pool.get(lang).poll();
@@ -94,29 +103,17 @@ public class ApiResource {
             fiber.dispose();
 
             if (latch.getCount() == 0) {
-
                 output = fox.getResults();
                 Server.pool.get(lang).push(fox);
-
             } else {
-
                 fox = null;
                 Server.pool.get(lang).add();
-                // TODO : error output
             }
 
             LOG.info(ui.getRequestUri());
             LOG.info(hh.getRequestHeaders());
             LOG.info("IP: " + request.getRemoteAddr());
-            /*}else {
-               LOG.debug("wrong parameters");
-               try {
-                   response.sendError(HttpURLConnection.HTTP_BAD_REQUEST);
-               } catch (IOException e) {
-                   LOG.error("\n", e);
-               }
-               response.finish();
-            }*/
+
         } catch (Exception e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
