@@ -117,8 +117,8 @@ public class Server {
 
         server.getServerConfiguration().addHttpHandler(
                 RuntimeDelegate.getInstance().createEndpoint(createApiResourceConfig(), GrizzlyHttpContainer.class),
-                "/call/"// BASE_URI.getPath()
-        );
+                ApiResource.getPath()
+                );
 
         String state = null;
         // error page data
