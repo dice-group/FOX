@@ -1,17 +1,20 @@
 package org.aksw.fox.tools.re;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.aksw.fox.tools.re.en.REStanford;
 
 public class FoxRETools {
 
-    protected IRE relationTool = null;
+    protected Map<String, IRE> relationTool = new HashMap<>();
 
     public FoxRETools() {
-        relationTool = new REStanford();
-
+        // TODO: move RE to config
+        relationTool.put("en", new REStanford());
     }
 
-    public IRE getRETool() {
-        return relationTool;
+    public IRE getRETool(String lang) {
+        return relationTool.get(lang);
     }
 }
