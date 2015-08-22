@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.json.JsonObject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -15,8 +16,11 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.aksw.fox.Fox;
 import org.aksw.fox.IFox;
+import org.aksw.fox.tools.ner.ToolsGenerator;
 import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxLanguageDetector;
 import org.aksw.fox.utils.FoxLanguageDetector.Langs;
 import org.aksw.fox.utils.FoxTextUtil;
@@ -25,12 +29,43 @@ import org.apache.log4j.Logger;
 import org.glassfish.grizzly.http.server.Request;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 @Path("ner")
 public class ApiResource {
 
     public static Logger LOG              = LogManager.getLogger(ApiResource.class);
     FoxLanguageDetector  languageDetector = new FoxLanguageDetector();
+
+    @Path("config")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public String getConfig() {
+        JSONObject jo = new JSONObject();
+        try {
+            JSONArray langs = new JSONArray();
+            ToolsGenerator.nerTools.keySet().forEach(lang -> {
+                JSONArray nerTools = new JSONArray();
+                ToolsGenerator.nerTools.get(lang).forEach(nerTools::put);
+
+                jo.put(lang, new JSONObject());
+                jo.getJSONObject(lang).put("ner", nerTools);
+                jo.getJSONObject(lang).put("nerlight", ToolsGenerator.nerLightTool.get(lang));
+                jo.getJSONObject(lang).put("nerlinking", ToolsGenerator.disambiguationTools.get(lang));
+
+                langs.put(lang);
+            });
+            jo.put("lang", langs);
+            JSONArray ja = new JSONArray();
+            FoxJena.prints.forEach(ja::put);
+            jo.put("out", ja);
+
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+        return jo.toString(2);
+    }
 
     @Path("entities")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -41,16 +76,16 @@ public class ApiResource {
 
         Map<String, String> parameter = new HashMap<>();
         try {
-            parameter.put(FoxCfg.parameter_input, properties.getString(FoxCfg.parameter_input));
-            parameter.put(FoxCfg.parameter_type, properties.getString(FoxCfg.parameter_type));
-            parameter.put(FoxCfg.parameter_task, properties.getString(FoxCfg.parameter_task));
-            parameter.put(FoxCfg.parameter_output, properties.getString(FoxCfg.parameter_output));
-            if (properties.get(FoxCfg.parameter_disamb) != null)
-                parameter.put(FoxCfg.parameter_disamb, properties.getString(FoxCfg.parameter_disamb));
+            parameter.put(Fox.parameter_input, properties.getString(Fox.parameter_input));
+            parameter.put(Fox.parameter_type, properties.getString(Fox.parameter_type));
+            parameter.put(Fox.parameter_task, properties.getString(Fox.parameter_task));
+            parameter.put(Fox.parameter_output, properties.getString(Fox.parameter_output));
+            if (properties.get(Fox.parameter_disamb) != null)
+                parameter.put(Fox.parameter_disamb, properties.getString(Fox.parameter_disamb));
             String lang = properties.getString("lang");
             Langs l = Langs.fromString(lang);
             if (l == null) {
-                l = languageDetector.detect(parameter.get(FoxCfg.parameter_input));
+                l = languageDetector.detect(parameter.get(Fox.parameter_input));
                 if (l != null)
                     lang = l.toString();
                 else
@@ -72,14 +107,14 @@ public class ApiResource {
             final CountDownLatch latch = new CountDownLatch(1);
 
             // get input data
-            switch (parameter.get(FoxCfg.parameter_type).toLowerCase()) {
+            switch (parameter.get(Fox.parameter_type).toLowerCase()) {
 
             case "url":
-                parameter.put(FoxCfg.parameter_input, FoxTextUtil.urlToText(parameter.get(FoxCfg.parameter_input)));
+                parameter.put(Fox.parameter_input, FoxTextUtil.urlToText(parameter.get(Fox.parameter_input)));
                 break;
 
             case "text":
-                parameter.put(FoxCfg.parameter_input, FoxTextUtil.htmlToText(parameter.get(FoxCfg.parameter_input)));
+                parameter.put(Fox.parameter_input, FoxTextUtil.htmlToText(parameter.get(Fox.parameter_input)));
                 break;
             }
 
@@ -96,7 +131,7 @@ public class ApiResource {
             } catch (InterruptedException e) {
                 LOG.error("Fox timeout after " + FoxCfg.get(FoxHttpHandler.CFG_KEY_FOX_LIFETIME) + "min.");
                 LOG.error("\n", e);
-                LOG.error("input: " + parameter.get(FoxCfg.parameter_input));
+                LOG.error("input: " + parameter.get(Fox.parameter_input));
             }
 
             // shutdown thread
@@ -120,11 +155,10 @@ public class ApiResource {
         return output;
     }
 
-    // TODO: entitiesFeedback
     @Path("entitiesFeedback")
     @POST
     public JsonObject postText() {
-
+        // TODO: entitiesFeedback
         LOG.info("FEEDBACK");
         return null;
     }
