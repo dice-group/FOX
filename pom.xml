@@ -395,7 +395,7 @@
                         <manifestEntries>
                             <Class-Path>lib/balie/Balie.jar
                                 lib/simmetrics_jar_v1_6_2_d07_02_07.jar
-                                lib/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</Class-Path>
+                                ${system.data}/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -417,7 +417,7 @@
                         <manifestEntries>
                             <Class-Path>lib/balie/Balie.jar
                                 lib/simmetrics_jar_v1_6_2_d07_02_07.jar
-                                lib/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</Class-Path>
+                                ${system.data}/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</Class-Path>
                         </manifestEntries>
                     </archive>
                 </configuration>
