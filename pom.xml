@@ -229,7 +229,7 @@
             <artifactId>jsonld-java</artifactId>
             <version>0.5.1</version>
         </dependency>
-                    <!-- jena-sparql-api -->
+        <!-- jena-sparql-api -->
         <dependency>
             <groupId>org.aksw.jena-sparql-api</groupId>
             <artifactId>jena-sparql-api-core</artifactId>
