@@ -35,13 +35,15 @@ public class ToolsGenerator {
     public static final Map<String, String>       disambiguationTools         = new HashMap<>();
     public static final Map<String, List<String>> nerTools                    = new HashMap<>();
     public static final Map<String, String>       nerLightTool                = new HashMap<>();
+    static {
+        init();
+    }
 
     /**
-     * @throws UnsupportedLangException
-     * 
+     * Read xml cfg.
      */
     @SuppressWarnings("unchecked")
-    public ToolsGenerator() throws UnsupportedLangException {
+    public static void init() {
         if (supportedLang.containsAll(usedLang)) {
             for (String lang : usedLang) {
                 String disambiguationTool = CFG.getString(CFG_KEY_DISAMBIGUATION_TOOL.concat("[@").concat(lang).concat("]"));
@@ -63,7 +65,7 @@ public class ToolsGenerator {
             Set<String> l = new HashSet<>();
             l.addAll(usedLang);
             l.removeAll(supportedLang);
-            throw new UnsupportedLangException(l.toString());
+            // throw new UnsupportedLangException(l.toString());
         }
 
         LOG.info("disambiguationTools:" + disambiguationTools);
