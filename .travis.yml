@@ -4,6 +4,7 @@ jdk:
 branches:
   only:
     - master
+sudo: false
 notifications:
   email:
     recipients:
