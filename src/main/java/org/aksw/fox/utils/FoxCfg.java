@@ -19,19 +19,11 @@ import org.apache.log4j.Logger;
  */
 public class FoxCfg {
 
-    public static final String  parameter_input    = "input";
-    public static final String  parameter_task     = "task";
-    public static final String  parameter_output   = "output";
-    public static final String  parameter_foxlight = "foxlight";
-    public static final String  parameter_nif      = "nif";
-    public static final String  parameter_type     = "type";
-    public static final String  parameter_disamb   = "disamb";
+    public static final Logger  LOG           = LogManager.getLogger(FoxCfg.class); ;
 
-    public static final Logger  LOG                = LogManager.getLogger(FoxCfg.class); ;
-
-    public static final String  LOG_FILE           = "log4j.properties";
-    public static final String  CFG_FILE           = "fox.properties";
-    protected static Properties foxProperties      = null;
+    public static final String  LOG_FILE      = "log4j.properties";
+    public static final String  CFG_FILE      = "fox.properties";
+    protected static Properties foxProperties = null;
 
     /**
      * Loads a given file to use as properties.

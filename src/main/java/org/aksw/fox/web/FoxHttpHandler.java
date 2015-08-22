@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.aksw.fox.Fox;
 import org.aksw.fox.IFox;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxJena;
@@ -123,32 +124,33 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
         LOG.info("checking form parameter ...");
 
-        String type = formData.get("type");
+        String type = formData.get(Fox.parameter_type);
         if (type == null || !(type.equalsIgnoreCase("url") || type.equalsIgnoreCase("text")))
             return false;
 
-        String text = formData.get("input");
+        String text = formData.get(Fox.parameter_input);
         if (text == null || text.trim().isEmpty())
             return false;
 
-        String task = formData.get("task");
-        if (task == null || !(task.equalsIgnoreCase("ke") || task.equalsIgnoreCase("ner") || task.equalsIgnoreCase("keandner") || task.equalsIgnoreCase("re") || task.equalsIgnoreCase("all")))
+        String task = formData.get(Fox.parameter_task);
+        if (task == null || !(task.equalsIgnoreCase("ke") || task.equalsIgnoreCase("ner") ||
+                task.equalsIgnoreCase("keandner") || task.equalsIgnoreCase("re") || task.equalsIgnoreCase("all")))
             return false;
 
-        String output = formData.get("output");
+        String output = formData.get(Fox.parameter_output);
 
         if (!FoxJena.prints.contains(output))
             return false;
 
-        String nif = formData.get("nif");
+        String nif = formData.get(Fox.parameter_nif);
         if (nif == null || !nif.equalsIgnoreCase("true"))
-            formData.put("nif", "false");
+            formData.put(Fox.parameter_nif, "false");
         else
-            formData.put("nif", "true");
+            formData.put(Fox.parameter_nif, "true");
 
-        String foxlight = formData.get("foxlight");
-        if (foxlight == null) {
-            formData.put("foxlight", "OFF");
+        String foxlight = formData.get(Fox.parameter_foxlight);
+        if (foxlight == null || foxlight.equalsIgnoreCase("off")) {
+            formData.put(Fox.parameter_foxlight, "OFF");
         }
 
         LOG.info("ok.");
