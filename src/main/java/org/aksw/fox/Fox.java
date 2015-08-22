@@ -42,45 +42,54 @@ import org.jetlang.fibers.ThreadFiber;
  */
 public class Fox implements IFox {
 
-    public static final Logger  LOG            = LogManager.getLogger(Fox.class);
+    public static final String  parameter_input    = "input";
+
+    public static final String  parameter_task     = "task";
+    public static final String  parameter_output   = "output";
+    public static final String  parameter_foxlight = "foxlight";
+    public static final String  parameter_nif      = "nif";
+    public static final String  parameter_type     = "type";
+    public static final String  parameter_disamb   = "disamb";
+
+    public static final Logger  LOG                = LogManager.getLogger(Fox.class);
 
     private String              lang;
 
     /**
      * 
      */
-    protected ILinking          linking        = null;
+    protected ILinking          linking            = null;
 
     /**
      * 
      */
 
-    protected Tools             nerTools       = null;
-    protected FoxRETools        reTools        = null;
+    protected Tools             nerTools           = null;
+    protected FoxRETools        reTools            = new FoxRETools();
 
     /**
      * 
      */
-    protected TokenManager      tokenManager   = null;
+    // protected TokenManager tokenManager = null;
 
     /**
      * 
      */
-    protected FoxJena           foxJena        = new FoxJena();
+    protected FoxJena           foxJena            = new FoxJena();
 
     /**
      * Holds a tool for fox's light version.
      */
-    protected INER              nerLight       = null;
+    // protected INER nerLight = null;
 
     /**
      * 
      */
-    protected FoxWebLog         foxWebLog      = null;
+    protected FoxWebLog         foxWebLog          = null;
 
-    private CountDownLatch      countDownLatch = null;
-    private Map<String, String> parameter      = null;
-    private String              response       = null;
+    private CountDownLatch      countDownLatch     = null;
+    private Map<String, String> parameter          = null;
+    private String              response           = null;
 
     @SuppressWarnings("unused")
     private Fox() {
@@ -96,24 +105,20 @@ public class Fox implements IFox {
             ToolsGenerator toolsGenerator = new ToolsGenerator();
             linking = toolsGenerator.getDisambiguationTool(lang);
             nerTools = toolsGenerator.getNERTools(lang);
-            nerLight = toolsGenerator.getNERLightTool(lang);
         } catch (UnsupportedLangException | LoadingNotPossibleException e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
         LOG.info("linking: " + linking.getClass());
-        LOG.info("ner light: " + nerLight.getClass());
 
         // TODO: relation extraction
         // reTools = new FoxRETools();
     }
 
     protected Set<Entity> doNER() {
-        LOG.info("Start ner ...");
-        foxWebLog.setMessage("Start NER (" + lang + ")...");
-        Set<Entity> entities = nerTools.getEntities(parameter.get(FoxCfg.parameter_input));
+        infoLog("Start NER (" + lang + ")...");
+        Set<Entity> entities = nerTools.getEntities(parameter.get(parameter_input));
 
         // remove duplicate annotations
-        // TODO: why they here?
         Map<String, Entity> wordEntityMap = new HashMap<>();
         for (Entity entity : entities) {
             if (wordEntityMap.get(entity.getText()) == null) {
@@ -130,123 +135,116 @@ public class Fox implements IFox {
         }
         // remove
         entities.retainAll(wordEntityMap.values());
-        foxWebLog.setMessage("NER done.");
+        infoLog("NER done.");
         return entities;
     }
 
     protected Set<Relation> doRE() {
-        // info
-        {
-            String info = "Start RE ...";
-            LOG.info(info);
-            foxWebLog.setMessage(info);
-        }
-        final CountDownLatch latch = new CountDownLatch(1);
-        IRE reTool = reTools.getRETool();
-        reTool.setCountDownLatch(latch);
-        reTool.setInput(parameter.get(FoxCfg.parameter_input));
-
-        Fiber fiber = new ThreadFiber();
-        fiber.start();
-        fiber.execute(reTool);
-
-        int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
-        try {
-            latch.await(min, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            LOG.error(e.getLocalizedMessage(), e);
-        }
-        // shutdown threads
-        fiber.dispose();
-
-        // get results
         Set<Relation> relations = null;
-        if (latch.getCount() == 0) {
-            relations = reTool.getResults();
+        IRE reTool = reTools.getRETool(lang);
+        if (reTool == null)
+            infoLog("Relation tool for " + lang.toUpperCase() + " not supported yet.");
+        else {
+            infoLog("Start RE ...");
+            final CountDownLatch latch = new CountDownLatch(1);
+            reTool.setCountDownLatch(latch);
+            reTool.setInput(parameter.get(parameter_input));
 
-        } else {
-            // info
-            String info = "Timeout after " + min + " min.";
-            LOG.error(info);
-            foxWebLog.setMessage(info);
+            Fiber fiber = new ThreadFiber();
+            fiber.start();
+            fiber.execute(reTool);
+
+            int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
+            try {
+                latch.await(min, TimeUnit.MINUTES);
+            } catch (InterruptedException e) {
+                LOG.error(e.getLocalizedMessage(), e);
+            }
+            // shutdown threads
+            fiber.dispose();
+
+            // get results
+            if (latch.getCount() == 0) {
+                relations = reTool.getResults();
+            } else {
+                infoLog("Timeout after " + min + " min.");
+            }
+            infoLog("RE done.");
         }
-
-        // info
-        {
-            String info = "RE done.";
-            LOG.info(info);
-            foxWebLog.setMessage(info);
-        }
-        return relations == null ? new HashSet<Relation>() : relations;
-
+        return relations;
     }
 
     protected Set<Entity> doNERLight(String name) {
-        {
-            String m = "Starting light NER version ...";
-            LOG.info(m);
-            foxWebLog.setMessage(m);
+        infoLog("Starting light NER version ...");
+        Set<Entity> entities = new HashSet<>();
+        if (name == null || name.isEmpty())
+            return entities;
+
+        INER nerLight = null;
+        for (INER t : nerTools.getNerTools()) {
+            if (name.equals(t.getClass().getName()))
+                nerLight = t;
+        }
+        /*
+        // loads a tool
+        try {
+            nerLight = (INER) FoxCfg.getClass(name);
+        } catch (LoadingNotPossibleException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            return entities;
+        }
+        */
+        if (nerLight == null) {
+            LOG.info("Given (" + name + ") tool is not supported.");
+            return entities;
         }
 
-        Set<Entity> entities = null;
-        if (name != null && !name.isEmpty())
+        infoLog("NER tool(" + lang + ") is: " + nerLight.getToolName());
+
+        // clean input
+        String input = parameter.get(parameter_input);
+        TokenManager tokenManager = new TokenManager(input);
+        input = tokenManager.getInput();
+        parameter.put(parameter_input, input);
+
+        {
+            final CountDownLatch latch = new CountDownLatch(1);
+            Fiber fiber = new ThreadFiber();
+            nerLight.setCountDownLatch(latch);
+            nerLight.setInput(parameter.get(parameter_input));
+
+            fiber.start();
+            fiber.execute(nerLight);
+
+            int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
             try {
-                nerLight = (INER) FoxCfg.getClass(name);
-            } catch (LoadingNotPossibleException e) {
-                LOG.error(e.getLocalizedMessage(), e);
+                latch.await(min, TimeUnit.MINUTES);
+            } catch (InterruptedException e) {
+                LOG.error("Timeout after " + min + " min.");
+                LOG.error("\n", e);
+                LOG.error("input:\n" + parameter.get(parameter_input));
             }
 
-        foxWebLog.setMessage("NER tool is: " + nerLight.getToolName());
+            // shutdown threads
+            fiber.dispose();
+            // get results
+            if (latch.getCount() == 0) {
+                entities = new HashSet<Entity>(nerLight.getResults());
 
-        final CountDownLatch latch = new CountDownLatch(1);
-
-        nerLight.setCountDownLatch(latch);
-        nerLight.setInput(tokenManager.getInput());
-
-        Fiber fiber = new ThreadFiber();
-        fiber.start();
-        fiber.execute(nerLight);
-
-        int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
-        try {
-            latch.await(min, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            LOG.error("Timeout after " + min + " min.");
-            LOG.error("\n", e);
-            LOG.error("input:\n" + parameter.get(FoxCfg.parameter_input));
+            } else {
+                if (LOG.isDebugEnabled())
+                    LOG.debug("timeout after " + min + "min.");
+                // TODO: handle timeout
+            }
         }
-
-        // shutdown threads
-        fiber.dispose();
-        // get results
-        if (latch.getCount() == 0) {
-            entities = new HashSet<Entity>(nerLight.getResults());
-
-        } else {
-            if (LOG.isDebugEnabled())
-                LOG.debug("timeout after " + min + "min.");
-
-            // TODO: handle timeout
-        }
-
-        foxWebLog.setMessage("Light version done.");
 
         tokenManager.repairEntities(entities);
 
-        /* make an index for each entity */
-
-        // make index map
+        // make an index for each entity
         Map<Integer, Entity> indexMap = new HashMap<>();
-        /*  
-         for (Entity entity : entities)
-              for (Integer i : FoxTextUtil.getIndices(entity.getText(), tokenManager.getTokenInput()))
-                  indexMap.put(i, entity);
-        */
-        entities.forEach(
-                entity -> FoxTextUtil.getIndices(entity.getText(), tokenManager.getTokenInput())
-                        .forEach(
-                                index -> indexMap.put(index, entity))
-                );
+        for (Entity entity : entities)
+            for (Integer i : FoxTextUtil.getIndices(entity.getText(), tokenManager.getTokenInput()))
+                indexMap.put(i, entity);
 
         // sort
         List<Integer> sortedIndices = new ArrayList<>(indexMap.keySet());
@@ -263,24 +261,28 @@ public class Fox implements IFox {
         }
 
         // remove entity without an index
-        Set<Entity> cleanEntity = new HashSet<>();
-        for (Entity e : entities) {
-            if (e.getIndices() != null && e.getIndices().size() > 0) {
-                cleanEntity.add(e);
+        {
+            Set<Entity> cleanEntity = new HashSet<>();
+            for (Entity e : entities) {
+                if (e.getIndices() != null && e.getIndices().size() > 0) {
+                    cleanEntity.add(e);
+                }
             }
+            entities = cleanEntity;
         }
-        entities = cleanEntity;
+
         nerLight = null;
+        infoLog("Light version done.");
         return entities;
     }
 
     protected void setURIs(Set<Entity> entities) {
         if (entities != null && !entities.isEmpty()) {
-            foxWebLog.setMessage("Start NE linking ...");
+            infoLog("Start NE linking ...");
 
             final CountDownLatch latch = new CountDownLatch(1);
             linking.setCountDownLatch(latch);
-            linking.setInput(entities, parameter.get(FoxCfg.parameter_input));
+            linking.setInput(entities, parameter.get(parameter_input));
 
             Fiber fiber = new ThreadFiber();
             fiber.start();
@@ -301,19 +303,11 @@ public class Fox implements IFox {
             if (latch.getCount() == 0) {
                 entities = new HashSet<Entity>(linking.getResults());
             } else {
-
-                String s = "Timeout after " + min + " min (" + linking.getClass().getName() + ").";
-                if (LOG.isDebugEnabled())
-                    LOG.debug(s);
-                foxWebLog.setMessage(s);
-
+                infoLog("Timeout after " + min + " min (" + linking.getClass().getName() + ").");
                 // use dev lookup after timeout
-                new NoLinking().setUris(entities, parameter.get(FoxCfg.parameter_input));
+                new NoLinking().setUris(entities, parameter.get(parameter_input));
             }
-
-            // for (Entity e : entities)
-            // e.uri = uriLookup.getUri(e.getText(), e.getType());
-            foxWebLog.setMessage("Start NE linking done.");
+            infoLog("Start NE linking done.");
         }
     }
 
@@ -323,24 +317,24 @@ public class Fox implements IFox {
             return;
         }
 
-        String input = parameter.get(FoxCfg.parameter_input);
+        String input = parameter.get(parameter_input);
 
         // switch output
-        final boolean useNIF = Boolean.parseBoolean(parameter.get(FoxCfg.parameter_nif));
+        final boolean useNIF = Boolean.parseBoolean(parameter.get(parameter_nif));
 
-        String out = parameter.get(FoxCfg.parameter_output);
-        foxWebLog.setMessage("Preparing output format ...");
+        String out = parameter.get(parameter_output);
+        infoLog("Preparing output format ...");
 
         foxJena.clearGraph();
         foxJena.setAnnotations(entities);
 
         if (relations != null) {
             foxJena.setRelations(relations);
-            foxWebLog.setMessage("Found " + relations.size() + " relations.");
+            infoLog("Found " + relations.size() + " relations.");
         }
 
         response = foxJena.print(out, useNIF, input);
-        foxWebLog.setMessage("Preparing output format done.");
+        infoLog("Preparing output format done.");
 
         if (parameter.get("returnHtml") != null && parameter.get("returnHtml").toLowerCase().endsWith("true")) {
 
@@ -369,14 +363,12 @@ public class Fox implements IFox {
             }
 
             html += input.substring(last);
-            parameter.put(FoxCfg.parameter_input, html);
+            parameter.put(parameter_input, html);
 
             if (LOG.isTraceEnabled())
                 infotrace(entities);
         }
-
-        foxWebLog.setMessage("Found " + entities.size() + " entities.");
-
+        infoLog("Found " + entities.size() + " entities.");
     }
 
     /**
@@ -384,16 +376,15 @@ public class Fox implements IFox {
      */
     @Override
     public void run() {
-        LOG.info("running fox...");
         foxWebLog = new FoxWebLog();
-        foxWebLog.setMessage("Running Fox...");
+        infoLog("Running Fox...");
 
         if (parameter == null) {
             LOG.error("Parameter not set.");
         } else {
-            String input = parameter.get(FoxCfg.parameter_input);
-            String task = parameter.get(FoxCfg.parameter_task);
-            String light = parameter.get(FoxCfg.parameter_foxlight);
+            String input = parameter.get(parameter_input);
+            String task = parameter.get(parameter_task);
+            String light = parameter.get(parameter_foxlight);
 
             Set<Entity> entities = null;
             Set<Relation> relations = null;
@@ -401,10 +392,10 @@ public class Fox implements IFox {
             if (input == null || task == null) {
                 LOG.error("Input or task parameter not set.");
             } else {
-                tokenManager = new TokenManager(input);
+                TokenManager tokenManager = new TokenManager(input);
                 // clean input
                 input = tokenManager.getInput();
-                parameter.put(FoxCfg.parameter_input, input);
+                parameter.put(parameter_input, input);
 
                 // light version
                 if (light != null && !light.equals("OFF")) {
@@ -446,7 +437,7 @@ public class Fox implements IFox {
         }
 
         // done
-        foxWebLog.setMessage("Running Fox done.");
+        infoLog("Running Fox done.");
         if (countDownLatch != null)
             countDownLatch.countDown();
     }
@@ -486,15 +477,15 @@ public class Fox implements IFox {
     public void setParameter(Map<String, String> parameter) {
         this.parameter = parameter;
 
-        String paraUriLookup = parameter.get(FoxCfg.parameter_disamb);
+        String paraUriLookup = parameter.get(parameter_disamb);
         if (paraUriLookup != null) {
             if (paraUriLookup.equalsIgnoreCase("off"))
-                paraUriLookup = "org.aksw.fox.uri.NullLookup";
+                paraUriLookup = NoLinking.class.getName();
 
             try {
                 linking = (ILinking) FoxCfg.getClass(paraUriLookup.trim());
             } catch (Exception e) {
-                LOG.error("InterfaceURI not found. Check parameter: " + FoxCfg.parameter_disamb);
+                LOG.error("InterfaceURI not found. Check parameter: " + parameter_disamb);
             }
         }
     }
@@ -507,18 +498,23 @@ public class Fox implements IFox {
     @Override
     public Map<String, String> getDefaultParameter() {
         Map<String, String> map = new HashMap<>();
-        map.put(FoxCfg.parameter_input, FoxConst.NER_EN_EXAMPLE_1);
-        map.put(FoxCfg.parameter_task, "NER");
-        map.put(FoxCfg.parameter_output, Lang.RDFXML.getName());
-        map.put(FoxCfg.parameter_nif, "false");
-        map.put(FoxCfg.parameter_foxlight, "OFF");
-        // map.put(FoxCfg.parameter_disamb, "org.aksw.fox.uri.AGDISTISLookup");
+        map.put(parameter_input, FoxConst.NER_EN_EXAMPLE_1);
+        map.put(parameter_task, "NER");
+        map.put(parameter_output, Lang.RDFXML.getName());
+        map.put(parameter_nif, "false");
+        map.put(parameter_foxlight, "OFF");
         return map;
     }
 
     @Override
     public String getLog() {
         return foxWebLog.getConsoleOutput();
+    }
+
+    private void infoLog(String m) {
+        if (foxWebLog != null)
+            foxWebLog.setMessage(m);
+        LOG.info(m);
     }
 
     @Override
