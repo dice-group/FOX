@@ -34,7 +34,7 @@ public class ToolsGenerator {
 
     public static final Map<String, String>       disambiguationTools         = new HashMap<>();
     public static final Map<String, List<String>> nerTools                    = new HashMap<>();
-    public static final Map<String, String>       nerLightTool                = new HashMap<>();
+    // public static final Map<String, String> nerLightTool = new HashMap<>();
     static {
         init();
     }
@@ -57,9 +57,11 @@ public class ToolsGenerator {
                 if (!tools.isEmpty())
                     nerTools.put(lang, tools);
 
+                /*
                 String lightTool = CFG.getString(CFG_KEY_LIGHT_TOOL.concat("[@").concat(lang).concat("]"));
                 if (lightTool != null && !lightTool.isEmpty())
                     nerLightTool.put(lang, lightTool);
+                    */
             }
         } else {
             Set<String> l = new HashSet<>();
@@ -70,16 +72,17 @@ public class ToolsGenerator {
 
         LOG.info("disambiguationTools:" + disambiguationTools);
         LOG.info("nerTools" + nerTools);
-        LOG.info("nerLightTool" + nerLightTool);
+        // LOG.info("nerLightTool" + nerLightTool);
     }
 
-    public INER getNERLightTool(String lang) throws UnsupportedLangException, LoadingNotPossibleException {
-        if (usedLang.contains(lang) && nerLightTool.get(lang) != null && !nerLightTool.get(lang).isEmpty()) {
-            return (INER) FoxCfg.getClass(nerLightTool.get(lang));
-        } else
-            throw new UnsupportedLangException("Language " + lang + " is not supported.");
-    }
-
+    /*
+        public INER getNERLightTool(String lang) throws UnsupportedLangException, LoadingNotPossibleException {
+            if (usedLang.contains(lang) && nerLightTool.get(lang) != null && !nerLightTool.get(lang).isEmpty()) {
+                return (INER) FoxCfg.getClass(nerLightTool.get(lang));
+            } else
+                throw new UnsupportedLangException("Language " + lang + " is not supported.");
+        }
+    */
     /**
      * 
      * @param lang
