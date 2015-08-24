@@ -264,38 +264,35 @@ public class Fox implements IFox {
                     infoLog(e1.getLocalizedMessage());
                     linking = new NoLinking();
                 }
-
-                linking.setCountDownLatch(latch);
-                linking.setInput(entities, parameter.get(Parameter.INPUT.toString()));
-
-                Fiber fiber = new ThreadFiber();
-                fiber.start();
-                fiber.execute(linking);
-
-                // use another time for the uri lookup?
-                int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
-                try {
-                    latch.await(min, TimeUnit.MINUTES);
-                } catch (InterruptedException e) {
-                    LOG.error("Timeout after " + min + "min.");
-                    LOG.error("\n", e);
-                }
-
-                // shutdown threads
-                fiber.dispose();
-                // get results
-                if (latch.getCount() == 0) {
-                    entities = new HashSet<Entity>(linking.getResults());
-                } else {
-                    infoLog("Timeout after " + min + " min (" + linking.getClass().getName() + ").");
-                    // use dev lookup after timeout
-                    new NoLinking().setUris(entities, parameter.get(Parameter.INPUT.toString()));
-                }
             }
-        } else {
+            linking.setCountDownLatch(latch);
+            linking.setInput(entities, parameter.get(Parameter.INPUT.toString()));
+
+            Fiber fiber = new ThreadFiber();
+            fiber.start();
+            fiber.execute(linking);
+
+            // use another time for the uri lookup?
+            int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
+            try {
+                latch.await(min, TimeUnit.MINUTES);
+            } catch (InterruptedException e) {
+                LOG.error("Timeout after " + min + "min.");
+                LOG.error("\n", e);
+            }
+
+            // shutdown threads
+            fiber.dispose();
+            // get results
+            if (latch.getCount() == 0) {
+                entities = new HashSet<Entity>(linking.getResults());
+            } else {
+                infoLog("Timeout after " + min + " min (" + linking.getClass().getName() + ").");
+                // use dev lookup after timeout
+                new NoLinking().setUris(entities, parameter.get(Parameter.INPUT.toString()));
+            }
             linking = null;
         }
-
         infoLog("Start NE linking done.");
     }
 
