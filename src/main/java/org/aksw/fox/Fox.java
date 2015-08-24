@@ -61,17 +61,7 @@ public class Fox implements IFox {
     /**
      * 
      */
-    // protected TokenManager tokenManager = null;
-
-    /**
-     * 
-     */
     protected FoxJena           foxJena        = new FoxJena();
-
-    /**
-     * Holds a tool for fox's light version.
-     */
-    // protected INER nerLight = null;
 
     /**
      * 
@@ -91,18 +81,12 @@ public class Fox implements IFox {
      */
     public Fox(String lang) {
         this.lang = lang;
-
         try {
             ToolsGenerator toolsGenerator = new ToolsGenerator();
-            linking = toolsGenerator.getDisambiguationTool(lang);
             nerTools = toolsGenerator.getNERTools(lang);
         } catch (UnsupportedLangException | LoadingNotPossibleException e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
-        LOG.info("linking: " + linking.getClass());
-
-        // TODO: relation extraction
-        // reTools = new FoxRETools();
     }
 
     protected Set<Entity> doNER() {
@@ -272,34 +256,47 @@ public class Fox implements IFox {
             infoLog("Start NE linking ...");
 
             final CountDownLatch latch = new CountDownLatch(1);
-            linking.setCountDownLatch(latch);
-            linking.setInput(entities, parameter.get(Parameter.INPUT.toString()));
+            ToolsGenerator toolsGenerator = new ToolsGenerator();
+            if (linking == null) {
+                try {
+                    linking = toolsGenerator.getDisambiguationTool(lang);
+                } catch (UnsupportedLangException | LoadingNotPossibleException e1) {
+                    infoLog(e1.getLocalizedMessage());
+                    linking = new NoLinking();
+                }
 
-            Fiber fiber = new ThreadFiber();
-            fiber.start();
-            fiber.execute(linking);
+                linking.setCountDownLatch(latch);
+                linking.setInput(entities, parameter.get(Parameter.INPUT.toString()));
 
-            // use another time for the uri lookup?
-            int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
-            try {
-                latch.await(min, TimeUnit.MINUTES);
-            } catch (InterruptedException e) {
-                LOG.error("Timeout after " + min + "min.");
-                LOG.error("\n", e);
+                Fiber fiber = new ThreadFiber();
+                fiber.start();
+                fiber.execute(linking);
+
+                // use another time for the uri lookup?
+                int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
+                try {
+                    latch.await(min, TimeUnit.MINUTES);
+                } catch (InterruptedException e) {
+                    LOG.error("Timeout after " + min + "min.");
+                    LOG.error("\n", e);
+                }
+
+                // shutdown threads
+                fiber.dispose();
+                // get results
+                if (latch.getCount() == 0) {
+                    entities = new HashSet<Entity>(linking.getResults());
+                } else {
+                    infoLog("Timeout after " + min + " min (" + linking.getClass().getName() + ").");
+                    // use dev lookup after timeout
+                    new NoLinking().setUris(entities, parameter.get(Parameter.INPUT.toString()));
+                }
             }
-
-            // shutdown threads
-            fiber.dispose();
-            // get results
-            if (latch.getCount() == 0) {
-                entities = new HashSet<Entity>(linking.getResults());
-            } else {
-                infoLog("Timeout after " + min + " min (" + linking.getClass().getName() + ").");
-                // use dev lookup after timeout
-                new NoLinking().setUris(entities, parameter.get(Parameter.INPUT.toString()));
-            }
-            infoLog("Start NE linking done.");
+        } else {
+            linking = null;
         }
+
+        infoLog("Start NE linking done.");
     }
 
     protected void setOutput(Set<Entity> entities, Set<Relation> relations) {
