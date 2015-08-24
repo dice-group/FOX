@@ -22,7 +22,6 @@ import org.aksw.fox.tools.ner.ToolsGenerator;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxLanguageDetector;
-import org.aksw.fox.utils.FoxLanguageDetector.Langs;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -51,7 +50,8 @@ public class ApiResource {
 
                 jo.put(lang, new JSONObject());
                 jo.getJSONObject(lang).put("ner", nerTools);
-                jo.getJSONObject(lang).put("nerlight", ToolsGenerator.nerLightTool.get(lang));
+                // / jo.getJSONObject(lang).put("nerlight",
+                // ToolsGenerator.nerLightTool.get(lang));
                 jo.getJSONObject(lang).put("nerlinking", ToolsGenerator.disambiguationTools.get(lang));
 
                 langs.put(lang);
@@ -76,79 +76,91 @@ public class ApiResource {
 
         Map<String, String> parameter = new HashMap<>();
         try {
-            parameter.put(Fox.parameter_input, properties.getString(Fox.parameter_input));
-            parameter.put(Fox.parameter_type, properties.getString(Fox.parameter_type));
-            parameter.put(Fox.parameter_task, properties.getString(Fox.parameter_task));
-            parameter.put(Fox.parameter_output, properties.getString(Fox.parameter_output));
-            if (properties.get(Fox.parameter_disamb) != null)
-                parameter.put(Fox.parameter_disamb, properties.getString(Fox.parameter_disamb));
-            String lang = properties.getString("lang");
-            Langs l = Langs.fromString(lang);
-            if (l == null) {
-                l = languageDetector.detect(parameter.get(Fox.parameter_input));
-                if (l != null)
-                    lang = l.toString();
-                else
-                    lang = "";
-            }
-            parameter.put("lang", lang);
-
-            LOG.info("parameter:");
-            parameter.entrySet().forEach(p -> {
-                LOG.info(p.getKey() + ":" + p.getValue());
-            });
-
-            // get a fox instance
-            IFox fox = Server.pool.get(lang).poll();
-
-            // init. thread
-            Fiber fiber = new ThreadFiber();
-            fiber.start();
-            final CountDownLatch latch = new CountDownLatch(1);
+            parameter.put(Fox.Parameter.INPUT.toString(), properties.getString(Fox.Parameter.INPUT.toString()));
+            parameter.put(Fox.Parameter.TYPE.toString(), properties.getString(Fox.Parameter.TYPE.toString()));
+            parameter.put(Fox.Parameter.TASK.toString(), properties.getString(Fox.Parameter.TASK.toString()));
+            parameter.put(Fox.Parameter.OUTPUT.toString(), properties.getString(Fox.Parameter.OUTPUT.toString()));
+            if (properties.get(Fox.Parameter.LINKING.toString()) != null)
+                parameter.put(Fox.Parameter.LINKING.toString(), properties.getString(Fox.Parameter.LINKING.toString()));
 
             // get input data
-            switch (parameter.get(Fox.parameter_type).toLowerCase()) {
-
+            switch (parameter.get(Fox.Parameter.TYPE.toString()).toLowerCase()) {
             case "url":
-                parameter.put(Fox.parameter_input, FoxTextUtil.urlToText(parameter.get(Fox.parameter_input)));
+                // parameter.put(Fox.Parameter.TYPE.toString(),
+                // Fox.Type.TEXT.toString());
+                parameter.put(Fox.Parameter.INPUT.toString(), FoxTextUtil.urlToText(parameter.get(Fox.Parameter.INPUT.toString())));
                 break;
-
             case "text":
-                parameter.put(Fox.parameter_input, FoxTextUtil.htmlToText(parameter.get(Fox.parameter_input)));
+                parameter.put(Fox.Parameter.INPUT.toString(), FoxTextUtil.htmlToText(parameter.get(Fox.Parameter.INPUT.toString())));
                 break;
             }
 
-            // set up fox
-            fox.setCountDownLatch(latch);
-            fox.setParameter(parameter);
-
-            // run fox
-            fiber.execute(fox);
-
-            // wait 5min or till the fox instance is finished
+            // lang
+            String lang = null;
             try {
-                latch.await(Integer.parseInt(FoxCfg.get(FoxHttpHandler.CFG_KEY_FOX_LIFETIME)), TimeUnit.MINUTES);
-            } catch (InterruptedException e) {
-                LOG.error("Fox timeout after " + FoxCfg.get(FoxHttpHandler.CFG_KEY_FOX_LIFETIME) + "min.");
-                LOG.error("\n", e);
-                LOG.error("input: " + parameter.get(Fox.parameter_input));
+                if (properties.get(Fox.Parameter.LANG.toString()) != null)
+                    lang = properties.getString(Fox.Parameter.LANG.toString());
+
+                Fox.Langs l = Fox.Langs.fromString(lang);
+                if (l == null) {
+
+                    l = languageDetector.detect(parameter.get(Fox.Parameter.INPUT.toString()));
+                    LOG.info("lang" + lang);
+                    if (l != null)
+                        lang = l.toString();
+                    else
+                        lang = "";
+                }
+                parameter.put(Fox.Parameter.LANG.toString(), lang);
+            } catch (Exception e) {
+                LOG.error(e.getLocalizedMessage(), e);
             }
 
-            // shutdown thread
-            fiber.dispose();
+            if (lang != null) {
+                LOG.info("parameter:");
+                parameter.entrySet().forEach(p -> {
+                    LOG.info(p.getKey() + ":" + p.getValue());
+                });
 
-            if (latch.getCount() == 0) {
-                output = fox.getResults();
-                Server.pool.get(lang).push(fox);
-            } else {
-                fox = null;
-                Server.pool.get(lang).add();
+                // get a fox instance
+                IFox fox = Server.pool.get(lang).poll();
+
+                // init. thread
+                Fiber fiber = new ThreadFiber();
+                fiber.start();
+                final CountDownLatch latch = new CountDownLatch(1);
+
+                // set up fox
+                fox.setCountDownLatch(latch);
+                fox.setParameter(parameter);
+
+                // run fox
+                fiber.execute(fox);
+
+                // wait 5min or till the fox instance is finished
+                try {
+                    latch.await(Integer.parseInt(FoxCfg.get(FoxHttpHandler.CFG_KEY_FOX_LIFETIME)), TimeUnit.MINUTES);
+                } catch (InterruptedException e) {
+                    LOG.error("Fox timeout after " + FoxCfg.get(FoxHttpHandler.CFG_KEY_FOX_LIFETIME) + "min.");
+                    LOG.error("\n", e);
+                    LOG.error("input: " + parameter.get(Fox.Parameter.INPUT.toString()));
+                }
+
+                // shutdown thread
+                fiber.dispose();
+
+                if (latch.getCount() == 0) {
+                    output = fox.getResults();
+                    Server.pool.get(lang).push(fox);
+                } else {
+                    fox = null;
+                    Server.pool.get(lang).add();
+                }
+
+                LOG.info(ui.getRequestUri());
+                LOG.info(hh.getRequestHeaders());
+                LOG.info("IP: " + request.getRemoteAddr());
             }
-
-            LOG.info(ui.getRequestUri());
-            LOG.info(hh.getRequestHeaders());
-            LOG.info("IP: " + request.getRemoteAddr());
-
         } catch (Exception e) {
             LOG.error(e.getLocalizedMessage(), e);
         }

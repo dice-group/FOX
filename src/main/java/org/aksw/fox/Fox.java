@@ -42,30 +42,21 @@ import org.jetlang.fibers.ThreadFiber;
  */
 public class Fox implements IFox {
 
-    public static final String  parameter_input    = "input";
-
-    public static final String  parameter_task     = "task";
-    public static final String  parameter_output   = "output";
-    public static final String  parameter_foxlight = "foxlight";
-    public static final String  parameter_nif      = "nif";
-    public static final String  parameter_type     = "type";
-    public static final String  parameter_disamb   = "disamb";
-
-    public static final Logger  LOG                = LogManager.getLogger(Fox.class);
+    public static final Logger  LOG            = LogManager.getLogger(Fox.class);
 
     private String              lang;
 
     /**
      * 
      */
-    protected ILinking          linking            = null;
+    protected ILinking          linking        = null;
 
     /**
      * 
      */
 
-    protected Tools             nerTools           = null;
-    protected FoxRETools        reTools            = new FoxRETools();
+    protected Tools             nerTools       = null;
+    protected FoxRETools        reTools        = new FoxRETools();
 
     /**
      * 
@@ -75,7 +66,7 @@ public class Fox implements IFox {
     /**
      * 
      */
-    protected FoxJena           foxJena            = new FoxJena();
+    protected FoxJena           foxJena        = new FoxJena();
 
     /**
      * Holds a tool for fox's light version.
@@ -85,11 +76,11 @@ public class Fox implements IFox {
     /**
      * 
      */
-    protected FoxWebLog         foxWebLog          = null;
+    protected FoxWebLog         foxWebLog      = null;
 
-    private CountDownLatch      countDownLatch     = null;
-    private Map<String, String> parameter          = null;
-    private String              response           = null;
+    private CountDownLatch      countDownLatch = null;
+    private Map<String, String> parameter      = null;
+    private String              response       = null;
 
     @SuppressWarnings("unused")
     private Fox() {
@@ -116,7 +107,7 @@ public class Fox implements IFox {
 
     protected Set<Entity> doNER() {
         infoLog("Start NER (" + lang + ")...");
-        Set<Entity> entities = nerTools.getEntities(parameter.get(parameter_input));
+        Set<Entity> entities = nerTools.getEntities(parameter.get(Parameter.INPUT.toString()));
 
         // remove duplicate annotations
         Map<String, Entity> wordEntityMap = new HashMap<>();
@@ -148,7 +139,7 @@ public class Fox implements IFox {
             infoLog("Start RE ...");
             final CountDownLatch latch = new CountDownLatch(1);
             reTool.setCountDownLatch(latch);
-            reTool.setInput(parameter.get(parameter_input));
+            reTool.setInput(parameter.get(Parameter.INPUT.toString()));
 
             Fiber fiber = new ThreadFiber();
             fiber.start();
@@ -202,16 +193,16 @@ public class Fox implements IFox {
         infoLog("NER tool(" + lang + ") is: " + nerLight.getToolName());
 
         // clean input
-        String input = parameter.get(parameter_input);
+        String input = parameter.get(Parameter.INPUT.toString());
         TokenManager tokenManager = new TokenManager(input);
         input = tokenManager.getInput();
-        parameter.put(parameter_input, input);
+        parameter.put(Parameter.INPUT.toString(), input);
 
         {
             final CountDownLatch latch = new CountDownLatch(1);
             Fiber fiber = new ThreadFiber();
             nerLight.setCountDownLatch(latch);
-            nerLight.setInput(parameter.get(parameter_input));
+            nerLight.setInput(parameter.get(Parameter.INPUT.toString()));
 
             fiber.start();
             fiber.execute(nerLight);
@@ -222,7 +213,7 @@ public class Fox implements IFox {
             } catch (InterruptedException e) {
                 LOG.error("Timeout after " + min + " min.");
                 LOG.error("\n", e);
-                LOG.error("input:\n" + parameter.get(parameter_input));
+                LOG.error("input:\n" + parameter.get(Parameter.INPUT.toString()));
             }
 
             // shutdown threads
@@ -282,7 +273,7 @@ public class Fox implements IFox {
 
             final CountDownLatch latch = new CountDownLatch(1);
             linking.setCountDownLatch(latch);
-            linking.setInput(entities, parameter.get(parameter_input));
+            linking.setInput(entities, parameter.get(Parameter.INPUT.toString()));
 
             Fiber fiber = new ThreadFiber();
             fiber.start();
@@ -305,7 +296,7 @@ public class Fox implements IFox {
             } else {
                 infoLog("Timeout after " + min + " min (" + linking.getClass().getName() + ").");
                 // use dev lookup after timeout
-                new NoLinking().setUris(entities, parameter.get(parameter_input));
+                new NoLinking().setUris(entities, parameter.get(Parameter.INPUT.toString()));
             }
             infoLog("Start NE linking done.");
         }
@@ -317,12 +308,12 @@ public class Fox implements IFox {
             return;
         }
 
-        String input = parameter.get(parameter_input);
+        String input = parameter.get(Parameter.INPUT.toString());
 
         // switch output
-        final boolean useNIF = Boolean.parseBoolean(parameter.get(parameter_nif));
+        final boolean useNIF = Boolean.parseBoolean(parameter.get(Parameter.NIF.toString()));
 
-        String out = parameter.get(parameter_output);
+        String out = parameter.get(Parameter.OUTPUT.toString());
         infoLog("Preparing output format ...");
 
         foxJena.clearGraph();
@@ -363,7 +354,7 @@ public class Fox implements IFox {
             }
 
             html += input.substring(last);
-            parameter.put(parameter_input, html);
+            parameter.put(Parameter.INPUT.toString(), html);
 
             if (LOG.isTraceEnabled())
                 infotrace(entities);
@@ -382,9 +373,9 @@ public class Fox implements IFox {
         if (parameter == null) {
             LOG.error("Parameter not set.");
         } else {
-            String input = parameter.get(parameter_input);
-            String task = parameter.get(parameter_task);
-            String light = parameter.get(parameter_foxlight);
+            String input = parameter.get(Parameter.INPUT.toString());
+            String task = parameter.get(Parameter.TASK.toString());
+            String light = parameter.get(Parameter.FOXLIGHT.toString());
 
             Set<Entity> entities = null;
             Set<Relation> relations = null;
@@ -395,7 +386,7 @@ public class Fox implements IFox {
                 TokenManager tokenManager = new TokenManager(input);
                 // clean input
                 input = tokenManager.getInput();
-                parameter.put(parameter_input, input);
+                parameter.put(Parameter.INPUT.toString(), input);
 
                 // light version
                 if (light != null && !light.equals("OFF")) {
@@ -477,7 +468,7 @@ public class Fox implements IFox {
     public void setParameter(Map<String, String> parameter) {
         this.parameter = parameter;
 
-        String paraUriLookup = parameter.get(parameter_disamb);
+        String paraUriLookup = parameter.get(Parameter.LINKING.toString());
         if (paraUriLookup != null) {
             if (paraUriLookup.equalsIgnoreCase("off"))
                 paraUriLookup = NoLinking.class.getName();
@@ -485,7 +476,7 @@ public class Fox implements IFox {
             try {
                 linking = (ILinking) FoxCfg.getClass(paraUriLookup.trim());
             } catch (Exception e) {
-                LOG.error("InterfaceURI not found. Check parameter: " + parameter_disamb);
+                LOG.error("InterfaceURI not found. Check parameter: " + Parameter.LINKING.toString());
             }
         }
     }
@@ -498,11 +489,11 @@ public class Fox implements IFox {
     @Override
     public Map<String, String> getDefaultParameter() {
         Map<String, String> map = new HashMap<>();
-        map.put(parameter_input, FoxConst.NER_EN_EXAMPLE_1);
-        map.put(parameter_task, "NER");
-        map.put(parameter_output, Lang.RDFXML.getName());
-        map.put(parameter_nif, "false");
-        map.put(parameter_foxlight, "OFF");
+        map.put(Parameter.INPUT.toString(), FoxConst.NER_EN_EXAMPLE_1);
+        map.put(Parameter.TASK.toString(), Task.NER.toString());
+        map.put(Parameter.OUTPUT.toString(), Lang.RDFXML.getName());
+        map.put(Parameter.NIF.toString(), NIF.OFF.toString());
+        map.put(Parameter.FOXLIGHT.toString(), FoxLight.OFF.toString());
         return map;
     }
 
@@ -521,4 +512,183 @@ public class Fox implements IFox {
     public String getLang() {
         return lang;
     }
+
+    // ------------------------
+    /*
+     * Type values
+     */
+    public enum Type {
+
+        TEXT("text"),
+        URL("url");
+
+        private String type;
+
+        Type(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+
+        public static Type fromString(String type) {
+            if (type != null)
+                for (Type b : Type.values())
+                    if (type.equalsIgnoreCase(b.type))
+                        return b;
+            return null;
+        }
+    }
+
+    /*
+     * Task values
+     */
+    public enum Task {
+
+        NER("NER"),
+        RE("RE"),
+        KE("KE");
+
+        private String task;
+
+        Task(String task) {
+            this.task = task;
+        }
+
+        @Override
+        public String toString() {
+            return this.task;
+        }
+
+        public static Task fromString(String task) {
+            if (task != null)
+                for (Task b : Task.values())
+                    if (task.equalsIgnoreCase(b.task))
+                        return b;
+            return null;
+        }
+    }
+
+    /*
+     * Parameter
+     */
+    public enum Parameter {
+        TYPE("type"),
+        INPUT("input"),
+        TASK("task"),
+        OUTPUT("output"),
+        FOXLIGHT("foxlight"),
+        NIF("nif"),
+        LANG("lang"),
+        LINKING("disamb");
+
+        private String para;
+
+        Parameter(String parameter) {
+            this.para = parameter;
+        }
+
+        @Override
+        public String toString() {
+            return this.para;
+        }
+
+        public static Parameter fromString(String parameter) {
+            if (parameter != null)
+                for (Parameter b : Parameter.values())
+                    if (parameter.equalsIgnoreCase(b.para))
+                        return b;
+            return null;
+        }
+    }
+
+    /*
+     * Langs
+     */
+    public enum Langs {
+
+        DE("de"),
+        ES("es"),
+        IT("it"),
+        EN("en"),
+        NL("nl"),
+        FR("fr");
+
+        private String label;
+
+        Langs(String text) {
+            this.label = text;
+        }
+
+        @Override
+        public String toString() {
+            return this.label;
+        }
+
+        public static Langs fromString(String label) {
+            if (label != null)
+                for (Langs b : Langs.values())
+                    if (label.equalsIgnoreCase(b.label))
+                        return b;
+            return null;
+        }
+    }
+
+    /*
+     * Nif
+     */
+    public enum NIF {
+
+        OFF("false"),
+        ON("true");
+
+        private String label;
+
+        NIF(String text) {
+            this.label = text;
+        }
+
+        @Override
+        public String toString() {
+            return this.label;
+        }
+
+        public static NIF fromString(String label) {
+            if (label != null)
+                for (NIF b : NIF.values())
+                    if (label.equalsIgnoreCase(b.label))
+                        return b;
+            return null;
+        }
+    }
+
+    /*
+     * Nif
+     */
+    public enum FoxLight {
+
+        OFF("off");
+
+        private String label;
+
+        FoxLight(String text) {
+            this.label = text;
+        }
+
+        @Override
+        public String toString() {
+            return this.label;
+        }
+
+        public static FoxLight fromString(String label) {
+            if (label != null)
+                for (FoxLight b : FoxLight.values())
+                    if (label.equalsIgnoreCase(b.label))
+                        return b;
+            return null;
+        }
+    }
+
 }

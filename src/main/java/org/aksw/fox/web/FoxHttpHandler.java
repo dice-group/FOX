@@ -12,7 +12,6 @@ import org.aksw.fox.IFox;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxLanguageDetector;
-import org.aksw.fox.utils.FoxLanguageDetector.Langs;
 import org.aksw.fox.utils.FoxStringUtil;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.glassfish.grizzly.http.server.Request;
@@ -34,22 +33,19 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
     @Override
     protected void postService(Request request, Response response, Map<String, String> parameter) {
 
-        // get input data
-        switch (parameter.get("type").toLowerCase()) {
-
+        switch (parameter.get(Fox.Parameter.TYPE.toString()).toLowerCase()) {
         case "url":
-            parameter.put("input", FoxTextUtil.urlToText(parameter.get("input")));
+            parameter.put(Fox.Parameter.INPUT.toString(), FoxTextUtil.urlToText(parameter.get(Fox.Parameter.INPUT.toString())));
             break;
-
         case "text":
-            parameter.put("input", FoxTextUtil.htmlToText(parameter.get("input")));
+            parameter.put(Fox.Parameter.INPUT.toString(), FoxTextUtil.htmlToText(parameter.get(Fox.Parameter.INPUT.toString())));
             break;
         }
 
-        String lang = parameter.get("lang");
-        Langs l = Langs.fromString(lang);
+        String lang = parameter.get(Fox.Parameter.LANG.toString());
+        Fox.Langs l = Fox.Langs.fromString(lang);
         if (l == null) {
-            l = languageDetector.detect(parameter.get("input"));
+            l = languageDetector.detect(parameter.get(Fox.Parameter.INPUT.toString()));
             if (l != null)
                 lang = l.toString();
             else
@@ -77,7 +73,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
                 } catch (InterruptedException e) {
                     LOG.error("Fox timeout after " + FoxCfg.get(CFG_KEY_FOX_LIFETIME) + "min.");
                     LOG.error("\n", e);
-                    LOG.error("input: " + parameter.get("input"));
+                    LOG.error("input: " + parameter.get(Fox.Parameter.INPUT.toString()));
                 }
 
                 // shutdown thread
@@ -96,7 +92,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
                 String in = null, out = null, log = null;
                 if (fox != null) {
-                    in = FoxStringUtil.encodeURLComponent(parameter.get("input"));
+                    in = FoxStringUtil.encodeURLComponent(parameter.get(Fox.Parameter.INPUT.toString()));
                     out = FoxStringUtil.encodeURLComponent(output);
                     log = FoxStringUtil.encodeURLComponent(fox.getLog());
                 }
@@ -124,33 +120,33 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
         LOG.info("checking form parameter ...");
 
-        String type = formData.get(Fox.parameter_type);
-        if (type == null || !(type.equalsIgnoreCase("url") || type.equalsIgnoreCase("text")))
+        String type = formData.get(Fox.Parameter.TYPE.toString());
+        if (type == null || !(type.equalsIgnoreCase(Fox.Type.URL.toString()) || type.equalsIgnoreCase(Fox.Type.TEXT.toString())))
             return false;
 
-        String text = formData.get(Fox.parameter_input);
+        String text = formData.get(Fox.Parameter.INPUT.toString());
         if (text == null || text.trim().isEmpty())
             return false;
 
-        String task = formData.get(Fox.parameter_task);
+        String task = formData.get(Fox.Parameter.TASK.toString());
         if (task == null || !(task.equalsIgnoreCase("ke") || task.equalsIgnoreCase("ner") ||
                 task.equalsIgnoreCase("keandner") || task.equalsIgnoreCase("re") || task.equalsIgnoreCase("all")))
             return false;
 
-        String output = formData.get(Fox.parameter_output);
+        String output = formData.get(Fox.Parameter.OUTPUT.toString());
 
         if (!FoxJena.prints.contains(output))
             return false;
 
-        String nif = formData.get(Fox.parameter_nif);
+        String nif = formData.get(Fox.Parameter.NIF.toString());
         if (nif == null || !nif.equalsIgnoreCase("true"))
-            formData.put(Fox.parameter_nif, "false");
+            formData.put(Fox.Parameter.NIF.toString(), "false");
         else
-            formData.put(Fox.parameter_nif, "true");
+            formData.put(Fox.Parameter.NIF.toString(), "true");
 
-        String foxlight = formData.get(Fox.parameter_foxlight);
+        String foxlight = formData.get(Fox.Parameter.FOXLIGHT.toString());
         if (foxlight == null || foxlight.equalsIgnoreCase("off")) {
-            formData.put(Fox.parameter_foxlight, "OFF");
+            formData.put(Fox.Parameter.FOXLIGHT.toString(), "OFF");
         }
 
         LOG.info("ok.");

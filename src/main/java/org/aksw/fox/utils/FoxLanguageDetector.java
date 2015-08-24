@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.fox.Fox;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -23,18 +24,18 @@ import com.optimaize.langdetect.text.TextObject;
  *
  */
 public class FoxLanguageDetector {
-    public static Logger       LOG              = LogManager.getLogger(FoxLanguageDetector.class);
+    public static Logger         LOG              = LogManager.getLogger(FoxLanguageDetector.class);
 
-    public static Set<Langs>   lang             = new HashSet<>(Arrays.asList(
-                                                        Langs.DE,
-                                                        Langs.EN,
-                                                        Langs.FR,
-                                                        Langs.ES,
-                                                        Langs.IT,
-                                                        Langs.NL
-                                                        ));
+    public static Set<Fox.Langs> lang             = new HashSet<>(Arrays.asList(
+                                                          Fox.Langs.DE,
+                                                          Fox.Langs.EN,
+                                                          Fox.Langs.FR,
+                                                          Fox.Langs.ES,
+                                                          Fox.Langs.IT,
+                                                          Fox.Langs.NL
+                                                          ));
 
-    protected LanguageDetector languageDetector = null;
+    protected LanguageDetector   languageDetector = null;
 
     /**
      * Test
@@ -43,7 +44,7 @@ public class FoxLanguageDetector {
      */
     public static void main(String[] a) {
         FoxLanguageDetector ld = new FoxLanguageDetector();
-        Langs lang = ld.detect(FoxConst.NER_NL_EXAMPLE_1);
+        Fox.Langs lang = ld.detect(FoxConst.NER_NL_EXAMPLE_1);
         LOG.info(lang.toString() + " text.");
     }
 
@@ -58,13 +59,13 @@ public class FoxLanguageDetector {
      * 
      * @param lang
      */
-    public FoxLanguageDetector(Set<Langs> lang) {
+    public FoxLanguageDetector(Set<Fox.Langs> lang) {
         initLanguageDetector(lang);
     }
 
-    protected void initLanguageDetector(Set<Langs> lang) {
+    protected void initLanguageDetector(Set<Fox.Langs> lang) {
         Set<String> langs = new HashSet<>();
-        for (Langs l : lang)
+        for (Fox.Langs l : lang)
             langs.add(l.toString());
 
         try {
@@ -77,12 +78,12 @@ public class FoxLanguageDetector {
         }
     }
 
-    public Langs detect(String text) {
+    public Fox.Langs detect(String text) {
         TextObject textObject = CommonTextObjectFactories.forDetectingOnLargeText().forText(text);
         List<DetectedLanguage> probs = languageDetector.getProbabilities(textObject);
-        Langs lang = null;
+        Fox.Langs lang = null;
         for (DetectedLanguage prob : probs) {
-            lang = Langs.fromString(prob.getLanguage());
+            lang = Fox.Langs.fromString(prob.getLanguage());
             if (lang != null) {
                 break;
             }
@@ -90,39 +91,7 @@ public class FoxLanguageDetector {
         return lang;
     }
 
-    /*
-     * Enum
-     */
-    public enum Langs {
-
-        DE("de"),
-        ES("es"),
-        IT("it"),
-        EN("en"),
-        NL("nl"),
-        FR("fr");
-
-        private String label;
-
-        Langs(String text) {
-            this.label = text;
-        }
-
-        @Override
-        public String toString() {
-            return this.label;
-        }
-
-        public static Langs fromString(String label) {
-            if (label != null)
-                for (Langs b : Langs.values())
-                    if (label.equalsIgnoreCase(b.label))
-                        return b;
-            return null;
-        }
-    }
 }
-
 /*
 
 af Afrikaans
