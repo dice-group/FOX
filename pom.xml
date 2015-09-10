@@ -29,13 +29,8 @@
     </properties>
     <repositories>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
-            <id>edu.illinois.cs.cogcomp</id>
-            <name>Cognitive Computation Group</name>
-            <url>http://cogcomp.cs.illinois.edu/m2repo</url>
+            <id>local repository</id>
+            <url>file://${project.basedir}/repository</url>
         </repository>
         <repository>
             <id>maven.aksw.internal</id>
@@ -46,6 +41,15 @@
             <id>maven.aksw.snapshots</id>
             <name>University Leipzig, AKSW Maven2 Repository</name>
             <url>http://maven.aksw.org/archiva/repository/snapshots</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>edu.illinois.cs.cogcomp</id>
+            <name>Cognitive Computation Group</name>
+            <url>http://cogcomp.cs.illinois.edu/m2repo</url>
         </repository>
     </repositories>
     <dependencies>
@@ -82,11 +86,11 @@
             <systemPath>${system.libs}/simmetrics_jar_v1_6_2_d07_02_07.jar</systemPath>
         </dependency>
         <!-- regular dependencies -->
-                 <!-- cache -->
+        <!-- cache -->
         <dependency>
-          <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
-          <artifactId>concurrentlinkedhashmap-lru</artifactId>
-          <version>1.4.2</version>
+            <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+            <artifactId>concurrentlinkedhashmap-lru</artifactId>
+            <version>1.4.2</version>
         </dependency>
         <!-- -->
         <!-- Illinois -->
@@ -227,7 +231,7 @@
         <dependency>
             <groupId>com.github.jsonld-java</groupId>
             <artifactId>jsonld-java</artifactId>
-            <version>0.6.0</version>
+            <version>0.5.0</version>
         </dependency>
         <!-- jena-sparql-api -->
         <dependency>
@@ -314,7 +318,12 @@
         <dependency>
             <groupId>com.github.renespeck</groupId>
             <artifactId>SwissKnife</artifactId>
-            <version>4c96d42b88</version>
+            <version>c1d3267066418dd9d03adf01d77ab114cbf4d835</version>
+        </dependency>
+        <dependency>
+            <groupId>com.entopix</groupId>
+            <artifactId>maui</artifactId>
+            <version>1.3.0</version>
         </dependency>
     </dependencies>
     <!-- build -->
