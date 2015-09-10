@@ -227,7 +227,7 @@
         <dependency>
             <groupId>com.github.jsonld-java</groupId>
             <artifactId>jsonld-java</artifactId>
-            <version>0.5.1</version>
+            <version>0.6.0</version>
         </dependency>
         <!-- jena-sparql-api -->
         <dependency>
