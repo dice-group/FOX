@@ -71,7 +71,7 @@ Fox.DemoCtrl = function($routeParams, $scope, $http) {
   };
 
   $scope.$watch('request.lang', function(newValue, oldValue) {
-    $scope.request.foxlight='OFF';
+    $scope.request.foxlight = 'OFF';
   });
 
   $scope.$watch('request.defaults', function(newValue, oldValue) {
@@ -81,6 +81,12 @@ Fox.DemoCtrl = function($routeParams, $scope, $http) {
       $scope.request.input = "Berlin is an American New Wave band. Despite its name, Berlin did not have any known major connections with Germany, but instead was formed in Los Angeles, California in 1978.";
       $scope.request.output = 'Turtle';
 
+    } else if (newValue == 5) {
+      $scope.request.lang = 'fr';
+
+      $scope.request.type = 'text';
+      $scope.request.input = "Leipzig se trouve au centre de l'Allemagne. Son maire Burkhard Jung est un membre du SPD.";
+      $scope.request.output = 'Turtle';
     } else if (newValue == 2) {
       $scope.request.type = 'url';
       $scope.request.input = "http://en.wikipedia.org/wiki/Leipzig_University";

@@ -14,8 +14,8 @@
           <div class="control-group span4">
             <label class="control-label">Lang</label>
             <div class="controls">
-              <select class="input-block-level" id="lang" data-ng-model="request.lang" data-ng-init="request.lang='guess'">
-                <option>guess</option>
+              <select class="input-block-level" id="lang" data-ng-model="request.lang" data-ng-init="request.lang='detect'">
+                <option>detect</option>
                 <option data-ng-repeat="lang in config.lang">{{lang}}</option>
               </select>
             </div>
@@ -72,7 +72,7 @@
             <div class="controls">
               <select class="input-block-level" id="foxlight" data-ng-model="request.foxlight">
                 <option>OFF</option>
-                <option data-ng-hide="{{request.lang == 'guess'}}" data-ng-repeat="ner in config[request.lang].ner" >{{ner}}</option>
+                <option data-ng-hide="{{request.lang =='detect'}}" data-ng-repeat="ner in config[request.lang].ner" >{{ner}}</option>
               </select>
             </div>
           </div>
@@ -85,6 +85,8 @@
               <input type="radio" name="defaults" value="0" data-ng-model="request.defaults">
               <input type="radio" name="defaults" value="1" data-ng-model="request.defaults">
               <input type="radio" name="defaults" value="2" data-ng-model="request.defaults">
+	      <input type="radio" name="defaults" value="5" data-ng-model="request.defaults">
+
             </div>
           </div>
           <div class="span1">
