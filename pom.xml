@@ -43,10 +43,6 @@
             <url>http://maven.aksw.org/archiva/repository/snapshots</url>
         </repository>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
             <id>edu.illinois.cs.cogcomp</id>
             <name>Cognitive Computation Group</name>
             <url>http://cogcomp.cs.illinois.edu/m2repo</url>
@@ -182,16 +178,6 @@
             <artifactId>commons-compress</artifactId>
             <version>1.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>fluent-hc</artifactId>
-            <version>4.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.4</version>
-        </dependency>
         <!-- NERcFr <dependency> <groupId>org.vicomtech</groupId> <artifactId>opennlp-tools</artifactId> 
             <version>custom-0.0.1</version> </dependency> -->
         <!-- open nlp -->
@@ -316,15 +302,15 @@
             <version>0.4</version>
         </dependency>
         <dependency>
-            <groupId>com.github.renespeck</groupId>
-            <artifactId>SwissKnife</artifactId>
-            <version>c1d3267066418dd9d03adf01d77ab114cbf4d835</version>
-        </dependency>
-        <dependency>
             <groupId>com.entopix</groupId>
             <artifactId>maui</artifactId>
             <version>1.3.0</version>
-        </dependency>
+        </dependency>	
+	<dependency>
+		<groupId>de.renespeck.swissknife</groupId>
+		<artifactId>swissknife</artifactId>
+		<version>0.0.1</version>
+	</dependency>
     </dependencies>
     <!-- build -->
     <build>
