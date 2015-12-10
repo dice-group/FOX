@@ -118,7 +118,7 @@ public class FoxClassifier {
      * Rewrites results and input to labels, uses a serialized classifier to
      * classify this labels and rewrites the labels.
      * 
-     * @param input
+     * @param sentence
      * @param toolResults
      * @return classified token
      */

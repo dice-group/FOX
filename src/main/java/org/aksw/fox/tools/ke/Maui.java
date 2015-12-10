@@ -1,25 +1,56 @@
 package org.aksw.fox.tools.ke;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.aksw.fox.data.Keyword;
+import org.aksw.fox.tools.ner.AbstractKE;
+import org.aksw.fox.tools.ner.IKE;
+import org.aksw.fox.utils.FoxCfg;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.PropertyConfigurator;
 
 import weka.core.Utils;
 
 import com.entopix.maui.filters.MauiFilter.MauiFilterException;
-import com.entopix.maui.main.MauiModelBuilder;
-import com.entopix.maui.main.MauiTopicExtractor;
 import com.entopix.maui.main.MauiWrapper;
 import com.entopix.maui.stemmers.PorterStemmer;
+import com.entopix.maui.stopwords.Stopwords;
+import com.entopix.maui.stopwords.StopwordsEnglish;
 import com.entopix.maui.util.Topic;
 
-public class Maui {
+public class Maui extends AbstractKE {
+    static {
+        PropertyConfigurator.configure(FoxCfg.LOG_FILE);
+    }
 
-    public static void runMaui(String[] options) throws Exception {
+    @Override
+    public Set<Keyword> retrieve(String input) {
+        String[] args = new String[6];
+        args[0] = "run";
+        args[1] = input;
+        args[2] = "-m";
+        args[3] = "data/maui/model/maui-semeval2010-train.data";
+        args[4] = "-v";
+        args[5] = "none";
+
+        String[] remainingArgs = new String[args.length - 1];
+        System.arraycopy(args, 1, remainingArgs, 0, args.length - 1);
+
+        Set<Keyword> keywords = new HashSet<>();
+        try {
+            keywords.addAll(runMaui(remainingArgs));
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+        // keywords.forEach(LOG::info);
+        return keywords;
+    }
+
+    public Set<Keyword> runMaui(String[] options) throws Exception {
 
         String inputString = options[0];
-        // checking if it's a file or an input string
         File testFile = new File(inputString);
         if (testFile.exists()) {
             inputString = FileUtils.readFileToString(testFile);
@@ -58,26 +89,26 @@ public class Maui {
             // the last three items should match what was used in the wrapper
             // constructor
             // i.e. null if the defaults were used
-            mauiWrapper.setModelParameters(vocabularyName, new PorterStemmer(), null, null);
+            Stopwords stopwords = new StopwordsEnglish();
+
+            mauiWrapper.setModelParameters(vocabularyName, new PorterStemmer(), stopwords, "en");
 
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException();
+            LOG.error(e.getLocalizedMessage(), e);
         }
 
+        Set<Keyword> keywords = new HashSet<Keyword>();
         try {
-
-            ArrayList<Topic> keywords = mauiWrapper.extractTopicsFromText(inputString, topicsPerDocument);
-            for (Topic keyword : keywords) {
-                System.out.println("Keyword: " + keyword.getTitle() + " " + keyword.getProbability());
+            for (Topic keyword : mauiWrapper.extractTopicsFromText(inputString, topicsPerDocument)) {
+                keywords.add(new Keyword(keyword.getTitle(), Double.valueOf(keyword.getProbability()).floatValue(), getToolName()));
             }
         } catch (MauiFilterException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
+            LOG.error(e.getLocalizedMessage(), e);
         }
+        return keywords;
     }
 
-    public static String[] getTrainingArgs() {
+    public String[] getTrainingArgs() {
 
         String[] args = new String[9];
         args[0] = "train";
@@ -92,11 +123,11 @@ public class Maui {
         return args;
     }
 
-    public static String[] getRunArgs() {
+    public String[] getRunArgs() {
 
         String[] args = new String[6];
         args[0] = "run";
-        args[1] = "data/maui/wiki20/documents/287.txt";
+        args[1] = "Leipzig has been a trade city since at least the time of the Holy Roman Empire. The city sits at the intersection of the Via Regia and Via Imperii, two important Medieval trade routes. Leipzig was once one of the major European centers of learning and culture in fields such as music and publishing. Leipzig became a major urban center within the German Democratic Republic (East Germany) after World War II, but its cultural and economic importance declined despite East Germany being the richest economy in the Soviet Bloc.";
         args[2] = "-m";
         args[3] = "data/maui/model/maui-semeval2010-train.data";
         args[4] = "-v";
@@ -107,29 +138,49 @@ public class Maui {
     }
 
     public static void main(String[] args) throws Exception {
+        {
 
-        args = getRunArgs();
-
-        String command = args[0].toLowerCase();
-
-        if (args.length == 0 || (!command.equals("train") && !command.equals("test") && !command.equals("run"))) {
-            System.out.printf("Maui Standalone Runner\n"
-                    + "java -jar standalone.jar [train|test|run] options...\n"
-                    + "Please specify train or test and then the appropriate parameters.\n");
-
-            System.exit(-1);
+            String input = "" +
+                    "Leipzig has been a trade city since at least the time of the Holy Roman Empire. "
+                    + "The city sits at the intersection of the Via Regia and Via Imperii, "
+                    + "two important Medieval trade routes. "
+                    + "Leipzig was once one of the major European centers of learning and culture in "
+                    + "fields such as music and publishing. Leipzig became a major urban center within "
+                    + "the German Democratic Republic (East Germany) after World War II, but its cultural "
+                    + "and economic importance declined despite East Germany being the richest economy in the Soviet Bloc.";
+            IKE m = new Maui();
+            Set<Keyword> keywords = m.retrieve(input);
+            keywords.forEach(LOG::info);
         }
+        /*
+        {
+            Maui m = new Maui();
+            args = m.getRunArgs();
 
-        String[] remainingArgs = new String[args.length - 1];
+            String command = args[0].toLowerCase();
 
-        System.arraycopy(args, 1, remainingArgs, 0, args.length - 1);
+            if (args.length == 0 || (!command.equals("train") && !command.equals("test") && !command.equals("run"))) {
+                System.out.printf("Maui Standalone Runner\n"
+                        + "java -jar standalone.jar [train|test|run] options...\n"
+                        + "Please specify train or test and then the appropriate parameters.\n");
 
-        if (command.equals("train")) {
-            MauiModelBuilder.main(remainingArgs);
-        } else if (command.equals("test")) {
-            MauiTopicExtractor.main(remainingArgs);
-        } else {
-            runMaui(remainingArgs);
+                System.exit(-1);
+            }
+
+            String[] remainingArgs = new String[args.length - 1];
+
+            System.arraycopy(args, 1, remainingArgs, 0, args.length - 1);
+
+            if (command.equals("train")) {
+                MauiModelBuilder.main(remainingArgs);
+            } else if (command.equals("test")) {
+                MauiTopicExtractor.main(remainingArgs);
+            } else {
+                Set<Keyword> keywords = m.runMaui(remainingArgs);
+
+                keywords.forEach(LOG::info);
+            }
         }
+        */
     }
 }
