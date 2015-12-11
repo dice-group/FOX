@@ -81,7 +81,17 @@
             <scope>system</scope>
             <systemPath>${system.libs}/simmetrics_jar_v1_6_2_d07_02_07.jar</systemPath>
         </dependency>
-        <!-- regular dependencies -->
+	    <!-- regular dependencies -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>fluent-hc</artifactId>
+			<version>4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.4</version>
+		</dependency>
         <!-- cache -->
         <dependency>
             <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
