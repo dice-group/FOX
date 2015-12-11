@@ -49,7 +49,7 @@ public class ApiResource {
 
         JSONObject nerTools = new JSONObject();
         ToolsGenerator.nerTools.get(lang).forEach(nerTool -> {
-          nerTools.put(nerTool.substring(nerTool.lastIndexOf(".")), nerTool);
+          nerTools.put(nerTool.substring(nerTool.lastIndexOf(".") + 1), nerTool);
         });
         cfg.getJSONObject(lang).put("ner", nerTools);
         cfg.getJSONObject(lang).put("nerlinking", ToolsGenerator.disambiguationTools.get(lang));
