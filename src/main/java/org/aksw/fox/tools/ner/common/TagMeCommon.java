@@ -2,7 +2,6 @@ package org.aksw.fox.tools.ner.common;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -34,10 +33,11 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 
+import de.renespeck.swissknife.http.Requests;
+
 public class TagMeCommon extends AbstractNER {
 
     public static final XMLConfiguration    CFG                     = CfgManager.getCfg(TagMeCommon.class);
-    public static final Charset             UTF_8                   = Charset.forName("UTF-8");
 
     public static final String              CFG_KEY_TAGME_KEY       = "tagMe.key";
     public static final String              CFG_KEY_SPARQL_ENDPOINT = "tagMe.sparqlEndpoint";
@@ -187,7 +187,7 @@ public class TagMeCommon extends AbstractNER {
         public String send() {
             String response = "";
             try {
-                response = postToJSON(ENDPOINT, Form.form()
+                response = Requests.postForm(ENDPOINT, Form.form()
                         .add("key", TAGME_KEY)
                         .add("text", sentence)
                         .add("lang", LANG)

@@ -33,7 +33,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
     @Override
     protected void postService(Request request, Response response, Map<String, String> parameter) {
 
-        switch (parameter.get(Fox.Parameter.TYPE.toString()).toLowerCase()) {
+        switch (parameter.get(Fox.Parameter.TYPE.toString()).toString()) {
         case "url":
             parameter.put(Fox.Parameter.INPUT.toString(), FoxTextUtil.urlToText(parameter.get(Fox.Parameter.INPUT.toString())));
             break;

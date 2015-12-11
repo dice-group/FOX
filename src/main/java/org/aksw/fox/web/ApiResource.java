@@ -34,148 +34,157 @@ import org.json.JSONObject;
 @Path("ner")
 public class ApiResource {
 
-    public static Logger LOG              = LogManager.getLogger(ApiResource.class);
-    FoxLanguageDetector  languageDetector = new FoxLanguageDetector();
+  public static Logger LOG = LogManager.getLogger(ApiResource.class);
+  FoxLanguageDetector languageDetector = new FoxLanguageDetector();
 
-    @Path("config")
-    @Produces(MediaType.APPLICATION_JSON)
-    @GET
-    public String getConfig() {
-        JSONObject jo = new JSONObject();
-        try {
-            JSONArray langs = new JSONArray();
-            ToolsGenerator.nerTools.keySet().forEach(lang -> {
-                JSONArray nerTools = new JSONArray();
-                ToolsGenerator.nerTools.get(lang).forEach(nerTools::put);
+  @Path("config")
+  @Produces(MediaType.APPLICATION_JSON)
+  @GET
+  public String getConfig() {
+    JSONObject cfg = new JSONObject();
+    JSONArray langs = new JSONArray();
+    try {
+      ToolsGenerator.nerTools.keySet().forEach(lang -> {
+        cfg.put(lang, new JSONObject());
 
-                jo.put(lang, new JSONObject());
-                jo.getJSONObject(lang).put("ner", nerTools);
-                // / jo.getJSONObject(lang).put("nerlight",
-                // ToolsGenerator.nerLightTool.get(lang));
-                jo.getJSONObject(lang).put("nerlinking", ToolsGenerator.disambiguationTools.get(lang));
+        JSONObject nerTools = new JSONObject();
+        ToolsGenerator.nerTools.get(lang).forEach(nerTool -> {
+          nerTools.put(nerTool.substring(nerTool.lastIndexOf(".") + 1), nerTool);
+        });
+        cfg.getJSONObject(lang).put("ner", nerTools);
+        cfg.getJSONObject(lang).put("nerlinking", ToolsGenerator.disambiguationTools.get(lang));
+        langs.put(lang);
+      });
+      cfg.put("lang", langs);
+      JSONArray ja = new JSONArray();
+      FoxJena.prints.forEach(ja::put);
+      cfg.put("out", ja);
 
-                langs.put(lang);
-            });
-            jo.put("lang", langs);
-            JSONArray ja = new JSONArray();
-            FoxJena.prints.forEach(ja::put);
-            jo.put("out", ja);
+    } catch (Exception e) {
+      LOG.error(e.getLocalizedMessage(), e);
+    }
+    return cfg.toString(2);
+  }
 
-        } catch (Exception e) {
-            LOG.error(e.getLocalizedMessage(), e);
+  @Path("entities")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_XML)
+  @POST
+  public String postApi(final JsonObject properties, @Context Request request,
+      @Context HttpHeaders hh, @Context UriInfo ui) {
+    String output = "";
+
+    Map<String, String> parameter = new HashMap<>();
+    try {
+      parameter.put(Fox.Parameter.INPUT.toString(),
+          properties.getString(Fox.Parameter.INPUT.toString()));
+      parameter.put(Fox.Parameter.TYPE.toString(),
+          properties.getString(Fox.Parameter.TYPE.toString()));
+      parameter.put(Fox.Parameter.TASK.toString(),
+          properties.getString(Fox.Parameter.TASK.toString()));
+      parameter.put(Fox.Parameter.OUTPUT.toString(),
+          properties.getString(Fox.Parameter.OUTPUT.toString()));
+      if (properties.get(Fox.Parameter.LINKING.toString()) != null)
+        parameter.put(Fox.Parameter.LINKING.toString(),
+            properties.getString(Fox.Parameter.LINKING.toString()));
+
+      // get input data
+      switch (parameter.get(Fox.Parameter.TYPE.toString()).toLowerCase()) {
+        case "url":
+          // parameter.put(Fox.Parameter.TYPE.toString(),
+          // Fox.Type.TEXT.toString());
+          parameter.put(Fox.Parameter.INPUT.toString(),
+              FoxTextUtil.urlToText(parameter.get(Fox.Parameter.INPUT.toString())));
+          break;
+        case "text":
+          parameter.put(Fox.Parameter.INPUT.toString(),
+              FoxTextUtil.htmlToText(parameter.get(Fox.Parameter.INPUT.toString())));
+          break;
+      }
+
+      // lang
+      String lang = null;
+      try {
+        if (properties.get(Fox.Parameter.LANG.toString()) != null)
+          lang = properties.getString(Fox.Parameter.LANG.toString());
+
+        Fox.Langs l = Fox.Langs.fromString(lang);
+        if (l == null) {
+
+          l = languageDetector.detect(parameter.get(Fox.Parameter.INPUT.toString()));
+          LOG.info("lang" + lang);
+          if (l != null)
+            lang = l.toString();
+          else
+            lang = "";
         }
-        return jo.toString(2);
-    }
+        parameter.put(Fox.Parameter.LANG.toString(), lang);
+      } catch (Exception e) {
+        LOG.error(e.getLocalizedMessage(), e);
+      }
 
-    @Path("entities")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_XML)
-    @POST
-    public String postApi(final JsonObject properties, @Context Request request, @Context HttpHeaders hh, @Context UriInfo ui) {
-        String output = "";
+      if (lang != null) {
+        LOG.info("parameter:");
+        parameter.entrySet().forEach(p -> {
+          LOG.info(p.getKey() + ":" + p.getValue());
+        });
 
-        Map<String, String> parameter = new HashMap<>();
+        // get a fox instance
+        IFox fox = Server.pool.get(lang).poll();
+
+        // init. thread
+        Fiber fiber = new ThreadFiber();
+        fiber.start();
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        // set up fox
+        fox.setCountDownLatch(latch);
+        fox.setParameter(parameter);
+
+        // run fox
+        fiber.execute(fox);
+
+        // wait 5min or till the fox instance is finished
         try {
-            parameter.put(Fox.Parameter.INPUT.toString(), properties.getString(Fox.Parameter.INPUT.toString()));
-            parameter.put(Fox.Parameter.TYPE.toString(), properties.getString(Fox.Parameter.TYPE.toString()));
-            parameter.put(Fox.Parameter.TASK.toString(), properties.getString(Fox.Parameter.TASK.toString()));
-            parameter.put(Fox.Parameter.OUTPUT.toString(), properties.getString(Fox.Parameter.OUTPUT.toString()));
-            if (properties.get(Fox.Parameter.LINKING.toString()) != null)
-                parameter.put(Fox.Parameter.LINKING.toString(), properties.getString(Fox.Parameter.LINKING.toString()));
-
-            // get input data
-            switch (parameter.get(Fox.Parameter.TYPE.toString()).toLowerCase()) {
-            case "url":
-                // parameter.put(Fox.Parameter.TYPE.toString(),
-                // Fox.Type.TEXT.toString());
-                parameter.put(Fox.Parameter.INPUT.toString(), FoxTextUtil.urlToText(parameter.get(Fox.Parameter.INPUT.toString())));
-                break;
-            case "text":
-                parameter.put(Fox.Parameter.INPUT.toString(), FoxTextUtil.htmlToText(parameter.get(Fox.Parameter.INPUT.toString())));
-                break;
-            }
-
-            // lang
-            String lang = null;
-            try {
-                if (properties.get(Fox.Parameter.LANG.toString()) != null)
-                    lang = properties.getString(Fox.Parameter.LANG.toString());
-
-                Fox.Langs l = Fox.Langs.fromString(lang);
-                if (l == null) {
-
-                    l = languageDetector.detect(parameter.get(Fox.Parameter.INPUT.toString()));
-                    LOG.info("lang" + lang);
-                    if (l != null)
-                        lang = l.toString();
-                    else
-                        lang = "";
-                }
-                parameter.put(Fox.Parameter.LANG.toString(), lang);
-            } catch (Exception e) {
-                LOG.error(e.getLocalizedMessage(), e);
-            }
-
-            if (lang != null) {
-                LOG.info("parameter:");
-                parameter.entrySet().forEach(p -> {
-                    LOG.info(p.getKey() + ":" + p.getValue());
-                });
-
-                // get a fox instance
-                IFox fox = Server.pool.get(lang).poll();
-
-                // init. thread
-                Fiber fiber = new ThreadFiber();
-                fiber.start();
-                final CountDownLatch latch = new CountDownLatch(1);
-
-                // set up fox
-                fox.setCountDownLatch(latch);
-                fox.setParameter(parameter);
-
-                // run fox
-                fiber.execute(fox);
-
-                // wait 5min or till the fox instance is finished
-                try {
-                    latch.await(Integer.parseInt(FoxCfg.get(FoxHttpHandler.CFG_KEY_FOX_LIFETIME)), TimeUnit.MINUTES);
-                } catch (InterruptedException e) {
-                    LOG.error("Fox timeout after " + FoxCfg.get(FoxHttpHandler.CFG_KEY_FOX_LIFETIME) + "min.");
-                    LOG.error("\n", e);
-                    LOG.error("input: " + parameter.get(Fox.Parameter.INPUT.toString()));
-                }
-
-                // shutdown thread
-                fiber.dispose();
-
-                if (latch.getCount() == 0) {
-                    output = fox.getResults();
-                    Server.pool.get(lang).push(fox);
-                } else {
-                    fox = null;
-                    Server.pool.get(lang).add();
-                }
-
-                LOG.info(ui.getRequestUri());
-                LOG.info(hh.getRequestHeaders());
-                LOG.info("IP: " + request.getRemoteAddr());
-            }
-        } catch (Exception e) {
-            LOG.error(e.getLocalizedMessage(), e);
+          latch.await(Integer.parseInt(FoxCfg.get(FoxHttpHandler.CFG_KEY_FOX_LIFETIME)),
+              TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+          LOG.error(
+              "Fox timeout after " + FoxCfg.get(FoxHttpHandler.CFG_KEY_FOX_LIFETIME) + "min.");
+          LOG.error("\n", e);
+          LOG.error("input: " + parameter.get(Fox.Parameter.INPUT.toString()));
         }
-        return output;
-    }
 
-    @Path("entitiesFeedback")
-    @POST
-    public JsonObject postText() {
-        // TODO: entitiesFeedback
-        LOG.info("FEEDBACK");
-        return null;
-    }
+        // shutdown thread
+        fiber.dispose();
 
-    public static String getPath() {
-        return "/call/";
+        if (latch.getCount() == 0) {
+          output = fox.getResults();
+          Server.pool.get(lang).push(fox);
+        } else {
+          fox = null;
+          Server.pool.get(lang).add();
+        }
+
+        LOG.info(ui.getRequestUri());
+        LOG.info(hh.getRequestHeaders());
+        LOG.info("IP: " + request.getRemoteAddr());
+      }
+    } catch (Exception e) {
+      LOG.error(e.getLocalizedMessage(), e);
     }
+    return output;
+  }
+
+  @Path("entitiesFeedback")
+  @POST
+  public JsonObject postText() {
+    // TODO: entitiesFeedback
+    LOG.info("FEEDBACK");
+    return null;
+  }
+
+  public static String getPath() {
+    return "/call/";
+  }
 }

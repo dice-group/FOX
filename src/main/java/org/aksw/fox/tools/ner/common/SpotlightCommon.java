@@ -1,6 +1,5 @@
 package org.aksw.fox.tools.ner.common;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +16,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.renespeck.swissknife.http.Requests;
+
 public class SpotlightCommon extends AbstractNER {
 
-    public static Logger             LOG   = LogManager.getLogger(SpotlightCommon.class);
-    public static final Charset      UTF_8 = Charset.forName("UTF-8");
+    public static Logger             LOG = LogManager.getLogger(SpotlightCommon.class);
 
     protected final XMLConfiguration CFG;
     protected String                 SPOTLIGHT_URL;
@@ -68,7 +68,7 @@ public class SpotlightCommon extends AbstractNER {
             }
             else
                 try {
-                    spotlightResponse = postToJSON(SPOTLIGHT_URL, Form.form()
+                    spotlightResponse = Requests.postForm(SPOTLIGHT_URL, Form.form()
                             .add("confidence", SPOTLIGHT_CONFIDENCE)
                             .add("support", SPOTLIGHT_SUPPORT)
                             .add("types", SPOTLIGHT_TYPES)

@@ -72,7 +72,7 @@
             <div class="controls">
               <select class="input-block-level" id="foxlight" data-ng-model="request.foxlight">
                 <option>OFF</option>
-                <option data-ng-hide="{{request.lang =='detect'}}" data-ng-repeat="ner in config[request.lang].ner" >{{ner}}</option>
+                <option data-ng-hide="{{request.lang =='detect'}}" data-ng-repeat="(name,tool) in config[request.lang].ner" value="{{tool}}">{{name}}</option>
               </select>
             </div>
           </div>
