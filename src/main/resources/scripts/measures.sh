@@ -9,5 +9,5 @@ input=eval/MultilayerPerceptron_total.csv
 output=eval/Measures_MultilayerPerceptron_total.csv
 #
 #
-java -cp fox-2.3.0-jar-with-dependencies.jar org.aksw.fox.utils.evaluation.FoxEvaluationHelper -i$input -o$output -mfalse
+java -cp fox-${project.version}-jar-with-dependencies.jar org.aksw.fox.utils.evaluation.FoxEvaluationHelper -i$input -o$output -mfalse
 echo "Done. Check the $output file."
