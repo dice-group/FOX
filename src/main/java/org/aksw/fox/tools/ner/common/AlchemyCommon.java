@@ -10,6 +10,7 @@ import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.fox.utils.CfgManager;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.http.client.fluent.Form;
+import org.apache.http.entity.ContentType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,14 +38,15 @@ public abstract class AlchemyCommon extends AbstractNER {
     // http://www.alchemyapi.com/api/entity/textc.html
     JSONObject o = null;
     try {
-      final String response = Requests.postForm(
-
-          url,
+      final String response = Requests.postForm(url,
           Form.form()//
-              .add("apikey", api_key).add("text", input) //
-              .add("outputMode", outputMode).add("maxRetrieve", max) //
-              .add("coreference", "0").add("linkedData", "0") //
-      );
+              .add("apikey", api_key)//
+              .add("text", input) //
+              .add("outputMode", outputMode)//
+              .add("maxRetrieve", max) //
+              .add("coreference", "0")//
+              .add("linkedData", "0"), //
+          ContentType.APPLICATION_JSON);
       o = new JSONObject(response);
     } catch (JSONException | IOException e) {
       LOG.error(e.getLocalizedMessage(), e);

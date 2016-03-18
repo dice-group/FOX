@@ -10,6 +10,7 @@ import org.aksw.fox.utils.CfgManager;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.http.client.fluent.Form;
+import org.apache.http.entity.ContentType;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -62,17 +63,21 @@ public abstract class SpotlightCommon extends AbstractNER {
         }
       }
       counter = 1;
-
       String spotlightResponse = null;
       if (input.trim().isEmpty()) {
         LOG.info("Empty input!");
       } else {
         try {
-          spotlightResponse = Requests.postForm(SPOTLIGHT_URL,
-              Form.form().add("confidence", SPOTLIGHT_CONFIDENCE).add("support", SPOTLIGHT_SUPPORT)
-                  .add("types", SPOTLIGHT_TYPES).add("sparql", SPOTLIGHT_SPARQL)
-                  .add("text", input));
-
+          spotlightResponse = Requests.postForm(//
+              SPOTLIGHT_URL,
+              Form.form()//
+                  .add("confidence", SPOTLIGHT_CONFIDENCE)//
+                  .add("support", SPOTLIGHT_SUPPORT)//
+                  .add("types", SPOTLIGHT_TYPES)//
+                  .add("sparql", SPOTLIGHT_SPARQL)//
+                  .add("text", input)//
+                  .add("types", "Person,Organisation,Location,Place"), //
+              ContentType.APPLICATION_JSON);
           LOG.debug("spotlightResponse: " + spotlightResponse);
         } catch (final Exception e) {
           LOG.error(e.getLocalizedMessage(), e);
@@ -80,7 +85,6 @@ public abstract class SpotlightCommon extends AbstractNER {
       }
       JSONObject resultJSON = null;
       JSONArray entities = null;
-
       if (spotlightResponse != null) {
         try {
           resultJSON = new JSONObject(spotlightResponse);
@@ -98,8 +102,8 @@ public abstract class SpotlightCommon extends AbstractNER {
         for (int i = 0; i < entities.length(); i++) {
           try {
             final JSONObject entity = entities.getJSONObject(i);
+            LOG.debug(entity.toString(2));
             final String type = spotlight(entity.getString("@types"));
-
             if (!type.equals(EntityClassMap.getNullCategory())) {
               entityList.add(getEntity(entity.getString("@surfaceForm"), type,
                   Entity.DEFAULT_RELEVANCE, getToolName()));
@@ -127,15 +131,15 @@ public abstract class SpotlightCommon extends AbstractNER {
     if ((spotlightTag == null) || spotlightTag.trim().isEmpty()) {
       return t;
     }
-
     if (spotlightTag.toLowerCase().contains("person")) {
       t = EntityClassMap.P;
     } else if (spotlightTag.toLowerCase().contains("organisation")) {
       t = EntityClassMap.O;
     } else if (spotlightTag.toLowerCase().contains("place")) {
       t = EntityClassMap.L;
+    } else if (spotlightTag.toLowerCase().contains("location")) {
+      t = EntityClassMap.L;
     }
-
     return t;
   }
 }

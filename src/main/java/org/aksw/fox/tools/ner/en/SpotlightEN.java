@@ -2,24 +2,27 @@ package org.aksw.fox.tools.ner.en;
 
 import java.io.IOException;
 
-import org.aksw.fox.nerlearner.reader.TrainingInputReader;
 import org.aksw.fox.tools.ner.common.SpotlightCommon;
 import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.utils.FoxConst;
 import org.apache.log4j.PropertyConfigurator;
 
 public class SpotlightEN extends SpotlightCommon {
 
-    public SpotlightEN() {
-        super("en");
-    }
+  public SpotlightEN() {
+    super("en");
+  }
 
-    public static void main(String[] a) throws IOException {
-        PropertyConfigurator.configure(FoxCfg.LOG_FILE);
+  public static void main(final String[] a) throws IOException {
+    PropertyConfigurator.configure(FoxCfg.LOG_FILE);
 
-        TrainingInputReader tr = new TrainingInputReader();
-        tr.initFiles("input/4");
-        String input = tr.getInput();
-        LOG.info(new SpotlightEN().retrieve(input));
+    // final TrainingInputReader tr = new TrainingInputReader();
+    // tr.initFiles("input/4");
 
-    }
+    new SpotlightEN()
+        .retrieve(//
+            FoxConst.NER_EN_EXAMPLE_1.concat(FoxConst.NER_EN_EXAMPLE_2))//
+        .forEach(LOG::info);
+
+  }
 }

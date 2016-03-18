@@ -18,6 +18,7 @@ import org.apache.log4j.PropertyConfigurator;
 import de.renespeck.swissknife.io.SerializationUtil;
 
 public class TagMeEN extends TagMeCommon {
+  final String file = "dataEN.bin";
 
   public TagMeEN() {
     super("en", "http://dbpedia.org/sparql", "http://dbpedia.org");
@@ -35,8 +36,6 @@ public class TagMeEN extends TagMeCommon {
 
   @SuppressWarnings("unchecked")
   public Map<String, Set<String>> createEnWikipediaCategories() {
-
-    final String file = "dataEN.bin";
 
     Map<String, Set<String>> cats = null;
     cats = SerializationUtil.deserialize(file, new HashMap<String, Set<String>>().getClass());

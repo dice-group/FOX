@@ -17,7 +17,7 @@ org.aksw.fox.web.feedback.FeedbackHttpHandler.apikey: <YOUR API KEY>
 ################################################################## 
 # INERReader training reader
 # org.aksw.fox.nerlearner.reader.NEEL2014Reader, org.aksw.fox.nerlearner.reader.TrainingInputReader, org.aksw.fox.nerlearner.reader.WikinerReader
-org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.WikinerReader
+org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.TrainingInputReader
 #
 #nerdMl
 org.aksw.fox.tools.ner.en.NERNerdML.apiKey: 551t91ndhg4jhaeqa4pcskvkj74dsnhr
@@ -35,12 +35,12 @@ org.aksw.fox.nerlearner.FoxClassifier.learner: weka.classifiers.functions.Multil
 ##################################################################
 # fox settings #
 ##################################################################
-org.aksw.fox.utils.tweets.Preprocessor.enabled: true
+org.aksw.fox.utils.tweets.Preprocessor.enabled: false
 org.aksw.fox.CrossValidation.runs: 10
 # max time in min. before fox timeouts
 org.aksw.fox.web.FoxHttpHandler.lifetime: 5
 # `true` to train fox. tainFox: { true | false }
-org.aksw.fox.nerlearner.FoxClassifier.training: true
+org.aksw.fox.nerlearner.FoxClassifier.training: false
 # an integer, 0 for all sentences
 org.aksw.fox.nerlearner.reader.INERReader.maxSentences:10
 # max time in min. for all ner tools

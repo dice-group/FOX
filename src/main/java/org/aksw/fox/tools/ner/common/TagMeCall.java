@@ -13,6 +13,7 @@ import org.aksw.fox.utils.CfgManager;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.http.client.fluent.Form;
+import org.apache.http.entity.ContentType;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -59,67 +60,55 @@ class TagMeCall implements Callable<List<Entity>> {
 
   @Override
   public List<Entity> call() {
-    final String response = send();
 
-    final JSONArray annos = handleResponse(response);
+    final JSONObject response = send();
+    LOG.info(response);
     final Set<Entity> entities = new HashSet<>();
-    for (int i = 0; i < annos.length(); i++) {
-      final JSONObject anno = annos.getJSONObject(i);
-      if (anno.has("dbpedia_categories") && anno.has("spot") && anno.has("rho")
-          && (anno.getDouble("rho") >= MIN_RHO)) {
-        final JSONArray ja = anno.getJSONArray("dbpedia_categories");
+    if (response.has("annotations")) {
+      final JSONArray annos = response.getJSONArray("annotations");
+      for (int i = 0; i < annos.length(); i++) {
+        final JSONObject anno = annos.getJSONObject(i);
+        if (anno.has("dbpedia_categories") && anno.has("spot") && anno.has("rho")
+            && (anno.getDouble("rho") >= MIN_RHO)) {
+          final JSONArray ja = anno.getJSONArray("dbpedia_categories");
 
-        for (int ii = 0; ii < ja.length(); ii++) {
-          final String tmpType = entityClassMap.get(ja.getString(ii).replace(" ", "_"));
+          for (int ii = 0; ii < ja.length(); ii++) {
+            final String tmpType = entityClassMap.get(ja.getString(ii).replace(" ", "_"));
 
-          if ((tmpType != null)) {
-            entities.add(new Entity(anno.getString("spot"), tmpType));
-            break;
+            if ((tmpType != null)) {
+              entities.add(new Entity(anno.getString("spot"), tmpType));
+              break;
+            }
           }
         }
       }
+    } else {
+      LOG.warn("No annotations found.");
     }
     return new ArrayList<>(entities);
 
   }
 
   /**
-   * Gets 'annotations' JSONArray
-   */
-  public JSONArray handleResponse(final String response) {
-    try {
-      JSONObject jo;
-      if (response != null) {
-        jo = new JSONObject(response);
-        if (jo.has("annotations")) {
-          return jo.getJSONArray("annotations");
-        } else {
-          LOG.warn("No annotations found.");
-        }
-      }
-    } catch (final Exception e) {
-      LOG.error(e.getLocalizedMessage(), e);
-    }
-    return new JSONArray();
-  }
-
-  /**
    * TagMe request.
    */
-  public String send() {
+  public JSONObject send() {
     String response = "";
     try {
       response = Requests.postForm(ENDPOINT,
           Form.form()//
               .add("key", TAGME_KEY)//
-              .add("text", sentence).add("lang", lang)//
+              .add("text", sentence)//
+              .add("lang", lang)//
               .add("epsilon", epsilon)//
               .add("min_comm", min_comm)//
               .add("min_link", min_link)//
-              .add("include_categories", include_categories));
+              .add("include_categories", include_categories),
+          ContentType.APPLICATION_JSON);
+      return new JSONObject(response);
     } catch (final IOException e) {
       LOG.error(e.getLocalizedMessage(), e);
     }
-    return response;
+    return new JSONObject();
   }
 }

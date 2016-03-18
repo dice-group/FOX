@@ -72,13 +72,32 @@ public abstract class TagMeCommon extends AbstractNER {
 
   protected List<Entity> retrieveSentences(final List<String> sentences) {
 
+    final List<String> _sentences = new ArrayList<>();
+
+    int ii = 0;
+    StringBuilder sb = new StringBuilder();
+    for (final String sentence : sentences) {
+      if (ii < 10) {
+        sb.append(sentence);
+      } else {
+        _sentences.add(sb.toString());
+        sb = new StringBuilder();
+        ii = 0;
+      }
+      ii++;
+    }
+    final String last = sb.toString();
+    if (!last.isEmpty()) {
+      _sentences.add(sb.toString());
+    }
+
     final ExecutorService executorService = Executors.newFixedThreadPool(4);
     final CompletionService<List<Entity>> completionService =
         new ExecutorCompletionService<>(executorService);
 
     int n = 0;
-    for (int i = 0; i < sentences.size(); i++) {
-      completionService.submit(new TagMeCall(sentences.get(i), LANG, entityClasses));
+    for (int i = 0; i < _sentences.size(); i++) {
+      completionService.submit(new TagMeCall(_sentences.get(i), LANG, entityClasses));
       ++n;
     }
     executorService.shutdown();

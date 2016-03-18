@@ -26,4 +26,5 @@ public class NoLinking extends AbstractLinking {
         }
         this.entities = entities;
     }
+
 }
