@@ -62,7 +62,6 @@ class TagMeCall implements Callable<List<Entity>> {
   public List<Entity> call() {
 
     final JSONObject response = send();
-    LOG.info(response);
     final Set<Entity> entities = new HashSet<>();
     if (response.has("annotations")) {
       final JSONArray annos = response.getJSONArray("annotations");

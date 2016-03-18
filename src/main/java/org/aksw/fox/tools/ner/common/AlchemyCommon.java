@@ -2,7 +2,9 @@ package org.aksw.fox.tools.ner.common;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
@@ -35,23 +37,51 @@ public abstract class AlchemyCommon extends AbstractNER {
 
   @Override
   public List<Entity> retrieve(final String input) {
-    // http://www.alchemyapi.com/api/entity/textc.html
-    JSONObject o = null;
-    try {
-      final String response = Requests.postForm(url,
-          Form.form()//
-              .add("apikey", api_key)//
-              .add("text", input) //
-              .add("outputMode", outputMode)//
-              .add("maxRetrieve", max) //
-              .add("coreference", "0")//
-              .add("linkedData", "0"), //
-          ContentType.APPLICATION_JSON);
-      o = new JSONObject(response);
-    } catch (JSONException | IOException e) {
-      LOG.error(e.getLocalizedMessage(), e);
+    return retrieveSentences(getSentences("en", input));
+  }
+
+  protected List<Entity> retrieveSentences(final List<String> sentences) {
+    final Set<Entity> set = new HashSet<>();
+    final List<String> _sentences = new ArrayList<>();
+
+    int ii = 0;
+    StringBuilder sb = new StringBuilder();
+    for (final String sentence : sentences) {
+      if (ii < 10) {
+        sb.append(sentence);
+      } else {
+        _sentences.add(sb.toString());
+        sb = new StringBuilder();
+        ii = 0;
+      }
+      ii++;
     }
-    return alchemyNERResponseParser(o);
+    final String last = sb.toString();
+    if (!last.isEmpty()) {
+      _sentences.add(sb.toString());
+    }
+    // http://www.alchemyapi.com/api/entity/textc.html
+    for (final String sen : _sentences) {
+      JSONObject o = null;
+      try {
+        final String response = Requests.postForm(url,
+            Form.form()//
+                .add("apikey", api_key)//
+                .add("text", sen) //
+                .add("outputMode", outputMode)//
+                .add("maxRetrieve", max) //
+                .add("coreference", "0")//
+                .add("linkedData", "0"), //
+            ContentType.APPLICATION_JSON);
+        o = new JSONObject(response);
+      } catch (JSONException | IOException e) {
+        LOG.error(e.getLocalizedMessage(), e);
+      }
+      if (o != null) {
+        set.addAll(alchemyNERResponseParser(o));
+      }
+    }
+    return new ArrayList<>(set);
   }
 
   protected List<Entity> alchemyNERResponseParser(final JSONObject o) {
