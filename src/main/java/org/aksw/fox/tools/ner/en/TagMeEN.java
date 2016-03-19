@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -21,7 +22,7 @@ public class TagMeEN extends TagMeCommon {
   final String file = "dataEN.bin";
 
   public TagMeEN() {
-    super("en", "http://dbpedia.org/sparql", "http://dbpedia.org");
+    super(Locale.ENGLISH, "http://dbpedia.org/sparql", "http://dbpedia.org");
 
     final Map<String, String> fileToType = new HashMap<>();
     fileToType.put("catsOrganisationEN.bin", EntityClassMap.O);

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -46,12 +47,12 @@ class TagMeCall implements Callable<List<Entity>> {
   public static final String min_comm = "0.1";
   public static final String min_link = "0.1";
   String sentence;
-  String lang;
+  Locale lang;
 
   QueryExecutionFactory qef;
   Map<String, String> entityClassMap;
 
-  public TagMeCall(final String sentence, final String lang,
+  public TagMeCall(final String sentence, final Locale lang,
       final Map<String, String> entityClassMap) {
     this.sentence = sentence;
     this.lang = lang;
@@ -98,7 +99,7 @@ class TagMeCall implements Callable<List<Entity>> {
           Form.form()//
               .add("key", TAGME_KEY)//
               .add("text", sentence)//
-              .add("lang", lang)//
+              .add("lang", lang.getLanguage())//
               .add("epsilon", epsilon)//
               .add("min_comm", min_comm)//
               .add("min_link", min_link)//

@@ -2,6 +2,7 @@ package org.aksw.fox.tools.ner.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
@@ -30,9 +31,9 @@ public abstract class SpotlightCommon extends AbstractNER {
   protected String SPOTLIGHT_TYPES;
   protected String SPOTLIGHT_SPARQL;
 
-  String lang;
+  Locale lang;
 
-  public SpotlightCommon(final String lang) {
+  public SpotlightCommon(final Locale lang) {
     CFG = CfgManager.getCfg(this.getClass());
 
     SPOTLIGHT_URL = CFG.getString(FoxConst.CFG_KEY_SPOTLIGHT_URL);

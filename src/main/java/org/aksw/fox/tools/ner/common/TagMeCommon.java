@@ -3,6 +3,7 @@ package org.aksw.fox.tools.ner.common;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -40,7 +41,7 @@ public abstract class TagMeCommon extends AbstractNER {
   public static final String min_comm = "0.1";
   public static final String min_link = "0.1";
 
-  protected final String LANG;
+  protected Locale LANG;
 
   /*
    * protected ConcurrentMap<String, String> categoriesToTypeLRU = new
@@ -56,7 +57,7 @@ public abstract class TagMeCommon extends AbstractNER {
    * @param dbpediaURL
    * @param dbpediaGraph
    */
-  public TagMeCommon(final String lang, final String dbpediaURL, final String dbpediaGraph) {
+  public TagMeCommon(final Locale lang, final String dbpediaURL, final String dbpediaGraph) {
     LOG.info("TagMeCommon ... ");
     LANG = lang;
 

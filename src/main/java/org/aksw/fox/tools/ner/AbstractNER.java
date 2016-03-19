@@ -76,7 +76,7 @@ public abstract class AbstractNER implements INER {
 
   /**
    * Creates a new Entity object.
-   * 
+   *
    * @param text
    * @param type
    * @param relevance
@@ -90,7 +90,7 @@ public abstract class AbstractNER implements INER {
 
   /**
    * Cleans the entities, uses a tokenizer to tokenize all entities with the same algorithm.
-   * 
+   *
    * @param list
    * @return
    */
@@ -116,9 +116,9 @@ public abstract class AbstractNER implements INER {
     return list;
   }
 
-  public List<String> getSentences(final String lang, final String input) {
+  public List<String> getSentences(final Locale lang, final String input) {
     final List<String> sentences = new ArrayList<>();
-    final BreakIterator sentenceIterator = BreakIterator.getSentenceInstance(new Locale(lang));
+    final BreakIterator sentenceIterator = BreakIterator.getSentenceInstance(lang);
     sentenceIterator.setText(input);
     int start = sentenceIterator.first();
     int end = sentenceIterator.next();

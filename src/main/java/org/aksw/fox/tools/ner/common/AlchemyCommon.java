@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
@@ -20,7 +21,14 @@ import org.json.JSONObject;
 import de.renespeck.swissknife.http.Requests;
 
 public abstract class AlchemyCommon extends AbstractNER {
-
+  /**
+   *
+   * 1: HTTP POST calls should include the Content-Type header: application/x-www-form-urlencoded
+   * <br>
+   *
+   * 2: Posted text documents can be a maximum of 50 kilobytes. Larger documents will result in a
+   * "content-exceeds-size-limit" error response.<br>
+   */
   public static final XMLConfiguration CFG = CfgManager.getCfg(AlchemyCommon.class);
 
   private final String api_key = CFG.getString("apikey");
@@ -37,10 +45,11 @@ public abstract class AlchemyCommon extends AbstractNER {
 
   @Override
   public List<Entity> retrieve(final String input) {
-    return retrieveSentences(getSentences("en", input));
+    return retrieveSentences(getSentences(Locale.ENGLISH, input));
   }
 
   protected List<Entity> retrieveSentences(final List<String> sentences) {
+
     final Set<Entity> set = new HashSet<>();
     final List<String> _sentences = new ArrayList<>();
 
@@ -102,7 +111,6 @@ public abstract class AlchemyCommon extends AbstractNER {
   }
 
   protected void setTypes() {
-
     entityClasses.put("Organization", EntityClassMap.O);
     entityClasses.put("City", EntityClassMap.L);
     entityClasses.put("Company", EntityClassMap.O);

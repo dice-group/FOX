@@ -1,6 +1,7 @@
 package org.aksw.fox.tools.ner.en;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import org.aksw.fox.tools.ner.common.SpotlightCommon;
 import org.aksw.fox.utils.FoxCfg;
@@ -10,7 +11,7 @@ import org.apache.log4j.PropertyConfigurator;
 public class SpotlightEN extends SpotlightCommon {
 
   public SpotlightEN() {
-    super("en");
+    super(Locale.ENGLISH);
   }
 
   public static void main(final String[] a) throws IOException {
