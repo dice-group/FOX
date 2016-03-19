@@ -85,10 +85,6 @@ public class TagMeEN extends TagMeCommon {
 
   public static void main(final String[] a) throws IOException {
     PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-    final TagMeEN tagMeEN = new TagMeEN();
-    tagMeEN
-        .retrieve(//
-            FoxConst.NER_EN_EXAMPLE_1.concat(FoxConst.NER_EN_EXAMPLE_2))//
-        .forEach(LOG::info);
+    new TagMeEN().retrieve(FoxConst.NER_EN_EXAMPLE_1).forEach(LOG::info);
   }
 }

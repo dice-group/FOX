@@ -1,10 +1,14 @@
 package org.aksw.fox.tools.ner.common;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
@@ -22,6 +26,8 @@ import de.renespeck.swissknife.http.Requests;
 
 public abstract class AlchemyCommon extends AbstractNER {
   /**
+   *
+   * http://www.alchemyapi.com/api/entity/textc.html
    *
    * 1: HTTP POST calls should include the Content-Type header: application/x-www-form-urlencoded
    * <br>
@@ -50,26 +56,34 @@ public abstract class AlchemyCommon extends AbstractNER {
 
   protected List<Entity> retrieveSentences(final List<String> sentences) {
 
-    final Set<Entity> set = new HashSet<>();
+    // _sentences with string of 15k bytes max.
     final List<String> _sentences = new ArrayList<>();
-
-    int ii = 0;
-    StringBuilder sb = new StringBuilder();
-    for (final String sentence : sentences) {
-      if (ii < 10) {
-        sb.append(sentence);
-      } else {
-        _sentences.add(sb.toString());
-        sb = new StringBuilder();
-        ii = 0;
+    {
+      int ii = 0;
+      final Map<Integer, Integer> sentenceSize = new HashMap<>();
+      for (final String sentence : sentences) {
+        try {
+          sentenceSize.put(ii++, sentence.getBytes("UTF-8").length);
+        } catch (final UnsupportedEncodingException e) {
+          LOG.error(e.getLocalizedMessage(), e);
+        }
       }
-      ii++;
-    }
-    final String last = sb.toString();
-    if (!last.isEmpty()) {
+      StringBuilder sb = new StringBuilder();
+      int sum = 0;
+      for (final Entry<Integer, Integer> entry : sentenceSize.entrySet()) {
+        sum += entry.getValue();
+        if (sum < 15000) {
+          sb.append(sentences.get(entry.getKey()));
+        } else {
+          _sentences.add(sb.toString());
+          sb = new StringBuilder();
+          sum = 0;
+        }
+      }
       _sentences.add(sb.toString());
     }
-    // http://www.alchemyapi.com/api/entity/textc.html
+
+    final Set<Entity> set = new HashSet<>();
     for (final String sen : _sentences) {
       JSONObject o = null;
       try {
