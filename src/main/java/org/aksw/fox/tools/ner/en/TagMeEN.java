@@ -63,12 +63,9 @@ public class TagMeEN extends TagMeCommon {
     fileToSet.put("catsPersonEN.bin", //
         wikipediaCategories.queryExecAndSerialize("catsPersonEN.bin", "dbo:Person"));
     fileToSet.put("catsLocationEN.bin", //
-        wikipediaCategories.queryExecAndSerialize("catsLocationEN.bin", "dbo:Location"));
-    // merge location and place
-    fileToSet.get("catsLocationEN.bin")
-        .addAll(wikipediaCategories.queryExecAndSerialize("catsPlaceEN.bin", "dbo:Place"));
+        wikipediaCategories.queryExecAndSerialize("catsLocationEN.bin", "dbo:Place"));
 
-    // clean the data
+    // makes uris unique in each set
     final Map<String, Set<String>> fileToSetClean = new HashMap<>();
     for (final Entry<String, Set<String>> entry : fileToSet.entrySet()) {
       final String key1 = entry.getKey();
