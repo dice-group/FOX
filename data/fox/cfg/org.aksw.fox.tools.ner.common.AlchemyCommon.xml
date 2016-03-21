@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <apikey>123</apikey>
+    <url>http://access.alchemyapi.com/calls/text/TextGetRankedNamedEntities</url>
+   <max>1000000</max>
+</config>
