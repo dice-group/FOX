@@ -26,9 +26,13 @@ Java 8, Maven 3, graphviz (for JavaDoc only)
 
 ## Run with Docker
 :one:  Build project: `./build.sh`
+
 :two:  Enter release folder: `cd release`
+
 :three: Copy properties file: `cp fox.properties-dist fox.properties`
+
 :four: Build docker container: `docker build -t fox .`
+
 :four: Start docker container: `docker run -p 4444:4444 -it fox`
 
 ## Demo and Documentation
