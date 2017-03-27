@@ -2,12 +2,11 @@ package org.aksw.fox.web;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -31,6 +30,9 @@ import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxLanguageDetector;
 import org.aksw.fox.utils.FoxTextUtil;
+import org.aksw.gerbil.io.nif.NIFWriter;
+import org.aksw.gerbil.io.nif.impl.TurtleNIFParser;
+import org.aksw.gerbil.io.nif.impl.TurtleNIFWriter;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentCreator;
 import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentParser;
@@ -49,8 +51,13 @@ public class ApiResource {
 
   public static Logger LOG = LogManager.getLogger(ApiResource.class);
   private final FoxLanguageDetector languageDetector = new FoxLanguageDetector();
-  private final TurtleNIFDocumentParser parser = new TurtleNIFDocumentParser();
-  private final TurtleNIFDocumentCreator creator = new TurtleNIFDocumentCreator();
+
+  public final TurtleNIFDocumentParser parser = new TurtleNIFDocumentParser();
+  public final TurtleNIFDocumentCreator creator = new TurtleNIFDocumentCreator();
+
+  public final TurtleNIFParser turtleNIFParser = new TurtleNIFParser();
+
+  public final NIFWriter turtleNIFWriter = new TurtleNIFWriter();
 
   private static final String PERSON_TYPE_URI = "scmsann:PERSON";
   private static final String LOCATION_TYPE_URI = "scmsann:LOCATION";
@@ -94,9 +101,9 @@ public class ApiResource {
 
   /**
    * <code>
-
-    curl -d "@example.ttl" -H "Content-Type: application/x-turtle" http://0.0.0.0:4444/call/ner/entities
   
+    curl -d "@example.ttl" -H "Content-Type: application/x-turtle" http://0.0.0.0:4444/call/ner/entities
+
     </code>
    */
   @Path("entities")
@@ -108,48 +115,47 @@ public class ApiResource {
     try {
       // read request
       final InputStream in = request.getInputStream();
-      final Reader reader = new InputStreamReader(in);
-      Document document;
+      List<Document> docs = null;
       try {
-        document = parser.getDocumentFromNIFReader(reader);
+        docs = turtleNIFParser.parseNIF(in);
       } catch (final Exception e) {
         LOG.error(e.getLocalizedMessage(), e);
         return "";
       }
       try {
-        reader.close();
         in.close();
       } catch (final IOException e) {
         LOG.error(e.getLocalizedMessage(), e);
       }
+      final List<Document> annotetedDocs = new ArrayList<>();
+      for (final Document document : docs) {
 
-      // send request to fox
-      final Map<String, String> parameter = new HashMap<>();
-      parameter.put(Fox.Parameter.INPUT.toString(), document.getText());
-      parameter.put(Fox.Parameter.TYPE.toString(), Fox.Type.TEXT.toString());
-      parameter.put(Fox.Parameter.LANG.toString(), Fox.Langs.EN.toString());
-      parameter.put(Fox.Parameter.TASK.toString(), Fox.Task.NER.toString());
-      parameter.put(Fox.Parameter.OUTPUT.toString(), Lang.JSONLD.getName());
+        // send request to fox
+        final Map<String, String> parameter = new HashMap<>();
+        parameter.put(Fox.Parameter.INPUT.toString(), document.getText());
+        parameter.put(Fox.Parameter.TYPE.toString(), Fox.Type.TEXT.toString());
+        parameter.put(Fox.Parameter.LANG.toString(), Fox.Langs.EN.toString());
+        parameter.put(Fox.Parameter.TASK.toString(), Fox.Task.NER.toString());
+        parameter.put(Fox.Parameter.OUTPUT.toString(), Lang.JSONLD.getName());
 
-      final String response = requestFox(parameter);
-      LOG.info(response);
-      // parse fox response
-      if ((response != null) && !response.isEmpty()) {
+        final String response = requestFox(parameter);
+        LOG.info(response);
+        // parse fox response
+        if ((response != null) && !response.isEmpty()) {
 
-        final JSONObject outObj = new JSONObject(response);
-        new ArrayList<>();
-        if (outObj.has("@graph")) {
-          final JSONArray graph = outObj.getJSONArray("@graph");
-          for (int i = 0; i < graph.length(); i++) {
-            parseType(graph.getJSONObject(i), document);
+          final JSONObject outObj = new JSONObject(response);
+          if (outObj.has("@graph")) {
+            final JSONArray graph = outObj.getJSONArray("@graph");
+            for (int i = 0; i < graph.length(); i++) {
+              parseType(graph.getJSONObject(i), document);
+            }
+          } else {
+            parseType(outObj, document);
           }
-        } else {
-          parseType(outObj, document);
         }
-
+        annotetedDocs.add(document);
       }
-
-      nifDocument = creator.getDocumentAsNIFString(document);
+      nifDocument = turtleNIFWriter.writeNIF(annotetedDocs);
     } catch (final Exception e) {
       LOG.error(e.getStackTrace(), e);
     }

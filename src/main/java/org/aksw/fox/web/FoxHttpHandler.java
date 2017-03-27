@@ -22,7 +22,7 @@ import org.json.JSONObject;
 
 /**
  *
- * @author rspeck
+ * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
 public class FoxHttpHandler extends AbstractFoxHttpHandler {
