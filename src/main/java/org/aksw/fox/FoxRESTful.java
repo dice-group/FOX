@@ -9,19 +9,14 @@ import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.web.Server;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 /**
  * Starts FOX web service.
  *
- * @author rspeck
+ * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
 public class FoxRESTful {
-
-  static {
-    PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-  }
 
   public static Logger LOG = LogManager.getLogger(FoxRESTful.class);
 
