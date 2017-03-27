@@ -6,22 +6,16 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.tools.ner.ToolsGenerator;
 import org.aksw.fox.tools.ner.en.StanfordEN;
-import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
-import org.aksw.fox.web.Server;
 import org.apache.http.entity.ContentType;
 import org.apache.jena.riot.Lang;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONObject;
 
 import de.renespeck.swissknife.http.Requests;
 
 public class Example {
-  static {
-    PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-  }
 
   public final static Logger LOG = LogManager.getLogger(Example.class);
 
@@ -34,7 +28,7 @@ public class Example {
   /**
    * Example programmatic use of FOX.
    */
-  public static void programmatic() {
+  protected static void programmatic() {
     LOG.info("programmatic ...");
 
     final String lang = Fox.Langs.EN.toString();
@@ -59,8 +53,8 @@ public class Example {
       if (!ToolsGenerator.nerTools.get(lang).contains(tool)) {
         LOG.warn("can't find the given tool " + tool);
       }
-      e = fox.doNERLight(tool);
-      // e = fox.doNER();
+      // e = fox.doNERLight(tool);
+      e = fox.doNER();
 
       // linking
       fox.setURIs(e);
@@ -75,7 +69,7 @@ public class Example {
   /**
    * Example web api use of FOX.
    */
-  private static void _webAPI(final String url) {
+  protected static void _webAPI(final String url) {
     LOG.info("webAPI ...");
 
     try {
