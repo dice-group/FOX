@@ -47,6 +47,7 @@
 			<name>Cognitive Computation Group</name>
 			<url>http://cogcomp.cs.illinois.edu/m2repo</url>
 		</repository>
+
 	</repositories>
 	<dependencies>
 		<!-- external dependencies -->
@@ -234,18 +235,22 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
+			<!-- <version>3.0.1</version> -->
+			  <version>3.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-grizzly2-servlet</artifactId>
-			<version>2.9.1</version>
+			<!-- <version>2.9.1</version> -->
+			<version>2.26-b03</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-processing</artifactId>
-			<version>2.11</version>
+			<!-- <version>2.11</version> -->
+			 <version>2.26-b03</version>
 		</dependency>
+		<!-- json -->
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
@@ -372,7 +377,7 @@
 								<copy todir="${project.build.directory}">
 									<fileset dir="${project.build.outputDirectory}/scripts" />
 								</copy>
-								<copy file="log4j.properties" tofile="${project.build.directory}/log4j.properties" />
+								<!-- <copy file="log4j.properties" tofile="${project.build.directory}/log4j.properties" />  -->
 								<copy file="fox.properties-dist" tofile="${project.build.directory}/fox.properties-dist" />
 								<chmod dir="${project.build.directory}" perm="700"
 									includes="**/*.sh" />
