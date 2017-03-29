@@ -25,7 +25,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.aksw.fox.FoxParameter;
 import org.aksw.fox.IFox;
-import org.aksw.fox.tools.ner.ToolsGenerator;
+import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxLanguageDetector;

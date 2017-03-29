@@ -16,7 +16,7 @@ import org.aksw.fox.IFox;
 import org.aksw.fox.data.exception.LoadingNotPossibleException;
 import org.aksw.fox.data.exception.PortInUseException;
 import org.aksw.fox.data.exception.UnsupportedLangException;
-import org.aksw.fox.tools.ner.ToolsGenerator;
+import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.CfgManager;
 import org.aksw.fox.utils.FoxServerUtil;
 import org.aksw.fox.web.feedback.FeedbackHttpHandler;

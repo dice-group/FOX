@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.tools.ner.ToolsGenerator;
+import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.tools.ner.en.StanfordEN;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.jena.riot.Lang;
