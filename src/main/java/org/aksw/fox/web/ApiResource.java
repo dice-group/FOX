@@ -73,6 +73,7 @@ public class ApiResource {
   @Produces(MediaType.APPLICATION_JSON)
   @GET
   public String getConfig() {
+
     final JSONObject cfg = new JSONObject();
     final JSONArray langs = new JSONArray();
     try {
@@ -100,9 +101,9 @@ public class ApiResource {
 
   /**
    * <code>
-  
-    curl -d "@example.ttl" -H "Content-Type: application/x-turtle" http://0.0.0.0:4444/call/ner/entities
 
+    curl -d "@example.ttl" -H "Content-Type: application/x-turtle" http://0.0.0.0:4444/call/ner/entities
+  
     </code>
    */
   @Path("entities")
