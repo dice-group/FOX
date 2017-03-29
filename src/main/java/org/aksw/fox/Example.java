@@ -31,7 +31,7 @@ public class Example {
   protected static void programmatic() {
     LOG.info("programmatic ...");
 
-    final String lang = Fox.Langs.EN.toString();
+    final String lang = FoxParameter.Langs.EN.toString();
     LOG.info(lang);
     LOG.info(ToolsGenerator.usedLang);
     if (!ToolsGenerator.usedLang.contains(lang)) {
@@ -41,10 +41,10 @@ public class Example {
 
       final Map<String, String> defaults = fox.getDefaultParameter();
 
-      defaults.put(Fox.Parameter.TYPE.toString(), Fox.Type.TEXT.toString());
-      defaults.put(Fox.Parameter.TASK.toString(), Fox.Task.NER.toString());
-      defaults.put(Fox.Parameter.OUTPUT.toString(), Lang.TURTLE.getName());
-      defaults.put(Fox.Parameter.INPUT.toString(), FoxConst.NER_EN_EXAMPLE_1);
+      defaults.put(FoxParameter.Parameter.TYPE.toString(), FoxParameter.Type.TEXT.toString());
+      defaults.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString());
+      defaults.put(FoxParameter.Parameter.OUTPUT.toString(), Lang.TURTLE.getName());
+      defaults.put(FoxParameter.Parameter.INPUT.toString(), FoxConst.NER_EN_EXAMPLE_1);
       fox.setParameter(defaults);
 
       // fox light version
@@ -74,13 +74,14 @@ public class Example {
 
     try {
       final String r = Requests.postJson(url.concat("/call/ner/entities"),
-          new JSONObject().put(Fox.Parameter.TYPE.toString(), Fox.Type.TEXT.toString())
+          new JSONObject()
+              .put(FoxParameter.Parameter.TYPE.toString(), FoxParameter.Type.TEXT.toString())
               /*
-               * .put(Fox.Parameter.LANG.toString(), Fox.Langs.EN.toString())
+               * .put(FoxParameter.Parameter.LANG.toString(), FoxParameter.Langs.EN.toString())
                */
-              .put(Fox.Parameter.TASK.toString(), Fox.Task.NER.toString())
-              .put(Fox.Parameter.OUTPUT.toString(), Lang.TURTLE.getName())
-              .put(Fox.Parameter.INPUT.toString(), FoxConst.NER_EN_EXAMPLE_1),
+              .put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString())
+              .put(FoxParameter.Parameter.OUTPUT.toString(), Lang.TURTLE.getName())
+              .put(FoxParameter.Parameter.INPUT.toString(), FoxConst.NER_EN_EXAMPLE_1),
           ContentType.APPLICATION_JSON);
       LOG.info(r);
 

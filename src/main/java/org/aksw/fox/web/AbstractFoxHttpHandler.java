@@ -31,7 +31,7 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
   abstract public List<String> getMappings();
 
   /**
-   * 
+   *
    * @param request
    * @param response
    */
@@ -94,12 +94,12 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
 
   /**
    * Checks POST parameter.
-   * 
+   *
    */
   abstract protected boolean checkParameter(Map<String, String> formData);
 
   /**
-   * 
+   *
    * @param request
    * @param response
    */
@@ -109,7 +109,7 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
   /**
    * Gets request POST parameters. The Map key holds the parameter name and the Map value the
    * parameter value.
-   * 
+   *
    */
   protected Map<String, String> getPostParameter(final Request request) {
 
@@ -209,7 +209,7 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
 
   /**
    * Writes data to response.
-   * 
+   *
    * @param response
    * @param text
    * @param status

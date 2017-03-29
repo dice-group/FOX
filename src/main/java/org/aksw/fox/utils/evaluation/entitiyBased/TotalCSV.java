@@ -5,8 +5,8 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.aksw.fox.CrossValidation;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.evaluation.CrossValidation;
 import org.aksw.fox.utils.FoxCfg;
 
 import au.com.bytecode.opencsv.CSVReader;

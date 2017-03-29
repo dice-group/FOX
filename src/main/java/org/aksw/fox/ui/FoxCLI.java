@@ -1,4 +1,4 @@
-package org.aksw.fox;
+package org.aksw.fox.ui;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.aksw.fox.data.exception.LoadingNotPossibleException;
 import org.aksw.fox.data.exception.UnsupportedLangException;
+import org.aksw.fox.evaluation.CrossValidation;
 import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.FoxClassifierFactory;
 import org.aksw.fox.nerlearner.reader.INERReader;
@@ -29,7 +30,6 @@ import weka.classifiers.Classifier;
  *
  */
 public class FoxCLI {
-
   public static Logger LOG = LogManager.getLogger(FoxCLI.class);
 
   /**

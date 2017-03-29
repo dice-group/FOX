@@ -69,6 +69,7 @@ public abstract class SpotlightCommon extends AbstractNER {
         LOG.info("Empty input!");
       } else {
         try {
+
           spotlightResponse = Requests.postForm(//
               SPOTLIGHT_URL,
               Form.form()//

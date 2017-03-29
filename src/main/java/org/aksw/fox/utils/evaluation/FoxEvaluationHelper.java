@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.aksw.fox.CrossValidation;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.evaluation.CrossValidation;
 import org.aksw.fox.utils.FoxCfg;
 
 import au.com.bytecode.opencsv.CSVReader;

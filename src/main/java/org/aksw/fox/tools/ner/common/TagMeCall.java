@@ -11,7 +11,6 @@ import java.util.concurrent.Callable;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.utils.CfgManager;
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.entity.ContentType;
@@ -49,7 +48,7 @@ class TagMeCall implements Callable<List<Entity>> {
   String sentence;
   Locale lang;
 
-  QueryExecutionFactory qef;
+  // QueryExecutionFactory qef;
   Map<String, String> entityClassMap;
 
   public TagMeCall(final String sentence, final Locale lang,

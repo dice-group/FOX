@@ -23,7 +23,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-import org.aksw.fox.Fox;
+import org.aksw.fox.FoxParameter;
 import org.aksw.fox.IFox;
 import org.aksw.fox.tools.ner.ToolsGenerator;
 import org.aksw.fox.utils.FoxCfg;
@@ -50,13 +50,12 @@ import org.json.JSONObject;
 public class ApiResource {
 
   public static Logger LOG = LogManager.getLogger(ApiResource.class);
+
   private final FoxLanguageDetector languageDetector = new FoxLanguageDetector();
 
   public final TurtleNIFDocumentParser parser = new TurtleNIFDocumentParser();
   public final TurtleNIFDocumentCreator creator = new TurtleNIFDocumentCreator();
-
   public final TurtleNIFParser turtleNIFParser = new TurtleNIFParser();
-
   public final NIFWriter turtleNIFWriter = new TurtleNIFWriter();
 
   private static final String PERSON_TYPE_URI = "scmsann:PERSON";
@@ -132,11 +131,11 @@ public class ApiResource {
 
         // send request to fox
         final Map<String, String> parameter = new HashMap<>();
-        parameter.put(Fox.Parameter.INPUT.toString(), document.getText());
-        parameter.put(Fox.Parameter.TYPE.toString(), Fox.Type.TEXT.toString());
-        parameter.put(Fox.Parameter.LANG.toString(), Fox.Langs.EN.toString());
-        parameter.put(Fox.Parameter.TASK.toString(), Fox.Task.NER.toString());
-        parameter.put(Fox.Parameter.OUTPUT.toString(), Lang.JSONLD.getName());
+        parameter.put(FoxParameter.Parameter.INPUT.toString(), document.getText());
+        parameter.put(FoxParameter.Parameter.TYPE.toString(), FoxParameter.Type.TEXT.toString());
+        parameter.put(FoxParameter.Parameter.LANG.toString(), FoxParameter.Langs.EN.toString());
+        parameter.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString());
+        parameter.put(FoxParameter.Parameter.OUTPUT.toString(), Lang.JSONLD.getName());
 
         final String response = requestFox(parameter);
         LOG.info(response);
@@ -173,42 +172,42 @@ public class ApiResource {
 
     final Map<String, String> parameter = new HashMap<>();
     try {
-      parameter.put(Fox.Parameter.INPUT.toString(),
-          properties.getString(Fox.Parameter.INPUT.toString()));
-      parameter.put(Fox.Parameter.TYPE.toString(),
-          properties.getString(Fox.Parameter.TYPE.toString()));
-      parameter.put(Fox.Parameter.TASK.toString(),
-          properties.getString(Fox.Parameter.TASK.toString()));
-      parameter.put(Fox.Parameter.OUTPUT.toString(),
-          properties.getString(Fox.Parameter.OUTPUT.toString()));
-      if (properties.get(Fox.Parameter.LINKING.toString()) != null) {
-        parameter.put(Fox.Parameter.LINKING.toString(),
-            properties.getString(Fox.Parameter.LINKING.toString()));
+      parameter.put(FoxParameter.Parameter.INPUT.toString(),
+          properties.getString(FoxParameter.Parameter.INPUT.toString()));
+      parameter.put(FoxParameter.Parameter.TYPE.toString(),
+          properties.getString(FoxParameter.Parameter.TYPE.toString()));
+      parameter.put(FoxParameter.Parameter.TASK.toString(),
+          properties.getString(FoxParameter.Parameter.TASK.toString()));
+      parameter.put(FoxParameter.Parameter.OUTPUT.toString(),
+          properties.getString(FoxParameter.Parameter.OUTPUT.toString()));
+      if (properties.get(FoxParameter.Parameter.LINKING.toString()) != null) {
+        parameter.put(FoxParameter.Parameter.LINKING.toString(),
+            properties.getString(FoxParameter.Parameter.LINKING.toString()));
       }
 
       // get input data
-      switch (parameter.get(Fox.Parameter.TYPE.toString()).toLowerCase()) {
+      switch (parameter.get(FoxParameter.Parameter.TYPE.toString()).toLowerCase()) {
         case "url":
-          parameter.put(Fox.Parameter.INPUT.toString(),
-              FoxTextUtil.urlToText(parameter.get(Fox.Parameter.INPUT.toString())));
+          parameter.put(FoxParameter.Parameter.INPUT.toString(),
+              FoxTextUtil.urlToText(parameter.get(FoxParameter.Parameter.INPUT.toString())));
           break;
         case "text":
-          parameter.put(Fox.Parameter.INPUT.toString(),
-              FoxTextUtil.htmlToText(parameter.get(Fox.Parameter.INPUT.toString())));
+          parameter.put(FoxParameter.Parameter.INPUT.toString(),
+              FoxTextUtil.htmlToText(parameter.get(FoxParameter.Parameter.INPUT.toString())));
           break;
       }
 
       // lang
       String lang = null;
       try {
-        if (properties.get(Fox.Parameter.LANG.toString()) != null) {
-          lang = properties.getString(Fox.Parameter.LANG.toString());
+        if (properties.get(FoxParameter.Parameter.LANG.toString()) != null) {
+          lang = properties.getString(FoxParameter.Parameter.LANG.toString());
         }
 
-        Fox.Langs l = Fox.Langs.fromString(lang);
+        FoxParameter.Langs l = FoxParameter.Langs.fromString(lang);
         if (l == null) {
 
-          l = languageDetector.detect(parameter.get(Fox.Parameter.INPUT.toString()));
+          l = languageDetector.detect(parameter.get(FoxParameter.Parameter.INPUT.toString()));
           LOG.info("lang" + lang);
           if (l != null) {
             lang = l.toString();
@@ -216,7 +215,7 @@ public class ApiResource {
             lang = "";
           }
         }
-        parameter.put(Fox.Parameter.LANG.toString(), lang);
+        parameter.put(FoxParameter.Parameter.LANG.toString(), lang);
       } catch (final Exception e) {
         LOG.error(e.getLocalizedMessage(), e);
       }
@@ -250,7 +249,7 @@ public class ApiResource {
   private String requestFox(final Map<String, String> parameter) {
     String output = "";
     // get a fox instance
-    IFox fox = Server.pool.get(parameter.get(Fox.Parameter.LANG.toString())).poll();
+    IFox fox = Server.pool.get(parameter.get(FoxParameter.Parameter.LANG.toString())).poll();
 
     // init. thread
     final Fiber fiber = new ThreadFiber();
@@ -271,7 +270,7 @@ public class ApiResource {
     } catch (final InterruptedException e) {
       LOG.error("Fox timeout after " + FoxCfg.get(FoxHttpHandler.CFG_KEY_FOX_LIFETIME) + "min.");
       LOG.error("\n", e);
-      LOG.error("input: " + parameter.get(Fox.Parameter.INPUT.toString()));
+      LOG.error("input: " + parameter.get(FoxParameter.Parameter.INPUT.toString()));
     }
 
     // shutdown thread
@@ -279,10 +278,10 @@ public class ApiResource {
 
     if (latch.getCount() == 0) {
       output = fox.getResults();
-      Server.pool.get(parameter.get(Fox.Parameter.LANG.toString())).push(fox);
+      Server.pool.get(parameter.get(FoxParameter.Parameter.LANG.toString())).push(fox);
     } else {
       fox = null;
-      Server.pool.get(parameter.get(Fox.Parameter.LANG.toString())).add();
+      Server.pool.get(parameter.get(FoxParameter.Parameter.LANG.toString())).add();
     }
     return output;
   }
