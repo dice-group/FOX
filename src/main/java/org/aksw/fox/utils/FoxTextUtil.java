@@ -1,12 +1,9 @@
 package org.aksw.fox.utils;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +13,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
@@ -35,7 +33,7 @@ import opennlp.tools.sentdetect.SentenceModel;
  */
 public class FoxTextUtil {
 
-  public static Logger logger = LogManager.getLogger(FoxTextUtil.class);
+  public static Logger LOG = LogManager.getLogger(FoxTextUtil.class);
   /**
    * Defines token.
    */
@@ -50,41 +48,14 @@ public class FoxTextUtil {
    * @return plain text
    */
   public static synchronized String urlToText(final String url) {
-    logger.info("extractFromUrl ... ");
-    String html = "";
-    URL u = null;
+    LOG.info("urlToText: " + url);
+    String html = null;
     try {
-      u = new URL(url);
-      if (u != null) {
-
-        final HttpURLConnection connection = (HttpURLConnection) u.openConnection();
-        connection.setRequestMethod("GET");
-        connection.connect();
-
-        final InputStream stream = connection.getInputStream();
-
-        final StringBuilder sb = new StringBuilder();
-        String line;
-        try {
-
-          final BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-          while ((line = br.readLine()) != null) {
-            sb.append(line);
-          }
-
-        } catch (final IOException e) {
-          logger.error("\n", e);
-          return "";
-        }
-
-        html = sb.toString();
-      }
-
-    } catch (final Exception e) {
-      logger.error("\n", e);
-      return "";
+      html = IOUtils.toString(new URL(url));
+    } catch (final IOException e) {
+      LOG.error(e.getLocalizedMessage(), e);
+      html = "";
     }
-
     return htmlToText(html);
   }
 
@@ -92,7 +63,7 @@ public class FoxTextUtil {
    * Gets the content from html/text as plain text.
    */
   public static synchronized String htmlToText(String html) {
-    logger.info("extractFromHTML ... ");
+    LOG.info("extractFromHTML ... ");
 
     // Adds line breaks to keep structure
     html = html.replaceAll("<li>", "<li>, ");
@@ -107,7 +78,7 @@ public class FoxTextUtil {
   }
 
   /**
-   * 
+   *
    * @param input
    * @return
    */
@@ -132,7 +103,7 @@ public class FoxTextUtil {
 
   /**
    * Gets sentences.
-   * 
+   *
    * @param source plain text of sentences
    * @return sentences
    */
@@ -143,7 +114,7 @@ public class FoxTextUtil {
     try {
       modelIn = new FileInputStream("data/openNLP/en-sent.bin");
     } catch (final FileNotFoundException e) {
-      logger.error("\n", e);
+      LOG.error("\n", e);
     }
     if (modelIn == null) {
       return null;
@@ -155,13 +126,13 @@ public class FoxTextUtil {
       final SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
       sentences = sentenceDetector.sentDetect(source);
     } catch (final IOException e) {
-      logger.error("\n", e);
+      LOG.error("\n", e);
     } finally {
       if (modelIn != null) {
         try {
           modelIn.close();
         } catch (final IOException e) {
-          logger.error("\n", e);
+          LOG.error("\n", e);
         }
       }
     }
@@ -171,7 +142,7 @@ public class FoxTextUtil {
 
   /**
    * Gets token of one sentence, token defined by {@link FoxTextUtil#tokenSpliter}.
-   * 
+   *
    * @param sentence (with punctuation mark)
    * @return token
    */
@@ -227,7 +198,7 @@ public class FoxTextUtil {
 
   /**
    * Gets token defined by {@link FoxTextUtil#tokenSpliter}.
-   * 
+   *
    * @param in string to split
    * @return token
    */
