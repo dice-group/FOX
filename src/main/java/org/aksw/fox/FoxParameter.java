@@ -65,9 +65,9 @@ public class FoxParameter {
 
   public enum Task {
 
-    NER("NER"), //
-    RE("RE"), //
-    KE("KE");
+    NER("ner"), //
+    RE("re"), //
+    KE("ke");
 
     private final String task;
 
