@@ -106,7 +106,7 @@ public class Fox extends AFox {
       infoLog("Start RE ...");
       final CountDownLatch latch = new CountDownLatch(1);
       reTool.setCountDownLatch(latch);
-      reTool.setInput(parameter.get(FoxParameter.Parameter.INPUT.toString()));
+      reTool.setInput(parameter.get(FoxParameter.Parameter.INPUT.toString()), null); // TODO: null
 
       final Fiber fiber = new ThreadFiber();
       fiber.start();
@@ -372,36 +372,35 @@ public class Fox extends AFox {
         parameter.put(FoxParameter.Parameter.INPUT.toString(), input);
 
         // light version
-        if ((light != null) && !light.equals("OFF")) {
-          // switch task
-          switch (task.toLowerCase()) {
+        if ((light != null) && !light.equalsIgnoreCase(FoxParameter.FoxLight.OFF.toString())) {
 
-            case "ke":
-              // TODO: ke fox
-              LOG.info("Starting light KE version ...");
-              break;
+          switch (FoxParameter.Task.fromString(task.toLowerCase())) {
+            case KE:
+              throw new UnsupportedOperationException();
 
-            case "ner":
+            case NER:
               entities = doNERLight(light);
               break;
+            case RE:
+              throw new UnsupportedOperationException();
+            default:
+              throw new UnsupportedOperationException();
           }
 
         } else {
           // no light version
-          switch (task.toLowerCase()) {
-            case "ke":
-              // TODO: ke fox
-              LOG.info("starting ke ...");
-              break;
-
-            case "ner":
+          switch (FoxParameter.Task.fromString(task.toLowerCase())) {
+            case KE:
+              throw new UnsupportedOperationException();
+            case NER:
               entities = doNER();
               break;
-
-            case "re":
+            case RE:
               entities = doNER();
               relations = doRE();
               break;
+            default:
+              throw new UnsupportedOperationException();
           }
         }
       }

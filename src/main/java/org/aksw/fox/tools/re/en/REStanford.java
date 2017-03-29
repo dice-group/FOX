@@ -80,14 +80,14 @@ public class REStanford extends AbstractRE {
   RelationExtractorAnnotator relationExtractorAnnotator = null;
 
   /**
-   * 
+   *
    */
   public REStanford() {
     init();
   }
 
   /**
-   * 
+   *
    */
   protected void init() {
     props.setProperty("annotators", "tokenize,ssplit,lemma,pos,parse,ner");
@@ -101,7 +101,7 @@ public class REStanford extends AbstractRE {
 
   /**
    * Maps relations to uris from properties file.
-   * 
+   *
    * @param cfgkey
    * @param relation
    */
@@ -117,7 +117,7 @@ public class REStanford extends AbstractRE {
   }
 
   /**
-   * 
+   *
    * @return
    */
   public String getToolName() {
@@ -126,7 +126,7 @@ public class REStanford extends AbstractRE {
 
   /*
    * Stanford relations (http://www.cnts.ua.ac.be/conll2004/pdf/00108rot.pdf)
-   * 
+   *
    * located in loc loc (New York, US) work for per org (Bill Gates, Microsoft) orgBased in org loc
    * (HP, Palo Alto) live in per loc (Bush, US)
    */
@@ -186,7 +186,7 @@ public class REStanford extends AbstractRE {
   }
 
   @Override
-  public Set<Relation> extract(final String text) {
+  public Set<Relation> extract(final String text, final List<Entity> noused) {
     final Set<Relation> set = new HashSet<>();
     // ----------------------------------------------------------------------------
     // tokenize and clean text
@@ -195,7 +195,7 @@ public class REStanford extends AbstractRE {
      * String options = "americanize=false,asciiQuotes=true,ptb3Escaping=false";
      * PTBTokenizer<CoreLabel> tokenizer = new PTBTokenizer<CoreLabel>( new StringReader(text), new
      * CoreLabelTokenFactory(), options);
-     * 
+     *
      * text = null; List<CoreLabel> corelabels = tokenizer.tokenize(); StringBuilder sb = new
      * StringBuilder(); for (CoreLabel label : corelabels) { sb.append(label.originalText());
      * sb.append(" "); } text = sb.toString();
@@ -281,18 +281,17 @@ public class REStanford extends AbstractRE {
       LOG.error(e.getLocalizedMessage(), e);
     }
     relations = set;
-    LOG.info(relations);
     return set;
   }
 
   /**
    * Test.
-   * 
+   *
    * @param args
    */
   public static void main(final String[] args) {
 
-    for (final Relation rr : new REStanford().extract(FoxConst.RE_EN_EXAMPLE_1)) {
+    for (final Relation rr : new REStanford().extract(FoxConst.RE_EN_EXAMPLE_1, null)) {
       LOG.info(rr);
     }
   }
