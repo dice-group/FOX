@@ -2,8 +2,6 @@ package org.aksw.fox.web;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,12 +23,8 @@ import org.aksw.fox.web.feedback.FeedbackHttpHandler;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.glassfish.grizzly.Connection;
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.grizzly.http.server.HttpServerFilter;
-import org.glassfish.grizzly.http.server.HttpServerProbe;
 import org.glassfish.grizzly.http.server.NetworkListener;
-import org.glassfish.grizzly.http.server.Response;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpContainer;
 import org.glassfish.jersey.jsonp.JsonProcessingFeature;
@@ -116,40 +110,22 @@ public class Server {
     server.addListener(new NetworkListener(CFG.getString(KEY_LISTENER_NAME),
         CFG.getString(KEY_DEFAULT_NETWORK_HOST), CFG.getInt(KEY_PORT)));
 
+    // MonitoringConfig
+    final Set<String> allowedpaths;
+    allowedpaths = new HashSet<>(Arrays.asList(//
+        ApiResource.getPath().replaceAll("/", ""), //
+        FoxHttpHandler.getPath().replaceAll("/", "") //
+    ));
+
+    server.getServerConfiguration().getMonitoringConfig().getWebServerConfig()
+        .addProbes(new HttpServerProbeRequestMonitoring(allowedpaths));
+
+    // adds api handler
     server//
         .getServerConfiguration().addHttpHandler(
             RuntimeDelegate.getInstance()//
                 .createEndpoint(createApiResourceConfig(), GrizzlyHttpContainer.class),
             ApiResource.getPath());
-
-    // MonitoringConfig
-    server.getServerConfiguration().getMonitoringConfig().getWebServerConfig()
-        .addProbes(new HttpServerProbe.Adapter() {
-
-          final Set<String> allowedpaths =
-              new HashSet<>(Arrays.asList(ApiResource.getPath(), FoxHttpHandler.getPath()));
-
-          @Override
-          public void onRequestCompleteEvent(final HttpServerFilter arg0, final Connection arg1,
-              final Response arg2) {
-
-            String path = "";
-            try {
-              path = new URL(arg2.getRequest().getRequestURL().toString()).getPath();
-            } catch (final MalformedURLException e) {
-              LOG.error(e.getLocalizedMessage(), e);
-            }
-
-            LOG.info(path);
-            LOG.info(allowedpaths);
-            LOG.info(arg2.getRequest().getRemoteAddr());
-            LOG.info(arg2.getRequest().getRequestURL().toString());
-            LOG.info("onRequestCompleteEvent");
-            if (allowedpaths.contains(path)) {
-              LOG.info("ALLOWED");
-            }
-          }
-        });
 
     String state = null;
     // error page data
