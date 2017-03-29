@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.aksw.fox.Fox;
+import org.aksw.fox.FoxParameter;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.commons.io.IOUtils;
@@ -29,9 +29,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class TestServer {
-  static {
-    PropertyConfigurator.configure(FoxCfg.LOG_FILE);
-  }
 
   public final static Logger LOG = LogManager.getLogger(TestServer.class);
 
@@ -42,24 +39,21 @@ public class TestServer {
   @Test
   public void serverTest() {
     // start server
-    long startTime = System.currentTimeMillis();
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          server = new Server();
-        } catch (Exception e) {
-          LOG.error(e.getLocalizedMessage(), e);
-        }
-        Assert.assertTrue(server.start());
+    final long startTime = System.currentTimeMillis();
+    new Thread(() -> {
+      try {
+        server = new Server();
+      } catch (final Exception e) {
+        LOG.error(e.getLocalizedMessage(), e);
       }
+      Assert.assertTrue(server.start());
     }).start();
 
     // wait till server is up
-    while (!Server.running && (System.currentTimeMillis() - startTime) < waitingTime) {
+    while (!Server.running && ((System.currentTimeMillis() - startTime) < waitingTime)) {
       try {
         Thread.sleep(1000);
-      } catch (InterruptedException ex) {
+      } catch (final InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
     }
@@ -88,29 +82,35 @@ public class TestServer {
       final Charset UTF_8 = Charset.forName("UTF-8");
       final String url = "http://" + server.host + ":" + server.port + "/call/ner/entities";
       LOG.info("url: " + url);
-       
-      Response response = Request.Post(url)
+
+      final Response response = Request.Post(url)
           .addHeader("Content-type", "application/json;charset=".concat(UTF_8.toString()))
-          .addHeader("Accept-Charset", UTF_8.toString())
-          .body(new StringEntity(
-              new JSONObject().put(Fox.Parameter.TYPE.toString(), Fox.Type.TEXT.toString())
-                  .put(Fox.Parameter.LANG.toString(), Fox.Langs.EN.toString())
-                  .put(Fox.Parameter.TASK.toString(), Fox.Task.NER.toString())
-                  .put(Fox.Parameter.OUTPUT.toString(), Lang.TURTLE.getName())
-                  .put(Fox.Parameter.INPUT.toString(), FoxConst.NER_EN_EXAMPLE_1).toString(),
-              ContentType.APPLICATION_JSON))
+          .addHeader("Accept-Charset",
+              UTF_8
+                  .toString())
+          .body(
+              new StringEntity(
+                  new JSONObject()
+                      .put(FoxParameter.Parameter.TYPE.toString(),
+                          FoxParameter.Type.TEXT.toString())
+                      .put(FoxParameter.Parameter.LANG.toString(), FoxParameter.Langs.EN.toString())
+                      .put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString())
+                      .put(FoxParameter.Parameter.OUTPUT.toString(), Lang.TURTLE.getName())
+                      .put(FoxParameter.Parameter.INPUT.toString(), FoxConst.NER_EN_EXAMPLE_1)
+                      .toString(),
+                  ContentType.APPLICATION_JSON))
           .execute();
 
-      HttpResponse httpResponse = response.returnResponse();
+      final HttpResponse httpResponse = response.returnResponse();
       LOG.info(httpResponse.getStatusLine().toString());
-      HttpEntity entry = httpResponse.getEntity();
-      String r = IOUtils.toString(entry.getContent(), UTF_8);
+      final HttpEntity entry = httpResponse.getEntity();
+      final String r = IOUtils.toString(entry.getContent(), UTF_8);
       EntityUtils.consume(entry);
       LOG.info(r);
       Assert.assertNotNull(r);
       Assert.assertFalse(r.isEmpty());
 
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOG.error(e.getLocalizedMessage(), e);
     }
   }
@@ -120,8 +120,8 @@ public class TestServer {
    */
   public void demoTest() {
 
-    String path = "http://" + server.host + ":" + server.port;
-    Map<String, Integer> urls = new HashMap<>();
+    final String path = "http://" + server.host + ":" + server.port;
+    final Map<String, Integer> urls = new HashMap<>();
 
     urls.put(path, 200);
     urls.put(path + "/demo/index.html", 200);
@@ -134,14 +134,14 @@ public class TestServer {
      */
 
     try {
-      for (Iterator<Entry<String, Integer>> iterator = urls.entrySet().iterator(); iterator
+      for (final Iterator<Entry<String, Integer>> iterator = urls.entrySet().iterator(); iterator
           .hasNext();) {
-        Entry<String, Integer> url = iterator.next();
+        final Entry<String, Integer> url = iterator.next();
         LOG.info(url);
-        HttpURLConnection con = (HttpURLConnection) new URL(url.getKey()).openConnection();
+        final HttpURLConnection con = (HttpURLConnection) new URL(url.getKey()).openConnection();
         Assert.assertEquals(url.getValue().intValue(), con.getResponseCode());
       }
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOG.error(e.getLocalizedMessage(), e);
     }
   }

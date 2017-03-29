@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import org.aksw.fox.tools.ner.common.SpotlightCommon;
-import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
-import org.apache.log4j.PropertyConfigurator;
 
 public class SpotlightEN extends SpotlightCommon {
 
@@ -15,7 +13,6 @@ public class SpotlightEN extends SpotlightCommon {
   }
 
   public static void main(final String[] a) throws IOException {
-    PropertyConfigurator.configure(FoxCfg.LOG_FILE);
 
     // final TrainingInputReader tr = new TrainingInputReader();
     // tr.initFiles("input/4");

@@ -67,14 +67,6 @@
 			<scope>system</scope>
 			<systemPath>${system.libs}/nerd/client-0.0.1-SNAPSHOT.jar</systemPath>
 		</dependency>
-		<!-- http://sourceforge.net/projects/balie -->
-		<dependency>
-			<groupId>ca.uottawa</groupId>
-			<artifactId>balie</artifactId>
-			<version>1.81</version>
-			<scope>system</scope>
-			<systemPath>${system.libs}/balie/Balie.jar</systemPath>
-		</dependency>
 		<dependency>
 			<groupId>uk.ac.shef.wit</groupId>
 			<artifactId>simmetrics</artifactId>
@@ -309,6 +301,12 @@
 			<artifactId>swissknife</artifactId>
 			<version>0.0.2</version>
 		</dependency>
+		<!-- http://sourceforge.net/projects/balie -->
+		<dependency> 
+			<groupId>ca.uottawa</groupId>
+			<artifactId>balie</artifactId>
+			<version>1.81.0</version>
+		</dependency> 
 		<dependency>
 			<groupId>org.aksw</groupId>
 			<artifactId>gerbil.nif.transfer</artifactId>
@@ -377,7 +375,7 @@
 								<copy todir="${project.build.directory}">
 									<fileset dir="${project.build.outputDirectory}/scripts" />
 								</copy>
-								<!-- <copy file="log4j.properties" tofile="${project.build.directory}/log4j.properties" />  -->
+								<copy file="log4j.properties" tofile="${project.build.directory}/log4j.properties" />
 								<copy file="fox.properties-dist" tofile="${project.build.directory}/fox.properties-dist" />
 								<chmod dir="${project.build.directory}" perm="700"
 									includes="**/*.sh" />
@@ -400,7 +398,7 @@
 							<addClasspath>true</addClasspath>
 						</manifest>
 						<manifestEntries>
-							<Class-Path>lib/balie/Balie.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar ${system.data}/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</Class-Path>
+							<Class-Path>lib/simmetrics_jar_v1_6_2_d07_02_07.jar ${system.data}/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -420,7 +418,7 @@
 							<addClasspath>true</addClasspath>
 						</manifest>
 						<manifestEntries>
-							<Class-Path>lib/balie/Balie.jar lib/simmetrics_jar_v1_6_2_d07_02_07.jar ${system.data}/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</Class-Path>
+							<Class-Path>lib/simmetrics_jar_v1_6_2_d07_02_07.jar ${system.data}/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>

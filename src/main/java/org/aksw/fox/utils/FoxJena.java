@@ -143,6 +143,14 @@ public class FoxJena {
         return graph;
     }
 
+    /*
+    public void setAutoTag(Keyword keyword){ 
+        Resource resource = model.createResource(keyword.uri.id);                                   
+        resource.addLiteral(ctagLabel, keyword.uri.label);
+        resource.addLiteral(ctagMeans, keyword.text);       
+        resource.addProperty(scmsTool, model.createResource(ConfigurationUtil.TOOL_PREFIX + keyword.tool));
+    }*/
+
     /**
      * Adds entities to graph.
      */

@@ -1,4 +1,4 @@
-package org.aksw.fox;
+package org.aksw.fox.ui;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -17,14 +17,13 @@ import org.apache.log4j.Logger;
  *
  */
 public class FoxRESTful {
-
   public static Logger LOG = LogManager.getLogger(FoxRESTful.class);
 
   /**
    * Starts FOX web service.
    */
   public static void main(final String[] args) {
-
+    LOG.info("Fox web service starting ...");
     if (FoxCfg.loadFile(FoxCfg.CFG_FILE)) {
       try {
         new Server().start();

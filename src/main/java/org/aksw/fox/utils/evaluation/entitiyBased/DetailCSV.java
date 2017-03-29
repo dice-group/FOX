@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.fox.CrossValidation;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.evaluation.CrossValidation;
 import org.aksw.fox.utils.FoxCfg;
 
 import weka.core.Instances;

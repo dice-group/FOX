@@ -12,9 +12,7 @@ import java.util.Set;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.common.TagMeCommon;
 import org.aksw.fox.tools.ner.common.WikipediaCategories;
-import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
-import org.apache.log4j.PropertyConfigurator;
 
 import de.renespeck.swissknife.io.SerializationUtil;
 
@@ -81,7 +79,6 @@ public class TagMeEN extends TagMeCommon {
   }
 
   public static void main(final String[] a) throws IOException {
-    PropertyConfigurator.configure(FoxCfg.LOG_FILE);
     new TagMeEN().retrieve(FoxConst.NER_EN_EXAMPLE_1).forEach(LOG::info);
   }
 }

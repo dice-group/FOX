@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.aksw.fox.Fox;
+import org.aksw.fox.FoxParameter;
 import org.aksw.fox.IFox;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxJena;
@@ -36,21 +36,21 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
       final Map<String, String> parameter) {
 
     String errormessage = "";
-    switch (parameter.get(Fox.Parameter.TYPE.toString()).toString()) {
+    switch (parameter.get(FoxParameter.Parameter.TYPE.toString()).toString()) {
       case "url":
-        parameter.put(Fox.Parameter.INPUT.toString(),
-            FoxTextUtil.urlToText(parameter.get(Fox.Parameter.INPUT.toString())));
+        parameter.put(FoxParameter.Parameter.INPUT.toString(),
+            FoxTextUtil.urlToText(parameter.get(FoxParameter.Parameter.INPUT.toString())));
         break;
       case "text":
-        parameter.put(Fox.Parameter.INPUT.toString(),
-            FoxTextUtil.htmlToText(parameter.get(Fox.Parameter.INPUT.toString())));
+        parameter.put(FoxParameter.Parameter.INPUT.toString(),
+            FoxTextUtil.htmlToText(parameter.get(FoxParameter.Parameter.INPUT.toString())));
         break;
     }
 
-    String lang = parameter.get(Fox.Parameter.LANG.toString());
-    Fox.Langs l = Fox.Langs.fromString(lang);
+    String lang = parameter.get(FoxParameter.Parameter.LANG.toString());
+    FoxParameter.Langs l = FoxParameter.Langs.fromString(lang);
     if (l == null) {
-      l = languageDetector.detect(parameter.get(Fox.Parameter.INPUT.toString()));
+      l = languageDetector.detect(parameter.get(FoxParameter.Parameter.INPUT.toString()));
       if (l != null) {
         lang = l.toString();
       } else {
@@ -83,7 +83,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
         } catch (final InterruptedException e) {
           LOG.error("Fox timeout after " + FoxCfg.get(CFG_KEY_FOX_LIFETIME) + "min.");
           LOG.error("\n", e);
-          LOG.error("input: " + parameter.get(Fox.Parameter.INPUT.toString()));
+          LOG.error("input: " + parameter.get(FoxParameter.Parameter.INPUT.toString()));
         }
 
         // shutdown thread
@@ -101,7 +101,8 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
         String in = null, out = null, log = null;
         if (fox != null) {
-          in = FoxStringUtil.encodeURLComponent(parameter.get(Fox.Parameter.INPUT.toString()));
+          in = FoxStringUtil
+              .encodeURLComponent(parameter.get(FoxParameter.Parameter.INPUT.toString()));
           out = FoxStringUtil.encodeURLComponent(output);
           log = FoxStringUtil.encodeURLComponent(fox.getLog());
         }
@@ -127,40 +128,40 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
     LOG.info("checking form parameter ...");
 
-    final String type = formData.get(Fox.Parameter.TYPE.toString());
-    if ((type == null) || !(type.equalsIgnoreCase(Fox.Type.URL.toString())
-        || type.equalsIgnoreCase(Fox.Type.TEXT.toString()))) {
+    final String type = formData.get(FoxParameter.Parameter.TYPE.toString());
+    if ((type == null) || !(type.equalsIgnoreCase(FoxParameter.Type.URL.toString())
+        || type.equalsIgnoreCase(FoxParameter.Type.TEXT.toString()))) {
       return false;
     }
 
-    final String text = formData.get(Fox.Parameter.INPUT.toString());
+    final String text = formData.get(FoxParameter.Parameter.INPUT.toString());
     if ((text == null) || text.trim().isEmpty()) {
       return false;
     }
 
-    final String task = formData.get(Fox.Parameter.TASK.toString());
+    final String task = formData.get(FoxParameter.Parameter.TASK.toString());
     if ((task == null) || !(task.equalsIgnoreCase("ke") || task.equalsIgnoreCase("ner")
         || task.equalsIgnoreCase("keandner") || task.equalsIgnoreCase("re")
         || task.equalsIgnoreCase("all"))) {
       return false;
     }
 
-    final String output = formData.get(Fox.Parameter.OUTPUT.toString());
+    final String output = formData.get(FoxParameter.Parameter.OUTPUT.toString());
 
     if (!FoxJena.prints.contains(output)) {
       return false;
     }
 
-    final String nif = formData.get(Fox.Parameter.NIF.toString());
+    final String nif = formData.get(FoxParameter.Parameter.NIF.toString());
     if ((nif == null) || !nif.equalsIgnoreCase("true")) {
-      formData.put(Fox.Parameter.NIF.toString(), "false");
+      formData.put(FoxParameter.Parameter.NIF.toString(), "false");
     } else {
-      formData.put(Fox.Parameter.NIF.toString(), "true");
+      formData.put(FoxParameter.Parameter.NIF.toString(), "true");
     }
 
-    final String foxlight = formData.get(Fox.Parameter.FOXLIGHT.toString());
+    final String foxlight = formData.get(FoxParameter.Parameter.FOXLIGHT.toString());
     if ((foxlight == null) || foxlight.equalsIgnoreCase("off")) {
-      formData.put(Fox.Parameter.FOXLIGHT.toString(), "OFF");
+      formData.put(FoxParameter.Parameter.FOXLIGHT.toString(), "OFF");
     }
 
     LOG.info("ok.");
@@ -170,5 +171,9 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
   @Override
   public List<String> getMappings() {
     return Arrays.asList("/api");
+  }
+
+  public static String getPath() {
+    return "/api";
   }
 }
