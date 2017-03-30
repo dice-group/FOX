@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import org.aksw.fox.FoxParameter;
 import org.aksw.fox.IFox;
 import org.aksw.fox.utils.FoxCfg;
-import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxLanguageDetector;
 import org.aksw.fox.utils.FoxStringUtil;
 import org.aksw.fox.utils.FoxTextUtil;
@@ -139,6 +138,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
       return false;
     }
 
+    // TODO: replace magic with parameter enums
     final String task = formData.get(FoxParameter.Parameter.TASK.toString());
     if ((task == null) || !(task.equalsIgnoreCase("ke") || task.equalsIgnoreCase("ner")
         || task.equalsIgnoreCase("keandner") || task.equalsIgnoreCase("re")
@@ -148,7 +148,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
     final String output = formData.get(FoxParameter.Parameter.OUTPUT.toString());
 
-    if (!FoxJena.prints.contains(output)) {
+    if (FoxParameter.Output.fromString(output) == null) {
       return false;
     }
 
