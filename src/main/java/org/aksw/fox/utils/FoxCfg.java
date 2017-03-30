@@ -21,13 +21,12 @@ public class FoxCfg {
 
   public static final Logger LOG = LogManager.getLogger(FoxCfg.class);;
 
-  // public static final String LOG_FILE = "log4j.properties";
   public static final String CFG_FILE = "fox.properties";
   protected static Properties foxProperties = null;
 
   /**
    * Loads a given file to use as properties.
-   * 
+   *
    * @param cfgFile properties file
    */
   public static boolean loadFile(final String cfgFile) {
@@ -62,7 +61,7 @@ public class FoxCfg {
 
   /**
    * Gets a property.
-   * 
+   *
    * @param key property key
    * @return property value
    */
@@ -75,7 +74,7 @@ public class FoxCfg {
 
   /**
    * Gets an object of the given class.
-   * 
+   *
    * @param classPath path to class
    * @return object of a class
    * @throws LoadingNotPossibleException
