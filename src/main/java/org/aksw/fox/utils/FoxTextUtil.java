@@ -70,7 +70,6 @@ public class FoxTextUtil {
     html = html.replaceAll("</li>", ", </li>");
     html = html.replaceAll("<dd>", "<dd>, ");
     html = html.replaceAll("</dd>", ", </dd>");
-    // TODO:add all possible cases
 
     final Source src = new Source(html);
     return new TextExtractor(new Segment(src, src.getBegin(), src.getEnd()))
@@ -108,7 +107,6 @@ public class FoxTextUtil {
    * @return sentences
    */
   protected static synchronized String[] _getSentences(final String source) {
-    // TODO: use a better one?
 
     InputStream modelIn = null;
     try {
