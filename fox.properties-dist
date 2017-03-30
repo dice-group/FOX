@@ -44,4 +44,4 @@ org.aksw.fox.nerlearner.FoxClassifier.training: false
 # an integer, 0 for all sentences
 org.aksw.fox.nerlearner.reader.INERReader.maxSentences:10
 # max time in min. for all ner tools
-org.aksw.fox.tools.ner.Tools.lifeTime: 2
+org.aksw.fox.tools.Tools.lifeTime: 2
