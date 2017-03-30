@@ -18,6 +18,12 @@ import com.hp.hpl.jena.query.ResultSetFormatter;
 
 import de.renespeck.swissknife.io.SerializationUtil;
 
+/**
+ * Creates dbpedia types for TagMe
+ *
+ * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
+ *
+ */
 public class WikipediaCategories {
   public static final Logger LOG = LogManager.getLogger(WikipediaCategories.class);
 
@@ -31,7 +37,6 @@ public class WikipediaCategories {
     sb.append("?s a ").append(type).append(".");
     sb.append("?s dct:subject ?cat");
     sb.append("}");
-    // TODO: remove limits
     // sb.append("} Limit 1000");
     return sb.toString();
   }

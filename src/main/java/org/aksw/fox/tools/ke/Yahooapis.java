@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+@Deprecated
 public class Yahooapis {
   public static void main(final String[] a) throws Exception {
 
@@ -23,6 +24,7 @@ public class Yahooapis {
     final HttpGet httpget = new HttpGet(builder.build());
     System.out.println(httpget.getURI());
 
+    @SuppressWarnings("resource")
     final HttpClient httpclient = new DefaultHttpClient();
     final HttpResponse response = httpclient.execute(httpget);
     final HttpEntity entity = response.getEntity();
