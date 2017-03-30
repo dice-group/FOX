@@ -26,6 +26,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<system.libs>${basedir}/lib</system.libs>
 		<system.data>${basedir}/data</system.data>
+		<lucene.version>4.10.0</lucene.version>
 	</properties>
 	<repositories>
 		<repository>
@@ -75,6 +76,28 @@
 			<systemPath>${system.libs}/simmetrics_jar_v1_6_2_d07_02_07.jar</systemPath>
 		</dependency>
 		<!-- regular dependencies -->
+		<!-- lucene -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queries</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<!-- lucene -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>fluent-hc</artifactId>
