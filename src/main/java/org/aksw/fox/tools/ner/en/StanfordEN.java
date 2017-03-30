@@ -1,11 +1,10 @@
 package org.aksw.fox.tools.ner.en;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import org.aksw.fox.data.EntityClassMap;
-import org.aksw.fox.nerlearner.reader.TrainingInputReader;
 import org.aksw.fox.tools.ner.common.StanfordCommon;
+import org.aksw.fox.utils.FoxConst;
 
 /**
  *
@@ -35,16 +34,6 @@ public class StanfordEN extends StanfordCommon {
   }
 
   public static void main(final String[] a) {
-    final TrainingInputReader tr = new TrainingInputReader();
-    try {
-      tr.initFiles("input/4");
-    } catch (final IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-    LOG.info(new StanfordEN().retrieve(tr.getInput()));
-
-    // LOG.info(new StanfordEN().retrieve(FoxConst.NER_EN_EXAMPLE_1));
+    LOG.info(new StanfordEN().retrieve(FoxConst.NER_EN_EXAMPLE_1));
   }
 }

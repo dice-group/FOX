@@ -263,10 +263,15 @@ public class REStanford extends AbstractRE {
              * (tokenCounter == emTwo.getExtentTokenStart()) { b.addIndicies(label.beginPosition() +
              * 1); } tokenCounter++; }
              */
-            final Relation relation =
-                new Relation(a, "", StanfordRelations.fromString(relationMention.getType()).name(),
-                    b, relationURIs.get(StanfordRelations.fromString(relationMention.getType())),
-                    getToolName(), Relation.DEFAULT_RELEVANCE);
+            final Relation relation = new Relation(//
+                a, //
+                "", //
+                StanfordRelations.fromString(relationMention.getType()).name(), //
+                b, //
+                relationURIs.get(StanfordRelations.fromString(relationMention.getType())), //
+                getToolName(), //
+                Relation.DEFAULT_RELEVANCE//
+            );
 
             if (LOG.isDebugEnabled()) {
               LOG.debug(relationMention);

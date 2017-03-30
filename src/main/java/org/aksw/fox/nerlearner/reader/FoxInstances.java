@@ -25,189 +25,193 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 /**
- * 
- * 
+ *
+ *
  * @author rspeck
- * 
+ *
  */
 public class FoxInstances {
 
-    public static Logger  logger = Logger.getLogger(FoxInstances.class);
+  public static Logger logger = Logger.getLogger(FoxInstances.class);
 
-    protected Set<String> token  = null;
+  protected Set<String> token = null;
 
-    /**
-     * Gets instances from the given toolResults and oracle.
-     * 
-     * @param input
-     *            plain text
-     * @param toolResults
-     *            found entities of each tool
-     * @param oracel
-     *            correct training results
-     * @return instances object
-     */
+  /**
+   * Gets instances from the given toolResults and oracle.
+   * 
+   * @param input plain text
+   * @param toolResults found entities of each tool
+   * @param oracel correct training results
+   * @return instances object
+   */
 
-    public Instances getInstances(Set<String> token, Map<String, Set<Entity>> toolResults, Map<String, String> oracle) {
-        if (logger.isDebugEnabled())
-            logger.debug("getInstances ...");
-
-        if (logger.isTraceEnabled())
-            logger.trace(toolResults);
-        // read oracle
-        Map<String, String> oracelToken = new HashMap<>();
-        if (oracle != null) {
-            for (Entry<String, String> e : oracle.entrySet()) {
-                for (String t : FoxTextUtil.getSentenceToken(e.getKey() + "."))
-                    if (!t.trim().isEmpty())
-                        oracelToken.put(t.trim(), e.getValue());
-            }
-            if (logger.isDebugEnabled()) {
-                logger.debug("oracle:\n" + oracelToken);
-            }
-        }
-
-        //
-        this.token = token;
-
-        // toolResults to make TokenCategory for each tool
-        Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = getTokenCategoryMatrix(toolResults);
-
-        // declare the feature vector
-        FastVector featureVector = getFeatureVector(toolTokenCategoryMatrix);
-
-        // train data
-        Instances instances = new Instances(oracle != null ? "train data" : "test data", featureVector, token.size());
-        instances.setClassIndex(featureVector.size() - 1);
-
-        // fill values
-        Instance row = new Instance(instances.numAttributes());
-
-        List<String> sortedToolNames = new ArrayList<>(toolTokenCategoryMatrix.keySet());
-        Collections.sort(sortedToolNames);
-
-        // each row
-        int diffNull = 0;
-        for (String tok : token) {
-            int i = 0; // tool index
-
-            if (logger.isTraceEnabled())
-                logger.trace("token: " + tok);
-
-            for (String toolname : sortedToolNames) {
-                if (logger.isTraceEnabled())
-                    logger.trace("toolname: " + toolname);
-                int c = 0; // category index
-                int start = EntityClassMap.entityClasses.size();
-                for (int j = i * start; j < i * start + start; j++) {
-
-                    TokenCategoryMatrix tcm = toolTokenCategoryMatrix.get(toolname);
-                    double v = tcm.getValue(tok, EntityClassMap.entityClasses.get(c)) ? 1.0 : 0.0;
-
-                    if (logger.isTraceEnabled())
-                        logger.trace(j + ": " + c + ": " + v);
-                    row.setValue((Attribute) featureVector.elementAt(j), v);
-
-                    c++;
-                }
-                i++;
-            }
-            if (oracle != null) {
-                row.setValue((Attribute) featureVector.elementAt(instances.numAttributes() - 1), EntityClassMap.oracel(oracelToken.get(tok)));
-                if (EntityClassMap.oracel(oracelToken.get(tok)) != EntityClassMap.getNullCategory())
-                    diffNull++;
-            }
-
-            instances.add(row);
-        }
-
-        // DEBUG TRACE
-        if (logger.isDebugEnabled()) {
-            logger.debug("found all: " + (diffNull == oracelToken.size()));
-            logger.trace("\n" + instances);
-        }
-        // DEBUG TRACE
-
-        return instances;
+  public Instances getInstances(final Set<String> token, final Map<String, Set<Entity>> toolResults,
+      final Map<String, String> oracle) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("getInstances ...");
     }
 
-    /**
-     * Gets instances from the given toolResults.
-     * 
-     * @param input
-     *            plain text
-     * @param toolResults
-     *            found entities of each tool
-     * @return instances object
-     */
-    public Instances getInstances(Set<String> token, Map<String, Set<Entity>> toolResults) {
-        return getInstances(token, toolResults, null);
+    if (logger.isTraceEnabled()) {
+      logger.trace(toolResults);
+    }
+    // read oracle
+    final Map<String, String> oracelToken = new HashMap<>();
+    if (oracle != null) {
+      for (final Entry<String, String> e : oracle.entrySet()) {
+        for (final String t : FoxTextUtil.getSentenceToken(e.getKey() + ".")) {
+          if (!t.trim().isEmpty()) {
+            oracelToken.put(t.trim(), e.getValue());
+          }
+        }
+      }
+      if (logger.isDebugEnabled()) {
+        logger.debug("oracle:\n" + oracelToken);
+      }
     }
 
-    // uses toolResults to make TokenCategoryMatrix object for each tool
-    private Map<String, TokenCategoryMatrix> getTokenCategoryMatrix(Map<String, Set<Entity>> toolResults) {
-        if (logger.isDebugEnabled())
-            logger.debug("getTokenCategoryMatrix ...");
+    //
+    this.token = token;
 
-        final Set<String> entityClasses = new LinkedHashSet<>(EntityClassMap.entityClasses);
-        final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = new HashMap<>();
-        final CountDownLatch latch = new CountDownLatch(toolResults.entrySet().size());
+    // toolResults to make TokenCategory for each tool
+    final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix =
+        getTokenCategoryMatrix(toolResults);
 
-        List<Fiber> fibers = new ArrayList<>();
-        for (final Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
-            Fiber fiber = new ThreadFiber();
-            fiber.start();
-            fiber.execute(new Runnable() {
-                public void run() {
-                    toolTokenCategoryMatrix.put(
-                            entry.getKey(),
-                            new TokenCategoryMatrix(
-                                    token,
-                                    entityClasses,
-                                    EntityClassMap.getNullCategory(),
-                                    entry.getValue(),
-                                    FoxTextUtil.tokenSpliter
-                            )
-                            );
-                    latch.countDown();
-                }
-            });
-            fibers.add(fiber);
+    // declare the feature vector
+    final FastVector featureVector = getFeatureVector(toolTokenCategoryMatrix);
+
+    // train data
+    final Instances instances =
+        new Instances(oracle != null ? "train data" : "test data", featureVector, token.size());
+    instances.setClassIndex(featureVector.size() - 1);
+
+    // fill values
+    final Instance row = new Instance(instances.numAttributes());
+
+    final List<String> sortedToolNames = new ArrayList<>(toolTokenCategoryMatrix.keySet());
+    Collections.sort(sortedToolNames);
+
+    // each row
+    int diffNull = 0;
+    for (final String tok : token) {
+      int i = 0; // tool index
+
+      if (logger.isTraceEnabled()) {
+        logger.trace("token: " + tok);
+      }
+
+      for (final String toolname : sortedToolNames) {
+        if (logger.isTraceEnabled()) {
+          logger.trace("toolname: " + toolname);
         }
+        int c = 0; // category index
+        final int start = EntityClassMap.entityClasses.size();
+        for (int j = i * start; j < ((i * start) + start); j++) {
 
-        // TODO: time to cfg
-        try {
-            latch.await(Long.MAX_VALUE, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            logger.error("\n", e);
+          final TokenCategoryMatrix tcm = toolTokenCategoryMatrix.get(toolname);
+          final double v = tcm.getValue(tok, EntityClassMap.entityClasses.get(c)) ? 1.0 : 0.0;
+
+          if (logger.isTraceEnabled()) {
+            logger.trace(j + ": " + c + ": " + v);
+          }
+          row.setValue((Attribute) featureVector.elementAt(j), v);
+
+          c++;
         }
+        i++;
+      }
+      if (oracle != null) {
+        row.setValue((Attribute) featureVector.elementAt(instances.numAttributes() - 1),
+            EntityClassMap.oracel(oracelToken.get(tok)));
+        if (EntityClassMap.oracel(oracelToken.get(tok)) != EntityClassMap.getNullCategory()) {
+          diffNull++;
+        }
+      }
 
-        // shutdown threads
-        for (Fiber fiber : fibers)
-            fiber.dispose();
-
-        return toolTokenCategoryMatrix;
+      instances.add(row);
     }
 
-    private FastVector getFeatureVector(Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix) {
-        if (logger.isDebugEnabled())
-            logger.debug("getFeatureVector ...");
-
-        // declare the feature vector
-        // declare numeric attribute along with its values
-        FastVector featureVector = new FastVector();
-        List<String> sortedToolNames = new ArrayList<>(toolTokenCategoryMatrix.keySet());
-        Collections.sort(sortedToolNames);
-        for (String toolname : sortedToolNames) {
-            for (String cl : EntityClassMap.entityClasses)
-                featureVector.addElement(new Attribute(toolname + cl));
-        }
-        // declare the class attribute along with its values
-        FastVector attVals = new FastVector();
-        for (String cl : EntityClassMap.entityClasses)
-            attVals.addElement(cl);
-        // class att. at last position!
-        featureVector.addElement(new Attribute("class", attVals));
-        return featureVector;
+    // DEBUG TRACE
+    if (logger.isDebugEnabled()) {
+      logger.debug("found all: " + (diffNull == oracelToken.size()));
+      logger.trace("\n" + instances);
     }
+    // DEBUG TRACE
+
+    return instances;
+  }
+
+  /**
+   * Gets instances from the given toolResults.
+   * 
+   * @param input plain text
+   * @param toolResults found entities of each tool
+   * @return instances object
+   */
+  public Instances getInstances(final Set<String> token,
+      final Map<String, Set<Entity>> toolResults) {
+    return getInstances(token, toolResults, null);
+  }
+
+  // uses toolResults to make TokenCategoryMatrix object for each tool
+  private Map<String, TokenCategoryMatrix> getTokenCategoryMatrix(
+      final Map<String, Set<Entity>> toolResults) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("getTokenCategoryMatrix ...");
+    }
+
+    final Set<String> entityClasses = new LinkedHashSet<>(EntityClassMap.entityClasses);
+    final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = new HashMap<>();
+    final CountDownLatch latch = new CountDownLatch(toolResults.entrySet().size());
+
+    final List<Fiber> fibers = new ArrayList<>();
+    for (final Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
+      final Fiber fiber = new ThreadFiber();
+      fiber.start();
+      fiber.execute(() -> {
+        toolTokenCategoryMatrix.put(entry.getKey(), new TokenCategoryMatrix(token, entityClasses,
+            EntityClassMap.getNullCategory(), entry.getValue(), FoxTextUtil.tokenSpliter));
+        latch.countDown();
+      });
+      fibers.add(fiber);
+    }
+
+    try {
+      latch.await(Long.MAX_VALUE, TimeUnit.MINUTES);
+    } catch (final InterruptedException e) {
+      logger.error("\n", e);
+    }
+
+    // shutdown threads
+    for (final Fiber fiber : fibers) {
+      fiber.dispose();
+    }
+
+    return toolTokenCategoryMatrix;
+  }
+
+  private FastVector getFeatureVector(
+      final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("getFeatureVector ...");
+    }
+
+    // declare the feature vector
+    // declare numeric attribute along with its values
+    final FastVector featureVector = new FastVector();
+    final List<String> sortedToolNames = new ArrayList<>(toolTokenCategoryMatrix.keySet());
+    Collections.sort(sortedToolNames);
+    for (final String toolname : sortedToolNames) {
+      for (final String cl : EntityClassMap.entityClasses) {
+        featureVector.addElement(new Attribute(toolname + cl));
+      }
+    }
+    // declare the class attribute along with its values
+    final FastVector attVals = new FastVector();
+    for (final String cl : EntityClassMap.entityClasses) {
+      attVals.addElement(cl);
+    }
+    // class att. at last position!
+    featureVector.addElement(new Attribute("class", attVals));
+    return featureVector;
+  }
 }
