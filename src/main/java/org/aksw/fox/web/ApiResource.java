@@ -24,10 +24,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import org.aksw.fox.FoxParameter;
+import org.aksw.fox.FoxParameter.Output;
 import org.aksw.fox.IFox;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.FoxCfg;
-import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxLanguageDetector;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.aksw.gerbil.io.nif.NIFWriter;
@@ -90,7 +90,9 @@ public class ApiResource {
       });
       cfg.put("lang", langs);
       final JSONArray ja = new JSONArray();
-      FoxJena.prints.forEach(ja::put);
+      for (final Output v : FoxParameter.Output.values()) {
+        ja.put(v.name());
+      }
       cfg.put("out", ja);
 
     } catch (final Exception e) {
@@ -101,9 +103,9 @@ public class ApiResource {
 
   /**
    * <code>
-
-    curl -d "@example.ttl" -H "Content-Type: application/x-turtle" http://0.0.0.0:4444/call/ner/entities
   
+    curl -d "@example.ttl" -H "Content-Type: application/x-turtle" http://0.0.0.0:4444/call/ner/entities
+
     </code>
    */
   @Path("entities")
