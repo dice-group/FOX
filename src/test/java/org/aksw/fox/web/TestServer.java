@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.aksw.fox.FoxParameter;
-import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -23,7 +22,6 @@ import org.apache.http.util.EntityUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -126,11 +124,16 @@ public class TestServer {
     urls.put(path, 200);
     urls.put(path + "/demo/index.html", 200);
     urls.put(path + "/public/img/errors.png", 200);
-
-    /*
-     * TODO: endpoint paths urls.put(path + "/call/ner/entities", 405); urls.put(path +
-     * "/call/ner/entities/", 405); urls.put(path + "/api", 405); urls.put(path + "/api/", 405);
-     * urls.put(path + "/api/ner/feedback/", 405); urls.put(path + "/api/ner/feedback", 405);
+    // TODO: check all paths
+    /**
+     * <code>
+    urls.put(path + "/call/ner/entities", 405);
+    urls.put(path +      "/call/ner/entities/", 405);
+    urls.put(path + "/api", 405);
+    urls.put(path + "/api/", 405);
+    urls.put(path + "/api/ner/feedback/", 405);
+    urls.put(path + "/api/ner/feedback", 405);
+       </code>
      */
 
     try {
