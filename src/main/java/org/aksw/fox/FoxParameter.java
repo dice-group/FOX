@@ -1,5 +1,7 @@
 package org.aksw.fox;
 
+import org.apache.jena.riot.Lang;
+
 public class FoxParameter {
 
   public enum Parameter {
@@ -27,6 +29,40 @@ public class FoxParameter {
       if (parameter != null) {
         for (final Parameter b : Parameter.values()) {
           if (parameter.equalsIgnoreCase(b.para)) {
+            return b;
+          }
+        }
+      }
+      return null;
+    }
+  }
+
+  public enum Output {
+
+    RDFXML(Lang.RDFXML.getName()), //
+    TURTLE(Lang.TURTLE.getName()), //
+    RDFJSON(Lang.RDFJSON.getName()), //
+    JSONLD(Lang.JSONLD.getName()), //
+    TRIG(Lang.TRIG.getName()), //
+    NQUADS(Lang.NQUADS.getName());
+    /* FileUtils.langXMLAbbrev, */
+    // Lang.N3.getName(),
+
+    private final String type;
+
+    Output(final String type) {
+      this.type = type;
+    }
+
+    @Override
+    public String toString() {
+      return type;
+    }
+
+    public static Output fromString(final String type) {
+      if (type != null) {
+        for (final Output b : Output.values()) {
+          if (type.equalsIgnoreCase(b.type)) {
             return b;
           }
         }
