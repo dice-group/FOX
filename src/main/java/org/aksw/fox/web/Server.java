@@ -171,7 +171,7 @@ public class Server {
           fb.getMappings().toArray(new String[fb.getMappings().size() - 1]));
     }
 
-    if (server.getServerConfiguration().getHttpHandlers().size() == 0) {
+    if (server.getServerConfiguration().getHttpHandlersWithMapping().size() == 0) {
       LOG.warn("No HttpHandler found. No available path for the server.");
     }
   }

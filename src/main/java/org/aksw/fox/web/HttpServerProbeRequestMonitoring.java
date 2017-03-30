@@ -22,8 +22,8 @@ public class HttpServerProbeRequestMonitoring extends HttpServerProbe.Adapter {
   }
 
   @Override
-  public void onRequestCompleteEvent(final HttpServerFilter arg0, final Connection arg1,
-      final Response arg2) {
+  public void onRequestCompleteEvent(final HttpServerFilter arg0,
+      @SuppressWarnings("rawtypes") final Connection arg1, final Response arg2) {
 
     String path = "";
     try {
