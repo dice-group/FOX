@@ -2,26 +2,26 @@ package org.aksw.fox.tools.re;
 
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Relation;
+import org.aksw.fox.tools.ITool;
 
 /**
  *
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
-public interface IRE extends Runnable {
-
-  public Set<Relation> extract(String text, List<Entity> entities);
-
-  /**
-   * Sets a CountDownLatch object.
+public interface IRE extends ITool {
+  /***
+   * Extracts relations from the given text.
    *
-   * @param cdl
+   * @param text
+   * @param entities
+   *
+   * @return relations
    */
-  public void setCountDownLatch(CountDownLatch cdl);
+  public Set<Relation> extract(String text, List<Entity> entities);
 
   /**
    * Sets the input.
