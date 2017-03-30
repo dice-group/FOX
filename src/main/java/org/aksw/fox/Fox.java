@@ -376,22 +376,25 @@ public class Fox extends AFox {
 
           switch (FoxParameter.Task.fromString(task.toLowerCase())) {
             case KE:
-              throw new UnsupportedOperationException();
-
+              LOG.warn("Operation not supported.");
+              break;
             case NER:
               entities = doNERLight(light);
               break;
             case RE:
-              throw new UnsupportedOperationException();
+              LOG.warn("Operation not supported.");
+              break;
             default:
-              throw new UnsupportedOperationException();
+              LOG.warn("Operation not supported.");
+              break;
           }
 
         } else {
           // no light version
           switch (FoxParameter.Task.fromString(task.toLowerCase())) {
             case KE:
-              throw new UnsupportedOperationException();
+              LOG.warn("Operation not supported.");
+              break;
             case NER:
               entities = doNER();
               break;
@@ -400,7 +403,8 @@ public class Fox extends AFox {
               relations = doRE();
               break;
             default:
-              throw new UnsupportedOperationException();
+              LOG.warn("Operation not supported.");
+              break;
           }
         }
       }
