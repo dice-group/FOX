@@ -2,14 +2,17 @@ package org.aksw.fox.data;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
 /**
- * @author rspeck
+ *
+ * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
+ *
  */
 public class Entity {
-  public static Logger logger = Logger.getLogger(Entity.class);
+  public static Logger LOG = Logger.getLogger(Entity.class);
 
   public static final float DEFAULT_RELEVANCE = -1;
 
@@ -23,42 +26,43 @@ public class Entity {
 
   protected String tool = "";
 
+  /**
+   * Start indices.
+   */
   protected Set<Integer> indicies = null;
 
-  public Set<Integer> getIndices() {
-    return indicies;
-  }
-
-  public void addIndicies(final int index) {
-    if (indicies == null) {
-      indicies = new HashSet<>();
-    }
-
-    indicies.add(index);
-  }
-
-  public void addAllIndicies(final Set<Integer> indices) {
-    if (indicies == null) {
-      indicies = new HashSet<>();
-    }
-
-    indicies.addAll(indices);
-  }
-
-  // public Entity() { /**/ }
-
-  public String getTool() {
-    return tool;
-  }
-
+  /**
+   *
+   * Constructor.
+   *
+   * @param text
+   * @param type
+   */
   public Entity(final String text, final String type) {
     this(text, type, DEFAULT_RELEVANCE, "");
   }
 
+  /**
+   *
+   * Constructor.
+   *
+   * @param text
+   * @param type
+   * @param relevance
+   */
   public Entity(final String text, final String type, final float relevance) {
     this(text, type, relevance, "");
   }
 
+  /**
+   *
+   * Constructor.
+   *
+   * @param text
+   * @param type
+   * @param relevance
+   * @param tool
+   */
   public Entity(final String text, final String type, final float relevance, final String tool) {
     this.text = text;
     this.type = type;
@@ -99,12 +103,51 @@ public class Entity {
     return true;
   }
 
+  /**
+   * Gets all start indices.
+   */
+  public Set<Integer> getIndices() {
+    return indicies;
+  }
+
+  /**
+   * Adds start indices
+   *
+   * @param index
+   */
+  public void addIndicies(final int index) {
+    if (indicies == null) {
+      indicies = new TreeSet<>();
+    }
+    indicies.add(index);
+  }
+
+  /**
+   * Adds start indices.
+   *
+   * @param indices
+   */
+  public void addAllIndicies(final Set<Integer> indices) {
+    if (indicies == null) {
+      indicies = new HashSet<>();
+    }
+    indicies.addAll(indices);
+  }
+
+  public String getTool() {
+    return tool;
+  }
+
   public String getText() {
     return text;
   }
 
   public String getType() {
     return type;
+  }
+
+  public float getRelevance() {
+    return relevance;
   }
 
   @Override

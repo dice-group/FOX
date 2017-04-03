@@ -120,6 +120,7 @@ public class REStanford extends AbstractRE {
    *
    * @return
    */
+  @Override
   public String getToolName() {
     return REStanford.class.getSimpleName();
   }
@@ -186,7 +187,7 @@ public class REStanford extends AbstractRE {
   }
 
   @Override
-  public Set<Relation> extract(final String text, final List<Entity> noused) {
+  public Set<Relation> extract() {
     final Set<Relation> set = new HashSet<>();
     // ----------------------------------------------------------------------------
     // tokenize and clean text
@@ -206,7 +207,7 @@ public class REStanford extends AbstractRE {
     try {
       LOG.info("Start...");
 
-      final Annotation doc = new Annotation(text);
+      final Annotation doc = new Annotation(input);
       LOG.debug("Annotate the doc...");
       stanfordNLP.annotate(doc);
       LOG.debug("RelationExtractorAnnotator the doc...");
@@ -295,8 +296,10 @@ public class REStanford extends AbstractRE {
    * @param args
    */
   public static void main(final String[] args) {
+    final REStanford reStanford = new REStanford();
+    reStanford.setInput(FoxConst.RE_EN_EXAMPLE_1, null);
 
-    for (final Relation rr : new REStanford().extract(FoxConst.RE_EN_EXAMPLE_1, null)) {
+    for (final Relation rr : reStanford.extract()) {
       LOG.info(rr);
     }
   }
