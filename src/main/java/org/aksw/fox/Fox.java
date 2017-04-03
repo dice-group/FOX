@@ -97,39 +97,70 @@ public class Fox extends AFox {
     return entities;
   }
 
-  protected Set<Relation> doRE() {
-    Set<Relation> relations = null;
-    final IRE reTool = reTools.getRETool(lang);
-    if (reTool == null) {
+  protected Set<Relation> doRE(final Set<Entity> entities) {
+    final Map<String, Set<Relation>> relations = new HashMap<>();
+
+    final List<IRE> tools = reTools.getRETool(lang);
+
+    if ((tools == null) || (tools.size() == 0)) {
       infoLog("Relation tool for " + lang.toUpperCase() + " not supported yet.");
     } else {
-      infoLog("Start RE ...");
-      final CountDownLatch latch = new CountDownLatch(1);
-      reTool.setCountDownLatch(latch);
-      reTool.setInput(parameter.get(FoxParameter.Parameter.INPUT.toString()), null); // TODO: null
+      infoLog("Start RE with " + tools.size() + " tools ...");
 
-      final Fiber fiber = new ThreadFiber();
-      fiber.start();
-      fiber.execute(reTool);
+      // use all tools to retrieve entities
+      // start all threads
+      final List<Fiber> fibers = new ArrayList<>();
+      final CountDownLatch latch = new CountDownLatch(tools.size());
+      for (final IRE tool : tools) {
 
+        tool.setCountDownLatch(latch);
+        tool.setInput(parameter.get(FoxParameter.Parameter.INPUT.toString()), entities);
+
+        final Fiber fiber = new ThreadFiber();
+        fibers.add(fiber);
+        fiber.start();
+        fiber.execute(tool);
+      }
+
+      // wait for finish
       final int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
       try {
         latch.await(min, TimeUnit.MINUTES);
       } catch (final InterruptedException e) {
+        LOG.error("Timeout after " + min + "min.");
         LOG.error(e.getLocalizedMessage(), e);
+        LOG.error("input parameter:\n" + parameter.toString());
       }
+
       // shutdown threads
-      fiber.dispose();
+      for (final Fiber fiber : fibers) {
+        fiber.dispose();
+      }
 
       // get results
       if (latch.getCount() == 0) {
-        relations = reTool.getResults();
+
+        for (final IRE tool : tools) {
+
+          final Set<Relation> rs = tool.getResults();
+          if ((rs != null) && !rs.isEmpty()) {
+            relations.put(tool.getToolName(), rs);
+          }
+        }
+
       } else {
         infoLog("Timeout after " + min + " min.");
       }
       infoLog("RE done.");
     }
-    return relations;
+
+    // TODO: merge or handle one by one for each tool
+    final Set<Relation> set = new HashSet<>();
+    for (final Set<Relation> r : relations.values()) {
+
+      set.addAll(r);
+    }
+    return set;
   }
 
   protected Set<Entity> doNERLight(final String name) {
@@ -400,7 +431,7 @@ public class Fox extends AFox {
               break;
             case RE:
               entities = doNER();
-              relations = doRE();
+              relations = doRE(entities);
               break;
             default:
               LOG.warn("Operation not supported.");
