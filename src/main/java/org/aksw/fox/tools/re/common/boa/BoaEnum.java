@@ -1,11 +1,11 @@
-package org.aksw.fox.tools.re.en.boa;
+package org.aksw.fox.tools.re.common.boa;
 
 /**
  *
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
-public enum ReadBoaEnum {
+public enum BoaEnum {
 
   URI("uri"),
 
@@ -93,7 +93,7 @@ public enum ReadBoaEnum {
 
   private final String label;
 
-  private ReadBoaEnum(final String label) {
+  private BoaEnum(final String label) {
     this.label = label;
   }
 

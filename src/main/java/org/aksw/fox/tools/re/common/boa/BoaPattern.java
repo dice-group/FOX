@@ -1,4 +1,4 @@
-package org.aksw.fox.tools.re.en.boa;
+package org.aksw.fox.tools.re.common.boa;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Only used inside this class to encapsulate the Solr query results.
  */
-public class Pattern {
+public class BoaPattern {
 
   public Map<String, Double> features = new HashMap<String, Double>();
   public String naturalLanguageRepresentationNormalized = "";
@@ -26,13 +26,13 @@ public class Pattern {
   private String normalizedPattern = null;
   public String generalized = "";
 
-  public Pattern(final String naturalLanguageRepresentation, final String language) {
+  public BoaPattern(final String naturalLanguageRepresentation, final String language) {
 
     this.naturalLanguageRepresentation = naturalLanguageRepresentation;
     this.language = language;
   }
 
-  public Pattern() {
+  public BoaPattern() {
     // TODO Auto-generated constructor stub
   }
 
@@ -85,7 +85,9 @@ public class Pattern {
       }
 
       final Set<String> naturalLanguageRepresentationChunks = new HashSet<String>(
-          Arrays.asList(naturalLanguageRepresentationNormalized.toLowerCase().trim().split(" ")));
+          // Arrays.asList(naturalLanguageRepresentationNormalized.toLowerCase().trim().split("
+          // ")));
+          Arrays.asList(naturalLanguageRepresentationNormalized.trim().split(" ")));
 
       // TODO: !!! REMOVE STOPWORDS
       // naturalLanguageRepresentationChunks.removeAll(Constants.STOP_WORDS);
@@ -115,7 +117,8 @@ public class Pattern {
     }
 
     final List<String> naturalLanguageRepresentationChunks =
-        new ArrayList<String>(Arrays.asList(s.toLowerCase().trim().split(" ")));
+        // new ArrayList<String>(Arrays.asList(s.toLowerCase().trim().split(" ")));
+        new ArrayList<String>(Arrays.asList(s.trim().split(" ")));
 
     // TODO: !!! REMOVE STOPWORDS
     // naturalLanguageRepresentationChunks.removeAll(Constants.NEW_STOP_WORDS);
@@ -156,7 +159,7 @@ public class Pattern {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    final Pattern other = (Pattern) obj;
+    final BoaPattern other = (BoaPattern) obj;
     if (language == null) {
       if (other.language != null) {
         return false;
