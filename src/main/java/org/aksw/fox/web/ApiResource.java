@@ -91,7 +91,7 @@ public class ApiResource {
       cfg.put("lang", langs);
       final JSONArray ja = new JSONArray();
       for (final Output v : FoxParameter.Output.values()) {
-        ja.put(v.name());
+        ja.put(v.toString());
       }
       cfg.put("out", ja);
 
@@ -103,9 +103,9 @@ public class ApiResource {
 
   /**
    * <code>
-  
-    curl -d "@example.ttl" -H "Content-Type: application/x-turtle" http://0.0.0.0:4444/call/ner/entities
 
+    curl -d "@example.ttl" -H "Content-Type: application/x-turtle" http://0.0.0.0:4444/call/ner/entities
+  
     </code>
    */
   @Path("entities")
