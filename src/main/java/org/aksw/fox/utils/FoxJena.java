@@ -49,12 +49,15 @@ public class FoxJena {
   public static final String nsDBpedia = "http://dbpedia.org/resource/";
 
   public static final String nsAnn = "http://www.w3.org/2000/10/annotation-ns#";
-  public static final String nsCTag = "http://commontag.org/ns#";
-  public static final String nsScms = "http://ns.aksw.org/scms/";
-  public static final String nsScmsann = "http://ns.aksw.org/scms/annotations/";
-  public static final String nsScmsannStanford = "http://ns.aksw.org/scms/annotations/stanford/";
 
-  public static final String nsScmssource = "http://ns.aksw.org/scms/tools/";
+  public static final String nsCTag = "http://commontag.org/ns#";
+
+  private static final String aksw = "http://ns.aksw.org/";
+  public static final String nsScms = aksw + "scms/";
+  public static final String nsScmsResource = nsScms + "resource/";
+  public static final String nsScmssource = nsScms + "tools/";
+  public static final String nsScmsann = nsScms + "annotations/";
+  public static final String nsScmsannStanford = nsScmsann + "stanford/";
 
   /* properties */
   protected Property annotation, beginIndex, endIndex, means, source, body, ctagLabel, ctagMeans,
@@ -72,8 +75,8 @@ public class FoxJena {
     graph = ModelFactory.createDefaultModel();
 
     // create namespace prefix
-    // graph.setNsPrefix("dbpedia-owl", nsDBpediaOwl);
-    graph.setNsPrefix("dbpedia", nsDBpedia);
+    graph.setNsPrefix("dbo", nsDBpediaOwl);
+    graph.setNsPrefix("dbr", nsDBpedia);
     graph.setNsPrefix("ann", nsAnn);
     graph.setNsPrefix("scms", nsScms);
     // graph.setNsPrefix("rdf", RDF.getURI());
@@ -82,6 +85,7 @@ public class FoxJena {
     graph.setNsPrefix("scmsann", nsScmsann);
     graph.setNsPrefix("stanford", nsScmsannStanford);
     graph.setNsPrefix("source", nsScmssource);
+    graph.setNsPrefix("scmsres", nsScmsResource);
 
     // NER properties
     annotation = graph.createProperty(nsAnn + "Annotation");
@@ -200,7 +204,10 @@ public class FoxJena {
       return;
     }
 
+    // we remove relations that are not in the text
     final Set<Relation> nofound = new HashSet<>();
+
+    // for all relations of all used tools
     for (final Relation relation : relations) {
       final Entity oe = relation.getObjectEntity();
       final Entity se = relation.getSubjectEntity();
