@@ -484,7 +484,7 @@ public class Fox extends AFox {
 
     String paraUriLookup = parameter.get(FoxParameter.Parameter.LINKING.toString());
     if (paraUriLookup != null) {
-      if (paraUriLookup.equalsIgnoreCase("off")) {
+      if (paraUriLookup.equalsIgnoreCase(FoxParameter.Linking.OFF.toString())) {
         paraUriLookup = NoLinking.class.getName();
       }
 

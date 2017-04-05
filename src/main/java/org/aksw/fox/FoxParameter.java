@@ -36,6 +36,32 @@ public class FoxParameter {
       return null;
     }
   }
+  public enum Linking {
+
+    OFF("off");
+
+    private final String para;
+
+    Linking(final String parameter) {
+      para = parameter;
+    }
+
+    @Override
+    public String toString() {
+      return para;
+    }
+
+    public static Linking fromString(final String parameter) {
+      if (parameter != null) {
+        for (final Linking b : Linking.values()) {
+          if (parameter.equalsIgnoreCase(b.para)) {
+            return b;
+          }
+        }
+      }
+      return null;
+    }
+  }
 
   public enum Output {
 
@@ -52,6 +78,7 @@ public class FoxParameter {
 
     Output(final String type) {
       this.type = type;
+
     }
 
     @Override
