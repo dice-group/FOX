@@ -8,8 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -44,6 +42,9 @@ import org.apache.tools.ant.taskdefs.Untar.UntarCompressionMethod;
 import org.apache.tools.ant.types.EnumeratedAttribute;
 
 /**
+ *
+ * We mapped leaderName, team, deathPlace, birthPlace, spouse, team, foundationPlace, subsidiary.
+ *
  * <code>
 en:
 http://dbpedia.org/ontology/author
@@ -85,7 +86,7 @@ http://dbpedia.org/ontology/team
 abstract public class ABoaIndex extends AbstractRE {
   protected static Logger LOG = LogManager.getLogger(ABoaIndex.class);
 
-  protected String file = null;
+  protected String luceneIndexFolder = null;
   protected IndexReader indexReader = null;
   protected IndexSearcher indexSearcher = null;
   protected Directory dir = null;
@@ -104,24 +105,21 @@ abstract public class ABoaIndex extends AbstractRE {
   public ABoaIndex(final String lang) {
     this.lang = lang;
 
-    final String f = "data/boa/" + lang;
-    if (!Files.exists(Paths.get(f))) {
+    luceneIndexFolder = "data/boa/" + lang;
+    if (!Files.exists(Paths.get(luceneIndexFolder))) {
 
       final File tarFile = Paths.get("data/boa/boa_" + lang + "_10.tar.gz").toFile();
       final Project p = new Project();
       final Untar ut = new Untar();
       ut.setProject(p);
-
       ut.setSrc(tarFile);
       if (tarFile.getName().endsWith(".gz")) {
         ut.setCompression((UntarCompressionMethod) EnumeratedAttribute
             .getInstance(UntarCompressionMethod.class, "gzip"));
       }
-      ut.setDest(Paths.get(file).toFile());
+      ut.setDest(Paths.get(luceneIndexFolder).toFile());
       ut.perform();
     }
-
-    file = f;
 
     createSupportedBoaRelations();
   }
@@ -135,7 +133,7 @@ abstract public class ABoaIndex extends AbstractRE {
 
   public IndexSearcher openIndexSearcher() throws IOException {
     closeIndexSearcher();
-    dir = FSDirectory.open(new File(file));
+    dir = FSDirectory.open(new File(luceneIndexFolder));
     indexReader = DirectoryReader.open(dir);
     indexSearcher = new IndexSearcher(indexReader);
     return indexSearcher;
@@ -232,22 +230,25 @@ abstract public class ABoaIndex extends AbstractRE {
         patterns.put(pattern.getNormalized().trim(), pattern);
       }
     }
-
-    LOG.info("patterns.size:" + patterns.size());
     closeIndexSearcher();
+    LOG.info("patterns.size:" + patterns.size());
 
-    // sort
-    class StringComparator implements Comparator<String> {
-      @Override
-      public int compare(final String o1, final String o2) {
-        return Integer.compare(o2.length(), o1.length());
-      }
-    }
-    final List<String> list = new ArrayList<>(noVarPattern);
-    Collections.sort(list, new StringComparator());
-
-    LOG.info("longest pattern:" + list.iterator().next());
-
+    // sort pattern length
+    /**
+     * <code>
+      if (!patterns.isEmpty()) {
+     class StringComparator implements Comparator<String> {
+       &#64;Override
+       public int compare(final String o1, final String o2) {
+         return Integer.compare(o2.length(), o1.length());
+       }
+     }
+     final List<String> list = new ArrayList<>(noVarPattern);
+     Collections.sort(list, new StringComparator());
+     LOG.info("longest pattern:" + list.iterator().next());
+     }
+     </code>
+     */
     return patterns;
   }
 
@@ -366,4 +367,5 @@ abstract public class ABoaIndex extends AbstractRE {
     supportedRelations.get(EntityClassMap.O).get(EntityClassMap.O)
         .add("http://dbpedia.org/ontology/subsidiary");
   }
+
 }
