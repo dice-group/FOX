@@ -12,7 +12,7 @@ fi
 # build fox
 echo "Building FOX..."
 if [ -f "$file" ] & dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then
-    nohup mvn clean compile package -Dmaven.test.skip=false javadoc:javadoc > build.log &
+    nohup mvn clean compile -Dmaven.test.skip=true javadoc:javadoc > build.log &
 else
     echo "Couldn't build FOX."
 fi
