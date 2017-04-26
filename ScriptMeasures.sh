@@ -1,5 +1,5 @@
-That script needs an update
 #!/bin/sh
+export MAVEN_OPTS="-Xmx16G -Dlog4j.configuration=file:data/fox/log4j.properties"
 #
 # That script helps you to calculate the measures. 
 # Please change the variables 'input' and 'output' to your needs.
