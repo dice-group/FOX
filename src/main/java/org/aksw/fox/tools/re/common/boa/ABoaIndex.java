@@ -281,12 +281,13 @@ abstract public class ABoaIndex extends AbstractRE {
       final String oType = object.getType();
 
       final Set<String> uris = getSupportedBoaRelations(sType, oType);
+      LOG.debug("uris that match the entity types: " + uris);
 
       final int sIndex = subject.getIndices().iterator().next();
       final int oIndex = object.getIndices().iterator().next();
 
       final String substring = text.substring(sIndex + subject.getText().length(), oIndex).trim();
-
+      LOG.debug("substring with possible pattern: " + substring);
       for (final String uri : uris) {
         final Map<String, BoaPattern> pattern = getPattern(uri);
 
