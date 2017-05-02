@@ -1,12 +1,12 @@
 package org.aksw.fox.tools;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.aksw.fox.data.exception.LoadingNotPossibleException;
 import org.aksw.fox.data.exception.UnsupportedLangException;
@@ -17,8 +17,14 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-public class ToolsGenerator {
-  public static Logger LOG = LogManager.getLogger(ToolsGenerator.class);
+interface IToolsGenerator {
+
+}
+
+
+public class ToolsGenerator implements IToolsGenerator {
+
+  public static final Logger LOG = LogManager.getLogger(ToolsGenerator.class);
   public static final XMLConfiguration CFG = CfgManager.getCfg(ToolsGenerator.class);
 
   public static final String CFG_KEY_SUPPORTED_LANG = "toolsGenerator.lang";
@@ -27,15 +33,15 @@ public class ToolsGenerator {
   public static final String CFG_KEY_DISAMBIGUATION_TOOL = "toolsGenerator.disambiguationTool";
   public static final String CFG_KEY_LIGHT_TOOL = "toolsGenerator.lightTool";
 
-  @SuppressWarnings("unchecked")
-  public static final Set<String> supportedLang =
-      new HashSet<String>(CFG.getList(CFG_KEY_SUPPORTED_LANG));
-  @SuppressWarnings("unchecked")
-  public static final Set<String> usedLang = new HashSet<String>(CFG.getList(CFG_KEY_USED_LANG));
+  public static final Set<String> supportedLang = ((List<?>) CFG.getList(CFG_KEY_SUPPORTED_LANG))//
+      .stream().map(p -> p.toString()).collect(Collectors.toSet());
+
+  public static final Set<String> usedLang = ((List<?>) CFG.getList(CFG_KEY_USED_LANG))//
+      .stream().map(p -> p.toString()).collect(Collectors.toSet());
 
   public static final Map<String, String> disambiguationTools = new HashMap<>();
   public static final Map<String, List<String>> nerTools = new HashMap<>();
-  // public static final Map<String, String> nerLightTool = new HashMap<>();
+
   static {
     init();
   }
@@ -43,51 +49,36 @@ public class ToolsGenerator {
   /**
    * Read xml cfg.
    */
-  @SuppressWarnings("unchecked")
   public static void init() {
     if (supportedLang.containsAll(usedLang)) {
       for (final String lang : usedLang) {
-        final String disambiguationTool =
-            CFG.getString(CFG_KEY_DISAMBIGUATION_TOOL.concat("[@").concat(lang).concat("]"));
+
+        final String key = "[@".concat(lang).concat("]");
+        final String disambiguationTool = CFG.getString(CFG_KEY_DISAMBIGUATION_TOOL.concat(key));
         if ((disambiguationTool != null) && !disambiguationTool.isEmpty()) {
           disambiguationTools.put(lang, disambiguationTool);
         }
 
-        final List<String> tools = new ArrayList<String>(
-            CFG.getList(CFG_KEY_NER_TOOLS.concat("[@").concat(lang).concat("]")));
-        tools.remove("");
-        tools.remove(null);
+        final List<String> tools = ((List<?>) CFG.getList(CFG_KEY_NER_TOOLS.concat(key)))//
+            .stream().map(p -> p.toString()).collect(Collectors.toList());
+
         Collections.sort(tools);
         if (!tools.isEmpty()) {
           nerTools.put(lang, tools);
         }
-
-        /*
-         * String lightTool =
-         * CFG.getString(CFG_KEY_LIGHT_TOOL.concat("[@").concat(lang).concat("]")); if (lightTool !=
-         * null && !lightTool.isEmpty()) nerLightTool.put(lang, lightTool);
-         */
       }
     } else {
       final Set<String> l = new HashSet<>();
       l.addAll(usedLang);
       l.removeAll(supportedLang);
-      // throw new UnsupportedLangException(l.toString());
     }
 
     LOG.info("disambiguationTools:" + disambiguationTools);
     LOG.info("nerTools" + nerTools);
-    // LOG.info("nerLightTool" + nerLightTool);
   }
 
-  /*
-   * public INER getNERLightTool(String lang) throws UnsupportedLangException,
-   * LoadingNotPossibleException { if (usedLang.contains(lang) && nerLightTool.get(lang) != null &&
-   * !nerLightTool.get(lang).isEmpty()) { return (INER) FoxCfg.getClass(nerLightTool.get(lang)); }
-   * else throw new UnsupportedLangException("Language " + lang + " is not supported."); }
-   */
   /**
-   * 
+   *
    * @param lang
    * @return
    * @throws UnsupportedLangException
@@ -104,7 +95,7 @@ public class ToolsGenerator {
   }
 
   /**
-   * 
+   *
    * @param lang
    * @return
    * @throws UnsupportedLangException

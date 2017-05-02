@@ -147,8 +147,9 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
     }
 
     final String output = formData.get(FoxParameter.Parameter.OUTPUT.toString());
-
+    LOG.info("output parameter:" + output);
     if (FoxParameter.Output.fromString(output) == null) {
+      LOG.warn("Not found");
       return false;
     }
 

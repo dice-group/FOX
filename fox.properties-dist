@@ -36,7 +36,7 @@ org.aksw.fox.nerlearner.FoxClassifier.learner: weka.classifiers.functions.Multil
 # fox settings #
 ##################################################################
 org.aksw.fox.utils.tweets.Preprocessor.enabled: false
-org.aksw.fox.evaluation.CrossValidation.runs: 10
+org.aksw.fox.evaluation.CrossValidation.runs: 1
 # max time in min. before fox timeouts
 org.aksw.fox.web.FoxHttpHandler.lifetime: 5
 # `true` to train fox. tainFox: { true | false }

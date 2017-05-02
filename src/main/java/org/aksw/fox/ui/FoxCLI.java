@@ -91,7 +91,7 @@ public class FoxCLI {
 
     final File file = new File(in);
     if (!file.exists()) {
-      throw new IOException("Can't find file or directory.");
+      throw new IOException("Can't find file or directory: " + in);
     } else {
       if (file.isDirectory()) {
         // read all files in a directory
