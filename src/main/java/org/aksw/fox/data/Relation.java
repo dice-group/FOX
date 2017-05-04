@@ -3,17 +3,12 @@ package org.aksw.fox.data;
 import java.net.URI;
 import java.util.List;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
 /**
  *
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
-public class Relation {
-
-  public static Logger LOG = LogManager.getLogger(Relation.class);
+public class Relation implements IData {
 
   public static final float DEFAULT_RELEVANCE = -1;
 
@@ -71,7 +66,8 @@ public class Relation {
     return relationByTool;
   }
 
-  public String getTool() {
+  @Override
+  public String getToolName() {
     return tool;
   }
 

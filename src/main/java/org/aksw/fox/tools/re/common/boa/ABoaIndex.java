@@ -165,7 +165,7 @@ abstract public class ABoaIndex extends AbstractRE {
         final Iterator<Integer> iter = entity.getIndices().iterator();
         while (iter.hasNext()) {
           final Entity e = new Entity(entity.getText(), entity.getType(), entity.getRelevance(),
-              entity.getTool());
+              entity.getToolName());
 
           final int index = iter.next();
           e.addIndicies(index);

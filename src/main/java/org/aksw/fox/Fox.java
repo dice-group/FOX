@@ -2,6 +2,7 @@ package org.aksw.fox;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,11 +12,15 @@ import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.bind.DatatypeConverter;
+
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.data.exception.LoadingNotPossibleException;
 import org.aksw.fox.data.exception.UnsupportedLangException;
+import org.aksw.fox.output.FoxJenaNew;
+import org.aksw.fox.output.IFoxJena;
 import org.aksw.fox.tools.Tools;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.tools.ner.INER;
@@ -24,7 +29,6 @@ import org.aksw.fox.tools.ner.linking.NoLinking;
 import org.aksw.fox.tools.re.FoxRETools;
 import org.aksw.fox.tools.re.IRE;
 import org.aksw.fox.utils.FoxCfg;
-import org.aksw.fox.utils.FoxJena;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
@@ -54,7 +58,7 @@ public class Fox extends AFox {
   /**
    *
    */
-  protected FoxJena foxJena = new FoxJena();
+  protected IFoxJena foxJena = new FoxJenaNew();
 
   /**
    *
@@ -97,7 +101,7 @@ public class Fox extends AFox {
     return entities;
   }
 
-  protected Set<Relation> doRE(final Set<Entity> entities) {
+  protected Map<String, Set<Relation>> doRE(final Set<Entity> entities) {
     final Map<String, Set<Relation>> relations = new HashMap<>();
 
     final List<IRE> tools = reTools.getRETool(lang);
@@ -154,13 +158,17 @@ public class Fox extends AFox {
       infoLog("RE done.");
     }
 
-    // TODO: merge or handle one by one for each tool
-    final Set<Relation> set = new HashSet<>();
-    for (final Set<Relation> r : relations.values()) {
+    /**
+     * <code>
+     // TODO: merge or handle one by one for each tool
+     final Set<Relation> set = new HashSet<>();
+     for (final Set<Relation> r : relations.values()) {
 
-      set.addAll(r);
-    }
-    return set;
+       set.addAll(r);
+     }
+     </code>
+     */
+    return relations;
   }
 
   protected Set<Entity> doNERLight(final String name) {
@@ -311,7 +319,7 @@ public class Fox extends AFox {
     infoLog("Start NE linking done.");
   }
 
-  protected void setOutput(final Set<Entity> entities, final Set<Relation> relations) {
+  protected void setOutput(final Set<Entity> entities, final Map<String, Set<Relation>> relations) {
     if (entities == null) {
       LOG.warn("Entities are empty.");
       return;
@@ -319,22 +327,30 @@ public class Fox extends AFox {
 
     final String input = parameter.get(FoxParameter.Parameter.INPUT.toString());
 
-    // switch output
-    final boolean useNIF =
-        Boolean.parseBoolean(parameter.get(FoxParameter.Parameter.NIF.toString()));
+    Boolean.parseBoolean(parameter.get(FoxParameter.Parameter.NIF.toString()));
 
     final String out = parameter.get(FoxParameter.Parameter.OUTPUT.toString());
     infoLog("Preparing output format ...");
 
-    foxJena.clearGraph();
-    foxJena.setAnnotations(entities);
+    foxJena.reset();
+    foxJena.setLang(out);
+    foxJena.addInput(input, "demo");
+
+    final String start = DatatypeConverter.printDateTime(new GregorianCalendar());
+    final String end = DatatypeConverter.printDateTime(new GregorianCalendar());
+    foxJena.addEntities(entities, start, end);
 
     if (relations != null) {
-      foxJena.setRelations(relations);
-      infoLog("Found " + relations.size() + " relations.");
+
+      for (final Set<Relation> r : relations.values()) {
+        foxJena.addRelations(r, start, end);
+        infoLog("Found " + relations.size() + " relations.");
+      }
     }
 
-    response = foxJena.print(out, useNIF, input);
+    response = foxJena.print();
+
+    // response = foxJena.print(out, useNIF, input);
     infoLog("Preparing output format done.");
 
     if ((parameter.get("returnHtml") != null)
@@ -392,7 +408,7 @@ public class Fox extends AFox {
       final String light = parameter.get(FoxParameter.Parameter.FOXLIGHT.toString());
 
       Set<Entity> entities = null;
-      Set<Relation> relations = null;
+      Map<String, Set<Relation>> relations = null;
 
       if ((input == null) || (task == null)) {
         LOG.error("Input or task parameter not set.");

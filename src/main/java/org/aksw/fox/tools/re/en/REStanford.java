@@ -12,13 +12,12 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.Relation;
+import org.aksw.fox.output.AFoxJenaNew;
 import org.aksw.fox.tools.ner.en.StanfordENOldVersion;
 import org.aksw.fox.tools.re.AbstractRE;
 import org.aksw.fox.utils.Converter;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 import edu.stanford.nlp.ie.machinereading.structure.EntityMention;
 import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations.RelationMentionsAnnotation;
@@ -65,14 +64,7 @@ public class REStanford extends AbstractRE {
     }
   }
 
-  public static final Logger LOG = LogManager.getLogger(REStanford.class);
-
-  public static final String CFG_KEY_LIVEIN = REStanford.class.getName().concat(".liveIn");
-  public static final String CFG_KEY_LOCATEDIN = REStanford.class.getName().concat(".locatedIn");
-  public static final String CFG_KEY_ORGBASEDIN = REStanford.class.getName().concat(".orgbasedIn");
-  public static final String CFG_KEY_WORKFOR = REStanford.class.getName().concat(".workFor");
-
-  Map<StanfordRelations, List<URI>> relationURIs = new HashMap<>();
+  Map<StanfordRelations, String> relationURIs = new HashMap<>();
 
   Properties props = new Properties();
   StanfordCoreNLP stanfordNLP = new StanfordCoreNLP();
@@ -93,10 +85,12 @@ public class REStanford extends AbstractRE {
     props.setProperty("annotators", "tokenize,ssplit,lemma,pos,parse,ner");
     relationExtractorAnnotator = new RelationExtractorAnnotator(props);
 
-    initURIs(StanfordRelations.Live_In, CFG_KEY_LIVEIN);
-    initURIs(StanfordRelations.Located_In, CFG_KEY_LOCATEDIN);
-    initURIs(StanfordRelations.OrgBased_In, CFG_KEY_ORGBASEDIN);
-    initURIs(StanfordRelations.Work_For, CFG_KEY_WORKFOR);
+    initURIs(StanfordRelations.Live_In, AFoxJenaNew.ns_fox_ontology.concat("stanford_livein"));
+    initURIs(StanfordRelations.Located_In,
+        AFoxJenaNew.ns_fox_ontology.concat("stanford_locatedin"));
+    initURIs(StanfordRelations.OrgBased_In,
+        AFoxJenaNew.ns_fox_ontology.concat("stanford_orgbasedin"));
+    initURIs(StanfordRelations.Work_For, AFoxJenaNew.ns_fox_ontology.concat("stanford_workfor"));
   }
 
   /**
@@ -107,9 +101,10 @@ public class REStanford extends AbstractRE {
    */
   private void initURIs(final StanfordRelations relation, final String cfgkey) {
     try {
-      final URI[] urisc = Converter.convertArray(FoxCfg.get(cfgkey).replaceAll(" ", "").split(","),
-          URI::create, URI[]::new);
-      relationURIs.put(relation, Arrays.asList(urisc));
+      // final URI[] urisc = Converter.convertArray(FoxCfg.get(cfgkey).replaceAll(" ",
+      // "").split(","),
+      // URI::create, URI[]::new);
+      relationURIs.put(relation, cfgkey);// Arrays.asList(urisc));
     } catch (final Exception e) {
       LOG.error("Check the config file. Something went wrong.");
       LOG.error(e.getLocalizedMessage(), e);
@@ -269,7 +264,8 @@ public class REStanford extends AbstractRE {
                 "", //
                 StanfordRelations.fromString(relationMention.getType()).name(), //
                 b, //
-                relationURIs.get(StanfordRelations.fromString(relationMention.getType())), //
+                Arrays.asList(new URI(
+                    relationURIs.get(StanfordRelations.fromString(relationMention.getType())))), //
                 getToolName(), //
                 Relation.DEFAULT_RELEVANCE//
             );
