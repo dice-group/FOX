@@ -23,9 +23,11 @@ public class WikinerReader implements INERReader {
   public static void main(final String[] a) throws IOException {
 
     final String[] files = new String[1];
-    files[0] = "input/Wikiner/aij-wikiner-de-wp2.bz2";
+    files[0] = "input/Wikiner/aij-wikiner-en-wp3.bz2";
 
     final WikinerReader r = new WikinerReader(files);
+
+    LOG.info(INERReader.maxSentences);
     LOG.info(r.getEntities().size());
     /*
      * for (Entry<?, ?> e : r.getEntities().entrySet()) { LOG.info(e.getValue()); }
@@ -67,9 +69,9 @@ public class WikinerReader implements INERReader {
 
   /**
    * Tags are:
-   * 
+   *
    * [I-MISC, B-LOC, I-PER, B-PER, I-LOC, B-MISC, I-ORG, B-ORG, O]
-   * 
+   *
    * @throws IOException
    */
   protected void readData() throws IOException {
@@ -167,6 +169,7 @@ public class WikinerReader implements INERReader {
         sentenceCount++;
       }
     }
+    LOG.info("sentences: " + sentenceCount);
     // removes disambs
     for (final Entry<String, List<SimpleEntry<String, Integer>>> entry : disambEntities
         .entrySet()) {

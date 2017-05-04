@@ -150,10 +150,10 @@ public abstract class AbstractNER implements INER {
   private void logMsg() {
     // DEBUG
     if (entityList.size() > 0) {
-      LOG.debug(entityList.size() + "(" + entityList.iterator().next().getTool() + ")");
+      LOG.debug(entityList.size() + "(" + entityList.iterator().next().getToolName() + ")");
     }
     for (final Entity entity : entityList) {
-      LOG.debug(entity.getText() + "=>" + entity.getType() + "(" + entity.getTool() + ")");
+      LOG.debug(entity.getText() + "=>" + entity.getType() + "(" + entity.getToolName() + ")");
     }
 
     // INFO

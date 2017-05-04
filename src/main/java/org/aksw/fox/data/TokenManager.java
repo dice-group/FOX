@@ -32,7 +32,7 @@ public class TokenManager {
   protected Map<String, Integer> labelIndex = new LinkedHashMap<>();
 
   /**
-   * 
+   *
    * @param sentences
    */
   public TokenManager(String sentences) {
@@ -102,8 +102,8 @@ public class TokenManager {
     if (occurrence.size() != 0) {
 
     } else {
-      LOG.debug(
-          "can't find entity:" + entity.getText() + "(" + entity.getTool() + "), try to fix ...");
+      LOG.debug("can't find entity:" + entity.getText() + "(" + entity.getToolName()
+          + "), try to fix ...");
 
       String fix = entity.getText().replaceAll("([\\p{Punct}&&[^\")\\]}.]])(\\s+)", "$1");
       occurrence = FoxTextUtil.getIndices(fix, tokenInput);

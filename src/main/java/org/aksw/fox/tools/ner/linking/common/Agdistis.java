@@ -12,8 +12,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.aksw.fox.data.Entity;
+import org.aksw.fox.output.AFoxJenaNew;
 import org.aksw.fox.tools.ner.linking.AbstractLinking;
-import org.aksw.fox.utils.FoxJena;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
@@ -163,10 +163,10 @@ public class Agdistis extends AbstractLinking {
               URI uri;
               try {
 
-                uri = new URI(FoxJena.nsScmsResource + entity.getText().replaceAll(" ", "_"));
+                uri = new URI(AFoxJenaNew.ns_fox_resource + entity.getText().replaceAll(" ", "_"));
                 entity.uri = uri.toASCIIString(); // TODO: why?
               } catch (final URISyntaxException e) {
-                entity.uri = FoxJena.nsScmsResource + entity.getText();
+                entity.uri = AFoxJenaNew.ns_fox_resource + entity.getText();
                 LOG.error(entity.uri + "\n", e);
               }
 

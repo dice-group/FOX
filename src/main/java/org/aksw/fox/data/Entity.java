@@ -4,15 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
-
 /**
  *
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
-public class Entity {
-  public static Logger LOG = Logger.getLogger(Entity.class);
+public class Entity implements IData {
 
   public static final float DEFAULT_RELEVANCE = -1;
 
@@ -134,7 +131,8 @@ public class Entity {
     indicies.addAll(indices);
   }
 
-  public String getTool() {
+  @Override
+  public String getToolName() {
     return tool;
   }
 

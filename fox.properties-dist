@@ -1,14 +1,4 @@
 ##################################################################
-# RE #
-# it is a list of URIs
-# e.g.: 
-# org.aksw.fox.tools.re.en.REStanford.liveIn: http://ns.aksw.org/scms/annotations/StanfordLiveIn, http://ns.aksw.org/scms/annotations/somethingElse
-################################################################## 
-org.aksw.fox.tools.re.en.REStanford.liveIn: http://ns.aksw.org/scms/annotations/stanford/livein
-org.aksw.fox.tools.re.en.REStanford.locatedIn: http://ns.aksw.org/scms/annotations/stanford/locatedin
-org.aksw.fox.tools.re.en.REStanford.orgbasedIn: http://ns.aksw.org/scms/annotations/stanford/orgbasedin
-org.aksw.fox.tools.re.en.REStanford.workFor: http://ns.aksw.org/scms/annotations/stanford/workfor
-##################################################################
 # NER feedback #
 ##################################################################
 org.aksw.fox.web.feedback.FeedbackHttpHandler.apikey: <YOUR API KEY>

@@ -1,12 +1,10 @@
-package org.aksw.fox.utils;
+package org.aksw.fox.output;
 
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.aksw.fox.FoxParameter;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Relation;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -31,6 +29,7 @@ import com.hp.hpl.jena.vocabulary.XSD;
  * @author rspeck
  *
  */
+@Deprecated
 public class FoxJena {
 
   public static Logger LOG = LogManager.getLogger(FoxJena.class);
@@ -157,7 +156,7 @@ public class FoxJena {
         }
 
         resource.addProperty(means, graph.createResource(entity.uri));
-        resource.addProperty(source, graph.createResource(nsScmssource + entity.getTool()));
+        resource.addProperty(source, graph.createResource(nsScmssource + entity.getToolName()));
         resource.addLiteral(body, entity.getText());
       }
     }
@@ -267,25 +266,30 @@ public class FoxJena {
     return sw.toString();
   }
 
-  public static void main(final String args[]) {
+  /**
+   * <code>
+   public static void main(final String args[]) {
+  
+     // test data
+     final DataTestFactory dtf = new DataTestFactory();
+     final Set<Entity> entities = new ArrayList<Set<Entity>>(dtf.getTestEntities().values()).get(0);
+     final Set<Relation> relations = dtf.getTestRelations().entrySet().iterator().next().getValue();
+  
+     final String input = dtf.getTestEntities().entrySet().iterator().next().getKey();
+  
+     // test
+     final FoxJena fj = new FoxJena();
+  
+     fj.setAnnotations(entities);
+     fj.setRelations(relations);
+  
+     final String out = fj.print(FoxParameter.Output.TURTLE.name(), false, input);
+     System.out.println(out);
+  
+   }
+   </code>
+   */
 
-    // test data
-    final DataTestFactory dtf = new DataTestFactory();
-    final Set<Entity> entities = new ArrayList<Set<Entity>>(dtf.getTestEntities().values()).get(0);
-    final Set<Relation> relations = dtf.getTestRelations().entrySet().iterator().next().getValue();
-
-    final String input = dtf.getTestEntities().entrySet().iterator().next().getKey();
-
-    // test
-    final FoxJena fj = new FoxJena();
-
-    fj.setAnnotations(entities);
-    fj.setRelations(relations);
-
-    final String out = fj.print(FoxParameter.Output.TURTLE.name(), false, input);
-    System.out.println(out);
-
-  }
   /*
    * public static void main(String args[]) { // create an empty graph Model graph =
    * ModelFactory.createDefaultModel();
