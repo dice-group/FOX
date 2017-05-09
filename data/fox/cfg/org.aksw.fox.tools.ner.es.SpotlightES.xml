@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <spotlight>
+        <url>http://0.0.0.0:4445/rest/annotate</url>
+        <confidence>0.2</confidence>
+        <support>2</support>
+        <spotter>Default</spotter>
+        <disambiguator>Default</disambiguator>
+        <policy>whitelist</policy>
+        <types>  </types>
+        <sparql>  </sparql>
+    </spotlight>
+</config>
