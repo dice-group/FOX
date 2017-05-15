@@ -30,7 +30,7 @@ public class TrainingInputReader implements INERReader {
   public static Logger LOG = LogManager.getLogger(TrainingInputReader.class);
 
   /**
-   * 
+   *
    */
   public static void main(final String[] aa) throws Exception {
 
@@ -71,7 +71,7 @@ public class TrainingInputReader implements INERReader {
 
   /**
    * http://www-nlpir.nist.gov/related_projects/muc/proceedings/ne_task.html
-   * 
+   *
    * @param inputPaths
    * @throws IOException
    */
@@ -105,15 +105,7 @@ public class TrainingInputReader implements INERReader {
 
   @Override
   public void initFiles(final String[] initFiles) throws IOException {
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("TrainingInputReader ...");
-    }
-
     inputFiles = new File[initFiles.length];
-
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("search files ...");
-    }
 
     for (int i = 0; i < initFiles.length; i++) {
       inputFiles[i] = new File(initFiles[i]);
@@ -124,11 +116,10 @@ public class TrainingInputReader implements INERReader {
 
     readInputFromFiles();
     parse();
-
   }
 
   /**
-   * 
+   *
    * @return
    * @throws IOException
    */
@@ -224,7 +215,7 @@ public class TrainingInputReader implements INERReader {
 
   /**
    * Reads PREAMBLE or TEXT tag content to taggedInput.
-   * 
+   *
    **/
   protected void readInputFromFiles() throws IOException {
     if (LOG.isDebugEnabled()) {
@@ -269,7 +260,7 @@ public class TrainingInputReader implements INERReader {
 
   /**
    * Reads entities in taggedInput.
-   * 
+   *
    * @return
    */
   protected String parse() {
