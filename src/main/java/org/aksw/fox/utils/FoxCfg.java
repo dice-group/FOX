@@ -92,6 +92,7 @@ public class FoxCfg {
     } catch (ClassNotFoundException | NoSuchMethodException | SecurityException
         | InstantiationException | IllegalAccessException | IllegalArgumentException
         | InvocationTargetException e) {
+      LOG.error(e.getLocalizedMessage(), e);
       throw new LoadingNotPossibleException("Could not load class: " + classPath);
     }
   }

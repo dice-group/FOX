@@ -47,15 +47,7 @@ public class WikinerReader implements INERReader {
 
   @Override
   public void initFiles(final String[] initFiles) throws IOException {
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("WikinerReader ...");
-    }
-
     inputFiles = new File[initFiles.length];
-
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("search files (" + initFiles.length + ")...");
-    }
 
     for (int i = 0; i < initFiles.length; i++) {
       inputFiles[i] = new File(initFiles[i]);
