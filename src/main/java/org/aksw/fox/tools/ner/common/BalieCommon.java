@@ -6,7 +6,6 @@ import java.util.List;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.fox.utils.FoxCfg;
 
 import ca.uottawa.balie.Balie;
 import ca.uottawa.balie.DisambiguationRulesNerf;
@@ -83,14 +82,14 @@ public abstract class BalieCommon extends AbstractNER {
     String lastType = null;
     for (int i = 0; i < tokenList.Size(); i++) {
 
-      float re = Entity.DEFAULT_RELEVANCE;
-      if ((FoxCfg.get("balieDefaultRelevance") != null)
-          && !Boolean.valueOf(FoxCfg.get("balieDefaultRelevance"))) {
-        final Double like = ner.map.get(i);
-        if (like != null) {
-          re = like.floatValue();
-        }
-      }
+      final float re = Entity.DEFAULT_RELEVANCE;
+      // if ((FoxCfg.get("balieDefaultRelevance") != null)
+      // && !Boolean.valueOf(FoxCfg.get("balieDefaultRelevance"))) {
+      // final Double like = ner.map.get(i);
+      // if (like != null) {
+      // re = like.floatValue();
+      // }
+      // }
       final Token token = tokenList.Get(i);
       String type = token.EntityType().GetLabel(NamedEntityTypeEnumMappingNerf.values());
       if ((type != null) && !type.equals("nothing")) {
