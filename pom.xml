@@ -435,7 +435,7 @@
 							<addClasspath>true</addClasspath>
 						</manifest>
 						<manifestEntries>
-							<Class-Path>lib/simmetrics_jar_v1_6_2_d07_02_07.jar ${system.data}/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</Class-Path>
+							<Class-Path>lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -455,7 +455,7 @@
 							<addClasspath>true</addClasspath>
 						</manifest>
 						<manifestEntries>
-							<Class-Path>lib/simmetrics_jar_v1_6_2_d07_02_07.jar ${system.data}/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</Class-Path>
+							<Class-Path>lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -498,7 +498,7 @@
 					</docletArtifact>
 					<additionalparam>-views -all</additionalparam>
 					<useStandardDocletOptions>true</useStandardDocletOptions>
-					<reportOutputDirectory>${project.build.directory}/</reportOutputDirectory>
+					<!--<reportOutputDirectory>${project.build.directory}/</reportOutputDirectory>-->
 					<destDir>demo/doc</destDir>
 					<failOnError>false</failOnError>
 					<additionalparam>-Xdoclint:none</additionalparam>
