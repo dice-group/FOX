@@ -9,7 +9,6 @@ import java.util.List;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxTextUtil;
 
 import opennlp.tools.namefind.NameFinderME;
@@ -73,7 +72,7 @@ public abstract class OpenNLPCommon extends AbstractNER {
           }
 
           final Span[] nameSpans = nameFinder.find(tokens);
-          final double[] probs = nameFinder.probs(nameSpans);
+          nameFinder.probs(nameSpans);
           for (int ii = 0; ii < nameSpans.length; ii++) {
             final Span span = nameSpans[ii];
 
@@ -83,11 +82,11 @@ public abstract class OpenNLPCommon extends AbstractNER {
             }
             word = word.trim();
 
-            float p = Entity.DEFAULT_RELEVANCE;
-            if ((FoxCfg.get("openNLPDefaultRelevance") != null)
-                && !Boolean.valueOf(FoxCfg.get("openNLPDefaultRelevance"))) {
-              p = Double.valueOf(probs[ii]).floatValue();
-            }
+            final float p = Entity.DEFAULT_RELEVANCE;
+            // if ((FoxCfg.get("openNLPDefaultRelevance") != null)
+            // && !Boolean.valueOf(FoxCfg.get("openNLPDefaultRelevance"))) {
+            // p = Double.valueOf(probs[ii]).floatValue();
+            // }
             final String cl = mapTypeToSupportedType(span.getType());
             if (cl != EntityClassMap.getNullCategory()) {
               list.add(getEntity(word, cl, p, getToolName()));

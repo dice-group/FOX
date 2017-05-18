@@ -7,7 +7,6 @@ import java.util.Vector;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 
 import edu.illinois.cs.cogcomp.LbjNer.ExpressiveFeatures.ExpressiveFeaturesAnnotator;
@@ -131,10 +130,10 @@ public class IllinoisExtendedEN extends AbstractNER {
             res.append("] ");
             open = false;
             if (EntityClassMap.illinois(tag) != EntityClassMap.getNullCategory()) {
-              if ((FoxCfg.get("illinoisDefaultRelevance") == null)
-                  || Boolean.valueOf(FoxCfg.get("illinoisDefaultRelevance"))) {
-                prob = Entity.DEFAULT_RELEVANCE;
-              }
+              // if ((FoxCfg.get("illinoisDefaultRelevance") == null)
+              // || Boolean.valueOf(FoxCfg.get("illinoisDefaultRelevance"))) {
+              prob = Entity.DEFAULT_RELEVANCE;
+              // }
               list.add(getEntity(word, EntityClassMap.illinois(tag), prob, getToolName()));
             }
           }
