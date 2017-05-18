@@ -66,10 +66,17 @@ public class FoxCfg {
    * @return property value
    */
   public static String get(final String key) {
-    if (foxProperties == null) {
-      loadFile(CFG_FILE);
+    try {
+      if (foxProperties == null) {
+        loadFile(CFG_FILE);
+      }
+
+      return foxProperties.getProperty(key).trim();
+    } catch (final Exception e) {
+      LOG.error(e.getLocalizedMessage(), e);
+      LOG.info("given key is: " + key);
     }
-    return foxProperties.getProperty(key).trim();
+    return null;
   }
 
   /**
@@ -94,6 +101,20 @@ public class FoxCfg {
         | InvocationTargetException e) {
       LOG.error(e.getLocalizedMessage(), e);
       throw new LoadingNotPossibleException("Could not load class: " + classPath);
+    }
+  }
+
+  public static void main(final String[] a) {
+
+    final String key = "org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass";
+    final String c = FoxCfg.get(key);
+    LOG.info(c);
+
+    try {
+      FoxCfg.getClass(c);
+    } catch (final LoadingNotPossibleException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
   }
 }
