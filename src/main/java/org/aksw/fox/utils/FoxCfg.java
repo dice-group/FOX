@@ -69,7 +69,7 @@ public class FoxCfg {
     if (foxProperties == null) {
       loadFile(CFG_FILE);
     }
-    return foxProperties.getProperty(key);
+    return foxProperties.getProperty(key).trim();
   }
 
   /**
