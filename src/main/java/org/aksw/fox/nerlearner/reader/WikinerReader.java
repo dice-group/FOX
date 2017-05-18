@@ -1,7 +1,6 @@
 package org.aksw.fox.nerlearner.reader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.Map.Entry;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.utils.FileUtil;
 
-public class WikinerReader implements INERReader {
+public class WikinerReader extends ANERReader {
 
   protected File[] inputFiles;
   protected StringBuilder input = new StringBuilder();
@@ -27,7 +26,7 @@ public class WikinerReader implements INERReader {
 
     final WikinerReader r = new WikinerReader(files);
 
-    LOG.info(INERReader.maxSentences);
+    LOG.info(maxSentences);
     LOG.info(r.getEntities().size());
     /*
      * for (Entry<?, ?> e : r.getEntities().entrySet()) { LOG.info(e.getValue()); }
@@ -47,14 +46,7 @@ public class WikinerReader implements INERReader {
 
   @Override
   public void initFiles(final String[] initFiles) throws IOException {
-    inputFiles = new File[initFiles.length];
-
-    for (int i = 0; i < initFiles.length; i++) {
-      inputFiles[i] = new File(initFiles[i]);
-      if (!inputFiles[i].exists()) {
-        throw new FileNotFoundException(initFiles[i]);
-      }
-    }
+    super.initFiles(initFiles);
 
     readData();
   }
