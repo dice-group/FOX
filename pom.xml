@@ -498,8 +498,8 @@
 					</docletArtifact>
 					<additionalparam>-views -all</additionalparam>
 					<useStandardDocletOptions>true</useStandardDocletOptions>
-					<!--<reportOutputDirectory>${project.build.directory}/</reportOutputDirectory>-->
-					<destDir>demo/doc</destDir>
+					<reportOutputDirectory>${project.basedir}/demo</reportOutputDirectory>
+					<destDir>/doc</destDir>
 					<failOnError>false</failOnError>
 					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
