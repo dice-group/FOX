@@ -64,7 +64,9 @@ public class TestServer {
       demoTest();
 
       // stop server
-      server.stop();
+      final boolean down = server.stop();
+
+      LOG.info(down ? "Server stopped!" : "Could't stop the server.");
     } else {
       LOG.warn("Server start toke too long");
     }
