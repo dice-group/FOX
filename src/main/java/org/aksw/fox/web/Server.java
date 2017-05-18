@@ -216,8 +216,22 @@ public class Server {
     return running;
   }
 
-  public void stop() {
-    server.shutdownNow();
+  public boolean stop() {
+    server.shutdown();
+
+    // wait 1 min until server is down.
+    int count = 0; // 1 min
+    while (server.isStarted() && (count++ < 10)) {
+      // 6s
+      final long ms = 1000 * 6;
+      try {
+        Thread.sleep(ms);
+      } catch (final InterruptedException ex) {
+        Thread.currentThread().interrupt();
+      }
+    }
+    running = false;
+    return !running;
   }
 
   /**
