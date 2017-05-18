@@ -233,6 +233,8 @@ public class ApiResource {
       }
     } catch (final Exception e) {
       LOG.error(e.getLocalizedMessage(), e);
+      LOG.info("parameter");
+      LOG.info(parameter);
     }
     return output;
   }
