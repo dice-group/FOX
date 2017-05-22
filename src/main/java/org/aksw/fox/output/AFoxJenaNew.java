@@ -36,6 +36,7 @@ public class AFoxJenaNew {
   protected Model graph = ModelFactory.createDefaultModel();
   protected String lang = Lang.TURTLE.getName();
   // protected String lang = Lang.RDFJSON.getName();
+
   int document = 0;
   protected UrlValidator urlValidator = new UrlValidator();
 

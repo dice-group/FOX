@@ -44,7 +44,7 @@ public class FoxCLI {
    * @exception Exception if something wrong
    */
   public static void main(final String[] args) throws Exception {
-
+    LOG.info("Fox cl service starting ...");
     final Getopt getopt = new Getopt("Fox", args, "l:x i:x a:x");
     int arg;
     // input, action, lang
@@ -125,6 +125,8 @@ public class FoxCLI {
       default:
         throw new IOException("Don't know what to do. Please set the action parameter.");
     }
+
+    LOG.info("Fox cl service ended.");
   }
 
   public static void validate(final String[] inputFiles, final String lang) {

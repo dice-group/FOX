@@ -1,0 +1,22 @@
+<div class="container">
+    <div data-ng-include src="'templates/partials/navi.html'"></div>
+    <a href="https://github.com/AKSW/FOX">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+        src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub">
+    </a>
+    <h1 class="logo">Federated Knowledge Extraction Framework</h1>
+    <p>FOX is a framework that integrates the Linked Data Cloud and makes use of the diversity of NLP algorithms to extract RDF triples of high accuracy out of NL. In its current version, it integrates and merges the results of Named Entity Recognition tools. Keyword Extraction and Relation Extraction tools will be merged soon.</p>
+    <br>
+    <h2>Framework</h2>
+    <p>FOX is a framework and can be used programmatically, for more informations read the <a href="doc/index.html">Java documentation</a>.</p>
+    <br>
+    <h2>Web API</h2>
+    <p>FOX comes with a RESTful web service and can be used with <a href="https://github.com/renespeck/fox-java">FOX-Java</a> or <a href="https://github.com/earthquakesan/fox-py">FOX-Python</a> bindings.</p>
+    <p>To use the RESTful web service directly, read more about the parameter in the <a data-ng-href="index.html#!/doc">documentation</a> or try out the <a data-ng-href="index.html#!/demo">demo</a>.</p>
+    <br>
+    <h2>Tools</h2>
+    <p>FOX uses <a href="http://aksw.org/Projects/AGDISTIS.html">AGDISTIS</a>, an Open Source Named Entity Disambiguation Framework able to link entities against every Linked Data Knowledge Base, to disambiguate entities against <a href="http://aksw.org/Projects/DBpedia">DBpedia</a>. In contrast to lookup-based approaches, our framework can also detect resources that are not in DBpedia.</p>
+
+    <p>FOX relies on ensemble learning and combines the results of several NER tools. It utilizes the <a href="http://www.cs.waikato.ac.nz/ml/weka/">Waikato Environment for Knowledge Analysis</a> (Weka) and a Multilayer Perceptron trained with the <a href="https://github.com/AKSW/FOX/tree/master/input">largest dataset (5)</a> included in our evaluation.</p>
+    <div data-ng-include src="'templates/partials/footer.html'"></div>
+</div>

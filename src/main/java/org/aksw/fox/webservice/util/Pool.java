@@ -1,4 +1,4 @@
-package org.aksw.fox.web;
+package org.aksw.fox.webservice.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;

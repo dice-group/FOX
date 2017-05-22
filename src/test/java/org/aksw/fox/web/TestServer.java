@@ -80,7 +80,7 @@ public class TestServer {
 
     try {
       final Charset UTF_8 = Charset.forName("UTF-8");
-      final String url = "http://" + server.host + ":" + server.port + "/call/ner/entities";
+      final String url = "http://" + server.host + ":" + server.port + "/fox";
       LOG.info("url: " + url);
 
       final Response response = Request.Post(url)

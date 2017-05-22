@@ -1,12 +1,9 @@
 package org.aksw.fox;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import org.aksw.fox.utils.FoxConst;
 import org.aksw.fox.utils.FoxWebLog;
-import org.apache.jena.riot.Lang;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -22,7 +19,7 @@ abstract class AFox implements IFox {
 
   protected String lang = null;
   protected String response = null;
-  protected FoxWebLog foxWebLog = null;
+  protected FoxWebLog foxWebLog = new FoxWebLog();
   protected CountDownLatch countDownLatch = null;
   protected Map<String, String> parameter = null;
 
@@ -47,17 +44,6 @@ abstract class AFox implements IFox {
   }
 
   @Override
-  public Map<String, String> getDefaultParameter() {
-    final Map<String, String> map = new HashMap<>();
-    map.put(FoxParameter.Parameter.INPUT.toString(), FoxConst.NER_EN_EXAMPLE_1);
-    map.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString());
-    map.put(FoxParameter.Parameter.OUTPUT.toString(), Lang.RDFXML.getName());
-    map.put(FoxParameter.Parameter.NIF.toString(), FoxParameter.NIF.OFF.toString());
-    map.put(FoxParameter.Parameter.FOXLIGHT.toString(), FoxParameter.FoxLight.OFF.toString());
-    return map;
-  }
-
-  @Override
   public String getLang() {
     return lang;
   }
@@ -65,5 +51,12 @@ abstract class AFox implements IFox {
   @Override
   public String getLog() {
     return foxWebLog.getConsoleOutput();
+  }
+
+  protected void infoLog(final String m) {
+    if (foxWebLog != null) {
+      foxWebLog.setMessage(m);
+    }
+    LOG.info(m);
   }
 }

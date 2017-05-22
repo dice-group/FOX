@@ -1,0 +1,13 @@
+<div class="navbar navbar-inner">
+    <ul
+        class="nav"
+        data-ng-init="inflectorType='humanize'">
+        <li
+            data-ng-repeat="page in pages"
+            data-ui-route="#/{{page}}"
+            data-ng-class="{active: $uiRoute}"><a
+            data-ng-init="inflectorText=page"
+            data-ng-href="#!/{{page}}"> {{inflectorText|inflector:inflectorType}} </a></li>
+        <li><a href="doc/index.html">Java Doc</a></li>
+    </ul>
+</div>

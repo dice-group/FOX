@@ -1,5 +1,9 @@
 package org.aksw.fox;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.aksw.fox.utils.FoxConst;
 import org.apache.jena.riot.Lang;
 
 public class FoxParameter {
@@ -127,7 +131,7 @@ public class FoxParameter {
   }
 
   public enum Task {
-
+    ALL("all"), //
     NER("ner"), //
     RE("re"), //
     KE("ke");
@@ -240,5 +244,15 @@ public class FoxParameter {
       }
       return null;
     }
+  }
+
+  public static Map<String, String> getDefaultParameter() {
+    final Map<String, String> map = new HashMap<>();
+    map.put(FoxParameter.Parameter.INPUT.toString(), FoxConst.NER_EN_EXAMPLE_1);
+    map.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString());
+    map.put(FoxParameter.Parameter.OUTPUT.toString(), Lang.TURTLE.getName());
+    map.put(FoxParameter.Parameter.NIF.toString(), FoxParameter.NIF.OFF.toString());
+    map.put(FoxParameter.Parameter.FOXLIGHT.toString(), FoxParameter.FoxLight.OFF.toString());
+    return map;
   }
 }

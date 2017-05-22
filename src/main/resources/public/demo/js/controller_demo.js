@@ -7,7 +7,7 @@ Fox.DemoCtrl = function($routeParams, $scope, $http) {
   // get cfg
   $http({
     method: 'GET',
-    url: 'http://' + $scope.host + '/call/ner/config/'
+    url: 'http://' + $scope.host + '/config'
   }).
   success(function(data, status, headers, config) {
     $scope.config = data;
@@ -51,7 +51,7 @@ Fox.DemoCtrl = function($routeParams, $scope, $http) {
     // send request
     $http({
       method: 'POST',
-      url: 'http://' + $scope.host + '/api',
+      url: 'http://' + $scope.host + '/fox',
       data: request
     }).
     success(function(data, status, headers, config) {

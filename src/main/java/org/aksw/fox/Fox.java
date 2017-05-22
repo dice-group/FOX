@@ -60,6 +60,8 @@ public class Fox extends AFox {
    */
   protected IFoxJena foxJena = new FoxJenaNew();
 
+  protected FoxUtil foxUtil = new FoxUtil();
+
   /**
    *
    * Constructor.
@@ -77,6 +79,10 @@ public class Fox extends AFox {
     }
   }
 
+  /**
+   *
+   * @return
+   */
   protected Set<Entity> doNER() {
     infoLog("Start NER (" + lang + ")...");
     final Set<Entity> entities =
@@ -158,19 +164,14 @@ public class Fox extends AFox {
       infoLog("RE done.");
     }
 
-    /**
-     * <code>
-     // TODO: merge or handle one by one for each tool
-     final Set<Relation> set = new HashSet<>();
-     for (final Set<Relation> r : relations.values()) {
-
-       set.addAll(r);
-     }
-     </code>
-     */
     return relations;
   }
 
+  /**
+   *
+   * @param name
+   * @return
+   */
   protected Set<Entity> doNERLight(final String name) {
     infoLog("Starting light NER version ...");
     Set<Entity> entities = new HashSet<>();
@@ -184,10 +185,7 @@ public class Fox extends AFox {
         nerLight = t;
       }
     }
-    /*
-     * // loads a tool try { nerLight = (INER) FoxCfg.getClass(name); } catch
-     * (LoadingNotPossibleException e) { LOG.error(e.getLocalizedMessage(), e); return entities; }
-     */
+
     if (nerLight == null) {
       LOG.info("Given (" + name + ") tool is not supported.");
       return entities;
@@ -326,15 +324,14 @@ public class Fox extends AFox {
     }
 
     final String input = parameter.get(FoxParameter.Parameter.INPUT.toString());
-
-    Boolean.parseBoolean(parameter.get(FoxParameter.Parameter.NIF.toString()));
-
     final String out = parameter.get(FoxParameter.Parameter.OUTPUT.toString());
+    final String docuri = parameter.get("docuri");
+
     infoLog("Preparing output format ...");
 
     foxJena.reset();
     foxJena.setLang(out);
-    foxJena.addInput(input, "demo");
+    foxJena.addInput(input, docuri);
 
     final String start = DatatypeConverter.printDateTime(new GregorianCalendar());
     final String end = DatatypeConverter.printDateTime(new GregorianCalendar());
@@ -350,46 +347,51 @@ public class Fox extends AFox {
 
     response = foxJena.print();
 
-    // response = foxJena.print(out, useNIF, input);
+    LOG.info("jena response:\n" + response);
+
     infoLog("Preparing output format done.");
 
     if ((parameter.get("returnHtml") != null)
         && parameter.get("returnHtml").toLowerCase().endsWith("true")) {
-
-      final Map<Integer, Entity> indexEntityMap = new HashMap<>();
-      for (final Entity entity : entities) {
-        for (final Integer startIndex : entity.getIndices()) {
-          // TODO : check contains
-          indexEntityMap.put(startIndex, entity);
-        }
-      }
-
-      final Set<Integer> startIndices = new TreeSet<>(indexEntityMap.keySet());
-
-      String html = "";
-
-      int last = 0;
-      for (final Integer index : startIndices) {
-        final Entity entity = indexEntityMap.get(index);
-        if ((entity.uri != null) && !entity.uri.trim().isEmpty()) {
-          html += input.substring(last, index);
-          html += "<a class=\"" + entity.getType().toLowerCase() + "\" href=\"" + entity.uri
-              + "\"  target=\"_blank\"  title=\"" + entity.getType().toLowerCase() + "\" >"
-              + entity.getText() + "</a>";
-          last = index + entity.getText().length();
-        } else {
-          LOG.error("Entity has no URI: " + entity.getText());
-        }
-      }
-
-      html += input.substring(last);
-      parameter.put(FoxParameter.Parameter.INPUT.toString(), html);
-
-      if (LOG.isTraceEnabled()) {
-        infotrace(entities);
-      }
+      html(entities, input);
     }
     infoLog("Found " + entities.size() + " entities.");
+  }
+
+  protected void html(final Set<Entity> entities, final String input) {
+
+    final Map<Integer, Entity> indexEntityMap = new HashMap<>();
+    for (final Entity entity : entities) {
+      for (final Integer startIndex : entity.getIndices()) {
+        // TODO : check contains
+        indexEntityMap.put(startIndex, entity);
+      }
+    }
+
+    final Set<Integer> startIndices = new TreeSet<>(indexEntityMap.keySet());
+
+    String html = "";
+
+    int last = 0;
+    for (final Integer index : startIndices) {
+      final Entity entity = indexEntityMap.get(index);
+      if ((entity.uri != null) && !entity.uri.trim().isEmpty()) {
+        html += input.substring(last, index);
+        html += "<a class=\"" + entity.getType().toLowerCase() + "\" href=\"" + entity.uri
+            + "\"  target=\"_blank\"  title=\"" + entity.getType().toLowerCase() + "\" >"
+            + entity.getText() + "</a>";
+        last = index + entity.getText().length();
+      } else {
+        LOG.error("Entity has no URI: " + entity.getText());
+      }
+    }
+
+    html += input.substring(last);
+    parameter.put(FoxParameter.Parameter.INPUT.toString(), html);
+
+    if (LOG.isTraceEnabled()) {
+      foxUtil.infotrace(nerTools, entities);
+    }
   }
 
   /**
@@ -420,16 +422,9 @@ public class Fox extends AFox {
 
         // light version
         if ((light != null) && !light.equalsIgnoreCase(FoxParameter.FoxLight.OFF.toString())) {
-
           switch (FoxParameter.Task.fromString(task.toLowerCase())) {
-            case KE:
-              LOG.warn("Operation not supported.");
-              break;
             case NER:
               entities = doNERLight(light);
-              break;
-            case RE:
-              LOG.warn("Operation not supported.");
               break;
             default:
               LOG.warn("Operation not supported.");
@@ -467,33 +462,6 @@ public class Fox extends AFox {
     }
   }
 
-  /**
-   * Prints debug infos about entities for each tool and final entities in fox.
-   *
-   * @param entities final entities
-   */
-  private void infotrace(final Set<Entity> entities) {
-    if (LOG.isTraceEnabled()) {
-
-      LOG.trace("entities:");
-      for (final String toolname : nerTools.getToolResult().keySet()) {
-        if (nerTools.getToolResult().get(toolname) == null) {
-          return;
-        }
-
-        LOG.trace(toolname + ": " + nerTools.getToolResult().get(toolname).size());
-        for (final Entity e : nerTools.getToolResult().get(toolname)) {
-          LOG.trace(e);
-        }
-      }
-
-      LOG.trace("fox" + ": " + entities.size());
-      for (final Entity e : entities) {
-        LOG.trace(e);
-      }
-    }
-  }
-
   @Override
   public void setParameter(final Map<String, String> parameter) {
     super.setParameter(parameter);
@@ -511,12 +479,5 @@ public class Fox extends AFox {
             + FoxParameter.Parameter.LINKING.toString());
       }
     }
-  }
-
-  private void infoLog(final String m) {
-    if (foxWebLog != null) {
-      foxWebLog.setMessage(m);
-    }
-    LOG.info(m);
   }
 }
