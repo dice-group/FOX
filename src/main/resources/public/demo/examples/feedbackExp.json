@@ -1,0 +1,27 @@
+{
+  "key" : "YOUR API KEY",
+  "text": "Goethe studied law in University of Leipzig from 1765 to 1768. He detested learning age-old judicial rules by heart, preferring instead to attend the poetry lessons of Christian Fürchtegott Gellert. In Leipzig, Goethe fell in love with Käthchen Schönkopf and wrote cheerful verses about her in the Rococo genre. The restaurant Auerbachs Keller and its legend of Faust's 1525 barrel ride impressed him so much that Auerbachs Keller became the only real place in his closet drama Faust Part One.",
+  "url": "http://www.fictitious-site.com/example/goethe/bio",
+  "gender": "biography",
+  "language": "english",
+  "entities": [
+    {
+      "entity_uri": "http://dbpedia.org/resource/Johann_Wolfgang_von_Goethe",
+      "surface_form": "Goethe",
+      "offset": "211",
+      "feedback": "correct",
+      "manual": "false",
+      "annotation": "PERSON",
+      "systems": "spotlight_statistical alchemy_api zemanta"
+    },
+    {
+      "entity_uri": "http://dbpedia.org/resource/Leipzig",
+      "surface_form": "Leipzig",
+      "offset": "202",
+      "feedback": "correct",
+      "manual": "false",
+      "annotation": "LOCATION",
+      "systems": "spotlight_statistical alchemy_api zemanta"
+  }
+  ]
+} 

@@ -27,22 +27,9 @@ import com.hp.hpl.jena.vocabulary.XSD;
  *
  */
 public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
-  Resource inputResource = null;
-  String name = "";
 
-  /**
-   * <code>
-   public static void calenderTest() {
-  
-     final String value = DatatypeConverter.printDateTime(new GregorianCalendar());
-     LOG.info(value);
-  
-     final Date d = DatatypeConverter.parseDate(value).getTime();
-  
-     LOG.info(d.getTime());
-  
-   } </code>
-   */
+  Resource inputResource = null;
+  String baseuri = null;
 
   public static void main(final String args[]) {
 
@@ -61,7 +48,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
     final String start = DatatypeConverter.printDateTime(new GregorianCalendar());
     final String end = DatatypeConverter.printDateTime(new GregorianCalendar());
 
-    foxJena.addInput(input, "examplename");
+    foxJena.addInput(input, "http://example_uri.com");
     foxJena.addEntities(entities, start, end);
     foxJena.addRelations(relations, start, end);
 
@@ -76,7 +63,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
    * @return
    */
   protected String addSoftwareAgent(final String toolName, final String version) {
-
+    LOG.info("Adds sSoftwareAgent");
     final Resource resource = graph.createResource(ns_fox_resource.concat(toolName));
 
     resource.addProperty(RDF.type, propertyProvSoftwareAgent);
@@ -94,6 +81,8 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
   protected void addActivity(final Set<String> uris, final String start, final String end,
       final Property propertyActivity, final String toolUri) {
 
+    LOG.info("Add activity ");
+
     final Resource resource = graph.createResource();
 
     resource.addProperty(RDF.type, propertyProvActivity);
@@ -106,7 +95,6 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
     });
 
     resource.addProperty(propertyProvUsed, graph.getResource(toolUri));
-
   }
 
   /**
@@ -129,11 +117,11 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
 
   @Override
   public void addRelations(final Set<Relation> relations, final String start, final String end) {
+    LOG.info("Add relations.");
+
     if ((relations != null) && !relations.isEmpty()) {
       final Set<String> uris = _addRelations(relations);
-
       final String toolName = getToolname(relations);
-      LOG.info(toolName);
       final String toolUri = addSoftwareAgent(toolName, "TODO");
 
       addActivity(uris, start, end, propertyActivityRelationExtraction, toolUri);
@@ -141,6 +129,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
   }
 
   private Set<String> _addEntities(final Set<Entity> entities) {
+    LOG.info("Add entities.");
     final Set<String> uris = new HashSet<>();
 
     for (final Entity entity : entities) {
@@ -150,9 +139,9 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
 
         for (final Integer index : entity.getIndices()) {
 
-          final Resource resource =
-              graph.createResource(getDocumentURI().concat(String.valueOf(index)).concat("-")
-                  .concat(String.valueOf(index + entity.getText().length())));
+          final Resource resource = graph.createResource(//
+              createDocUri(baseuri, index, index + entity.getText().length())//
+          );
 
           uris.add(resource.getURI());
 
@@ -240,7 +229,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
          * <code>
          final Resource resRel =
              graph.createResource(rse.getProperty(propertyItsrdfTaIdentRef).getObject().toString());
-        
+
          for (final URI uri : relation.getRelation()) {
            resRel.addProperty(graph.createProperty(uri.toString()),
                roe.getPropertyResourceValue(propertyItsrdfTaIdentRef));
@@ -264,15 +253,17 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
   }
 
   @Override
-  public void addInput(final String input, final String name) {
+  public void addInput(final String input, String uri) {
     document++;
-    this.name = name;
+    baseuri = uri;
 
-    // uri
-    final String uri = getDocumentURI().concat(String.valueOf(0)).concat("-")
-        .concat(String.valueOf(input.length()));
+    if (baseuri == null) {
+      uri = getDefaultDocumentURI();
+    }
 
-    inputResource = graph.createResource(uri);
+    final String currecntUri = createDocUri(baseuri, 0, (input.length()));
+
+    inputResource = graph.createResource(currecntUri);
     inputResource.addProperty(RDF.type, propertyNifContext);
 
     // endIndex
@@ -287,13 +278,17 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
     inputResource.addLiteral(propertyNifIsString, input);
   }
 
-  protected String getDocumentURI() {
-    return ns_fox_resource.concat(name).concat("_document").concat(String.valueOf(document))
-        .concat("_char");
+  public String createDocUri(final String baseuri, final int start, final int end) {
+    return baseuri.concat("#char").concat(String.valueOf(start)).concat(",")
+        .concat(String.valueOf(end));
+  }
+
+  public String getDefaultDocumentURI() {
+    return "http://ns.aksw.org/fox/".concat("demo/").concat("document-")
+        .concat(String.valueOf(document));
   }
 
   private String getToolname(final Set<? extends IData> data) {
-
     String toolname = "";
     for (final IData e : data) {
       if (toolname.isEmpty()) {
@@ -305,5 +300,4 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
     }
     return toolname;
   }
-
 }

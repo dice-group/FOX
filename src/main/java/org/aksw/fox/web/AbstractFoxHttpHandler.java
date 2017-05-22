@@ -65,7 +65,7 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
           if (LOG.isDebugEnabled()) {
             LOG.debug("HTTP_BAD_REQUEST (400)");
           }
-          setResponse(response, HttpURLConnection.HTTP_BAD_REQUEST);
+          sendError(response, HttpURLConnection.HTTP_BAD_REQUEST);
 
         } else {
 
@@ -75,20 +75,20 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
             if (LOG.isDebugEnabled()) {
               LOG.debug("HTTP_BAD_REQUEST (400)");
             }
-            setResponse(response, HttpURLConnection.HTTP_BAD_REQUEST);
+            sendError(response, HttpURLConnection.HTTP_BAD_REQUEST);
           }
         }
       } else {
         if (LOG.isDebugEnabled()) {
           LOG.debug("HTTP_BAD_METHOD (405)");
         }
-        setResponse(response, HttpURLConnection.HTTP_BAD_METHOD);
+        sendError(response, HttpURLConnection.HTTP_BAD_METHOD);
       }
     } else {
       if (LOG.isDebugEnabled()) {
         LOG.debug("HTTP_NOT_FOUND (404)");
       }
-      setResponse(response, HttpURLConnection.HTTP_NOT_FOUND);
+      sendError(response, HttpURLConnection.HTTP_NOT_FOUND);
     }
   }
 
@@ -130,14 +130,14 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
           offset += pointer;
         }
       } catch (final Exception e) {
-        LOG.error("\n", e);
+        LOG.error(e.getLocalizedMessage(), e);
       }
 
       String query = "";
       try {
         query = new String(data, "UTF-8");
       } catch (final UnsupportedEncodingException e) {
-        LOG.error("\n", e);
+        LOG.error(e.getLocalizedMessage(), e);
         query = "";
       }
 
@@ -170,7 +170,7 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
             try {
               formMap.put(key, URLDecoder.decode(value, "UTF-8"));
             } catch (final UnsupportedEncodingException e) {
-              LOG.error("\n", e);
+              LOG.error(e.getLocalizedMessage(), e);
             }
           }
         }
@@ -191,7 +191,7 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
               formMap.put(entry.getKey().toLowerCase(), entry.getValue()[0]);
 
             } catch (final Exception e) {
-              LOG.error("\n", e);
+              LOG.error(e.getLocalizedMessage(), e);
             }
           }
         }
@@ -227,16 +227,16 @@ public abstract class AbstractFoxHttpHandler extends HttpHandler {
       response.setContentLength(bytes.length);
       response.getWriter().write(data);
     } catch (final IOException e) {
-      LOG.error("\n", e);
+      LOG.error(e.getLocalizedMessage(), e);
     }
     response.finish();
   }
 
-  protected void setResponse(final Response response, final int status) {
+  private void sendError(final Response response, final int status) {
     try {
       response.sendError(status);
     } catch (final IOException e) {
-      LOG.error("\n", e);
+      LOG.error(e.getLocalizedMessage(), e);
     }
     response.finish();
   }

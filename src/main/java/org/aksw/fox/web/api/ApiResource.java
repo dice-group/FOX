@@ -1,6 +1,5 @@
-package org.aksw.fox.web;
+package org.aksw.fox.web.api;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -24,18 +23,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import org.aksw.fox.FoxParameter;
-import org.aksw.fox.FoxParameter.Output;
 import org.aksw.fox.IFox;
-import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.FoxCfg;
-import org.aksw.fox.utils.FoxLanguageDetector;
 import org.aksw.fox.utils.FoxTextUtil;
-import org.aksw.gerbil.io.nif.NIFWriter;
-import org.aksw.gerbil.io.nif.impl.TurtleNIFParser;
-import org.aksw.gerbil.io.nif.impl.TurtleNIFWriter;
+import org.aksw.fox.web.FoxHttpHandler;
+import org.aksw.fox.web.Server;
+import org.aksw.fox.webservice.util.RouteConfig;
 import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentCreator;
-import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentParser;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.apache.jena.riot.Lang;
 import org.apache.log4j.LogManager;
@@ -46,17 +40,13 @@ import org.jetlang.fibers.ThreadFiber;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-@Path("ner")
+@Path("fox")
 public class ApiResource {
 
   public static Logger LOG = LogManager.getLogger(ApiResource.class);
 
-  private final FoxLanguageDetector languageDetector = new FoxLanguageDetector();
-
-  public final TurtleNIFDocumentParser parser = new TurtleNIFDocumentParser();
-  public final TurtleNIFDocumentCreator creator = new TurtleNIFDocumentCreator();
-  public final TurtleNIFParser turtleNIFParser = new TurtleNIFParser();
-  public final NIFWriter turtleNIFWriter = new TurtleNIFWriter();
+  private final RouteConfig apiResourceCfg = new RouteConfig();
+  private final ApiUtil apiUtil = new ApiUtil();
 
   private static final String PERSON_TYPE_URI = "scmsann:PERSON";
   private static final String LOCATION_TYPE_URI = "scmsann:LOCATION";
@@ -73,98 +63,75 @@ public class ApiResource {
   @Produces(MediaType.APPLICATION_JSON)
   @GET
   public String getConfig() {
-
-    final JSONObject cfg = new JSONObject();
-    final JSONArray langs = new JSONArray();
-    try {
-      ToolsGenerator.nerTools.keySet().forEach(lang -> {
-        cfg.put(lang, new JSONObject());
-
-        final JSONObject nerTools = new JSONObject();
-        ToolsGenerator.nerTools.get(lang).forEach(nerTool -> {
-          nerTools.put(nerTool.substring(nerTool.lastIndexOf(".") + 1), nerTool);
-        });
-        cfg.getJSONObject(lang).put("ner", nerTools);
-        cfg.getJSONObject(lang).put("nerlinking", ToolsGenerator.disambiguationTools.get(lang));
-        langs.put(lang);
-      });
-      cfg.put("lang", langs);
-      final JSONArray ja = new JSONArray();
-      for (final Output v : FoxParameter.Output.values()) {
-        ja.put(v.toString());
-      }
-      cfg.put("out", ja);
-
-    } catch (final Exception e) {
-      LOG.error(e.getLocalizedMessage(), e);
-    }
-    return cfg.toString(2);
+    return apiResourceCfg.getConfig();
   }
 
   /**
    * <code>
 
-    curl -d "@example.ttl" -H "Content-Type: application/x-turtle" http://0.0.0.0:4444/call/ner/entities
-  
+    curl -d "@example.ttl" -H "Content-Type: application/x-turtle" http://0.0.0.0:4444/fox/
+
     </code>
    */
-  @Path("entities")
   @Consumes("application/x-turtle")
   @Produces("application/x-turtle")
   @POST
   public String postApiNif(@Context final Request request, @Context final HttpHeaders hh) {
+
+    LOG.info("HttpHeaders");
+    hh.getRequestHeaders().entrySet().forEach(LOG::info);
+
     String nifDocument = "";
     try {
       // read request
       final InputStream in = request.getInputStream();
       List<Document> docs = null;
       try {
-        docs = turtleNIFParser.parseNIF(in);
+        docs = apiUtil.parseNIF(in);
       } catch (final Exception e) {
         LOG.error(e.getLocalizedMessage(), e);
-        return "";
-      }
-      try {
+      } finally {
         in.close();
-      } catch (final IOException e) {
-        LOG.error(e.getLocalizedMessage(), e);
       }
-      final List<Document> annotetedDocs = new ArrayList<>();
-      for (final Document document : docs) {
 
-        // send request to fox
-        final Map<String, String> parameter = new HashMap<>();
-        parameter.put(FoxParameter.Parameter.INPUT.toString(), document.getText());
-        parameter.put(FoxParameter.Parameter.TYPE.toString(), FoxParameter.Type.TEXT.toString());
-        parameter.put(FoxParameter.Parameter.LANG.toString(), FoxParameter.Langs.EN.toString());
-        parameter.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString());
-        parameter.put(FoxParameter.Parameter.OUTPUT.toString(), Lang.JSONLD.getName());
+      // annotate each doc
+      if (docs != null) {
+        final List<Document> annotetedDocs = new ArrayList<>();
+        for (final Document document : docs) {
+          // send request to fox
+          final Map<String, String> parameter = new HashMap<>();
+          parameter.put(FoxParameter.Parameter.INPUT.toString(), document.getText());
+          parameter.put(FoxParameter.Parameter.TYPE.toString(), FoxParameter.Type.TEXT.toString());
+          parameter.put(FoxParameter.Parameter.LANG.toString(), FoxParameter.Langs.EN.toString());
+          parameter.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString());
+          parameter.put(FoxParameter.Parameter.OUTPUT.toString(), Lang.TURTLE.getName());
 
-        final String response = requestFox(parameter);
-        LOG.info(response);
-        // parse fox response
-        if ((response != null) && !response.isEmpty()) {
+          final String response = requestFox(parameter);
+          LOG.info(response);
+          // parse fox response
+          if ((response != null) && !response.isEmpty()) {
 
-          final JSONObject outObj = new JSONObject(response);
-          if (outObj.has("@graph")) {
-            final JSONArray graph = outObj.getJSONArray("@graph");
-            for (int i = 0; i < graph.length(); i++) {
-              parseType(graph.getJSONObject(i), document);
+            final JSONObject outObj = new JSONObject(response);
+            if (outObj.has("@graph")) {
+              final JSONArray graph = outObj.getJSONArray("@graph");
+              for (int i = 0; i < graph.length(); i++) {
+                parseType(graph.getJSONObject(i), document);
+              }
+            } else {
+              parseType(outObj, document);
             }
-          } else {
-            parseType(outObj, document);
           }
+          annotetedDocs.add(document);
         }
-        annotetedDocs.add(document);
+        nifDocument = apiUtil.writeNIF(annotetedDocs);
       }
-      nifDocument = turtleNIFWriter.writeNIF(annotetedDocs);
     } catch (final Exception e) {
       LOG.error(e.getStackTrace(), e);
     }
+
     return nifDocument;
   }
 
-  @Path("entities")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_XML)
   @POST
@@ -210,7 +177,7 @@ public class ApiResource {
         FoxParameter.Langs l = FoxParameter.Langs.fromString(lang);
         if (l == null) {
 
-          l = languageDetector.detect(parameter.get(FoxParameter.Parameter.INPUT.toString()));
+          l = apiUtil.detectLanguage(parameter.get(FoxParameter.Parameter.INPUT.toString()));
           LOG.info("lang" + lang);
           if (l != null) {
             lang = l.toString();
@@ -239,19 +206,7 @@ public class ApiResource {
     return output;
   }
 
-  @Path("entitiesFeedback")
-  @POST
-  public JsonObject postText() {
-    // TODO: entitiesFeedback
-    LOG.info("FEEDBACK");
-    return null;
-  }
-
-  public static String getPath() {
-    return "/call/";
-  }
-
-  private String requestFox(final Map<String, String> parameter) {
+  protected String requestFox(final Map<String, String> parameter) {
     String output = "";
     // get a fox instance
     IFox fox = Server.pool.get(parameter.get(FoxParameter.Parameter.LANG.toString())).poll();

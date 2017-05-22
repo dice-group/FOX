@@ -13,6 +13,7 @@ import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxLanguageDetector;
 import org.aksw.fox.utils.FoxStringUtil;
 import org.aksw.fox.utils.FoxTextUtil;
+import org.aksw.fox.webservice.util.Pool;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 import org.jetlang.fibers.Fiber;
@@ -28,6 +29,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
   public static final String CFG_KEY_FOX_LIFETIME =
       FoxHttpHandler.class.getName().concat(".lifetime");
+
   FoxLanguageDetector languageDetector = new FoxLanguageDetector();
 
   @Override

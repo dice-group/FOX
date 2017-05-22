@@ -68,6 +68,7 @@ public class GermanNERCorpus extends ANERReader {
     tagsMap.put("B-PER", EntityClassMap.P);
     tagsMap.put("B-LOC", EntityClassMap.L);
     tagsMap.put("B-ORG", EntityClassMap.O);
+
     tagsMap.put("I-PER", EntityClassMap.P);
     tagsMap.put("I-LOC", EntityClassMap.L);
     tagsMap.put("I-ORG", EntityClassMap.O);

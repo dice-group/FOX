@@ -1,0 +1,91 @@
+
+.string { color: green; }
+.number { color: darkorange; }
+.boolean { color: blue; }
+.null { color: magenta; }
+.key { color: red; }
+
+.btn-custom {
+	/*
+	http://charliepark.org/bootstrap_buttons
+	*/
+	background-color: hsl(32, 100%, 36%) !important;
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff9f32",
+		endColorstr="#b76100");
+	background-image: -khtml-gradient(linear, left top, left bottom, from(#ff9f32),
+		to(#b76100));
+	background-image: -moz-linear-gradient(top, #ff9f32, #b76100);
+	background-image: -ms-linear-gradient(top, #ff9f32, #b76100);
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ff9f32),
+		color-stop(100%, #b76100));
+	background-image: -webkit-linear-gradient(top, #ff9f32, #b76100);
+	background-image: -o-linear-gradient(top, #ff9f32, #b76100);
+	background-image: linear-gradient(#ff9f32, #b76100);
+	border-color: #b76100 #b76100 hsl(32, 100%, 30%);
+	color: #fff !important;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.39);
+	-webkit-font-smoothing: antialiased;
+}
+
+.navbar {
+	margin-top: 40px;
+}
+
+.navbar .nav>li>a:hover,.navbar .nav .active>a,.navbar .nav .active>a:hover	{
+	color: #f58220;
+}
+
+.logo {
+	background-image: url('../img/foxlogo.png');
+	height: 86px;
+	background-repeat: no-repeat;
+	background-position: left center;
+	padding-top: 40px;
+	padding-left: 100px;
+}
+a{
+    cursor: pointer;
+    cursor: hand;
+    color: #f58220;
+}
+.input a {
+	color:#333;
+}
+a.organization {
+	background-color: #AF4A52;
+	color:#f5f5f5;
+}
+
+a.person {
+	background-color: #08c;
+	color:#f5f5f5;
+}
+
+a.location {
+	background-color: #468746;
+	   color:#f5f5f5;
+}
+
+
+pre {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	white-space: pre-wrap;
+	margin: 10px 0px 10px 0px;
+	max-height: 300px;
+     padding: 5px; margin: 5px;
+}
+
+
+.input {
+	background-color: #f5f5f5;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	border: solid 1px rgba(0, 0, 0, 0.15);
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding: 10px;
+	max-height: 300px;
+}
+

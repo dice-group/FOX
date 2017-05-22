@@ -187,13 +187,26 @@
 			<classifier>models</classifier>
 		</dependency>
 
-		<!-- stanford for Spanish
+		<!-- stanford for Spanish-->
 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp</artifactId>
 			<version>3.5.2</version>
 			<classifier>models-spanish</classifier>
 		</dependency>
+	<!-- 	<dependency>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-corenlp</artifactId>
+			<version>3.5.2</version>
+			<classifier>models-french</classifier>
+		</dependency> -->
+				<dependency>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-corenlp</artifactId>
+			<version>3.5.2</version>
+			<classifier>models-german</classifier>
+		</dependency>
+		<!--
 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp-spanish</artifactId>
@@ -349,6 +362,12 @@
 		    <artifactId>ant</artifactId>
 		    <version>1.10.1</version>
 		</dependency>
+		<!-- sparkjava -->
+		<dependency>
+			<groupId>com.sparkjava</groupId>
+			<artifactId>spark-core</artifactId>
+			<version>2.5</version>
+		</dependency>
 	</dependencies>
 	<!-- build -->
 	<build>
@@ -498,8 +517,8 @@
 					</docletArtifact>
 					<additionalparam>-views -all</additionalparam>
 					<useStandardDocletOptions>true</useStandardDocletOptions>
-					<reportOutputDirectory>${project.basedir}/demo</reportOutputDirectory>
-					<destDir>/doc</destDir>
+					<reportOutputDirectory>${project.basedir}</reportOutputDirectory>
+					<destDir>/demo/doc</destDir>
 					<failOnError>false</failOnError>
 					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>

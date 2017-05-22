@@ -1,7 +1,6 @@
 package org.aksw.fox.web;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,13 +12,13 @@ import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.aksw.fox.Fox;
 import org.aksw.fox.IFox;
-import org.aksw.fox.data.exception.LoadingNotPossibleException;
 import org.aksw.fox.data.exception.PortInUseException;
-import org.aksw.fox.data.exception.UnsupportedLangException;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.CfgManager;
 import org.aksw.fox.utils.FoxServerUtil;
+import org.aksw.fox.web.api.ApiResource;
 import org.aksw.fox.web.feedback.FeedbackHttpHandler;
+import org.aksw.fox.webservice.util.Pool;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -35,7 +34,9 @@ import org.glassfish.jersey.server.ResourceConfig;
  * @author rspeck
  *
  */
+@Deprecated
 public class Server {
+
   public final static Logger LOG = LogManager.getLogger(Server.class);
   public static final XMLConfiguration CFG = CfgManager.getCfg(Server.class);
 
@@ -44,8 +45,7 @@ public class Server {
   static {
     try {
       Server.initPools();
-    } catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-        | SecurityException | UnsupportedLangException | LoadingNotPossibleException e) {
+    } catch (final Exception e) {
       LOG.error(e.getLocalizedMessage(), e);
     }
   }
@@ -66,18 +66,12 @@ public class Server {
   public String host = CFG.getString(KEY_DEFAULT_NETWORK_HOST);
 
   /**
+   * Checks port and inits the server.
    *
    * @param port the servers port
-   * @throws SecurityException
-   * @throws NoSuchMethodException
-   * @throws InvocationTargetException
-   * @throws IllegalArgumentException
-   * @throws NumberFormatException
-   * @throws PortInUseException
+   * @throws Exception
    */
-  public Server() throws LoadingNotPossibleException, UnsupportedLangException,
-      NumberFormatException, IllegalArgumentException, InvocationTargetException,
-      NoSuchMethodException, SecurityException, PortInUseException {
+  public Server() throws Exception {
 
     final int port = CFG.getInt(KEY_PORT);
     if (!FoxServerUtil.isPortAvailable(port)) {
@@ -87,9 +81,7 @@ public class Server {
     init();
   }
 
-  protected static void initPools()
-      throws UnsupportedLangException, LoadingNotPossibleException, IllegalArgumentException,
-      InvocationTargetException, NoSuchMethodException, SecurityException {
+  protected static void initPools() throws Exception {
     pool = new HashMap<>();
     for (final String lang : ToolsGenerator.usedLang) {
       int poolsize = CFG.getInt(CFG_KEY_POOL_SIZE.concat("[@").concat(lang).concat("]"));
@@ -102,8 +94,7 @@ public class Server {
     }
   }
 
-  protected void init() throws IllegalArgumentException, InvocationTargetException,
-      NoSuchMethodException, SecurityException {
+  protected void init() throws Exception {
 
     server = new HttpServer();
     server.getServerConfiguration().setDefaultErrorPageGenerator(new ErrorPages());
@@ -112,20 +103,18 @@ public class Server {
 
     // MonitoringConfig
     final Set<String> allowedpaths;
-    allowedpaths = new HashSet<>(Arrays.asList(//
-        ApiResource.getPath().replaceAll("/", ""), //
-        FoxHttpHandler.getPath().replaceAll("/", "") //
-    ));
-
-    server.getServerConfiguration().getMonitoringConfig().getWebServerConfig()
+    allowedpaths = new HashSet<>(Arrays.asList(""));
+    server.getServerConfiguration()//
+        .getMonitoringConfig().getWebServerConfig()
         .addProbes(new HttpServerProbeRequestMonitoring(allowedpaths));
 
     // adds api handler
-    server//
-        .getServerConfiguration().addHttpHandler(
-            RuntimeDelegate.getInstance()//
-                .createEndpoint(createApiResourceConfig(), GrizzlyHttpContainer.class),
-            ApiResource.getPath());
+    final ResourceConfig rc = new ResourceConfig().registerClasses(ApiResource.class)
+        .register(JsonProcessingFeature.class).packages("org.glassfish.jersey.examples.jsonp")
+        .property(JsonGenerator.PRETTY_PRINTING, true);
+
+    server.getServerConfiguration().addHttpHandler(RuntimeDelegate.getInstance()//
+        .createEndpoint(rc, GrizzlyHttpContainer.class), "");
 
     String state = null;
     // error page data
@@ -216,14 +205,17 @@ public class Server {
     return running;
   }
 
+  /**
+   * Stops server.
+   *
+   * @return true in case server stopped
+   */
   public boolean stop() {
     server.shutdown();
-
     // wait 1 min until server is down.
     int count = 0; // 1 min
     while (server.isStarted() && (count++ < 10)) {
-      // 6s
-      final long ms = 1000 * 6;
+      final long ms = 1000 * 6;// 6s
       try {
         Thread.sleep(ms);
       } catch (final InterruptedException ex) {
@@ -234,14 +226,4 @@ public class Server {
     return !running;
   }
 
-  /**
-   * Create Jersey server-side application resource configuration.
-   *
-   * @return Jersey server-side application configuration.
-   */
-  public static ResourceConfig createApiResourceConfig() {
-    return new ResourceConfig().registerClasses(ApiResource.class)
-        .register(JsonProcessingFeature.class).packages("org.glassfish.jersey.examples.jsonp")
-        .property(JsonGenerator.PRETTY_PRINTING, true);
-  }
 }

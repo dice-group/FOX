@@ -1,0 +1,118 @@
+<div class="container">
+  <div data-ng-include src="'templates/partials/navi.html'"></div>
+
+  <!-- input -->
+  <form class="form-horizontal ">
+    <fieldset>
+
+      <div data-ng-hide="!response.output">
+        <a class="btn-link" data-ng-click="collapsed = !collapsed">Go Back</a>
+      </div>
+
+      <div data-collapse="collapsed">
+        <div class="row">
+          <div class="control-group span4">
+            <label class="control-label">Lang</label>
+            <div class="controls">
+              <select class="input-block-level" id="lang" data-ng-model="request.lang" data-ng-init="request.lang='detect'">
+                <option>detect</option>
+                <option data-ng-repeat="lang in config.lang">{{lang}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="control-group span4">
+            <label class="control-label">Input Format</label>
+            <div class="controls">
+              <select class="input-block-level" data-ng-model="request.type" id="type">
+                <option value="text">text/html</option>
+                <option value="url">url</option>
+              </select>
+            </div>
+          </div>
+          <div class="control-group span4">
+            <label class="control-label">Extraction Type</label>
+            <div class="controls">
+              <select class="input-block-level" id="task" data-ng-model="request.task">
+                <option value="ner">ner</option>
+                <option value="re">re</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Input</label>
+          <div class="controls">
+            <textarea class="span6" id="input" data-ng-model="request.input" rows="7" cols="50" wrap="soft"> </textarea>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="control-group span4">
+            <label class="control-label">Output Format</label>
+            <div class="controls">
+              <select class="input-block-level" id="output" data-ng-model="request.output">
+                  <option data-ng-repeat="output in config.out">{{output}}</option>
+              </select>
+            </div>
+          </div>
+          <!--
+          <div class="control-group span1">
+          <label class="control-label" style="width:70px">NIF-draft</label>
+          <div class="controls" style="margin-left: 90px;">
+          <input type="checkbox" id="nif" data-ng-model="request.nif" data-ng-checked="request.nif">
+          </div>
+          </div>
+          -->
+          <div class="control-group span4">
+            <label class="control-label">Fox Light</label>
+            <div class="controls">
+              <select class="input-block-level" id="foxlight" data-ng-model="request.foxlight">
+                <option>OFF</option>
+                <option data-ng-hide="{{request.lang =='detect'}}" data-ng-repeat="(name,tool) in config[request.lang].ner" value="{{tool}}">{{name}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="control-group span7">
+            <label class="control-label">Examples</label>
+            <div class="controls">
+              <input type="radio" name="defaults" value="0" data-ng-model="request.defaults">
+              <input type="radio" name="defaults" value="1" data-ng-model="request.defaults">
+              <input type="radio" name="defaults" value="2" data-ng-model="request.defaults">
+	      <input type="radio" name="defaults" value="5" data-ng-model="request.defaults">
+
+            </div>
+          </div>
+          <div class="span1">
+            <button type="submit" data-ng-click="request.send()" data-ng-disabled="request.state!='done'" class="btn btn-custom">Submit</button>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+
+
+  <div data-collapse="!collapsed">
+    <!-- log -->
+    <div class="container">
+      <div class="input" data-ng-bind-html-unsafe="response.input"></div>
+    </div>
+    <br>
+    <div class="container">
+      <pre class="output">{{response.output}}</pre>
+    </div>
+    <br>
+    <div class="container">
+      <pre class="log">{{response.log}}</pre>
+  </div>
+
+
+  <div data-ng-include src="'templates/partials/footer.html'"></div>
+</div>

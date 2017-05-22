@@ -15,6 +15,7 @@ public class StanfordDE extends StanfordCommon {
   // https://github.com/stanfordnlp/CoreNLP/blob/master/src/edu/stanford/nlp/pipeline/StanfordCoreNLP-german.properties
 
   private static Properties props = new Properties();
+
   static {
     /* props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse"); */
     props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");

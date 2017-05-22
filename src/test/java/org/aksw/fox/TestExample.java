@@ -30,7 +30,7 @@ public class TestExample {
     } else {
       final Fox fox = new Fox(lang);
 
-      final Map<String, String> defaults = fox.getDefaultParameter();
+      final Map<String, String> defaults = FoxParameter.getDefaultParameter();
 
       defaults.put(FoxParameter.Parameter.TYPE.toString(), FoxParameter.Type.TEXT.toString());
       defaults.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString());
