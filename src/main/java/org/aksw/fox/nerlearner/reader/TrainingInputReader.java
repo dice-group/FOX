@@ -2,7 +2,6 @@ package org.aksw.fox.nerlearner.reader;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,8 +15,6 @@ import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.utils.FoxTextUtil;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 /**
  * reads input training data
@@ -25,9 +22,7 @@ import org.apache.log4j.Logger;
  * @author rspeck
  *
  */
-public class TrainingInputReader implements INERReader {
-
-  public static Logger LOG = LogManager.getLogger(TrainingInputReader.class);
+public class TrainingInputReader extends ANERReader {
 
   /**
    *
@@ -35,7 +30,7 @@ public class TrainingInputReader implements INERReader {
   public static void main(final String[] aa) throws Exception {
 
     final List<String> files = new ArrayList<>();
-    final File file = new File("input/3");
+    final File file = new File("input/4");
     if (!file.exists()) {
       throw new IOException("Can't find file or directory.");
     } else {
@@ -56,11 +51,11 @@ public class TrainingInputReader implements INERReader {
     final String[] a = files.toArray(new String[files.size()]);
 
     final INERReader trainingInputReader = new TrainingInputReader(a);
-    TrainingInputReader.LOG.info("input: ");
-    TrainingInputReader.LOG.info(trainingInputReader.getInput());
-    TrainingInputReader.LOG.info("oracle: ");
+    ANERReader.LOG.info("input: ");
+    ANERReader.LOG.info(trainingInputReader.getInput());
+    ANERReader.LOG.info("oracle: ");
     for (final Entry<String, String> e : trainingInputReader.getEntities().entrySet()) {
-      TrainingInputReader.LOG.info(e.getValue() + "-" + e.getKey());
+      ANERReader.LOG.info(e.getValue() + "-" + e.getKey());
     }
   }
 
@@ -105,14 +100,7 @@ public class TrainingInputReader implements INERReader {
 
   @Override
   public void initFiles(final String[] initFiles) throws IOException {
-    inputFiles = new File[initFiles.length];
-
-    for (int i = 0; i < initFiles.length; i++) {
-      inputFiles[i] = new File(initFiles[i]);
-      if (!inputFiles[i].exists()) {
-        throw new FileNotFoundException(initFiles[i]);
-      }
-    }
+    super.initFiles(initFiles);
 
     readInputFromFiles();
     parse();
@@ -125,31 +113,11 @@ public class TrainingInputReader implements INERReader {
    */
   @Override
   public String getInput() {
-    // DEBUG
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("getInput ...\n" + input);
-    }
-
-    // INFO
-    LOG.info("input length: " + input.length());
-
     return input;
   }
 
   @Override
   public HashMap<String, String> getEntities() {
-    {
-      // DEBUG
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("getEntities ...");
-        for (final Entry<String, String> e : entities.entrySet()) {
-          LOG.debug(e.getKey() + " -> " + e.getValue());
-        }
-      }
-      // INFO
-      LOG.info("oracle raw size: " + entities.size());
-    }
-
     {
       // remove oracle entities aren't in input
       final Set<Entity> set = new HashSet<>();
@@ -264,17 +232,13 @@ public class TrainingInputReader implements INERReader {
    * @return
    */
   protected String parse() {
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("parse ...");
-    }
-
     input = taggedInput.toString().replaceAll("<p>|</p>", "");
 
     while (true) {
-
       final int openTagStartIndex = input.indexOf("<ENAMEX");
       if (openTagStartIndex == -1) {
         break;
+
       } else {
         final int openTagCloseIndex = input.indexOf(">", openTagStartIndex);
         final int closeTagIndex = input.indexOf("</ENAMEX>");
@@ -317,7 +281,7 @@ public class TrainingInputReader implements INERReader {
           input = input.replaceFirst("</ENAMEX>", "");
 
         } catch (final Exception e) {
-          LOG.error("\n", e);
+          LOG.error(e.getLocalizedMessage(), e);
         }
       }
     }
@@ -359,5 +323,4 @@ public class TrainingInputReader implements INERReader {
       }
     }
   }
-
 }

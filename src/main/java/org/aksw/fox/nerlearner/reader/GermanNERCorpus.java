@@ -22,6 +22,8 @@ public class GermanNERCorpus extends ANERReader {
 
   String sep = "\t";
 
+  boolean debug = true;
+
   /**
    * Test.
    *
@@ -35,14 +37,13 @@ public class GermanNERCorpus extends ANERReader {
 
     final INERReader r = new GermanNERCorpus(files);
 
-    LOG.info(maxSentences);
-    LOG.info(r.getEntities().size());
-
     LOG.info("input:");
     for (final String line : r.getInput().split("\n")) {
       LOG.info(line);
     }
 
+    LOG.info("entities:");
+    r.getEntities().entrySet().forEach(LOG::info);
   }
 
   /**
@@ -83,46 +84,50 @@ public class GermanNERCorpus extends ANERReader {
 
       // all lines
       String lastClass = "";
-      final StringBuffer word = new StringBuffer();
+      final StringBuffer entity = new StringBuffer();
 
+      final int debuglines = 1000;
+      int currentLine = 0;
       for (final String line : lines) {
-        if (line.trim().isEmpty()) {
-          // new sentence
-          input.append(" \n");
+        currentLine++;
 
-        } else {
-          final String[] split = line.split(sep);
+        if (debug && (currentLine < debuglines)) {
+          if (line.trim().isEmpty()) {
+            // new sentence
+            input.append(" \n");
 
-          if (split.length != 2) {
-            LOG.info("Line length wrong, should be 2, but it's: " + split.length);
-          }
-          if (split.length > 1) {
+          } else {
+            final String[] split = line.split(sep);
 
-            final String currentToken = split[0];
-            final String currentClass = tagsMap.get(split[1]);
-
-            input.append(currentToken).append(" ");
-
-            if (lastClass.isEmpty()) {
-              lastClass = currentClass;
+            if (split.length != 2) {
+              LOG.info("Line length wrong, should be 2, but it's: " + split.length);
             }
+            if (split.length > 1) {
 
-            if (lastClass.equals(currentClass)) {
-              if (word.length() != 0) {
-                word.append(" ");
-              }
-              word.append(currentToken);
-            } else {
-              if (!(lastClass).equals(EntityClassMap.N)) {
-                addE(word.toString(), lastClass);
+              final String currentToken = split[0].trim();
+              final String currentClass = tagsMap.get(split[1]);
+
+              input.append(currentToken).append(" ");
+
+              if (lastClass.isEmpty()) {
+                lastClass = currentClass;
               }
 
-              word.delete(0, word.length());
-              word.append(currentToken);
-              lastClass = currentClass;
+              if (lastClass.equals(currentClass)) {
+                if (entity.length() != 0) {
+                  entity.append(" ");
+                }
+                entity.append(currentToken);
+              } else {
+                if (!(lastClass).equals(EntityClassMap.getNullCategory())) {
+                  addE(entity.toString().trim(), lastClass);
+                }
 
+                entity.delete(0, entity.length());
+                entity.append(currentToken);
+                lastClass = currentClass;
+              }
             }
-
           }
         }
       }
@@ -137,7 +142,7 @@ public class GermanNERCorpus extends ANERReader {
     // disambEntities.entrySet().forEach(LOG::info);
 
     disambEntities.entrySet()
-        .forEach(e -> entities.put(e.getKey(), tagsMap.get(e.getValue().iterator().next())));
+        .forEach(e -> entities.put(e.getKey(), (e.getValue().iterator().next())));
 
   }
 
