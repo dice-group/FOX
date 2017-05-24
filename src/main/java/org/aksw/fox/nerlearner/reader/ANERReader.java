@@ -18,6 +18,9 @@ public abstract class ANERReader implements INERReader {
   public static final Logger LOG = LogManager.getLogger(INERReader.class);
   public static final int maxSentences = Integer.valueOf(FoxCfg.get(CFG_KEY_MAX_SENTENCES));
 
+  /**
+   * String to File.
+   */
   @Override
   public void initFiles(final String[] initFiles) throws IOException {
     inputFiles = new File[initFiles.length];
