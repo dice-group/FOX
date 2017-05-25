@@ -22,8 +22,6 @@ public class GermanNERCorpus extends ANERReader {
 
   String sep = "\t";
 
-  boolean debug = false;
-
   /**
    * Test.
    *
@@ -86,47 +84,42 @@ public class GermanNERCorpus extends ANERReader {
       String lastClass = "";
       final StringBuffer entity = new StringBuffer();
 
-      final int debuglines = 1000;
-      int currentLine = 0;
       for (final String line : lines) {
-        currentLine++;
 
-        if (debug && (currentLine < debuglines)) {
-          if (line.trim().isEmpty()) {
-            // new sentence
-            input.append(" \n");
+        if (line.trim().isEmpty()) {
+          // new sentence
+          input.append(" \n");
 
-          } else {
-            final String[] split = line.split(sep);
+        } else {
+          final String[] split = line.split(sep);
 
-            if (split.length != 2) {
-              LOG.info("Line length wrong, should be 2, but it's: " + split.length);
+          if (split.length != 2) {
+            LOG.info("Line length wrong, should be 2, but it's: " + split.length);
+          }
+          if (split.length > 1) {
+
+            final String currentToken = split[0].trim();
+            final String currentClass = tagsMap.get(split[1]);
+
+            input.append(currentToken).append(" ");
+
+            if (lastClass.isEmpty()) {
+              lastClass = currentClass;
             }
-            if (split.length > 1) {
 
-              final String currentToken = split[0].trim();
-              final String currentClass = tagsMap.get(split[1]);
-
-              input.append(currentToken).append(" ");
-
-              if (lastClass.isEmpty()) {
-                lastClass = currentClass;
+            if (lastClass.equals(currentClass)) {
+              if (entity.length() != 0) {
+                entity.append(" ");
+              }
+              entity.append(currentToken);
+            } else {
+              if (!(lastClass).equals(EntityClassMap.getNullCategory())) {
+                addE(entity.toString().trim(), lastClass);
               }
 
-              if (lastClass.equals(currentClass)) {
-                if (entity.length() != 0) {
-                  entity.append(" ");
-                }
-                entity.append(currentToken);
-              } else {
-                if (!(lastClass).equals(EntityClassMap.getNullCategory())) {
-                  addE(entity.toString().trim(), lastClass);
-                }
-
-                entity.delete(0, entity.length());
-                entity.append(currentToken);
-                lastClass = currentClass;
-              }
+              entity.delete(0, entity.length());
+              entity.append(currentToken);
+              lastClass = currentClass;
             }
           }
         }
