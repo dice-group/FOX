@@ -22,7 +22,7 @@ public class GermanNERCorpus extends ANERReader {
 
   String sep = "\t";
 
-  boolean debug = true;
+  boolean debug = false;
 
   /**
    * Test.
