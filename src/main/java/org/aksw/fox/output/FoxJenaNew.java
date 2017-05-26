@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.xml.bind.DatatypeConverter;
 
 import org.aksw.fox.data.Entity;
+import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.IData;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.utils.DataTestFactory;
@@ -128,6 +129,44 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
     }
   }
 
+  /**
+   * Gives other named entity types.
+   *
+   * @param foxET
+   * @return
+   */
+
+  private Set<String> otherET(final String foxET) {
+
+    final String DOLCE_PERSON_TYPE_URI =
+        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person";
+    final String DOLCE_LOCATION_TYPE_URI =
+        "http://www.ontologydesignpatterns.org/ont/d0.owl#Location";
+    final String DOLCE_ORGANIZATION_TYPE_URI =
+        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization";
+
+    final Set<String> types = new HashSet<>();
+
+    if (foxET.equals(EntityClassMap.P.toString())) {
+      types.add(DOLCE_PERSON_TYPE_URI);
+      types.add("http://schema.org/Person");
+      types.add("http://dbpedia.org/ontology/Person");
+    } else if (foxET.equals(EntityClassMap.L.toString())) {
+
+      types.add(DOLCE_LOCATION_TYPE_URI);
+      types.add("http://schema.org/Place");
+      types.add("http://schema.org/Location");
+      types.add("http://dbpedia.org/ontology/Place");
+    } else if (foxET.equals(EntityClassMap.O.toString())) {
+      types.add(DOLCE_ORGANIZATION_TYPE_URI);
+      types.add("http://schema.org/Organisation");
+      types.add("http://dbpedia.org/ontology/Organisation");
+    }
+
+    return types;
+
+  }
+
   private Set<String> _addEntities(final Set<Entity> entities) {
     LOG.info("Add entities.");
     final Set<String> uris = new HashSet<>();
@@ -157,8 +196,16 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
 
           // taIdentRef
           resource.addProperty(propertyItsrdfTaIdentRef, graph.createResource(entity.uri));
+
+          // class
           resource.addProperty(propertyItsrdfTaClassRef,
               graph.createResource(ns_fox_ontology + entity.getType()));
+
+          final Set<String> others = otherET(entity.getType());
+
+          for (final String s : others) {
+            resource.addProperty(propertyItsrdfTaClassRef, graph.createResource(s));
+          }
 
           // anchorOf
           resource.addLiteral(propertyNifAnchorOf, graph.createTypedLiteral(//

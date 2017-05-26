@@ -110,6 +110,9 @@ public class Conll2002 extends ANERReader {
         final String currentToken = split[0];
         final String currentClass = tagsMap.get(split[split.length - 1].trim());
 
+        if (currentClass == null) {
+          LOG.info("currentClass is NULL for the given line: " + line);
+        }
         input.append(currentToken).append(" ");
 
         if (lastClass.isEmpty()) {

@@ -157,11 +157,14 @@ public class FoxServer extends AServer {
     if (docs != null) {
 
       final String lang = parameter.get(FoxParameter.Parameter.LANG.toString());
+      LOG.info(lang);
       // get a fox instance
       final Pool<IFox> pool = FoxServer.pool.get(lang);
       IFox fox = null;
       if (pool != null) {
         fox = pool.poll();
+      } else {
+        LOG.warn("Couldn't find a fox instance for the given language!!!!!!!");
       }
 
       boolean done = false;
