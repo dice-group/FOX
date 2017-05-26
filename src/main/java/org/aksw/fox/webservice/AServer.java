@@ -71,6 +71,7 @@ public abstract class AServer {
       if (req.requestMethod().toLowerCase().equals("post")) {
         // utf-8 only
         final String encoding = req.raw().getCharacterEncoding();
+        LOG.info("requested encoding:" + encoding);
         if ((encoding == null) || !encoding.toLowerCase().trim().equals("utf-8")) {
           Spark.halt(415, "Use utf-8");
         }
