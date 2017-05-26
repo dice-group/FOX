@@ -50,16 +50,7 @@ public class Conll2002 extends ANERReader {
   /**
    * Constructor for loading class.
    */
-  public Conll2002() {}
-
-  /**
-   *
-   * Constructor.
-   *
-   * @param inputPaths
-   * @throws IOException
-   */
-  public Conll2002(final String[] inputPaths) throws IOException {
+  public Conll2002() {
     // [I-MISC, B-LOC, I-PER, B-PER, I-LOC, B-MISC, I-ORG, B-ORG, O]
     tagsMap.put("B-PER", EntityClassMap.P);
     tagsMap.put("B-LOC", EntityClassMap.L);
@@ -72,6 +63,18 @@ public class Conll2002 extends ANERReader {
     tagsMap.put("O", EntityClassMap.getNullCategory());
     tagsMap.put("I-MISC", EntityClassMap.getNullCategory());
     tagsMap.put("B-MISC", EntityClassMap.getNullCategory());
+
+  }
+
+  /**
+   *
+   * Constructor.
+   *
+   * @param inputPaths
+   * @throws IOException
+   */
+  public Conll2002(final String[] inputPaths) throws IOException {
+    this();
 
     initFiles(inputPaths);
   }
