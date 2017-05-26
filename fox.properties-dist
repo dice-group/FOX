@@ -21,7 +21,7 @@ org.aksw.fox.Fox.defaultLightNER: org.aksw.fox.tools.ner.en.NERStanford
 org.aksw.fox.nerlearner.FoxClassifier.modelPath: data/fox/ml
 # which learner to use, values are: { result_vote | class_vote | weka.classifiers.functions.MultilayerPerceptron | weka.classifiers.trees.J48 | ...}
 org.aksw.fox.nerlearner.FoxClassifier.learner: weka.classifiers.functions.MultilayerPerceptron
-#org.aksw.fox.nerlearner.FoxClassifier.learnerOptions: -L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a
+org.aksw.fox.nerlearner.FoxClassifier.learnerOptions: -L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a
 ##################################################################
 # fox settings #
 ##################################################################
