@@ -30,14 +30,14 @@ public class Conll2002 extends ANERReader {
    */
   public static void main(final String[] a) throws IOException {
 
-    final String[] files = new String[3];
+    final String[] files = new String[1];
     files[0] = "input/conll2002/esp.train.gz";
-    files[1] = "input/conll2002/esp.testa.gz";
-    files[2] = "input/conll2002/esp.testb.gz";
+    // files[1] = "input/conll2002/esp.testa.gz";
+    // files[2] = "input/conll2002/esp.testb.gz";
 
-    files[0] = "input/conll2002/ned.train.gz";
-    files[1] = "input/conll2002/ned.testa.gz";
-    files[2] = "input/conll2002/ned.testb.gz";
+    // files[0] = "input/conll2002/ned.train.gz";
+    // files[1] = "input/conll2002/ned.testa.gz";
+    // files[2] = "input/conll2002/ned.testb.gz";
 
     final INERReader r = new Conll2002(files);
 
@@ -69,9 +69,9 @@ public class Conll2002 extends ANERReader {
     tagsMap.put("I-LOC", EntityClassMap.L);
     tagsMap.put("I-ORG", EntityClassMap.O);
 
-    tagsMap.put("O", EntityClassMap.N);
-    tagsMap.put("I-MISC", EntityClassMap.N);
-    tagsMap.put("B-MISC", EntityClassMap.N);
+    tagsMap.put("O", EntityClassMap.getNullCategory());
+    tagsMap.put("I-MISC", EntityClassMap.getNullCategory());
+    tagsMap.put("B-MISC", EntityClassMap.getNullCategory());
 
     initFiles(inputPaths);
   }
@@ -111,7 +111,8 @@ public class Conll2002 extends ANERReader {
         final String currentClass = tagsMap.get(split[split.length - 1].trim());
 
         if (currentClass == null) {
-          LOG.info("currentClass is NULL for the given line: " + line);
+          LOG.info("currentClass is NULL for the given line: " + line + " class:"
+              + split[split.length - 1]);
         }
         input.append(currentToken).append(" ");
 
