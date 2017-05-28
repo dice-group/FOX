@@ -75,7 +75,7 @@ public abstract class SpotlightCommon extends AbstractNER {
               Form.form()//
                   .add("confidence", SPOTLIGHT_CONFIDENCE)//
                   .add("support", SPOTLIGHT_SUPPORT)//
-                  .add("types", SPOTLIGHT_TYPES)//
+                  // .add("types", SPOTLIGHT_TYPES)//
                   .add("sparql", SPOTLIGHT_SPARQL)//
                   .add("text", input)//
                   .add("types", "Person,Organisation,Location,Place"), //
@@ -133,14 +133,27 @@ public abstract class SpotlightCommon extends AbstractNER {
     if ((spotlightTag == null) || spotlightTag.trim().isEmpty()) {
       return t;
     }
-    if (spotlightTag.toLowerCase().contains("person")) {
-      t = EntityClassMap.P;
-    } else if (spotlightTag.toLowerCase().contains("organisation")) {
+
+    if (spotlightTag.toLowerCase().contains("dbpedia:organisation")) {
       t = EntityClassMap.O;
-    } else if (spotlightTag.toLowerCase().contains("place")) {
+    } else if (spotlightTag.toLowerCase().contains("dbpedia:person")) {
+      t = EntityClassMap.P;
+    } else if (spotlightTag.toLowerCase().contains("dbpedia:place")) {
       t = EntityClassMap.L;
-    } else if (spotlightTag.toLowerCase().contains("location")) {
+    } else if (spotlightTag.toLowerCase().contains("dbpedia:location")) {
       t = EntityClassMap.L;
+    }
+
+    if (t.equals(EntityClassMap.getNullCategory())) {
+      if (spotlightTag.toLowerCase().contains("organisation")) {
+        t = EntityClassMap.O;
+      } else if (spotlightTag.toLowerCase().contains("person")) {
+        t = EntityClassMap.P;
+      } else if (spotlightTag.toLowerCase().contains("place")) {
+        t = EntityClassMap.L;
+      } else if (spotlightTag.toLowerCase().contains("location")) {
+        t = EntityClassMap.L;
+      }
     }
     return t;
   }
