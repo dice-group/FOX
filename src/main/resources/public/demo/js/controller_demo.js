@@ -38,7 +38,7 @@ Fox.DemoCtrl = function($routeParams, $scope, $http) {
 
     // prepare request
     var request = angular.copy($scope.request);
-    request.input = encodeURIComponent(request.input);
+    //request.input = encodeURIComponent(request.input);
     request.returnHtml = true;
 
     // clear old data
@@ -48,6 +48,7 @@ Fox.DemoCtrl = function($routeParams, $scope, $http) {
       log: ''
     };
 
+
     // send request
     $http({
       method: 'POST',
@@ -55,10 +56,10 @@ Fox.DemoCtrl = function($routeParams, $scope, $http) {
       data: request
     }).
     success(function(data, status, headers, config) {
-
+      console.log(data);
       $scope.response = {
         input: decodeURIComponent(data.input),
-        output: decodeURIComponent(data.output),
+        output: data,
         log: decodeURIComponent(data.log)
       };
 
