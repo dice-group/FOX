@@ -17,7 +17,7 @@ if [ ! -d "$DIRECTORY" ]; then
 	# ES
 	wget http://hobbitdata.informatik.uni-leipzig.de/agdistis/dbpedia_index_2016-04/es/indexdbpedia_es_2016.zip
 	# NL
-	wget http://hobbitdata.informatik.uni-leipzig.de/agdistis/dbpedia_index_2016-04/nl/indexdbpedia_nl_2016.zip -P ./data/agdistis/  
+	wget http://hobbitdata.informatik.uni-leipzig.de/agdistis/dbpedia_index_2016-04/nl/indexdbpedia_nl_2016.zip
 	#
 	#
 	unzip indexdbpedia_en_2016.zip
