@@ -25,6 +25,7 @@ import org.json.JSONObject;
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
+@Deprecated
 public class FoxHttpHandler extends AbstractFoxHttpHandler {
 
   public static final String CFG_KEY_FOX_LIFETIME =
@@ -93,7 +94,7 @@ public class FoxHttpHandler extends AbstractFoxHttpHandler {
         // get output
         String output = "";
         if (latch.getCount() == 0) {
-          output = fox.getResults();
+          output = fox.getResultsAndClean();
           Server.pool.get(lang).push(fox);
         } else {
           fox = null;

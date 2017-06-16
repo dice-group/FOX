@@ -11,6 +11,7 @@ import org.glassfish.grizzly.http.server.HttpServerFilter;
 import org.glassfish.grizzly.http.server.HttpServerProbe;
 import org.glassfish.grizzly.http.server.Response;
 
+@Deprecated
 public class HttpServerProbeRequestMonitoring extends HttpServerProbe.Adapter {
 
   public final static Logger LOG = LogManager.getLogger(HttpServerProbeRequestMonitoring.class);

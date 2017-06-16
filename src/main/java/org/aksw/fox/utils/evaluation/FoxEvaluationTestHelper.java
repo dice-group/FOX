@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import gnu.getopt.Getopt;
 
+@Deprecated
 /**
  *
  * Calculates measures to use for Wilcoxon signed-rank test.
@@ -17,17 +18,17 @@ public class FoxEvaluationTestHelper extends FoxEvaluationHelper {
   protected int fold;
 
   /**
-   * 
+   *
    * @param args
    *        <p>
    *        -i for an input directory <br>
    *        (files in csv format with columns:<br>
    *        run, classifier, class, a, b, c, d) <br>
    *        <br>
-   * 
+   *
    *        -o for an output file<br>
    *        </p>
-   * 
+   *
    * @throws IOException if something wrong
    */
   public static void main(final String[] args) throws IOException {
