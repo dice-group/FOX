@@ -1,4 +1,12 @@
 #!/bin/sh
 export MAVEN_OPTS="-Xmx16G -Dlog4j.configuration=file:data/fox/log4j.properties"
 
-nohup mvn exec:java  -Dexec.mainClass="org.aksw.fox.ui.FoxRESTful" > logRun.log &
+cd spotlight
+
+./runDE.sh
+./runEN.sh
+./runES.sh
+./runNL.sh
+./runFR.sh
+
+cd ..
