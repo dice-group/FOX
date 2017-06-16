@@ -18,7 +18,6 @@ abstract class AFox implements IFox {
   public static final Logger LOG = LogManager.getLogger(AFox.class);
 
   protected String lang = null;
-  protected String response = null;
   protected FoxWebLog foxWebLog = new FoxWebLog();
   protected CountDownLatch countDownLatch = null;
   protected Map<String, String> parameter = null;
@@ -36,11 +35,6 @@ abstract class AFox implements IFox {
   @Override
   public void setParameter(final Map<String, String> parameter) {
     this.parameter = parameter;
-  }
-
-  @Override
-  public String getResults() {
-    return response;
   }
 
   @Override

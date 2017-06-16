@@ -6,11 +6,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.aksw.agdistis.algorithm.NEDAlgo_HITS;
+import org.aksw.agdistis.datatypes.Document;
+import org.aksw.agdistis.datatypes.DocumentText;
+import org.aksw.agdistis.datatypes.NamedEntitiesInText;
+import org.aksw.agdistis.datatypes.NamedEntityInText;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.output.AFoxJenaNew;
 import org.aksw.fox.tools.ner.linking.AbstractLinking;
@@ -31,6 +37,8 @@ public class Agdistis extends AbstractLinking {
   protected Map<Integer, Entity> indexMap = new HashMap<>();
   protected String endpoint;
 
+  public Agdistis() {}
+
   public Agdistis(final XMLConfiguration cfg) {
     endpoint = cfg.getString(CFG_KEY_AGDISTIS_ENDPOINT);
   }
@@ -38,9 +46,6 @@ public class Agdistis extends AbstractLinking {
   @Override
   public void setUris(final Set<Entity> entities, final String input) {
     LOG.info("AGDISTISLookup ...");
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("makeInput ...");
-    }
 
     String agdistis_input = makeInput(entities, input);
 
@@ -116,7 +121,7 @@ public class Agdistis extends AbstractLinking {
     return agdistis_input;
   }
 
-  private String send(final String agdistis_input) throws Exception {
+  protected String send(final String agdistis_input) throws Exception {
 
     // String data = parameter + agdistis_input;
     final String urlParameters =
@@ -141,7 +146,7 @@ public class Agdistis extends AbstractLinking {
     return IOUtils.toString(http.getInputStream(), "UTF-8");
   }
 
-  private void addURItoEntities(final String json, final Set<Entity> entities) {
+  protected void addURItoEntities(final String json, final Set<Entity> entities) {
     if (LOG.isDebugEnabled()) {
       LOG.debug("addURItoEntities ...");
     }
@@ -180,7 +185,7 @@ public class Agdistis extends AbstractLinking {
     }
   }
 
-  private String urlencode(final String disambiguatedURL) {
+  protected String urlencode(final String disambiguatedURL) {
     try {
       final String encode = URLEncoder.encode(disambiguatedURL
           .substring(disambiguatedURL.lastIndexOf('/') + 1, disambiguatedURL.length()), "UTF-8");
@@ -190,5 +195,54 @@ public class Agdistis extends AbstractLinking {
       LOG.error(disambiguatedURL + "\n", e);
       return disambiguatedURL;
     }
+  }
+
+  // new
+  public String standardAG(final String text, final NEDAlgo_HITS agdistis) {
+    final JSONArray arr = new JSONArray();
+
+    final Document d = textToDocument(text);
+    agdistis.run(d, null);
+
+    for (final NamedEntityInText namedEntity : d.getNamedEntitiesInText()) {
+      if (!namedEntity.getNamedEntityUri().contains("http")) {
+        namedEntity.setNamedEntity("http://aksw.org/notInWiki/" + namedEntity.getSingleWordLabel());
+      }
+      final JSONObject obj = new JSONObject();
+      obj.put("namedEntity", namedEntity.getLabel());
+      obj.put("start", namedEntity.getStartPos());
+      obj.put("offset", namedEntity.getLength());
+      obj.put("disambiguatedURL", namedEntity.getNamedEntityUri());
+      arr.add(obj);
+    }
+    return arr.toString();
+
+  }
+
+  public Document textToDocument(final String preAnnotatedText) {
+    final Document document = new Document();
+    final ArrayList<NamedEntityInText> list = new ArrayList<NamedEntityInText>();
+    int startpos = 0, endpos = 0;
+    final StringBuilder sb = new StringBuilder();
+    startpos = preAnnotatedText.indexOf("<entity>", startpos);
+    while (startpos >= 0) {
+      sb.append(preAnnotatedText.substring(endpos, startpos));
+      startpos += 8;
+      endpos = preAnnotatedText.indexOf("</entity>", startpos);
+      final int newStartPos = sb.length();
+      final String entityLabel = preAnnotatedText.substring(startpos, endpos);
+      list.add(new NamedEntityInText(newStartPos, entityLabel.length(), entityLabel, ""));
+      sb.append(entityLabel);
+      endpos += 9;
+      startpos = preAnnotatedText.indexOf("<entity>", startpos);
+    }
+
+    final NamedEntitiesInText nes = new NamedEntitiesInText(list);
+    final DocumentText text =
+        new DocumentText(preAnnotatedText.replaceAll("<entity>", "").replaceAll("</entity>", ""));
+
+    document.addText(text);
+    document.addNamedEntitiesInText(nes);
+    return document;
   }
 }

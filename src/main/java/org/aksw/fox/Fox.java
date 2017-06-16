@@ -79,6 +79,13 @@ public class Fox extends AFox {
     }
   }
 
+  @Override
+  public String getResultsAndClean() {
+    final String response = foxJena.print();
+    foxJena.reset();
+    return response;
+  }
+
   /**
    *
    * @return
@@ -329,7 +336,7 @@ public class Fox extends AFox {
 
     infoLog("Preparing output format ...");
 
-    foxJena.reset();
+    // foxJena.reset();
     foxJena.setLang(out);
     foxJena.addInput(input, docuri);
 
@@ -344,10 +351,6 @@ public class Fox extends AFox {
         infoLog("Found " + relations.size() + " relations.");
       }
     }
-
-    response = foxJena.print();
-
-    LOG.info("jena response:\n" + response);
 
     infoLog("Preparing output format done.");
 
