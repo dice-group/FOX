@@ -56,7 +56,7 @@ public class TestExample {
       // output
       fox.setOutput(e, null);
       Assert.assertTrue(e.size() > 0);
-      Assert.assertTrue(fox.getResults().length() > 0);
+      Assert.assertTrue(fox.getResultsAndClean().length() > 0);
     }
   }
 

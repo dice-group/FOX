@@ -300,12 +300,12 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
   }
 
   @Override
-  public void addInput(final String input, String uri) {
+  public void addInput(final String input, final String uri) {
     document++;
     baseuri = uri;
 
     if (baseuri == null) {
-      uri = getDefaultDocumentURI();
+      baseuri = getDefaultDocumentURI();
     }
 
     final String currecntUri = createDocUri(baseuri, 0, (input.length()));

@@ -11,6 +11,8 @@ public class SpotlightDE extends SpotlightCommon {
   }
 
   public static void main(final String[] a) {
-    LOG.info(new SpotlightDE().retrieve(FoxConst.NER_GER_EXAMPLE_1));
+
+    new SpotlightDE().retrieve(//
+        FoxConst.NER_GER_EXAMPLE_1).forEach(LOG::info);
   }
 }

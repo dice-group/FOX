@@ -31,7 +31,7 @@ public interface IFox extends Runnable {
    *
    * @return results
    */
-  public String getResults();
+  public String getResultsAndClean();
 
   /**
    * Returns lang.

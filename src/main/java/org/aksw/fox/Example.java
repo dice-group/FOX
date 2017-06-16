@@ -62,7 +62,7 @@ public class Example {
       // output
       fox.setOutput(e, null);
 
-      LOG.info(fox.getResults());
+      LOG.info(fox.getResultsAndClean());
     }
   }
 

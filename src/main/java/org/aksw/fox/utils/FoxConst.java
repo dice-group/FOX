@@ -33,7 +33,7 @@ public class FoxConst {
           + "Hussiten-Bewegung der böhmische König Wenzel IV.";
 
   public static String NER_ES_EXAMPLE_1 =
-      "Leipzig (en alemán estándar [ˈlaɪpʦɪç]) o Lipsia, en español, es una ciudad alemana en el noroeste del estado de Sajonia. "
+      "La Universidad de Leipzig (alemán Universität Leipzig), localizada en Leipzig en el Estado Libre de Sajonia, es la segunda más antigua de Alemania. Leipzig (en alemán estándar [ˈlaɪpʦɪç]) o Lipsia, en español, es una ciudad alemana en el noroeste del estado de Sajonia. "
           + "Con más de 520 000 habitantes1 a finales de 2012 es la segunda ciudad más poblada de ese estado federado (tras Dresde, "
           + "la capital de Sajonia) y tras Berlín, la tercera de todo el este de Alemania. Ya en el año 1165 recibió el derecho de "
           + "ciudad y de mercado (ahora recinto ferial). Desde entonces, Leipzig se convirtió en uno de los centros de comercio más "

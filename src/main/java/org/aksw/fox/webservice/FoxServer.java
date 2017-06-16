@@ -8,11 +8,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.aksw.fox.Fox;
 import org.aksw.fox.FoxParameter;
 import org.aksw.fox.IFox;
 import org.aksw.fox.data.exception.PortInUseException;
+import org.aksw.fox.output.FoxJenaNew;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.web.api.ApiUtil;
@@ -23,6 +25,7 @@ import org.apache.jena.riot.Lang;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.hpl.jena.sparql.lib.org.json.JSONObject;
 
 import spark.Spark;
@@ -52,6 +55,7 @@ public class FoxServer extends AServer {
    */
   public FoxServer() throws PortInUseException {
     super();
+    Spark.staticFileLocation("/public/demo");
   }
 
   protected static void initPools() throws Exception {
@@ -67,6 +71,24 @@ public class FoxServer extends AServer {
     }
   }
 
+  protected Set<String> allowedHeaderFields() {
+    return new HashSet<>(Arrays.asList(//
+        FoxParameter.Parameter.TYPE.toString(), //
+        FoxParameter.Parameter.INPUT.toString(), //
+        FoxParameter.Parameter.TASK.toString(), //
+        FoxParameter.Parameter.OUTPUT.toString()//
+    ));
+  }
+
+  protected Map<String, String> defaultParameter() {
+    final Map<String, String> parameter = new HashMap<>();
+    parameter.put(FoxParameter.Parameter.TYPE.toString(), FoxParameter.Type.TEXT.toString());
+    parameter.put(FoxParameter.Parameter.LANG.toString(), FoxParameter.Langs.EN.toString());
+    parameter.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString());
+    parameter.put(FoxParameter.Parameter.OUTPUT.toString(), Lang.TURTLE.getName());
+    return parameter;
+  }
+
   @Override
   public void mapRoutes() {
 
@@ -74,7 +96,7 @@ public class FoxServer extends AServer {
      * path: config <br>
      * method: GET <br>
      * <code>
-    curl http://0.0.0.0:9090/config
+                    curl http://0.0.0.0:9090/config
     </code>
      */
     Spark.get("/config", (req, res) -> {
@@ -87,8 +109,8 @@ public class FoxServer extends AServer {
      * Content-Type: application/json <br>
      *
      * <code>
-      curl -X POST -H "task:asdasd" -H "Content-Type:application/json" http://0.0.0.0:9090/fox
-      curl -X POST -H "task:asdasd" -H "Content-Type:application/x-turtle" http://0.0.0.0:9090/fox
+                  curl -X POST -H "task:asdasd" -H "Content-Type:application/json" http://0.0.0.0:9090/fox
+                  curl -X POST -H "task:asdasd" -H "Content-Type:application/x-turtle" http://0.0.0.0:9090/fox
     </code>
      */
     Spark.post("/fox", (req, res) -> {
@@ -98,55 +120,76 @@ public class FoxServer extends AServer {
       final String ct = req.contentType();
       LOG.info("ContentType: " + ct);
 
+      Map<String, String> parameter = defaultParameter();
+
       // JSON
       if ((ct != null) && (ct.indexOf(jsonContentType) != -1)) {
+
         final JSONObject jo = new JSONObject(req.body());
-        final String input = jo.getString(FoxParameter.Parameter.INPUT.toString());
+        final Map<String, Object> d = new ObjectMapper().readValue(jo.toString(), HashMap.class);
 
-        // final HashMap<String, Object> parameter = new ObjectMapper().readValue(jo.toString(),
-        // HashMap.class);
+        parameter = d.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, //
+            e -> String.valueOf(e.getValue())//
+        ));
 
-        LOG.info(input);
-        return "json to fox";
+        final FoxJenaNew foxJenaNew = new FoxJenaNew();
+        foxJenaNew.addInput(parameter.get(FoxParameter.Parameter.INPUT.toString()), null);
+        parameter.put(FoxParameter.Parameter.INPUT.toString(), foxJenaNew.print());
 
       } else
 
       // TURTLE
       if ((ct != null) && (ct.indexOf(turtleContentType) != -1)) {
-        // Parse input
-        List<Document> docs = null;
-        try {
 
-          docs = apiUtil.parseNIF(req.body());
-        } catch (final Exception e) {
-          LOG.error(e.getLocalizedMessage(), e);
-          errorMessage = "Could not parse the request body.";
-          LOG.warn(errorMessage);
+        // read header fields
+        final Set<String> headerfields = req.headers();
+
+        // set parameter
+        String field = FoxParameter.Parameter.TASK.toString();
+        if (headerfields.contains(field)) {
+          final String value = req.headers(field);
+          parameter.put(field, value);
+        }
+        field = FoxParameter.Parameter.LANG.toString();
+        if (headerfields.contains(field)) {
         }
 
-        if (docs != null) {
-          final Map<String, String> parameter = new HashMap<>();
+        // add input
+        parameter.put(FoxParameter.Parameter.INPUT.toString(), req.body());
 
-          parameter.put(FoxParameter.Parameter.TYPE.toString(), FoxParameter.Type.TEXT.toString());
-          parameter.put(FoxParameter.Parameter.LANG.toString(), FoxParameter.Langs.EN.toString());
-          parameter.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.RE.toString());
-          parameter.put(FoxParameter.Parameter.OUTPUT.toString(), Lang.TURTLE.getName());
-
-          final String foxResponse = fox(docs, parameter);
-
-          // create server response
-          res.body(foxResponse);
-          res.type(turtleContentType.concat(";charset=utf-8"));
-        }
-      }
-      // ESLE
+      } // ESLE
       else {
-        errorMessage = "Use a supported Content-Type";
+        errorMessage = "Use a supported Content-Type please.";
         Spark.halt(415, errorMessage);
+      }
+
+      // parse input
+      List<Document> docs = null;
+      try {
+        docs = apiUtil.parseNIF(parameter.get(FoxParameter.Parameter.INPUT.toString()));
+      } catch (final Exception e) {
+        LOG.error(e.getLocalizedMessage(), e);
+        errorMessage = "Could not parse the request body.";
+        LOG.warn(errorMessage);
+      }
+
+      // send fox request
+      if (docs != null) {
+        LOG.info("nif doc size: " + docs.size());
+
+        LOG.info(docs);
+        LOG.info(parameter);
+        // request
+        final String foxResponse = fox(docs, parameter);
+
+        // create server response
+        res.body(foxResponse);
+        res.type(turtleContentType.concat(";charset=utf-8"));
       }
 
       return res.body();
     });
+
   }
 
   public String fox(final List<Document> docs, final Map<String, String> parameter) {
@@ -157,7 +200,7 @@ public class FoxServer extends AServer {
     if (docs != null) {
 
       final String lang = parameter.get(FoxParameter.Parameter.LANG.toString());
-      LOG.info(lang);
+      LOG.info("lang: " + lang);
       // get a fox instance
       final Pool<IFox> pool = FoxServer.pool.get(lang);
       IFox fox = null;
@@ -180,7 +223,7 @@ public class FoxServer extends AServer {
       }
 
       if (done) {
-        nif = fox.getResults();
+        nif = fox.getResultsAndClean();
         FoxServer.pool.get(lang).push(fox);
       } else {
         fox = null;
@@ -190,8 +233,9 @@ public class FoxServer extends AServer {
     return nif;
   }
 
-  public boolean callFox(final IFox fox, final Map<String, String> parameter) {
+  protected boolean callFox(final IFox fox, final Map<String, String> parameter) {
     boolean done = false;
+
     if (fox != null) {
       LOG.info("start");
       // init. thread
@@ -215,23 +259,13 @@ public class FoxServer extends AServer {
       fiber.dispose();
 
       if (latch.getCount() == 0) {
-
-        LOG.debug("fox results:" + fox.getResults());
-        LOG.debug("fox lang:" + fox.getLang());
-        LOG.debug("fox log:" + fox.getLog());
+        // LOG.debug("fox results:" + fox.getResults());
+        // LOG.debug("fox lang:" + fox.getLang());
+        // LOG.debug("fox log:" + fox.getLog());
 
         done = true;
       }
     }
     return done;
-  }
-
-  protected Set<String> allowedHeaderFields() {
-    return new HashSet<>(Arrays.asList(//
-        FoxParameter.Parameter.TYPE.toString(), //
-        FoxParameter.Parameter.INPUT.toString(), //
-        FoxParameter.Parameter.TASK.toString(), //
-        FoxParameter.Parameter.OUTPUT.toString()//
-    ));
   }
 }
