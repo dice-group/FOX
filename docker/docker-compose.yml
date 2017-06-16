@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  fox:
+    build: .
+    ports:
+      - "4444:4444"
+    volumes:
+      - "./.m2:/root/.m2"
+
