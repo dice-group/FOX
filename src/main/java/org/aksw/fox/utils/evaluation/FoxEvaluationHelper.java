@@ -16,6 +16,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import gnu.getopt.Getopt;
 
+@Deprecated
 /**
  *
  * Calculates measures for the evaluation.

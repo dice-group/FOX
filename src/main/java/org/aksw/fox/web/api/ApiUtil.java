@@ -19,6 +19,7 @@ import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentParser;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+@Deprecated
 public class ApiUtil {
 
   public static Logger LOG = LogManager.getLogger(ApiUtil.class);

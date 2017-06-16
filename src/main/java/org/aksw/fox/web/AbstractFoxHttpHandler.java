@@ -24,6 +24,7 @@ import com.google.gson.JsonParser;
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
+@Deprecated
 public abstract class AbstractFoxHttpHandler extends HttpHandler {
 
   public static Logger LOG = Logger.getLogger(AbstractFoxHttpHandler.class);

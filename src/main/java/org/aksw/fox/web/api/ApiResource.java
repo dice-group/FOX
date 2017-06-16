@@ -40,6 +40,7 @@ import org.jetlang.fibers.ThreadFiber;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+@Deprecated
 @Path("fox")
 public class ApiResource {
 
@@ -68,9 +69,9 @@ public class ApiResource {
 
   /**
    * <code>
-
+  
     curl -d "@example.ttl" -H "Content-Type: application/x-turtle" http://0.0.0.0:4444/fox/
-
+  
     </code>
    */
   @Consumes("application/x-turtle")
@@ -237,7 +238,7 @@ public class ApiResource {
     fiber.dispose();
 
     if (latch.getCount() == 0) {
-      output = fox.getResults();
+      output = fox.getResultsAndClean();
       Server.pool.get(parameter.get(FoxParameter.Parameter.LANG.toString())).push(fox);
     } else {
       fox = null;
