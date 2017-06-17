@@ -1,6 +1,5 @@
 package org.aksw.fox.nerlearner.reader;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import org.aksw.fox.utils.FileUtil;
 
 public class WikinerReader extends ANERReader {
 
-  protected File[] inputFiles;
   protected StringBuilder input = new StringBuilder();
   protected HashMap<String, String> entities = new HashMap<>();
   protected HashMap<String, List<SimpleEntry<String, Integer>>> disambEntities = new HashMap<>();

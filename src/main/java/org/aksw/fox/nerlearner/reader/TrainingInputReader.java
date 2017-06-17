@@ -59,7 +59,6 @@ public class TrainingInputReader extends ANERReader {
     }
   }
 
-  protected File[] inputFiles;
   protected StringBuffer taggedInput = new StringBuffer();
   protected String input = "";
   protected HashMap<String, String> entities = new HashMap<>();
