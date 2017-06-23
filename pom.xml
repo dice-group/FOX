@@ -435,10 +435,12 @@
 								<copy todir="${project.build.directory}">
 									<fileset dir="${project.build.outputDirectory}/scripts" />
 								</copy>
+
 								<copy file="log4j.properties" tofile="${project.build.directory}/log4j.properties" />
 									<copy file="${project.build.outputDirectory}/Dockerfile"
 									toFile="${project.build.directory}/Dockerfile" overwrite="true" />
 								-->
+
 								<copy file="fox.properties-dist" tofile="${project.build.directory}/fox.properties-dist" />
 								<chmod dir="${project.build.directory}" perm="700"
 									includes="**/*.sh" />
