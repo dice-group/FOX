@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <agdistis>
+        <endpoint>http://titan.informatik.uni-leipzig.de:8080/AGDISTIS_NL</endpoint>
+    </agdistis>
+</config>

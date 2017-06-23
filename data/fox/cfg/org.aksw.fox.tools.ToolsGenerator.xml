@@ -23,7 +23,6 @@
             org.aksw.fox.tools.ner.en.OpenNLPEN, 
             org.aksw.fox.tools.ner.en.StanfordEN, 
             org.aksw.fox.tools.ner.en.IllinoisExtendedEN, 
-	    org.aksw.fox.tools.ner.en.SpotlightEN,
             org.aksw.fox.tools.ner.en.BalieEN
             " 
 
