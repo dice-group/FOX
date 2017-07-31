@@ -32,24 +32,25 @@ if [ ! -d "$DIRECTORY" ]; then
 
 	touch runDE.sh 
 	echo "nohup java -Dfile.encoding=utf-8 -jar dbpedia-spotlight-0.7.1.jar de http://localhost:4449/rest  > logDE.log &">> runDE.sh
-	chmod 777 runDE.sh 
+	chmod +x runDE.sh 
+	
 
 	touch runEN.sh 
 	echo "nohup java -Dfile.encoding=utf-8 -jar dbpedia-spotlight-0.7.1.jar en_2+2 http://localhost:4448/rest  > logEN.log &">> runEN.sh
-	chmod 777 runEN.sh 
+	chmod +x runEN.sh 
 	
 	touch runES.sh 
 	echo "nohup java -Dfile.encoding=utf-8 -jar dbpedia-spotlight-0.7.1.jar es http://localhost:4447/rest  > logES.log &">> runES.sh
-	chmod 777 runES.sh 
+	chmod +x runES.sh 
 	
 	touch runFR.sh 
 	echo "nohup java -Dfile.encoding=utf-8 -jar dbpedia-spotlight-0.7.1.jar fr http://localhost:4446/rest  > logFR.log &">> runFR.sh
-	chmod 777 runFR.sh 
+	chmod +x runFR.sh 
 	
 	
 	touch runNL.sh 
 	echo "nohup java -Dfile.encoding=utf-8 -jar dbpedia-spotlight-0.7.1.jar nl http://localhost:4445/rest  > logNL.log &">> runNL.sh
-	chmod 777 runNL.sh 
+	chmod +x runNL.sh 
 
 	echo "Downloaded Spotlight data."
 	
