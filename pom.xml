@@ -546,7 +546,7 @@
 					<additionalparam>-views -all</additionalparam>
 					<useStandardDocletOptions>true</useStandardDocletOptions>
 					<reportOutputDirectory>${project.basedir}</reportOutputDirectory>
-					<destDir>/demo/doc</destDir>
+					<destDir>/src/main/resources/public/demo/doc</destDir>
 					<failOnError>false</failOnError>
 					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
