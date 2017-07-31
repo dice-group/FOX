@@ -24,9 +24,9 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.apache.jena.riot.Lang;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
+import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hp.hpl.jena.sparql.lib.org.json.JSONObject;
 
 import spark.Spark;
 

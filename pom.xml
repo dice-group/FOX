@@ -27,6 +27,7 @@
 		<system.libs>${project.basedir}/lib</system.libs>
 		<system.data>${project.basedir}/data</system.data>
 		<lucene.version>4.10.0</lucene.version>
+		<jena.version>3.1.0</jena.version>
 	</properties>
 	<repositories>
 		<repository>
@@ -243,30 +244,36 @@
 			<artifactId>commons-validator</artifactId>
 			<version>1.4.0</version>
 		</dependency>
-		<dependency>
+ 
+	<!-- Jena for using NIF -->
+			<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>apache-jena</artifactId>
 			<type>pom</type>
-			<version>2.11.2</version>
+			<version>${jena.version}</version>
 		</dependency>
-		<!-- do we need this jena too? -->
 		<dependency>
-			<groupId>com.hp.hpl.jena</groupId>
-			<artifactId>arq</artifactId>
-			<version>2.8.4</version>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-core</artifactId>
+			<version>${jena.version}</version>
 		</dependency>
-		<!-- jena dependency -->
 		<dependency>
-			<groupId>com.github.jsonld-java</groupId>
-			<artifactId>jsonld-java</artifactId>
-			<version>0.5.0</version>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-arq</artifactId>
+			<version>${jena.version}</version>
 		</dependency>
-		<!-- jena-sparql-api -->
+
 		<dependency>
-			<groupId>org.aksw.jena-sparql-api</groupId>
-			<artifactId>jena-sparql-api-core</artifactId>
-			<version>2.12.1-8</version>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.github.jsonld-java</groupId>
+		    <artifactId>jsonld-java</artifactId>
+		    <version>0.10.0</version>
+		</dependency>
+
 		<!-- grizzly -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -372,6 +379,18 @@
 			<groupId>com.sparkjava</groupId>
 			<artifactId>spark-core</artifactId>
 			<version>2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aksw</groupId>
+			<artifactId>gerbil.nif.transfer</artifactId>
+			<version>1.2.4-jena3.1-SNAPSHOT</version>
+		</dependency>
+				<!-- jena-sparql-api -->
+		<dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-core</artifactId>
+			<!-- <version>2.12.1-8</version> -->
+			<version>3.3.0-1</version>
 		</dependency>
 	</dependencies>
 	<!-- build -->
