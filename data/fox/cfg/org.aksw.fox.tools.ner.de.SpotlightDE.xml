@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <spotlight>
-        <url>http://0.0.0.0:4449/rest/annotate</url>
+        <url>http://localhost:4449/rest/annotate</url>
         <confidence>0.5</confidence>
         <support>200</support>
         <spotter>Default</spotter>

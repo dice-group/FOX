@@ -34,8 +34,8 @@ This version supports multiple languages for NER only.
 
 Live Demo: [http://fox-demo.aksw.org (Version 2.3.0) ][5]
 
-Release: [(Version 2.3.0) ][8]
 
+Release: [(Version 2.3.0) ][8]
 
 <!--
 ## Installation and start server

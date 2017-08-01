@@ -14,13 +14,12 @@ import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.IData;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.utils.DataTestFactory;
-
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.XSD;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.ResIterator;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.XSD;
 
 /**
  *
@@ -169,9 +168,16 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
 
   private Set<String> _addEntities(final Set<Entity> entities) {
     LOG.info("Add entities.");
+
     final Set<String> uris = new HashSet<>();
 
     for (final Entity entity : entities) {
+
+      if (entity.getText().trim().isEmpty()) {
+        // TODO: why the light version has empty once here?
+        continue;
+      }
+
       if (!urlValidator.isValid(entity.uri)) {
         LOG.error("URI isn't valid: " + entity.uri);
       } else {
@@ -276,7 +282,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
          * <code>
          final Resource resRel =
              graph.createResource(rse.getProperty(propertyItsrdfTaIdentRef).getObject().toString());
-
+        
          for (final URI uri : relation.getRelation()) {
            resRel.addProperty(graph.createProperty(uri.toString()),
                roe.getPropertyResourceValue(propertyItsrdfTaIdentRef));

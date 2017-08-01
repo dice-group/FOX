@@ -2,7 +2,7 @@
 <config>
     <toolsGenerator>
         <lang>de, en, es, fr, it, nl</lang>
-        <usedLang>en,de</usedLang>
+        <usedLang>de, en, es, fr, nl</usedLang>
         <disambiguationTool
             de="org.aksw.fox.tools.ner.linking.de.AgdistisDirectDE"
             en="org.aksw.fox.tools.ner.linking.en.AgdistisDirectEN"
@@ -11,7 +11,7 @@
             it="org.aksw.fox.tools.ner.linking.it.AgdistisDirectIT"
             nl="org.aksw.fox.tools.ner.linking.nl.AgdistisDirectNL"
         ></disambiguationTool>
-
+	
         <nerTools
             de="
             org.aksw.fox.tools.ner.de.StanfordDE, 
@@ -22,6 +22,7 @@
             en="
             org.aksw.fox.tools.ner.en.OpenNLPEN, 
             org.aksw.fox.tools.ner.en.StanfordEN, 
+	    org.aksw.fox.tools.ner.en.SpotlightEN, 
             org.aksw.fox.tools.ner.en.IllinoisExtendedEN, 
             org.aksw.fox.tools.ner.en.BalieEN
             " 

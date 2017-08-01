@@ -3,16 +3,15 @@ package org.aksw.fox.output;
 import java.io.StringWriter;
 
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
+import org.apache.jena.vocabulary.XSD;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
  *

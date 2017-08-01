@@ -8,13 +8,12 @@ import java.util.Set;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.jena_sparql_api.pagination.core.QueryExecutionFactoryPaginated;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 
 import de.renespeck.swissknife.io.SerializationUtil;
 
@@ -72,6 +71,7 @@ public class WikipediaCategories {
       qef = new QueryExecutionFactoryHttp(service, graph);
       qef = new QueryExecutionFactoryPaginated(qef, 10000);
       // qef = new QueryExecutionFactoryDelay(qef, 1);
+
       final ResultSet rs = qef.createQueryExecution(query).execSelect();
       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
       ResultSetFormatter.outputAsJSON(baos, rs);
@@ -80,7 +80,11 @@ public class WikipediaCategories {
       LOG.error(e.getLocalizedMessage(), e);
     }
     if (qef != null) {
-      qef.close();
+      try {
+        qef.close();
+      } catch (final Exception e) {
+        LOG.error(e.getLocalizedMessage(), e);
+      }
     }
     return new JSONObject();
   }

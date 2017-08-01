@@ -8,19 +8,18 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Relation;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.ResIterator;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.XSD;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 // for future: http://www.w3.org/ns/oa#
 /**
@@ -269,23 +268,23 @@ public class FoxJena {
   /**
    * <code>
    public static void main(final String args[]) {
-  
+
      // test data
      final DataTestFactory dtf = new DataTestFactory();
      final Set<Entity> entities = new ArrayList<Set<Entity>>(dtf.getTestEntities().values()).get(0);
      final Set<Relation> relations = dtf.getTestRelations().entrySet().iterator().next().getValue();
-  
+
      final String input = dtf.getTestEntities().entrySet().iterator().next().getKey();
-  
+
      // test
      final FoxJena fj = new FoxJena();
-  
+
      fj.setAnnotations(entities);
      fj.setRelations(relations);
-  
+
      final String out = fj.print(FoxParameter.Output.TURTLE.name(), false, input);
      System.out.println(out);
-  
+
    }
    </code>
    */
