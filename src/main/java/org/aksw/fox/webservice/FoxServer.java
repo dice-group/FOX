@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import spark.QueryParamsMap;
 import spark.Spark;
 
 public class FoxServer extends AServer {
@@ -141,17 +142,56 @@ public class FoxServer extends AServer {
       // TURTLE
       if ((ct != null) && (ct.indexOf(turtleContentType) != -1)) {
 
-        // read header fields
+        // read query parameter if any
+        final QueryParamsMap map = req.queryMap();
+        final Map<String, String[]> para = map.toMap();
+
+        // read header fields if any
         final Set<String> headerfields = req.headers();
 
+        //
         // set parameter
+        //
+        // task
         String field = FoxParameter.Parameter.TASK.toString();
         if (headerfields.contains(field)) {
+          // header
           final String value = req.headers(field);
           parameter.put(field, value);
+        } else if (para.keySet().contains(field)) {
+          // url query
+          final String[] values = para.get(field);
+          if (values.length > 0) {
+            parameter.put(field, values[0]);
+          }
         }
+
+        // lang
         field = FoxParameter.Parameter.LANG.toString();
         if (headerfields.contains(field)) {
+          // header
+          final String value = req.headers(field);
+          parameter.put(field, value);
+        } else if (para.keySet().contains(field)) {
+          // url query
+          final String[] values = para.get(field);
+          if (values.length > 0) {
+            parameter.put(field, values[0]);
+          }
+        }
+
+        // lightversion
+        field = FoxParameter.Parameter.FOXLIGHT.toString();
+        if (headerfields.contains(field)) {
+          // header
+          final String value = req.headers(field);
+          parameter.put(field, value);
+        } else if (para.keySet().contains(field)) {
+          // url query
+          final String[] values = para.get(field);
+          if (values.length > 0) {
+            parameter.put(field, values[0]);
+          }
         }
 
         // add input
