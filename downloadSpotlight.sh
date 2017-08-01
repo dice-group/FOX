@@ -31,6 +31,7 @@ if [ ! -d "$DIRECTORY" ]; then
 	rm de.tar.gz en_2+2.tar.gz  es.tar.gz fr.tar.gz nl.tar.gz 
 
 	touch runDE.sh 
+
 	echo "nohup java -Xmx4G -Dfile.encoding=utf-8 -jar dbpedia-spotlight-0.7.1.jar de http://localhost:4449/rest  > logDE.log &">> runDE.sh
 	chmod +x runDE.sh 
 	
@@ -51,6 +52,7 @@ if [ ! -d "$DIRECTORY" ]; then
 	touch runNL.sh 
 	echo "nohup java -Xmx4G -Dfile.encoding=utf-8 -jar dbpedia-spotlight-0.7.1.jar nl http://localhost:4445/rest  > logNL.log &">> runNL.sh
 	chmod +x runNL.sh 
+
 
 	echo "Downloaded Spotlight data."
 	
