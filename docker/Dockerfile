@@ -19,7 +19,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # get app and build
 RUN cd /usr/bin/FOX \
-        && git clone --branch master https://github.com/renespeck/FOX . \
+        && git clone --branch master https://github.com/AKSW/FOX . \
         && mv fox.properties-dist fox.properties \
         && mvn clean compile -Dmaven.test.skip=true javadoc:javadoc
 
