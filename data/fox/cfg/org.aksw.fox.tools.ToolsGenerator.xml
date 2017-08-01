@@ -11,7 +11,7 @@
             it="org.aksw.fox.tools.ner.linking.it.AgdistisDirectIT"
             nl="org.aksw.fox.tools.ner.linking.nl.AgdistisDirectNL"
         ></disambiguationTool>
-
+	
         <nerTools
             de="
             org.aksw.fox.tools.ner.de.StanfordDE, 
@@ -22,7 +22,7 @@
             en="
             org.aksw.fox.tools.ner.en.OpenNLPEN, 
             org.aksw.fox.tools.ner.en.StanfordEN, 
-	    org.aksw.fox.tools.ner.de.SpotlightEN, 
+	    org.aksw.fox.tools.ner.en.SpotlightEN, 
             org.aksw.fox.tools.ner.en.IllinoisExtendedEN, 
             org.aksw.fox.tools.ner.en.BalieEN
             " 
