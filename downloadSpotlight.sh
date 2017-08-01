@@ -36,7 +36,7 @@ if [ ! -d "$DIRECTORY" ]; then
 	
 
 	touch runEN.sh 
-	echo "nohup java -Xmx4G -Dfile.encoding=utf-8 -jar dbpedia-spotlight-0.7.1.jar en_2+2 http://localhost:4448/rest  > logEN.log &">> runEN.sh
+	echo "nohup java -Xmx8G -Dfile.encoding=utf-8 -jar dbpedia-spotlight-0.7.1.jar en_2+2 http://localhost:4448/rest  > logEN.log &">> runEN.sh
 	chmod +x runEN.sh 
 	
 	touch runES.sh 
