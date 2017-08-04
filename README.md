@@ -16,14 +16,16 @@ In its current version, it integrates and merges the results of Named Entity Rec
 ## Requirements
 Java 8, Maven 3, graphviz (for JavaDoc only)
 
+## Documentation: 
+[documentation](documentation/readme.md).
+
+
 ## New Version
 This version supports multiple languages for NER, NED and RE.
 
 Live Demo: [http://fox.cs.uni-paderborn.de  (Version 2.4.0) ][6]
 
 Release: [(Version 2.4.0) ][9]
-
-Documentation: : [documentation](documentation/readme.md).
 
 ## Old Version
 This version supports multiple languages for NER only.
@@ -34,8 +36,6 @@ Live Demo: [http://fox-demo.aksw.org (Version 2.3.0) ][5]
 
 
 Release: [(Version 2.3.0) ][8]
-
-
 
 <!--
 ## Installation and start server
