@@ -26,7 +26,7 @@ RUN cd /usr/bin/FOX \
 COPY run.sh /usr/bin/FOX/run.sh
 RUN chmod +x /usr/bin/FOX/run.sh
 
-#RUN ./downloadAgdistis.sh 
+RUN ./downloadAgdistis.sh 
 RUN ./downloadSpotlight.sh
 
 # FOX port
