@@ -3,9 +3,9 @@
 
 # FOX API
 
-## endpoints
+## 1. Endpoints
 
-### configuration information
+### `/config` : configuration information
 
 to find supported parameters for HTTP requests of the current instance, call  http://localhost:4444/config for a json file. E.g.:
 
@@ -43,7 +43,7 @@ to find supported parameters for HTTP requests of the current instance, call  ht
 }
 ```
 
-### FOX
+### `/fox`: API
 
 FOX accepts HTTP POST requests with content type `application/x-turtle; charset=utf-8` or `application/json; charset=utf-8` only.
 
@@ -101,7 +101,7 @@ example input file [`example.json`][2]:
 ```
 
 
-## parameter
+## 2. Parameter
 
 Find supported parameters for HTTP requests of the current instance, call  http://localhost:4444/config for a json file.
 
