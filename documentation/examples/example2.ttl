@@ -1,0 +1,10 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+
+<http://www.example.org/sentence-1#char=0,206>
+  a                     nif:RFC5147String , nif:String , nif:Context ;
+  nif:beginIndex        "0"^^xsd:nonNegativeInteger ;
+  nif:endIndex          "206"^^xsd:nonNegativeInteger ;
+  nif:isString          "The philosopher and mathematician Leibniz was born in Leipzig in 1646 and attended the University of Leipzig from 1661-1666. The current chancellor of Germany, Angela Merkel, also attended this university."@en .

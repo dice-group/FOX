@@ -1,35 +1,38 @@
 [8]: https://github.com/AKSW/FOX/releases/tag/v2.3.0
 [9]: https://github.com/AKSW/FOX
-[7]: ./example.ttl
+[5]: ./requests.md
 [6]: ./requirements.md
+[7]: ../docker
 
-## New Version ([2.4.0][9])
-
-
-### requirements
-
-java 8, maven, wget, unzip, tar, <docker>
+# Version ([2.4.0][9])
 
 
-### Requests
 
+## [requirements][6]
 
-Example input file: [example.ttl][7]
+## [API and request examples][5]
 
-using FOX with a trained MLP with NER and RE in English:
+## [docker][7]
+The docker files are in the `Docker` folder.
 
-`curl -d "@example.ttl" -H "Content-Type:application/x-turtle; charset=utf-8"  http://fox.cs.uni-paderborn.de:4444/fox?task=re&lang=en> response.txt`
+## Without Docker:
+### setup
+Copy `fox.properties-dist` to `fox.properties`.
 
-using the light version of NER (means in this case the Stanford CoreNLP tools only) in English
+### build
+Run `ScriptBuild.sh`  to build fox.
 
-`curl -d "@example.ttl" -H "Content-Type:application/x-turtle; charset=utf-8"  http://fox.cs.uni-paderborn.de:4444/fox?task=ner&lang=de&foxlight=org.aksw.fox.tools.ner.de.StanfordDE > response.txt`
+Run `downloadAgdistis.sh` and  `downloadSpotlight.sh`.
 
+### run
 
-### Build:
+Run `ScriptRunSpotlight.sh` to start spotlight services.
 
-the docker file is in the `Docker` folder
+Run `ScriptRun.sh` to start FOX.
 
+Run `stop.sh` to stop FX.
 
+<!--
 ## Old Version ([2.3.0][8])
 
 ### Build:
@@ -43,3 +46,4 @@ Now, the release is ready in the `release` folder, `cd release`.
 Copy `fox.properties-dist` to `fox.properties` and run `run.sh`  to start the server.
 
 To close the server, run `close.sh`.
+-->

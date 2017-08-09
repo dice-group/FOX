@@ -1,5 +1,0 @@
-java 
-maven
-wget
-unzip
-tar
