@@ -1,6 +1,7 @@
+[3]:../documentation
 ##FOX - Datasets
 
-fine the documentation of Fox here : [][../documentation/]
+fine the documentation of Fox here : [documentation][3]
 
 * 1 - news dataset (created manually)
 * 2 - Illinois dataset ([NERWebpagesColumns] (http://cogcomp.cs.illinois.edu/page/resource_view/28))

@@ -1,9 +1,10 @@
 [1]: ../input
+[3]:../documentation
 [2]: fox_long.pdf
 
 # FOX
 
-fine the documentation of Fox here : [][../documentation/]
+fine the documentation of Fox here : [documentation][3]
 
 ## evaluation
 

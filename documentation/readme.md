@@ -4,8 +4,8 @@
 [7]: ../docker
 [8]: https://github.com/AKSW/FOX/releases/tag/v2.3.0
 [9]: https://github.com/AKSW/FOX
-[10] ../evaluation
-[11] ../input
+[10]: ../evaluation
+[11]: ../input
 
 
 # Version ([2.4.0][9])
