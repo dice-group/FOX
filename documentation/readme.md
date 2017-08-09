@@ -1,9 +1,9 @@
-[8]: https://github.com/AKSW/FOX/releases/tag/v2.3.0
-[9]: https://github.com/AKSW/FOX
+[4]: https://github.com/earthquakesan/fox-py
 [5]: ./requests.md
 [6]: ./requirements.md
 [7]: ../docker
-[8]: https://github.com/earthquakesan/fox-py
+[8]: https://github.com/AKSW/FOX/releases/tag/v2.3.0
+[9]: https://github.com/AKSW/FOX
 
 # Version ([2.4.0][9])
 
@@ -37,7 +37,7 @@ Run `stop.sh` to stop FX.
 
 ## Bindings
 
-[Python][7]
+[Python][4]
 
 
 <!--
