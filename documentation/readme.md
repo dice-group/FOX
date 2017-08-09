@@ -4,18 +4,17 @@
 [7]: ../docker
 [8]: https://github.com/AKSW/FOX/releases/tag/v2.3.0
 [9]: https://github.com/AKSW/FOX
+[10] ../evaluation
+[11] ../input
+
 
 # Version ([2.4.0][9])
-
-
 
 ## [Requirements][6]
 
 ## [API and request examples][5]
 
 ## [Docker][7]
-
-
 
 ## Without Docker:
 ### setup
@@ -38,6 +37,10 @@ Run `stop.sh` to stop FX.
 ## Bindings
 
 [Python][4]
+
+## [FOX datasets][11]
+
+## [FOX evaluation data][10]
 
 
 <!--

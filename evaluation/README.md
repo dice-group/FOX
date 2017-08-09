@@ -1,15 +1,38 @@
-FOX - Evaluation data
-=====================
+[1]: ../input
+[2]: fox_long.pdf
 
-Additional information might be given in the readme file in the specific folder.
+# FOX
 
-The resulting raw data from the learning and testing process.
+fine the documentation of Fox here : [][../documentation/]
 
-* 1 - news dataset (created manually)
-* 2 - Illinois dataset
-* 3 - subset of news dataset
-* 4 - reuters dataset (created manually)
-* 5 - all datasets 1-4
-* conll2002 - the conll2002 dataset
-* GermanNER - dataset build on the GermEval 2014 dataset 
-* Wikiner - silver standard datasets in many languages
+## evaluation
+
+### English evaluation
+
+```Tex
+@incollection{
+  year={2014},
+  isbn={978-3-319-11963-2},
+  booktitle={The Semantic Web – ISWC 2014},
+  volume={8796},
+  series={Lecture Notes in Computer Science},
+  title={Ensemble Learning for Named Entity Recognition},
+  publisher={Springer International Publishing},
+  author={Speck, René and Ngonga Ngomo, Axel-Cyrille}
+}
+```
+
+
+### Multilingual evaluation
+
+Detailed evaluation results on multilingual datasets present in: [Multilingual_evaluation.pdf][2]
+
+
+
+## datasets
+
+Additional information might be given in the readme file in the specific folder where then datasets are located [datasets][1].
+
+### evaluation meta data
+
+given in `evaluation.zip` and `evaluation_miltiple_langs.zip`

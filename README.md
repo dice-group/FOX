@@ -16,7 +16,7 @@ In its current version, it integrates and merges the results of Named Entity Rec
 ## Requirements
 Java 8, Maven 3, graphviz (for JavaDoc only)
 
-## Documentation: 
+## Documentation:
 [documentation](documentation/readme.md).
 
 
@@ -34,44 +34,7 @@ This version supports multiple languages for NER only.
 
 Live Demo: [http://fox-demo.aksw.org (Version 2.3.0) ][5]
 
-
 Release: [(Version 2.3.0) ][8]
-
-<!--
-## Installation and start server
-:one: Clone the latest version: `git clone -b master https://github.com/AKSW/FOX.git`
-
-:two: Build the release: `./build.sh`
-
-:three: Go into the `release` folder and rename `fox.properties-dist` to `fox.properties` and change the file to your needs.
-
-:four: Learn with trainings data (optional with default properties file): `./learn.sh` (set `org.aksw.fox.nerlearner.FoxClassifier.training` to true in  `fox.properties`)
-
-:five: Start the server: `./run.sh`
-
-:six: Stop the server: `./close.sh`
-
-## Run with Docker
-:one:  Build project: `./build.sh`
-
-:two:  Enter release folder: `cd release`
-
-:three: Copy properties file: `cp fox.properties-dist fox.properties`
-
-:four: Build docker container: `docker build -t fox .`
-
-:four: Start docker container: `docker run -p 4444:4444 -it fox`
-
-## Demo and Documentation
-Project Page: [http://fox.aksw.org][4]
-
-Live Demo: [http://fox-demo.aksw.org (Version 2.2.2) ][5]
-
-## Datasets
-The training and testing datasets are in the `input` folder.
-
-The resulting raw data from the learning and testing process are in the `evaluation` folder.
--->
 
 ## How to cite
 ```Tex
