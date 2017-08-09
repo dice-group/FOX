@@ -2,7 +2,7 @@
 <config>
     <toolsGenerator>
         <lang>de, en, es, fr, it, nl</lang>
-<usedLang>de, en, es, fr, nl</usedLang>
+        <usedLang>en</usedLang>
         <disambiguationTool
             de="org.aksw.fox.tools.ner.linking.de.AgdistisDirectDE"
             en="org.aksw.fox.tools.ner.linking.en.AgdistisDirectEN"

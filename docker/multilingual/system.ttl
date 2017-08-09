@@ -1,0 +1,75 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix hobbit: <http://w3id.org/hobbit/vocab#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix gerbil2: <http://w3id.org/gerbil/hobbit/vocab#> .
+@prefix nifsys: <http://w3id.org/hobbit/gerbil/nif-sys#> .
+
+<http://ns.aksw.org/fox> a hobbit:System ;
+    rdfs:label "FOX"@en;
+    rdfs:comment "FOX"@en.
+
+<http://ns.aksw.org/foxInstance> a  hobbit:SystemInstance;
+    rdfs:label  "FOX_en"@en;
+    rdfs:comment    "FOX"@en;
+    hobbit:imageName "git.project-hobbit.eu:4567/gerbil/gerbilnifsystemadapter";
+    hobbit:usesImage "git.project-hobbit.eu:4567/speck/fox";
+    nifsys:instanceImageName "git.project-hobbit.eu:4567/speck/fox";
+    hobbit:implementsAPI gerbil2:GerbilApiOKE2015T1, gerbil2:GerbilApiA2KB, gerbil2:GerbilApiERec, gerbil2:GerbilApiD2KB, gerbil2:GerbilApiC2KB, gerbil2:GerbilApiETyping, gerbil2:GerbilApiRT2KB;
+    hobbit:instanceOf <http://ns.aksw.org/fox> ;
+    nifsys:numberOfInstances "3"^^xsd:unsignedInt;
+    nifsys:webserviceUrl "http://HOST:4444/fox?task=ner&lang=en" .
+
+<http://ns.aksw.org/foxInstance_OpenNLPEN> a  hobbit:SystemInstance;
+    rdfs:label  "FOX_en_OpenNLPEN"@en;
+    rdfs:comment    "FOX_en_OpenNLPEN"@en;
+    hobbit:imageName "git.project-hobbit.eu:4567/gerbil/gerbilnifsystemadapter";
+    hobbit:usesImage "git.project-hobbit.eu:4567/speck/fox";
+    nifsys:instanceImageName "git.project-hobbit.eu:4567/speck/fox";
+    hobbit:implementsAPI gerbil2:GerbilApiOKE2015T1, gerbil2:GerbilApiA2KB, gerbil2:GerbilApiERec, gerbil2:GerbilApiD2KB, gerbil2:GerbilApiC2KB, gerbil2:GerbilApiETyping, gerbil2:GerbilApiRT2KB;
+    hobbit:instanceOf <http://ns.aksw.org/fox> ;
+    nifsys:numberOfInstances "3"^^xsd:unsignedInt;
+    nifsys:webserviceUrl "http://HOST:4444/fox?task=ner&lang=en&foxlight=org.aksw.fox.tools.ner.en.OpenNLPEN" .
+
+<http://ns.aksw.org/foxInstance_StanfordEN> a  hobbit:SystemInstance;
+    rdfs:label  "FOX_en_StanfordEN"@en;
+    rdfs:comment    "FOX_en_StanfordEN"@en;
+    hobbit:imageName "git.project-hobbit.eu:4567/gerbil/gerbilnifsystemadapter";
+    hobbit:usesImage "git.project-hobbit.eu:4567/speck/fox";
+    nifsys:instanceImageName "git.project-hobbit.eu:4567/speck/fox";
+    hobbit:implementsAPI gerbil2:GerbilApiOKE2015T1, gerbil2:GerbilApiA2KB, gerbil2:GerbilApiERec, gerbil2:GerbilApiD2KB, gerbil2:GerbilApiC2KB, gerbil2:GerbilApiETyping, gerbil2:GerbilApiRT2KB;
+    hobbit:instanceOf <http://ns.aksw.org/fox> ;
+    nifsys:numberOfInstances "3"^^xsd:unsignedInt;
+    nifsys:webserviceUrl "http://HOST:4444/fox?task=ner&lang=en&foxlight=org.aksw.fox.tools.ner.en.StanfordEN" .
+
+<http://ns.aksw.org/foxInstance_SpotlightEN> a  hobbit:SystemInstance;
+    rdfs:label  "FOX_en_SpotlightEN"@en;
+    rdfs:comment    "FOX_en_SpotlightEN"@en;
+    hobbit:imageName "git.project-hobbit.eu:4567/gerbil/gerbilnifsystemadapter";
+    hobbit:usesImage "git.project-hobbit.eu:4567/speck/fox";
+    nifsys:instanceImageName "git.project-hobbit.eu:4567/speck/fox";
+    hobbit:implementsAPI gerbil2:GerbilApiOKE2015T1, gerbil2:GerbilApiA2KB, gerbil2:GerbilApiERec, gerbil2:GerbilApiD2KB, gerbil2:GerbilApiC2KB, gerbil2:GerbilApiETyping, gerbil2:GerbilApiRT2KB;
+    hobbit:instanceOf <http://ns.aksw.org/fox> ;
+    nifsys:numberOfInstances "3"^^xsd:unsignedInt;
+    nifsys:webserviceUrl "http://HOST:4444/fox?task=ner&lang=en&foxlight=org.aksw.fox.tools.ner.en.SpotlightEN" .
+
+<http://ns.aksw.org/foxInstance_IllinoisExtendedEN> a  hobbit:SystemInstance;
+    rdfs:label  "FOX_en_IllinoisExtendedEN"@en;
+    rdfs:comment    "FOX_en_IllinoisExtendedEN"@en;
+    hobbit:imageName "git.project-hobbit.eu:4567/gerbil/gerbilnifsystemadapter";
+    hobbit:usesImage "git.project-hobbit.eu:4567/speck/fox";
+    nifsys:instanceImageName "git.project-hobbit.eu:4567/speck/fox";
+    hobbit:implementsAPI gerbil2:GerbilApiOKE2015T1, gerbil2:GerbilApiA2KB, gerbil2:GerbilApiERec, gerbil2:GerbilApiD2KB, gerbil2:GerbilApiC2KB, gerbil2:GerbilApiETyping, gerbil2:GerbilApiRT2KB;
+    hobbit:instanceOf <http://ns.aksw.org/fox> ;
+    nifsys:numberOfInstances "3"^^xsd:unsignedInt;
+    nifsys:webserviceUrl "http://HOST:4444/fox?task=ner&lang=en&foxlight=org.aksw.fox.tools.ner.en.IllinoisExtendedEN" .
+
+<http://ns.aksw.org/foxInstance_BalieEN> a  hobbit:SystemInstance;
+    rdfs:label  "FOX_en_BalieEN"@en;
+    rdfs:comment    "FOX_en_BalieEN"@en;
+    hobbit:imageName "git.project-hobbit.eu:4567/gerbil/gerbilnifsystemadapter";
+    hobbit:usesImage "git.project-hobbit.eu:4567/speck/fox";
+    nifsys:instanceImageName "git.project-hobbit.eu:4567/speck/fox";
+    hobbit:implementsAPI gerbil2:GerbilApiOKE2015T1, gerbil2:GerbilApiA2KB, gerbil2:GerbilApiERec, gerbil2:GerbilApiD2KB, gerbil2:GerbilApiC2KB, gerbil2:GerbilApiETyping, gerbil2:GerbilApiRT2KB;
+    hobbit:instanceOf <http://ns.aksw.org/fox> ;
+    nifsys:numberOfInstances "3"^^xsd:unsignedInt;
+    nifsys:webserviceUrl "http://HOST:4444/fox?task=ner&lang=en&foxlight=org.aksw.fox.tools.ner.en.BalieEN" .
