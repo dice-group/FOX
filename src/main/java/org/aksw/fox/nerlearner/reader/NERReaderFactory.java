@@ -7,15 +7,20 @@ import org.apache.log4j.Logger;
 
 public class NERReaderFactory {
 
-    public static final Logger LOG             = LogManager.getLogger(NERReaderFactory.class);
-    public final static String INER_READER_KEY = NERReaderFactory.class.getName().concat(".readerclass");
+  public static final Logger LOG = LogManager.getLogger(NERReaderFactory.class);
+  public final static String INER_READER_KEY =
+      NERReaderFactory.class.getName().concat(".readerclass");
 
-    public static INERReader getINERReader() throws LoadingNotPossibleException {
+  public static INERReader getINERReader() throws LoadingNotPossibleException {
+    return getINERReader(FoxCfg.get(INER_READER_KEY));
 
-        if (FoxCfg.get(INER_READER_KEY) != null) {
-            String classes = FoxCfg.get(INER_READER_KEY).trim();
-            return (INERReader) FoxCfg.getClass(classes);
-        } else
-            return null;
+  }
+
+  public static INERReader getINERReader(final String classes) throws LoadingNotPossibleException {
+    if ((classes != null) && !classes.trim().isEmpty()) {
+      return (INERReader) FoxCfg.getClass(classes);
+    } else {
+      return null;
     }
+  }
 }

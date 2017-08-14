@@ -1,6 +1,7 @@
 package org.aksw.fox.nerlearner;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,7 +31,7 @@ import weka.core.SerializationHelper;
 public class FoxClassifier {
 
   public static Logger LOG = LogManager.getLogger(FoxClassifier.class);
-
+  Map<String, Classifier> cache = new HashMap<>();
   public static final String CFG_KEY_MODEL_PATH =
       FoxClassifier.class.getName().concat(".modelPath");
   public static final String CFG_KEY_LEARNER = FoxClassifier.class.getName().concat(".learner");
@@ -110,14 +111,18 @@ public class FoxClassifier {
    * Reads a serialized Classifier from file that is specified in the fox properties.
    */
   public void readClassifier(final String lang) {
-    final String name = getName(lang);
-    LOG.info("readClassifier: " + name);
-    try {
-      classifier = (Classifier) SerializationHelper.read(name.trim());
-    } catch (final Exception e) {
-      LOG.error(e.getLocalizedMessage(), e);
+    classifier = cache.get(lang);
+    if (classifier == null) {
+      final String name = getName(lang);
+      LOG.info("readClassifier: " + name);
+      try {
+        classifier = (Classifier) SerializationHelper.read(name.trim());
+      } catch (final Exception e) {
+        LOG.error(e.getLocalizedMessage(), e);
+      }
+      LOG.info("readClassifier done.");
+      cache.put(lang, classifier);
     }
-    LOG.info("readClassifier done.");
   }
 
   /**

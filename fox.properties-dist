@@ -11,6 +11,7 @@ org.aksw.fox.web.feedback.FeedbackHttpHandler.apikey: <YOUR API KEY>
 # org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.NEEL2014Reader
 # org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.TrainingInputReader
 org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.WikinerReader
+#org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.NifReader
 # org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.BioCorpora
 # org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.GermanNERCorpus
 # org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.Conll2002

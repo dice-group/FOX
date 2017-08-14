@@ -69,11 +69,10 @@ public class TrainingInputReader extends ANERReader {
    * @param inputPaths
    * @throws IOException
    */
-  public TrainingInputReader(final String[] inputPaths) throws IOException {
-    initFiles(inputPaths);
-  }
 
-  public TrainingInputReader() {}
+  public TrainingInputReader(final String[] inputPaths) throws IOException {
+    super(inputPaths);
+  }
 
   public void initFiles(final String folder) throws IOException {
     final List<String> files = new ArrayList<>();
