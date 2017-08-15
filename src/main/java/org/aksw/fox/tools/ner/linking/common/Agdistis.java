@@ -22,15 +22,12 @@ import org.aksw.fox.output.AFoxJenaNew;
 import org.aksw.fox.tools.ner.linking.AbstractLinking;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 public class Agdistis extends AbstractLinking {
 
-  public static final Logger LOG = LogManager.getLogger(Agdistis.class);
   public static final String CFG_KEY_AGDISTIS_ENDPOINT = "agdistis.endpoint";
 
   // maps AGDISTIS index to real index
@@ -88,18 +85,7 @@ public class Agdistis extends AbstractLinking {
   private String makeInput(final Set<Entity> entities, final String input) {
 
     final Map<Integer, Entity> indexEntityMap = new HashMap<>();
-    for (final Entity entity : entities) {
-
-      final Set<Integer> startIndices = entity.getIndices();
-      if (startIndices == null) {
-        throw new NullPointerException("Entity without indexices.");
-      } else {
-        for (final Integer startIndex : startIndices) {
-          // TODO : check contains
-          indexEntityMap.put(startIndex, entity);
-        }
-      }
-    }
+    entities.forEach(entity -> entity.getIndices().forEach(i -> indexEntityMap.put(i, entity)));
 
     final Set<Integer> startIndices = new TreeSet<>(indexEntityMap.keySet());
     String agdistis_input = "";
@@ -206,7 +192,7 @@ public class Agdistis extends AbstractLinking {
 
     for (final NamedEntityInText namedEntity : d.getNamedEntitiesInText()) {
       if (!namedEntity.getNamedEntityUri().contains("http")) {
-        namedEntity.setNamedEntity("http://aksw.org/notInWiki/" + namedEntity.getSingleWordLabel());
+        namedEntity.setNamedEntity(AFoxJenaNew.akswNotInWiki + namedEntity.getSingleWordLabel());
       }
       final JSONObject obj = new JSONObject();
       obj.put("namedEntity", namedEntity.getLabel());

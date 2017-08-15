@@ -2,7 +2,6 @@ package org.aksw.fox.output;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -192,52 +191,28 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
       // Add to model
       if ((roe != null) && (rse != null)) {
 
-        final Date date = DatatypeConverter
-            .parseDate(DatatypeConverter.printDateTime(new GregorianCalendar())).getTime();
-        final long time = (date.getTime());
+        String uri = rse.getProperty(pItsrdfTaIdentRef).getResource().getLocalName();
+        final String time = String.valueOf(
+            DatatypeConverter.parseDate(DatatypeConverter.printDateTime(new GregorianCalendar()))
+                .getTime().getTime());
+        uri = ns_fox_resource.concat(uri).concat("_").concat(time);
 
-        String urir = rse.getProperty(pItsrdfTaIdentRef).getResource().getURI().concat("_")
-            .concat(String.valueOf(time));
+        final Resource resource = graph.createResource(uri)//
+            .addProperty(RDF.type, pRelationRelation)//
+            .addProperty(pRelationDomain, rse.getProperty(pItsrdfTaIdentRef).getResource())//
+            .addProperty(pRelationRange, roe.getPropertyResourceValue(pItsrdfTaIdentRef));
 
-        urir =
-            ns_fox_resource.concat(rse.getProperty(pItsrdfTaIdentRef).getResource().getLocalName());
-        urir = urir.concat("_").concat(String.valueOf(time));
-
-        final Resource resource = graph.createResource(urir);
-        uris.add(urir);
-
-        resource.addProperty(RDF.type, pRelationRelation);
-
-        resource.addProperty(pRelationDomain, rse.getProperty(pItsrdfTaIdentRef).getResource());
-
-        resource.addProperty(pRelationRange, roe.getPropertyResourceValue(pItsrdfTaIdentRef));
-        for (final URI uri : relation.getRelation()) {
-          resource.addProperty(pRelationrelation, graph.createProperty(uri.toString()));
+        for (final URI i : relation.getRelation()) {
+          resource.addProperty(pRelationrelation, graph.createProperty(i.toString()));
         }
-        /**
-         * <code>
-         final Resource resRel =
-             graph.createResource(rse.getProperty(pItsrdfTaIdentRef).getObject().toString());
-
-         for (final URI uri : relation.getRelation()) {
-           resRel.addProperty(graph.createProperty(uri.toString()),
-               roe.getPropertyResourceValue(pItsrdfTaIdentRef));
-         }
-         </code>
-         */
+        uris.add(uri);
 
       } else {
         nofound.add(relation);
-        if (LOG.isDebugEnabled()) {
-          LOG.debug("not found: ");
-          LOG.debug(relation);
-        }
+        LOG.debug("relation not found: " + relation);
       }
-
     }
-
     relations.removeAll(nofound);
-
     return uris;
   }
 

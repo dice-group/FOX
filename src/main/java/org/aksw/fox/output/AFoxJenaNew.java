@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class AFoxJenaNew {
   public static Logger LOG = LogManager.getLogger(AFoxJenaNew.class);
-
+  public static final String akswNotInWiki = "http://aksw.org/notInWiki/";
   public static final String ns_fox_ontology = "http://ns.aksw.org/fox/ontology#";
   public static final String ns_fox_resource = "http://ns.aksw.org/fox/resource#";
   public static final String ns_dbpedia_ontology = "http://dbpedia.org/ontology/";
