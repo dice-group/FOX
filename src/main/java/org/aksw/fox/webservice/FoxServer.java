@@ -17,9 +17,9 @@ import org.aksw.fox.data.exception.PortInUseException;
 import org.aksw.fox.output.FoxJenaNew;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.FoxCfg;
-import org.aksw.fox.web.api.ApiUtil;
 import org.aksw.fox.webservice.util.Pool;
 import org.aksw.fox.webservice.util.RouteConfig;
+import org.aksw.gerbil.io.nif.impl.TurtleNIFParser;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.apache.jena.riot.Lang;
 import org.jetlang.fibers.Fiber;
@@ -37,7 +37,6 @@ public class FoxServer extends AServer {
   final String jsonContentType = "application/json";
 
   protected final RouteConfig routeConfig = new RouteConfig();
-  protected final ApiUtil apiUtil = new ApiUtil();
 
   public static Map<String, Pool<IFox>> pool = null;
   static {
@@ -128,7 +127,6 @@ public class FoxServer extends AServer {
 
         final JSONObject jo = new JSONObject(req.body());
         final Map<String, Object> d = new ObjectMapper().readValue(jo.toString(), HashMap.class);
-
         parameter = d.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, //
             e -> String.valueOf(e.getValue())//
         ));
@@ -206,7 +204,8 @@ public class FoxServer extends AServer {
       // parse input
       List<Document> docs = null;
       try {
-        docs = apiUtil.parseNIF(parameter.get(FoxParameter.Parameter.INPUT.toString()));
+        docs =
+            new TurtleNIFParser().parseNIF(parameter.get(FoxParameter.Parameter.INPUT.toString()));
       } catch (final Exception e) {
         LOG.error(e.getLocalizedMessage(), e);
         errorMessage = "Could not parse the request body.";
