@@ -10,8 +10,6 @@ import java.util.Set;
 import javax.xml.bind.DatatypeConverter;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
-import org.aksw.fox.data.IData;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.utils.DataTestFactory;
 import org.apache.jena.rdf.model.Property;
@@ -30,6 +28,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
 
   Resource inputResource = null;
   String baseuri = null;
+  static String defaultDocumentURIbase = "http://ns.aksw.org/fox/";
 
   public static void main(final String args[]) {
 
@@ -48,9 +47,9 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
     final String start = DatatypeConverter.printDateTime(new GregorianCalendar());
     final String end = DatatypeConverter.printDateTime(new GregorianCalendar());
 
-    foxJena.addInput(input, "http://example_uri.com");
-    foxJena.addEntities(entities, start, end);
-    foxJena.addRelations(relations, start, end);
+    foxJena.addInput(input, "");
+    foxJena.addEntities(entities, start, end, "na", "na");
+    foxJena.addRelations(relations, start, end, "na", "na");
 
     LOG.info("Jena model: \n\n" + foxJena.print());
   }
@@ -63,17 +62,14 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
    * @return
    */
   protected String addSoftwareAgent(final String toolName, final String version) {
-    LOG.info("Adds sSoftwareAgent");
-    final Resource resource = graph.createResource(ns_fox_resource.concat(toolName));
 
-    resource.addProperty(RDF.type, propertyProvSoftwareAgent);
-    resource.addProperty(RDF.type, propertySchemaSoftwareAgent);
+    LOG.info("Adds SoftwareAgent");
 
-    resource.addLiteral(propertySchemaSoftwareVersion, graph.createTypedLiteral(//
-        new String(version), XSD.xstring.getURI()));
-
-    resource.addLiteral(propertyFoafName, graph.createTypedLiteral(//
-        new String(toolName), XSD.xstring.getURI()));
+    final Resource resource = graph.createResource(ns_fox_resource.concat(toolName))//
+        .addProperty(RDF.type, pProvSoftwareAgent)//
+        .addProperty(RDF.type, pSchemaSoftwareAgent)//
+        .addLiteral(pSchemaSoftwareVersion, graph.createTypedLiteral(version, XSD.xstring.getURI()))//
+        .addLiteral(pFoafName, graph.createTypedLiteral(toolName, XSD.xstring.getURI()));
 
     return resource.getURI();
   }
@@ -83,18 +79,17 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
 
     LOG.info("Add activity ");
 
-    final Resource resource = graph.createResource();
+    final Resource resource = graph.createResource()//
+        .addProperty(RDF.type, pProvActivity)//
+        .addProperty(RDF.type, propertyActivity)//
+        .addLiteral(pProvStartedAtTime, graph.createTypedLiteral(start))//
+        .addLiteral(pProvEndedAtTime, graph.createTypedLiteral(end))//
+        .addProperty(pProvUsed, graph.getResource(toolUri));
 
-    resource.addProperty(RDF.type, propertyProvActivity);
-    resource.addProperty(RDF.type, propertyActivity);
-
-    resource.addLiteral(propertyProvStartedAtTime, graph.createTypedLiteral(start));
-    resource.addLiteral(propertyProvEndedAtTime, graph.createTypedLiteral(end));
     uris.forEach(uri -> {
-      resource.addProperty(propertyProvGenerated, graph.getResource(uri));
+      resource.addProperty(pProvGenerated, graph.getResource(uri));
     });
 
-    resource.addProperty(propertyProvUsed, graph.getResource(toolUri));
   }
 
   /**
@@ -102,71 +97,29 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
    *
    */
   @Override
-  public void addEntities(final Set<Entity> entities, final String start, final String end) {
+  public void addEntities(final Set<Entity> entities, final String start, final String end,
+      final String toolName, final String version) {
 
     if ((entities != null) && !entities.isEmpty()) {
       final Set<String> uris = _addEntities(entities);
-
-      final String toolName = getToolname(entities);
-      LOG.info(toolName);
-      final String toolUri = addSoftwareAgent(toolName, "TODO");
-
-      addActivity(uris, start, end, propertyActivityNamedEntityRecognition, toolUri);
+      final String toolUri = addSoftwareAgent(toolName, version);
+      addActivity(uris, start, end, pActivityNER, toolUri);
     }
   }
 
   @Override
-  public void addRelations(final Set<Relation> relations, final String start, final String end) {
-    LOG.info("Add relations.");
+  public void addRelations(final Set<Relation> relations, final String start, final String end,
+      final String toolName, final String version) {
 
     if ((relations != null) && !relations.isEmpty()) {
       final Set<String> uris = _addRelations(relations);
-      final String toolName = getToolname(relations);
-      final String toolUri = addSoftwareAgent(toolName, "TODO");
-
-      addActivity(uris, start, end, propertyActivityRelationExtraction, toolUri);
+      final String toolUri = addSoftwareAgent(toolName, version);
+      addActivity(uris, start, end, pActivityRE, toolUri);
     }
-  }
-
-  /**
-   * Gives other named entity types.
-   *
-   * @param foxET
-   * @return
-   */
-
-  private Set<String> otherET(final String foxET) {
-
-    final String DOLCE_PERSON_TYPE_URI =
-        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person";
-    final String DOLCE_LOCATION_TYPE_URI =
-        "http://www.ontologydesignpatterns.org/ont/d0.owl#Location";
-    final String DOLCE_ORGANIZATION_TYPE_URI =
-        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization";
-
-    final Set<String> types = new HashSet<>();
-
-    if (foxET.equals(EntityClassMap.P.toString())) {
-      types.add(DOLCE_PERSON_TYPE_URI);
-      types.add("http://schema.org/Person");
-      types.add("http://dbpedia.org/ontology/Person");
-    } else if (foxET.equals(EntityClassMap.L.toString())) {
-
-      types.add(DOLCE_LOCATION_TYPE_URI);
-      types.add("http://schema.org/Place");
-      types.add("http://schema.org/Location");
-      types.add("http://dbpedia.org/ontology/Place");
-    } else if (foxET.equals(EntityClassMap.O.toString())) {
-      types.add(DOLCE_ORGANIZATION_TYPE_URI);
-      types.add("http://schema.org/Organisation");
-      types.add("http://dbpedia.org/ontology/Organisation");
-    }
-
-    return types;
-
   }
 
   private Set<String> _addEntities(final Set<Entity> entities) {
+
     LOG.info("Add entities.");
 
     final Set<String> uris = new HashSet<>();
@@ -184,41 +137,26 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
 
         for (final Integer index : entity.getIndices()) {
 
-          final Resource resource = graph.createResource(//
-              createDocUri(baseuri, index, index + entity.getText().length())//
-          );
+          final String docuri = createDocUri(baseuri, index, index + entity.getText().length());
+          final Resource resource = graph.createResource(docuri)//
+              .addProperty(RDF.type, pNifPhrase)//
+              .addLiteral(pNifBegin, //
+                  graph.createTypedLiteral(new Integer(index), XSD.nonNegativeInteger.getURI()))//
+              .addLiteral(pNifEnd, //
+                  graph.createTypedLiteral(new Integer(index + entity.getText().length()),
+                      XSD.nonNegativeInteger.getURI()))//
+              .addProperty(pItsrdfTaIdentRef, //
+                  graph.createResource(entity.uri))//
+              .addProperty(pItsrdfTaClassRef, //
+                  graph.createResource(ns_fox_ontology + entity.getType()))//
+              .addLiteral(pNifAnchorOf, //
+                  graph.createTypedLiteral(new String(entity.getText()), XSD.xstring.getURI()))//
+              .addProperty(pNifreferenceContext, inputResource);
 
-          uris.add(resource.getURI());
-
-          resource.addProperty(RDF.type, propertyNifPhrase);
-
-          // beginIndex
-          resource.addLiteral(propertyNifBeginIndex, graph.createTypedLiteral(//
-              new Integer(index), XSD.nonNegativeInteger.getURI()));
-
-          // endIndex
-          resource.addLiteral(propertyNifEndIndex, graph.createTypedLiteral(//
-              new Integer(index + entity.getText().length()), XSD.nonNegativeInteger.getURI()));
-
-          // taIdentRef
-          resource.addProperty(propertyItsrdfTaIdentRef, graph.createResource(entity.uri));
-
-          // class
-          resource.addProperty(propertyItsrdfTaClassRef,
-              graph.createResource(ns_fox_ontology + entity.getType()));
-
-          final Set<String> others = otherET(entity.getType());
-
-          for (final String s : others) {
-            resource.addProperty(propertyItsrdfTaClassRef, graph.createResource(s));
+          for (final String s : typesmap.get(entity.getType())) {
+            resource.addProperty(pItsrdfTaClassRef, graph.createResource(s));
           }
-
-          // anchorOf
-          resource.addLiteral(propertyNifAnchorOf, graph.createTypedLiteral(//
-              new String(entity.getText()), XSD.xstring.getURI()));
-
-          // referenceContext
-          resource.addProperty(propertyNifreferenceContext, inputResource);
+          uris.add(resource.getURI());
         }
       }
     }
@@ -237,11 +175,11 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
       Resource roe = null;
       Resource rse = null;
 
-      final ResIterator iterEntities = graph.listSubjectsWithProperty(RDF.type, propertyNifPhrase);
+      final ResIterator iterEntities = graph.listSubjectsWithProperty(RDF.type, pNifPhrase);
       while (iterEntities.hasNext()) {
         final Resource resource = iterEntities.nextResource();
 
-        for (final Statement indicies : resource.listProperties(propertyNifBeginIndex).toSet()) {
+        for (final Statement indicies : resource.listProperties(pNifBegin).toSet()) {
           final int index = indicies.getInt();
           if (oe.getIndices().contains(index)) {
             roe = resource;
@@ -258,34 +196,32 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
             .parseDate(DatatypeConverter.printDateTime(new GregorianCalendar())).getTime();
         final long time = (date.getTime());
 
-        String urir = rse.getProperty(propertyItsrdfTaIdentRef).getResource().getURI().concat("_")
+        String urir = rse.getProperty(pItsrdfTaIdentRef).getResource().getURI().concat("_")
             .concat(String.valueOf(time));
 
-        urir = ns_fox_resource
-            .concat(rse.getProperty(propertyItsrdfTaIdentRef).getResource().getLocalName());
+        urir =
+            ns_fox_resource.concat(rse.getProperty(pItsrdfTaIdentRef).getResource().getLocalName());
         urir = urir.concat("_").concat(String.valueOf(time));
 
         final Resource resource = graph.createResource(urir);
         uris.add(urir);
 
-        resource.addProperty(RDF.type, propertyRelationRelation);
+        resource.addProperty(RDF.type, pRelationRelation);
 
-        resource.addProperty(propertyRelationDomain,
-            rse.getProperty(propertyItsrdfTaIdentRef).getResource());
+        resource.addProperty(pRelationDomain, rse.getProperty(pItsrdfTaIdentRef).getResource());
 
-        resource.addProperty(propertyRelationRange,
-            roe.getPropertyResourceValue(propertyItsrdfTaIdentRef));
+        resource.addProperty(pRelationRange, roe.getPropertyResourceValue(pItsrdfTaIdentRef));
         for (final URI uri : relation.getRelation()) {
-          resource.addProperty(propertyRelationrelation, graph.createProperty(uri.toString()));
+          resource.addProperty(pRelationrelation, graph.createProperty(uri.toString()));
         }
         /**
          * <code>
          final Resource resRel =
-             graph.createResource(rse.getProperty(propertyItsrdfTaIdentRef).getObject().toString());
-        
+             graph.createResource(rse.getProperty(pItsrdfTaIdentRef).getObject().toString());
+
          for (final URI uri : relation.getRelation()) {
            resRel.addProperty(graph.createProperty(uri.toString()),
-               roe.getPropertyResourceValue(propertyItsrdfTaIdentRef));
+               roe.getPropertyResourceValue(pItsrdfTaIdentRef));
          }
          </code>
          */
@@ -307,7 +243,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
 
   @Override
   public void addInput(final String input, final String uri) {
-    document++;
+    documentCounter++;
     baseuri = uri;
 
     if (baseuri == null) {
@@ -316,19 +252,15 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
 
     final String currecntUri = createDocUri(baseuri, 0, (input.length()));
 
-    inputResource = graph.createResource(currecntUri);
-    inputResource.addProperty(RDF.type, propertyNifContext);
-
-    // endIndex
-    inputResource.addLiteral(propertyNifBeginIndex, graph.createTypedLiteral(//
-        new Integer(0), XSD.nonNegativeInteger.getURI()));
-
-    // endIndex
-    inputResource.addLiteral(propertyNifEndIndex, graph.createTypedLiteral(//
-        new Integer(input.length()), XSD.nonNegativeInteger.getURI()));
-
-    // isString
-    inputResource.addLiteral(propertyNifIsString, input);
+    inputResource =
+        graph.createResource(currecntUri)//
+            .addProperty(RDF.type, pNifContext)//
+            .addLiteral(pNifBegin,
+                graph.createTypedLiteral(new Integer(0), XSD.nonNegativeInteger.getURI()))//
+            .addLiteral(pNifEnd,
+                graph.createTypedLiteral(new Integer(input.length()),
+                    XSD.nonNegativeInteger.getURI()))//
+            .addLiteral(pNifIsString, input);
   }
 
   public String createDocUri(final String baseuri, final int start, final int end) {
@@ -337,20 +269,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
   }
 
   public String getDefaultDocumentURI() {
-    return "http://ns.aksw.org/fox/".concat("demo/").concat("document-")
-        .concat(String.valueOf(document));
-  }
-
-  private String getToolname(final Set<? extends IData> data) {
-    String toolname = "";
-    for (final IData e : data) {
-      if (toolname.isEmpty()) {
-        toolname = e.getToolName();
-      } else if (!toolname.equals(e.getToolName())) {
-        LOG.warn("All entities are expected to be created from one tool.");
-        LOG.warn("but we found: " + toolname + " and " + e.getToolName());
-      }
-    }
-    return toolname;
+    return defaultDocumentURIbase.concat("demo/").concat("document-")
+        .concat(String.valueOf(documentCounter));
   }
 }

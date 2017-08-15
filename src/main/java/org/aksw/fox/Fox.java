@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
@@ -21,6 +22,7 @@ import org.aksw.fox.data.exception.LoadingNotPossibleException;
 import org.aksw.fox.data.exception.UnsupportedLangException;
 import org.aksw.fox.output.FoxJenaNew;
 import org.aksw.fox.output.IFoxJena;
+import org.aksw.fox.tools.ATool;
 import org.aksw.fox.tools.Tools;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.tools.ner.INER;
@@ -114,6 +116,12 @@ public class Fox extends AFox {
     return entities;
   }
 
+  /**
+   * Gets toolname to relations
+   *
+   * @param entities
+   * @return toolname to relations
+   */
   protected Map<String, Set<Relation>> doRE(final Set<Entity> entities) {
     final Map<String, Set<Relation>> relations = new HashMap<>();
 
@@ -325,33 +333,32 @@ public class Fox extends AFox {
   }
 
   protected void setOutput(final Set<Entity> entities, final Map<String, Set<Relation>> relations) {
-    if (entities == null) {
-      LOG.warn("Entities are empty.");
-      return;
+    if ((entities == null) || (relations == null)) {
+      LOG.warn("Parameter NULL");
     }
 
     final String input = parameter.get(FoxParameter.Parameter.INPUT.toString());
-    final String out = parameter.get(FoxParameter.Parameter.OUTPUT.toString());
+    final String output = parameter.get(FoxParameter.Parameter.OUTPUT.toString());
     final String docuri = parameter.get("docuri");
 
     infoLog("Preparing output format ...");
 
-    // foxJena.reset();
-    foxJena.setLang(out);
+    foxJena.setLang(output);
     foxJena.addInput(input, docuri);
 
     final String start = DatatypeConverter.printDateTime(new GregorianCalendar());
     final String end = DatatypeConverter.printDateTime(new GregorianCalendar());
-    foxJena.addEntities(entities, start, end);
-
-    if (relations != null) {
-
-      for (final Set<Relation> r : relations.values()) {
-        foxJena.addRelations(r, start, end);
-        infoLog("Found " + relations.size() + " relations.");
-      }
+    String light = parameter.get(FoxParameter.Parameter.FOXLIGHT.toString());
+    if ((light == null) || light.equalsIgnoreCase(FoxParameter.FoxLight.OFF.toString())) {
+      light = this.getClass().getName();
     }
 
+    foxJena.addEntities(entities, start, end, light, ATool.getToolVersion(light));
+    for (final Entry<String, Set<Relation>> e : relations.entrySet()) {
+      final Set<Relation> r = e.getValue();
+      foxJena.addRelations(r, start, end, e.getKey(), ATool.getToolVersion(e.getKey()));
+      infoLog("Found " + relations.size() + " relations.");
+    }
     infoLog("Preparing output format done.");
 
     if ((parameter.get("returnHtml") != null)
@@ -411,9 +418,10 @@ public class Fox extends AFox {
       String input = parameter.get(FoxParameter.Parameter.INPUT.toString());
       final String task = parameter.get(FoxParameter.Parameter.TASK.toString());
       final String light = parameter.get(FoxParameter.Parameter.FOXLIGHT.toString());
+      LOG.info("task: " + task + " light: " + light);
 
-      Set<Entity> entities = null;
-      Map<String, Set<Relation>> relations = null;
+      Set<Entity> entities = new HashSet<>();
+      Map<String, Set<Relation>> relations = new HashMap<>();
 
       if ((input == null) || (task == null)) {
         LOG.error("Input or task parameter not set.");

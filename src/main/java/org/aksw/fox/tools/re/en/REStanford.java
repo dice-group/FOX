@@ -15,8 +15,6 @@ import org.aksw.fox.data.Relation;
 import org.aksw.fox.output.AFoxJenaNew;
 import org.aksw.fox.tools.ner.en.StanfordENOldVersion;
 import org.aksw.fox.tools.re.AbstractRE;
-import org.aksw.fox.utils.Converter;
-import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxConst;
 
 import edu.stanford.nlp.ie.machinereading.structure.EntityMention;
@@ -109,15 +107,6 @@ public class REStanford extends AbstractRE {
       LOG.error("Check the config file. Something went wrong.");
       LOG.error(e.getLocalizedMessage(), e);
     }
-  }
-
-  /**
-   *
-   * @return
-   */
-  @Override
-  public String getToolName() {
-    return REStanford.class.getSimpleName();
   }
 
   /*

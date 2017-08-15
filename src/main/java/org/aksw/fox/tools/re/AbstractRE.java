@@ -2,18 +2,14 @@ package org.aksw.fox.tools.re;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Relation;
-import org.apache.log4j.Logger;
+import org.aksw.fox.tools.ATool;
 
-public abstract class AbstractRE implements IRE {
-
-  public static Logger LOG = Logger.getLogger(AbstractRE.class);
+public abstract class AbstractRE extends ATool implements IRE {
 
   protected Set<Relation> relations = new HashSet<>();
-  protected CountDownLatch cdl = null;
   protected String input = null;
   protected Set<Entity> entities = null;
 
@@ -27,11 +23,6 @@ public abstract class AbstractRE implements IRE {
   }
 
   @Override
-  public void setCountDownLatch(final CountDownLatch cdl) {
-    this.cdl = cdl;
-  }
-
-  @Override
   public void setInput(final String input, final Set<Entity> entities) {
     this.input = input;
     this.entities = entities;
@@ -40,10 +31,5 @@ public abstract class AbstractRE implements IRE {
   @Override
   public Set<Relation> getResults() {
     return relations;
-  }
-
-  @Override
-  public String getToolName() {
-    return this.getClass().getSimpleName();
   }
 }

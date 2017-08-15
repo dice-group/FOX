@@ -8,19 +8,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.tools.ATool;
 import org.aksw.fox.utils.FoxTextUtil;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
-public abstract class AbstractNER implements INER {
+public abstract class AbstractNER extends ATool implements INER {
 
-  public static final Logger LOG = LogManager.getLogger(AbstractNER.class);
-
-  protected CountDownLatch cdl = null;
   protected String input = null;
 
   protected List<Entity> entityList = null;
@@ -35,11 +30,6 @@ public abstract class AbstractNER implements INER {
     list.addAll(set);
     entityList = clean(list);
     return entityList;
-  }
-
-  @Override
-  public String getToolName() {
-    return getClass().getSimpleName();
   }
 
   @Override
@@ -62,11 +52,6 @@ public abstract class AbstractNER implements INER {
   @Override
   public List<Entity> getResults() {
     return entityList;
-  }
-
-  @Override
-  public void setCountDownLatch(final CountDownLatch cdl) {
-    this.cdl = cdl;
   }
 
   @Override

@@ -11,6 +11,8 @@ public interface ITool extends Runnable {
    */
   public String getToolName();
 
+  public String getToolVersion();
+
   /**
    * Sets a CountDownLatch object.
    *

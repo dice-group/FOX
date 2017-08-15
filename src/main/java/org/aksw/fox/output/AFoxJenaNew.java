@@ -1,7 +1,13 @@
 package org.aksw.fox.output;
 
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+import org.aksw.fox.data.EntityClassMap;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -9,6 +15,8 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -36,30 +44,76 @@ public class AFoxJenaNew {
   protected String lang = Lang.TURTLE.getName();
   // protected String lang = Lang.RDFJSON.getName();
 
-  int document = 0;
+  int documentCounter = 0;
   protected UrlValidator urlValidator = new UrlValidator();
 
   // nif
-  protected Property propertyNifContext, propertyNifBeginIndex, propertyNifEndIndex,
-      propertyNifIsString, propertyNifPhrase, propertyNifAnchorOf, propertyNifreferenceContext;
+  protected Property pNifContext = graph.createProperty(ns_nif.concat("Context"));
+  protected Property pNifBegin = graph.createProperty(ns_nif.concat("beginIndex"));
+  protected Property pNifEnd = graph.createProperty(ns_nif.concat("endIndex"));
+  protected Property pNifIsString = graph.createProperty(ns_nif.concat("isString"));
+  protected Property pNifPhrase = graph.createProperty(ns_nif.concat("Phrase"));
+  protected Property pNifAnchorOf = graph.createProperty(ns_nif.concat("anchorOf"));
+  protected Property pNifreferenceContext = graph.createProperty(ns_nif.concat("referenceContext"));
 
   // itsrdf
-  protected Property propertyItsrdfTaIdentRef, propertyItsrdfTaClassRef;
+  protected Property pItsrdfTaIdentRef = graph.createProperty(ns_its.concat("taIdentRef"));
+  protected Property pItsrdfTaClassRef = graph.createProperty(ns_its.concat("taClassRef"));
 
   // prov
-  protected Property propertyProvActivity, propertyProvStartedAtTime, propertyProvUsed,
-      propertyProvGenerated, propertyProvEndedAtTime, propertyProvSoftwareAgent;
+  protected Property pProvActivity = graph.createProperty(ns_prov.concat("Activity"));
+  protected Property pProvStartedAtTime = graph.createProperty(ns_prov.concat("startedAtTime"));
+  protected Property pProvUsed = graph.createProperty(ns_prov.concat("used"));
+  protected Property pProvGenerated = graph.createProperty(ns_prov.concat("generated"));
+  protected Property pProvEndedAtTime = graph.createProperty(ns_prov.concat("endedAtTime"));
 
-  // fox onto
-  protected Property propertyActivityRelationExtraction, propertyActivityNamedEntityRecognition,
-      propertyRelationDomain, propertyRelationRange, propertyRelationRelation,
-      propertyRelationrelation;
+  protected Property pProvSoftwareAgent = graph.createProperty(ns_prov.concat("SoftwareAgent"));
 
   // schema
-  protected Property propertySchemaSoftwareAgent, propertySchemaSoftwareVersion;
+  protected Property pSchemaSoftwareAgent =
+      graph.createProperty(ns_schema.concat("SoftwareApplication"));
+  protected Property pSchemaSoftwareVersion =
+      graph.createProperty(ns_schema.concat("softwareVersion"));
+
+  // fox onto
+  protected Property pActivityRE =
+      graph.createProperty(ns_fox_ontology.concat("RelationExtraction"));
+  protected Property pActivityNER =
+      graph.createProperty(ns_fox_ontology.concat("NamedEntityRecognition"));
+
+  protected Property pRelationDomain = graph.createProperty(RDF.getURI().concat("subject"));
+  protected Property pRelationrelation = graph.createProperty(RDF.getURI().concat("predicate"));
+  protected Property pRelationRange = graph.createProperty(RDF.getURI().concat("object"));
+  protected Property pRelationRelation = graph.createProperty(ns_fox_ontology.concat("Relation"));
 
   // foaf
-  protected Property propertyFoafName;
+  protected Property pFoafName = graph.createProperty(ns_foaf.concat("name"));
+
+  /**
+   * Maps EntityClassMap types to KB types.
+   */
+  protected static Map<String, Set<String>> typesmap = new HashMap<>();
+  static {
+    typesmap.put(EntityClassMap.P.toString(),
+        new HashSet<String>(Arrays.asList(//
+            "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person", //
+            "http://schema.org/Person", //
+            "http://dbpedia.org/ontology/Person")));
+
+    typesmap.put(EntityClassMap.L.toString(),
+        new HashSet<String>(Arrays.asList(//
+            "http://www.ontologydesignpatterns.org/ont/d0.owl#Location", //
+            "http://schema.org/Place", //
+            "http://schema.org/Location", //
+            "http://dbpedia.org/ontology/Place")));
+
+    typesmap.put(EntityClassMap.O.toString(),
+        new HashSet<String>(Arrays.asList(//
+            "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization", //
+            "http://schema.org/Organisation", //
+            "http://dbpedia.org/ontology/Organisation")));
+
+  }
 
   /**
    *
@@ -75,7 +129,7 @@ public class AFoxJenaNew {
    */
   public void initGraph() {
     graph = ModelFactory.createDefaultModel();
-    document = 0;
+    documentCounter = 0;
     lang = Lang.TURTLE.getName();
 
     graph.setNsPrefix("foxo", ns_fox_ontology);
@@ -85,55 +139,11 @@ public class AFoxJenaNew {
     graph.setNsPrefix("its", ns_its);
     graph.setNsPrefix("nif", ns_nif);
     graph.setNsPrefix("prov", ns_prov);
-
     graph.setNsPrefix("foaf", ns_foaf);
     graph.setNsPrefix("schema", ns_schema);
-
     graph.setNsPrefix("xsd", XSD.getURI());
-
-    // nif
-    propertyNifContext = graph.createProperty(ns_nif.concat("Context"));
-    propertyNifBeginIndex = graph.createProperty(ns_nif.concat("beginIndex"));
-    propertyNifEndIndex = graph.createProperty(ns_nif.concat("endIndex"));
-    propertyNifIsString = graph.createProperty(ns_nif.concat("isString"));
-    propertyNifPhrase = graph.createProperty(ns_nif.concat("Phrase"));
-    propertyNifAnchorOf = graph.createProperty(ns_nif.concat("anchorOf"));
-    propertyNifreferenceContext = graph.createProperty(ns_nif.concat("referenceContext"));
-
-    // itsrdf
-    propertyItsrdfTaIdentRef = graph.createProperty(ns_its.concat("taIdentRef"));
-    propertyItsrdfTaClassRef = graph.createProperty(ns_its.concat("taClassRef"));
-
-    // prov
-    propertyProvActivity = graph.createProperty(ns_prov.concat("Activity"));
-    propertyProvStartedAtTime = graph.createProperty(ns_prov.concat("startedAtTime"));
-    propertyProvUsed = graph.createProperty(ns_prov.concat("used"));
-    propertyProvGenerated = graph.createProperty(ns_prov.concat("generated"));
-    propertyProvEndedAtTime = graph.createProperty(ns_prov.concat("endedAtTime"));
-
-    propertyProvSoftwareAgent = graph.createProperty(ns_prov.concat("SoftwareAgent"));
-
-    // schema
-    propertySchemaSoftwareAgent = graph.createProperty(ns_schema.concat("SoftwareApplication"));
-    propertySchemaSoftwareVersion = graph.createProperty(ns_schema.concat("softwareVersion"));
-
-    // fox onto
-    propertyActivityRelationExtraction =
-        graph.createProperty(ns_fox_ontology.concat("RelationExtraction"));
-    propertyActivityNamedEntityRecognition =
-        graph.createProperty(ns_fox_ontology.concat("NamedEntityRecognition"));
-
-    propertyRelationDomain = graph.createProperty(ns_fox_ontology.concat("domain"));
-
-    propertyRelationRange = graph.createProperty(ns_fox_ontology.concat("range"));
-
-    propertyRelationRelation = graph.createProperty(ns_fox_ontology.concat("Relation"));
-
-    propertyRelationrelation = graph.createProperty(ns_fox_ontology.concat("relation"));
-
-    // foaf
-    propertyFoafName = graph.createProperty(ns_foaf.concat("name"));
-
+    graph.setNsPrefix("rdf", RDF.getURI());
+    graph.setNsPrefix("rdfs", RDFS.getURI());
   }
 
   public void setLang(final String lang) {
@@ -149,4 +159,5 @@ public class AFoxJenaNew {
     RDFDataMgr.write(sw, graph, RDFLanguages.nameToLang(lang));
     return sw.toString();
   }
+
 }
