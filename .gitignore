@@ -8,7 +8,6 @@
 
 /log
 /demo/doc
-/fox.properties
 /foxFeedback.db
 /eval
 /tmp
@@ -24,3 +23,6 @@
 /data/maui/*
 /data/boa/*/
 /src/main/resources/public/demo/doc/*
+/docker/en/agdistis/*
+/docker/en/spotlight/*
+/out/*
