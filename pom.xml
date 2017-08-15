@@ -34,6 +34,7 @@
 		<balie.version>1.81.0</balie.version>
 		<stanford.version>3.5.2</stanford.version>
 		<spotlight.version>0.7.1</spotlight.version>
+		<boa.version>0.0.1</boa.version>
 	</properties>
 	<repositories>
 		<repository>
