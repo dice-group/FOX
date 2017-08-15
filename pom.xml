@@ -28,6 +28,12 @@
 		<system.data>${project.basedir}/data</system.data>
 		<lucene.version>4.10.0</lucene.version>
 		<jena.version>3.1.0</jena.version>
+		<agdistis.version>0.4.0</agdistis.version>
+		<illinoisner.version>2.8.1</illinoisner.version>
+		<opennlp.version>1.5.3</opennlp.version>
+		<balie.version>1.81.0</balie.version>
+		<stanford.version>3.5.2</stanford.version>
+		<spotlight.version>0.7.1</spotlight.version>
 	</properties>
 	<repositories>
 		<repository>
@@ -122,7 +128,7 @@
 		<dependency>
 			<groupId>edu.illinois.cs.cogcomp</groupId>
 			<artifactId>illinois-ner</artifactId>
-			<version>2.8.1</version>
+			<version>${illinoisner.version}</version>
 		</dependency>
 		<!-- <dependency> <artifactId>IllinoisNerExtended</artifactId> <version>2.7</version>
 			<classifier>models-conll</classifier> </dependency> <dependency> <groupId>edu.illinois.cs.cogcomp</groupId>
@@ -173,18 +179,18 @@
 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp</artifactId>
-			<version>3.5.2</version>
+			<version>${stanford.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp</artifactId>
-			<version>3.5.2</version>
+			<version>${stanford.version}</version>
 			<classifier>models</classifier>
 		</dependency>
 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-parser</artifactId>
-			<version>3.5.2</version>
+			<version>${stanford.version}</version>
 			<classifier>models</classifier>
 		</dependency>
 
@@ -192,7 +198,7 @@
 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp</artifactId>
-			<version>3.5.2</version>
+			<version>${stanford.version}</version>
 			<classifier>models-spanish</classifier>
 		</dependency>
 	<!-- 	<dependency>
@@ -204,7 +210,7 @@
 				<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp</artifactId>
-			<version>3.5.2</version>
+			<version>${stanford.version}</version>
 			<classifier>models-german</classifier>
 		</dependency>
 		<!--
@@ -227,12 +233,12 @@
 		<dependency>
 			<groupId>org.apache.opennlp</groupId>
 			<artifactId>opennlp-tools</artifactId>
-			<version>1.5.3</version>
+			<version>${opennlp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.opennlp</groupId>
 			<artifactId>opennlp-uima</artifactId>
-			<version>1.5.3</version>
+			<version>${opennlp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.opennlp</groupId>
@@ -356,17 +362,13 @@
 		<dependency>
 			<groupId>ca.uottawa</groupId>
 			<artifactId>balie</artifactId>
-			<version>1.81.0</version>
+			<version>${balie.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.aksw</groupId>
-			<artifactId>gerbil.nif.transfer</artifactId>
-			<version>1.1.0-SNAPSHOT</version>
-		</dependency>
+
 		<dependency> 
 			<groupId>org.aksw</groupId>
 			<artifactId>AGDISTIS</artifactId>
-			<version>0.4.0</version>
+			<version>${agdistis.version}</version>
 		</dependency>
 		<!-- ant -->
 		<dependency>
@@ -411,8 +413,10 @@
 				<includes>
 					<include>**/Dockerfile</include>
 					<include>**/scripts/*</include>
+					<include>**/*</include>
 				</includes>
 			</resource>
+			<!-- versioning
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
@@ -420,7 +424,7 @@
 					<exclude>**/Dockerfile</exclude>
 					<exclude>**/scripts/*</exclude>
 				</excludes>
-			</resource>
+			</resource> -->
 		</resources>
 
 		<plugins>
