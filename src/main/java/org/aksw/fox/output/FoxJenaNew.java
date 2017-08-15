@@ -58,25 +58,27 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
    *
    * @param name
    * @param verion
-   * @return
+   * @return it's uri
    */
   protected String addSoftwareAgent(final String toolName, final String version) {
-
-    LOG.info("Adds SoftwareAgent");
-
-    final Resource resource = graph.createResource(ns_fox_resource.concat(toolName))//
+    return graph.createResource(ns_fox_resource.concat(toolName))//
         .addProperty(RDF.type, pProvSoftwareAgent)//
         .addProperty(RDF.type, pSchemaSoftwareAgent)//
         .addLiteral(pSchemaSoftwareVersion, graph.createTypedLiteral(version, XSD.xstring.getURI()))//
-        .addLiteral(pFoafName, graph.createTypedLiteral(toolName, XSD.xstring.getURI()));
-
-    return resource.getURI();
+        .addLiteral(pFoafName, graph.createTypedLiteral(toolName, XSD.xstring.getURI())).getURI();
   }
 
+  /**
+   * Adds an activity.
+   *
+   * @param uris URIs the activity generated
+   * @param start time the activity started
+   * @param end time the activity ended
+   * @param propertyActivity the Property for the activity
+   * @param toolUri URI the activity used
+   */
   protected void addActivity(final Set<String> uris, final String start, final String end,
       final Property propertyActivity, final String toolUri) {
-
-    LOG.info("Add activity ");
 
     final Resource resource = graph.createResource()//
         .addProperty(RDF.type, pProvActivity)//
@@ -88,7 +90,6 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
     uris.forEach(uri -> {
       resource.addProperty(pProvGenerated, graph.getResource(uri));
     });
-
   }
 
   /**
@@ -106,6 +107,9 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
     }
   }
 
+  /**
+   *
+   */
   @Override
   public void addRelations(final Set<Relation> relations, final String start, final String end,
       final String toolName, final String version) {
@@ -118,8 +122,6 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
   }
 
   private Set<String> _addEntities(final Set<Entity> entities) {
-
-    LOG.info("Add entities.");
 
     final Set<String> uris = new HashSet<>();
 
