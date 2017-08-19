@@ -430,38 +430,24 @@ public class Fox extends AFox {
         // clean input
         input = tokenManager.getInput();
         parameter.put(FoxParameter.Parameter.INPUT.toString(), input);
-
-        // light version
-        if ((light != null) && !light.equalsIgnoreCase(FoxParameter.FoxLight.OFF.toString())) {
-          switch (FoxParameter.Task.fromString(task.toLowerCase())) {
-            case NER:
-              entities = doNERLight(light);
-              break;
-            default:
-              LOG.warn("Operation not supported.");
-              break;
-          }
-
-        } else {
-          // no light version
-          switch (FoxParameter.Task.fromString(task.toLowerCase())) {
-            case KE:
-              LOG.warn("Operation not supported.");
-              break;
-            case NER:
-              entities = doNER();
-              break;
-            case RE:
-              entities = doNER();
-              relations = doRE(entities);
-              break;
-            default:
-              LOG.warn("Operation not supported.");
-              break;
-          }
+        final boolean lightFox =
+            ((light != null) && !light.equalsIgnoreCase(FoxParameter.FoxLight.OFF.toString()));
+        switch (FoxParameter.Task.fromString(task.toLowerCase())) {
+          case KE:
+            LOG.warn("Operation not supported.");
+            break;
+          case NER:
+            entities = lightFox ? doNERLight(light) : doNER();
+            break;
+          case RE:
+            entities = lightFox ? doNERLight(light) : doNER();
+            relations = doRE(entities);
+            break;
+          default:
+            LOG.warn("Operation not supported.");
+            break;
         }
       }
-
       setURIs(entities);
       setOutput(entities, relations);
     }
