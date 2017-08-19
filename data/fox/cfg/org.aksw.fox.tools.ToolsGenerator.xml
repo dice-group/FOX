@@ -28,6 +28,7 @@
 
             es="
             org.aksw.fox.tools.ner.es.OpenNLPES, 
+	    org.aksw.fox.tools.ner.es.SpotlightES,
             org.aksw.fox.tools.ner.es.StanfordES, 
             org.aksw.fox.tools.ner.es.BalieES
             " 
