@@ -8,7 +8,7 @@ $scope.currentCtrl = 'DemoCtrl';
 
 $scope.request = {
     type: 'text',
-    task: 're',
+    task: 'ner',
     input: '',
     output: 'Turtle',
     nif: 0,
