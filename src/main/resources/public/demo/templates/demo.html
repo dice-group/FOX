@@ -1,15 +1,16 @@
+
 <div class="container">
   <div data-ng-include src="'templates/partials/navi.html'"></div>
-
   <!-- input -->
   <form class="form-horizontal ">
     <fieldset>
-
+      <!--
       <div data-ng-hide="!response.output">
         <a class="btn-link" data-ng-click="collapsed = !collapsed">Go Back</a>
-      </div>
+      </div>-->
 
-      <div data-collapse="collapsed">
+      <!--<div data-collapse="collapsed">-->
+      <div>
         <div class="row">
           <div class="control-group span4">
             <label class="control-label">Lang</label>
@@ -20,7 +21,7 @@
               </select>
             </div>
           </div>
-        </div>
+      </div>
 
         <div class="row">
           <div class="control-group span4">
@@ -99,7 +100,9 @@
 </div>
 
 
-  <div data-collapse="!collapsed">
+
+
+<!--  <div data-collapse="!collapsed"> -->
     <!-- log -->
       <!--
     <div class="container">
@@ -108,9 +111,18 @@
     <br>-->
 
     <div class="container">
+      <div setfn="setDirectiveFn(theDirFn)" ng-brat>
+        <div id="annotations"></div>
+      </div>
+    <!--
+    <button ng-click="directiveFn()">
+    Call Directive Function
+    </button>
+    <button ng-click="embed()">click</button>
+    -->
       <pre class="output">{{response.output}}</pre>
-    </div>
-    <br>
+
+    
       <!--
     <div class="container">
       <pre class="log">{{response.log}}</pre>
