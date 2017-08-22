@@ -1,6 +1,5 @@
 [4]: http://fox.aksw.org
-[5]: http://fox-demo.aksw.org
-[6]: http://fox.cs.uni-paderborn.de:4444
+[6]: http://fox-demo.aksw.org
 
 [7]: https://github.com/AKSW/FOX/releases/tag/v2.2.1
 [8]: https://github.com/AKSW/FOX/releases/tag/v2.3.0
@@ -20,21 +19,12 @@ Java 8, Maven 3, graphviz (for JavaDoc only)
 [documentation](documentation/readme.md).
 
 
-## New Version
+## Demo
 This version supports multiple languages for NER, NED and RE.
 
-Live Demo: [http://fox.cs.uni-paderborn.de  (Version 2.4.0) ][6]
+Live Demo: [http://fox-demo.aksw.org][6]
 
 Release: [(Version 2.4.0) ][9]
-
-## Old Version
-This version supports multiple languages for NER only.
-
-(This version will be offline soon!)
-
-Live Demo: [http://fox-demo.aksw.org (Version 2.3.0) ][5]
-
-Release: [(Version 2.3.0) ][8]
 
 ## How to cite
 ```Tex
