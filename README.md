@@ -39,7 +39,7 @@ english version with details
   series={Lecture Notes in Computer Science},
   title={Ensemble Learning for Named Entity Recognition},
   publisher={Springer International Publishing},
-  author={Speck, René and Ngonga Ngomo, Axel-Cyrille}
+  author={Ren{\'e} Speck and Axel-Cyrille {Ngonga Ngomo}},
 }
 ```
 
@@ -47,13 +47,13 @@ extended version for multiple languages
 
 ```Tex
 @InProceedings{speck2017,
-   author       = {Ren{\'e} Speck and Axel-Cyrille {Ngonga Ngomo}},
-   title        = {{Ensemble Learning of Named Entity Recognition Algorithms using Multilayer Perceptron for the Multilingual Web of Data}},
-   booktitle    = {K-CAP 2017: Knowledge Capture Conference},
-   year         = {2017},
-   pages        = {4},
-   organization = {ACM},
-   url          = {https://svn.aksw.org/papers/2017/KCAP_FOX/public.pdf},
+   author={Ren{\'e} Speck and Axel-Cyrille {Ngonga Ngomo}},
+   title={{Ensemble Learning of Named Entity Recognition Algorithms using Multilayer Perceptron for the Multilingual Web of Data}},
+   booktitle={K-CAP 2017: Knowledge Capture Conference},
+   year={2017},
+   pages={4},
+   organization={ACM},
+   url={https://svn.aksw.org/papers/2017/KCAP_FOX/public.pdf},
  }
  ```
 
