@@ -27,6 +27,9 @@ Live Demo: [http://fox-demo.aksw.org][6]
 Release: [(Version 2.4.0) ][9]
 
 ## How to cite
+
+english version with details
+
 ```Tex
 @incollection{
   year={2014},
@@ -39,6 +42,20 @@ Release: [(Version 2.4.0) ][9]
   author={Speck, René and Ngonga Ngomo, Axel-Cyrille}
 }
 ```
+
+extended version for multiple languages
+
+```Tex
+@InProceedings{speck2017,
+   author       = {Ren{\'e} Speck and Axel-Cyrille {Ngonga Ngomo}},
+   title        = {{Ensemble Learning of Named Entity Recognition Algorithms using Multilayer Perceptron for the Multilingual Web of Data}},
+   booktitle    = {K-CAP 2017: Knowledge Capture Conference},
+   year         = {2017},
+   pages        = {4},
+   organization = {ACM},
+   url          = {https://svn.aksw.org/papers/2017/KCAP_FOX/public.pdf},
+ }
+ ```
 
 ## License
 FOX is licensed under the [GNU GPL Version 2, June 1991](http://www.gnu.org/licenses/gpl-2.0.txt) (license document is in the application folder).
