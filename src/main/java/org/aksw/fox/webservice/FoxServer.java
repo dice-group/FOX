@@ -17,6 +17,7 @@ import org.aksw.fox.data.exception.PortInUseException;
 import org.aksw.fox.output.FoxJenaNew;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.webservice.statistics.FoxStatistics;
 import org.aksw.fox.webservice.util.Pool;
 import org.aksw.fox.webservice.util.RouteConfig;
 import org.aksw.gerbil.io.nif.impl.TurtleNIFParser;
@@ -39,6 +40,9 @@ public class FoxServer extends AServer {
   protected final RouteConfig routeConfig = new RouteConfig();
 
   public static Map<String, Pool<IFox>> pool = null;
+
+  protected FoxStatistics foxStatistics = new FoxStatistics();
+
   static {
     try {
       initPools();
@@ -109,8 +113,8 @@ public class FoxServer extends AServer {
      * Content-Type: application/json <br>
      *
      * <code>
-                  curl -X POST -H "task:asdasd" -H "Content-Type:application/json" http://0.0.0.0:9090/fox
-                  curl -X POST -H "task:asdasd" -H "Content-Type:application/x-turtle" http://0.0.0.0:9090/fox
+                  curl -X POST -H "task:ner" -H "Content-Type:application/json" http://0.0.0.0:9090/fox
+                  curl -X POST -H "task:ner" -H "Content-Type:application/x-turtle" http://0.0.0.0:9090/fox
     </code>
      */
     Spark.post("/fox", (req, res) -> {
@@ -224,6 +228,8 @@ public class FoxServer extends AServer {
         // create server response
         res.body(foxResponse);
         res.type(turtleContentType.concat(";charset=utf-8"));
+
+        foxStatistics.client(req.ip(), parameter);
       }
 
       return res.body();
