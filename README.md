@@ -5,7 +5,7 @@
 [8]: https://github.com/AKSW/FOX/releases/tag/v2.3.0
 [9]: https://github.com/AKSW/FOX
 
-[![Build Status](https://travis-ci.org/AKSW/FOX.svg?branch=master)](https://travis-ci.org/AKSW/FOX)
+[![Build Status](https://travis-ci.org/dice-group/FOX.svg?branch=master)](https://travis-ci.org/dice-group/FOX)
 
 ## FOX - Federated Knowledge Extraction Framework
 FOX ([http://fox.aksw.org][4]) is a framework that integrates the Linked Data Cloud and makes use of the diversity of NLP algorithms to extract RDF triples of high accuracy out of NL.
@@ -58,7 +58,7 @@ extended version for multiple languages
  ```
 
 ## License
-FOX is licensed under the [GNU GPL Version 2, June 1991](http://www.gnu.org/licenses/gpl-2.0.txt) (license document is in the application folder).
+FOX is licensed under the [GNU GPL Version 2, June 1991](LICENSE) (license document is in the application folder).
 
 FOX uses several other libraries. An incomplete list is as follows:
 * Illinois NLP Pipeline  (University of Illinois Research and Academic Use License)
