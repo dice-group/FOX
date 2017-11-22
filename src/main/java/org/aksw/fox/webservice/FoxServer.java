@@ -16,6 +16,7 @@ import org.aksw.fox.IFox;
 import org.aksw.fox.data.exception.PortInUseException;
 import org.aksw.fox.output.FoxJenaNew;
 import org.aksw.fox.tools.ToolsGenerator;
+import org.aksw.fox.utils.FoxLanguageDetector;
 import org.aksw.fox.webservice.statistics.FoxStatistics;
 import org.aksw.fox.webservice.util.Pool;
 import org.aksw.fox.webservice.util.RouteConfig;
@@ -35,7 +36,7 @@ public class FoxServer extends AServer {
 
   final String turtleContentType = "application/x-turtle";
   final String jsonContentType = "application/json";
-
+  FoxLanguageDetector languageDetector = new FoxLanguageDetector();
   protected final RouteConfig routeConfig = new RouteConfig();
 
   public static Map<String, Pool<IFox>> pool = null;
@@ -79,19 +80,22 @@ public class FoxServer extends AServer {
     // TODO: at least wait until all requests have finished.
   }
 
-  protected Set<String> allowedHeaderFields() {
+  public static Set<String> allowedHeaderFields() {
     return new HashSet<>(Arrays.asList(//
         FoxParameter.Parameter.TYPE.toString(), //
         FoxParameter.Parameter.INPUT.toString(), //
+        FoxParameter.Parameter.LANG.toString(), //
+        FoxParameter.Parameter.LINKING.toString(), //
+        FoxParameter.Parameter.FOXLIGHT.toString(), //
         FoxParameter.Parameter.TASK.toString(), //
         FoxParameter.Parameter.OUTPUT.toString()//
     ));
   }
 
-  protected Map<String, String> defaultParameter() {
+  public static Map<String, String> defaultParameter() {
     final Map<String, String> parameter = new HashMap<>();
     parameter.put(FoxParameter.Parameter.TYPE.toString(), FoxParameter.Type.TEXT.toString());
-    parameter.put(FoxParameter.Parameter.LANG.toString(), FoxParameter.Langs.EN.toString());
+    // parameter.put(FoxParameter.Parameter.LANG.toString(), FoxParameter.Langs.EN.toString());
     parameter.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString());
     parameter.put(FoxParameter.Parameter.OUTPUT.toString(), Lang.TURTLE.getName());
     return parameter;
@@ -130,6 +134,7 @@ public class FoxServer extends AServer {
 
         @SuppressWarnings("unchecked")
         final Map<String, Object> tmp = new ObjectMapper().readValue(jo.toString(), HashMap.class);
+        tmp.keySet().retainAll(FoxServer.allowedHeaderFields());
         parameter = tmp.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, //
             e -> String.valueOf(e.getValue())//
         ));
@@ -146,7 +151,7 @@ public class FoxServer extends AServer {
         // read query parameter if any
         final QueryParamsMap map = req.queryMap();
         final Map<String, String[]> para = map.toMap();
-
+        para.keySet().retainAll(FoxServer.allowedHeaderFields());
         // read header fields if any
         final Set<String> headerfields = req.headers();
 
@@ -233,7 +238,6 @@ public class FoxServer extends AServer {
 
       return res.body();
     });
-
   }
 
   public String fox(final List<Document> docs, final Map<String, String> parameter) {
@@ -244,8 +248,19 @@ public class FoxServer extends AServer {
     // annotate each doc
     if (docs != null) {
 
-      final String lang = parameter.get(FoxParameter.Parameter.LANG.toString());
-      LOG.info("lang: " + lang);
+      // detect the lang and choose en in worst case
+      String lang = parameter.get(FoxParameter.Parameter.LANG.toString());
+      FoxParameter.Langs l = FoxParameter.Langs.fromString(lang);
+      if (l == null) {
+        l = languageDetector.detect(parameter.get(FoxParameter.Parameter.INPUT.toString()));
+        if (l != null) {
+          lang = l.toString();
+        }
+      }
+      if (!ToolsGenerator.usedLang.contains(lang)) {
+        lang = FoxParameter.Langs.EN.toString();
+      }
+
       // get a fox instance
       final Pool<IFox> pool = FoxServer.pool.get(lang);
       IFox fox = null;

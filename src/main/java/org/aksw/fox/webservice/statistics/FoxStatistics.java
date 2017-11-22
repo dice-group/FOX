@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.aksw.fox.FoxParameter;
+import org.aksw.fox.webservice.FoxServer;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -20,11 +21,9 @@ public class FoxStatistics {
 
     // remove data we do not want in the log
     final Map<String, String> copy = new HashMap<String, String>(parameterMap);
+    copy.keySet().retainAll(FoxServer.allowedHeaderFields());
     copy.remove(FoxParameter.Parameter.INPUT.toString().toLowerCase());
-    copy.remove("docuri");
-    copy.remove("defaults");
     copy.remove(FoxParameter.Parameter.NIF.toString().toLowerCase());
-    copy.remove("state");
 
     // add data to the log file
     LOG.info("Client IP: ".concat(ip).concat("; parameter: ").concat(copy.toString()));
