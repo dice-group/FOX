@@ -1,4 +1,4 @@
-package org.aksw.fox.web;
+package org.aksw.fox.legacy;
 
 import java.io.IOException;
 import java.io.StringWriter;

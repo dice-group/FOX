@@ -1,10 +1,10 @@
-package org.aksw.fox.tools.ner.linking.fr;
+package org.aksw.fox.tools.linking.fr;
 
 import java.io.IOException;
 
 import org.aksw.agdistis.algorithm.NEDAlgo_HITS;
 import org.aksw.fox.data.exception.LoadingNotPossibleException;
-import org.aksw.fox.tools.ner.linking.common.Agdistis;
+import org.aksw.fox.tools.linking.common.Agdistis;
 import org.aksw.fox.utils.FoxCfg;
 
 /**
@@ -32,6 +32,6 @@ public class AgdistisDirectFR extends Agdistis {
   }
 
   public static void main(final String[] a) throws LoadingNotPossibleException {
-    FoxCfg.getClass("org.aksw.fox.tools.ner.linking.fr.AgdistisDirectFR");
+    FoxCfg.getClass("org.aksw.fox.tools.linking.fr.AgdistisDirectFR");
   }
 }

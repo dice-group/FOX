@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import org.aksw.fox.data.exception.LoadingNotPossibleException;
 import org.aksw.fox.data.exception.UnsupportedLangException;
-import org.aksw.fox.tools.ner.linking.ILinking;
+import org.aksw.fox.tools.linking.ILinking;
 import org.aksw.fox.utils.CfgManager;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.commons.configuration.XMLConfiguration;

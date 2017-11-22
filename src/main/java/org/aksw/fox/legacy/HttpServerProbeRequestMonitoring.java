@@ -1,4 +1,4 @@
-package org.aksw.fox.web;
+package org.aksw.fox.legacy;
 
 import java.net.MalformedURLException;
 import java.net.URL;

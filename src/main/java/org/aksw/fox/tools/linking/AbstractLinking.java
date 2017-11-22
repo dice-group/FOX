@@ -1,4 +1,4 @@
-package org.aksw.fox.tools.ner.linking;
+package org.aksw.fox.tools.linking;
 
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;

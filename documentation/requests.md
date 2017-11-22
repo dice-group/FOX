@@ -17,7 +17,7 @@ to find supported parameters for HTTP requests of the current instance, call  ht
       StanfordDE: "org.aksw.fox.tools.ner.de.StanfordDE",
       BalieDE: "org.aksw.fox.tools.ner.de.BalieDE"
     },
-      nerlinking: "org.aksw.fox.tools.ner.linking.de.AgdistisDirectDE"
+      nerlinking: "org.aksw.fox.tools.linking.de.AgdistisDirectDE"
     },
   en: {
     ner: {
@@ -26,7 +26,7 @@ to find supported parameters for HTTP requests of the current instance, call  ht
       OpenNLPEN: "org.aksw.fox.tools.ner.en.OpenNLPEN",
       IllinoisExtendedEN: "org.aksw.fox.tools.ner.en.IllinoisExtendedEN"
     },
-    nerlinking: "org.aksw.fox.tools.ner.linking.en.AgdistisDirectEN"
+    nerlinking: "org.aksw.fox.tools.linking.en.AgdistisDirectEN"
   },
   lang: [
     "de",

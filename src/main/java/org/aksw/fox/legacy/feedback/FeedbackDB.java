@@ -1,4 +1,4 @@
-package org.aksw.fox.web.feedback;
+package org.aksw.fox.legacy.feedback;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

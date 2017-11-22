@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.aksw.fox.FoxParameter;
+import org.aksw.fox.legacy.Server;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;

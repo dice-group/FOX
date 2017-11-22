@@ -1,4 +1,4 @@
-package org.aksw.fox.tools.ner.linking;
+package org.aksw.fox.tools.linking;
 
 import java.net.URI;
 import java.net.URISyntaxException;

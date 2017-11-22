@@ -1,4 +1,4 @@
-package org.aksw.fox.web;
+package org.aksw.fox.legacy;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -13,11 +13,12 @@ import javax.ws.rs.ext.RuntimeDelegate;
 import org.aksw.fox.Fox;
 import org.aksw.fox.IFox;
 import org.aksw.fox.data.exception.PortInUseException;
+import org.aksw.fox.legacy.api.ApiResource;
+import org.aksw.fox.legacy.feedback.FeedbackHttpHandler;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.CfgManager;
 import org.aksw.fox.utils.FoxServerUtil;
-import org.aksw.fox.web.api.ApiResource;
-import org.aksw.fox.web.feedback.FeedbackHttpHandler;
+import org.aksw.fox.webservice.AServer;
 import org.aksw.fox.webservice.util.Pool;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;
@@ -38,7 +39,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 public class Server {
 
   public final static Logger LOG = LogManager.getLogger(Server.class);
-  public static final XMLConfiguration CFG = CfgManager.getCfg(Server.class);
+  public static final XMLConfiguration CFG = CfgManager.getCfg(AServer.class);
 
   // language to fox instances
   public static Map<String, Pool<IFox>> pool = null;

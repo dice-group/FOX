@@ -1,4 +1,4 @@
-package org.aksw.fox.tools.ner.linking;
+package org.aksw.fox.tools.linking;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

@@ -1,4 +1,4 @@
-package org.aksw.fox.tools.ner.linking.common;
+package org.aksw.fox.tools.linking.common;
 
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -19,7 +19,7 @@ import org.aksw.agdistis.datatypes.NamedEntitiesInText;
 import org.aksw.agdistis.datatypes.NamedEntityInText;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.output.AFoxJenaNew;
-import org.aksw.fox.tools.ner.linking.AbstractLinking;
+import org.aksw.fox.tools.linking.AbstractLinking;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;

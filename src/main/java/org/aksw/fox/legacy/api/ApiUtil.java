@@ -1,4 +1,4 @@
-package org.aksw.fox.web.api;
+package org.aksw.fox.legacy.api;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,6 +1,6 @@
-package org.aksw.fox.tools.ner.linking.es;
+package org.aksw.fox.tools.linking.es;
 
-import org.aksw.fox.tools.ner.linking.common.Agdistis;
+import org.aksw.fox.tools.linking.common.Agdistis;
 import org.aksw.fox.utils.CfgManager;
 
 /**

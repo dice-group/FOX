@@ -15,13 +15,7 @@ org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlea
 # org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.BioCorpora
 # org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.GermanNERCorpus
 # org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass: org.aksw.fox.nerlearner.reader.Conll2002
-
 #
-#nerdMl
-org.aksw.fox.tools.ner.en.NERNerdML.apiKey: 551t91ndhg4jhaeqa4pcskvkj74dsnhr
-org.aksw.fox.tools.ner.en.NERNerdML.extractorType: NERDML
-org.aksw.fox.tools.ner.en.NERNerdML.documentType: PLAINTEXT
-
 #NER default light version class
 org.aksw.fox.Fox.defaultLightNER: org.aksw.fox.tools.ner.en.NERStanford
 #NER tools to use
@@ -35,8 +29,6 @@ org.aksw.fox.nerlearner.FoxClassifier.learnerOptions: -L 0.3 -M 0.2 -N 500 -V 0 
 ##################################################################
 org.aksw.fox.utils.tweets.Preprocessor.enabled: false
 org.aksw.fox.evaluation.CrossValidation.runs: 1
-# max time in min. before fox timeouts
-org.aksw.fox.web.FoxHttpHandler.lifetime: 10
 # `true` to train fox. tainFox: { true | false }
 org.aksw.fox.nerlearner.FoxClassifier.training: false
 # an integer, 0 for all sentences

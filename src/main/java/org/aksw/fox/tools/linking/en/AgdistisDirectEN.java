@@ -1,9 +1,9 @@
-package org.aksw.fox.tools.ner.linking.en;
+package org.aksw.fox.tools.linking.en;
 
 import java.io.IOException;
 
 import org.aksw.agdistis.algorithm.NEDAlgo_HITS;
-import org.aksw.fox.tools.ner.linking.common.Agdistis;
+import org.aksw.fox.tools.linking.common.Agdistis;
 
 /**
  * This class uses the Agdistis lib.

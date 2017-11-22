@@ -16,7 +16,6 @@ import org.aksw.fox.IFox;
 import org.aksw.fox.data.exception.PortInUseException;
 import org.aksw.fox.output.FoxJenaNew;
 import org.aksw.fox.tools.ToolsGenerator;
-import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.webservice.statistics.FoxStatistics;
 import org.aksw.fox.webservice.util.Pool;
 import org.aksw.fox.webservice.util.RouteConfig;
@@ -75,6 +74,11 @@ public class FoxServer extends AServer {
     }
   }
 
+  @Override
+  public void addShutdownHook() {
+    // TODO: at least wait until all requests have finished.
+  }
+
   protected Set<String> allowedHeaderFields() {
     return new HashSet<>(Arrays.asList(//
         FoxParameter.Parameter.TYPE.toString(), //
@@ -99,27 +103,21 @@ public class FoxServer extends AServer {
     /**
      * path: config <br>
      * method: GET <br>
-     * <code>
-                    curl http://0.0.0.0:9090/config
-    </code>
      */
     Spark.get("/config", (req, res) -> {
       res.type(jsonContentType.concat(";charset=utf-8"));
       return routeConfig.getConfig();
     });
+
     /**
      * path: fox <br>
      * method: POST <br>
      * Content-Type: application/json <br>
-     *
-     * <code>
-                  curl -X POST -H "task:ner" -H "Content-Type:application/json" http://0.0.0.0:9090/fox
-                  curl -X POST -H "task:ner" -H "Content-Type:application/x-turtle" http://0.0.0.0:9090/fox
-    </code>
      */
     Spark.post("/fox", (req, res) -> {
 
       String errorMessage = "";
+
       // checks content type
       final String ct = req.contentType();
       LOG.info("ContentType: " + ct);
@@ -128,17 +126,18 @@ public class FoxServer extends AServer {
 
       // JSON
       if ((ct != null) && (ct.indexOf(jsonContentType) != -1)) {
-
         final JSONObject jo = new JSONObject(req.body());
-        final Map<String, Object> d = new ObjectMapper().readValue(jo.toString(), HashMap.class);
-        parameter = d.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, //
+
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> tmp = new ObjectMapper().readValue(jo.toString(), HashMap.class);
+        parameter = tmp.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, //
             e -> String.valueOf(e.getValue())//
         ));
 
+        // tranform input to RDF document with NIF
         final FoxJenaNew foxJenaNew = new FoxJenaNew();
         foxJenaNew.addInput(parameter.get(FoxParameter.Parameter.INPUT.toString()), null);
         parameter.put(FoxParameter.Parameter.INPUT.toString(), foxJenaNew.print());
-
       } else
 
       // TURTLE
@@ -238,9 +237,10 @@ public class FoxServer extends AServer {
   }
 
   public String fox(final List<Document> docs, final Map<String, String> parameter) {
-
     LOG.info("fox");
+
     String nif = "";
+
     // annotate each doc
     if (docs != null) {
 
@@ -252,7 +252,7 @@ public class FoxServer extends AServer {
       if (pool != null) {
         fox = pool.poll();
       } else {
-        LOG.warn("Couldn't find a fox instance for the given language!!!!!!!");
+        LOG.warn("Couldn't find a fox instance for the given language!");
       }
 
       boolean done = false;
@@ -283,6 +283,7 @@ public class FoxServer extends AServer {
 
     if (fox != null) {
       LOG.info("start");
+
       // init. thread
       final Fiber fiber = new ThreadFiber();
       fiber.start();
@@ -293,9 +294,10 @@ public class FoxServer extends AServer {
 
       // wait
       try {
-        latch.await(Integer.parseInt(FoxCfg.get(CFG_KEY_FOX_LIFETIME)), TimeUnit.MINUTES);
+
+        latch.await(CFG.getInt(CFG_KEY_FOX_LIFETIME), TimeUnit.MINUTES);
       } catch (final InterruptedException e) {
-        LOG.error("Fox timeout after " + FoxCfg.get(CFG_KEY_FOX_LIFETIME) + "min.");
+        LOG.error("Fox timeout after " + CFG.getInt(CFG_KEY_FOX_LIFETIME) + "min.");
         LOG.error("\n", e);
         LOG.error("input: " + parameter.get(FoxParameter.Parameter.INPUT.toString()));
       }
@@ -304,10 +306,6 @@ public class FoxServer extends AServer {
       fiber.dispose();
 
       if (latch.getCount() == 0) {
-        // LOG.debug("fox results:" + fox.getResults());
-        // LOG.debug("fox lang:" + fox.getLang());
-        // LOG.debug("fox log:" + fox.getLog());
-
         done = true;
       }
     }

@@ -17,5 +17,7 @@
         <api>true</api>
         <feedback>false</feedback>
         <staticFileCache>false</staticFileCache>
+	<!-- in min-->
+	<lifetime>5</lifetime>
     </server>
 </config>

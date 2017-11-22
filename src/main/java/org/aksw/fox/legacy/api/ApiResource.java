@@ -1,4 +1,4 @@
-package org.aksw.fox.web.api;
+package org.aksw.fox.legacy.api;
 
 import java.io.InputStream;
 import java.net.URLDecoder;
@@ -24,10 +24,10 @@ import javax.ws.rs.core.UriInfo;
 
 import org.aksw.fox.FoxParameter;
 import org.aksw.fox.IFox;
+import org.aksw.fox.legacy.FoxHttpHandler;
+import org.aksw.fox.legacy.Server;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxTextUtil;
-import org.aksw.fox.web.FoxHttpHandler;
-import org.aksw.fox.web.Server;
 import org.aksw.fox.webservice.util.RouteConfig;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;

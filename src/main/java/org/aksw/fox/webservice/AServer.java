@@ -3,8 +3,6 @@ package org.aksw.fox.webservice;
 import org.aksw.fox.data.exception.PortInUseException;
 import org.aksw.fox.utils.CfgManager;
 import org.aksw.fox.utils.FoxServerUtil;
-import org.aksw.fox.web.FoxHttpHandler;
-import org.aksw.fox.web.Server;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -22,11 +20,9 @@ public abstract class AServer {
   public final static String KEY_LISTENER_NAME = "server.listenerName";
   public final static String KEY_PORT = "server.port";
   public final static String KEY_DEFAULT_NETWORK_HOST = "server.host";
+  public static final String CFG_KEY_FOX_LIFETIME = "server.lifetime";
 
-  public static final String CFG_KEY_FOX_LIFETIME =
-      FoxHttpHandler.class.getName().concat(".lifetime");
-
-  public static final XMLConfiguration CFG = CfgManager.getCfg(Server.class);
+  public static final XMLConfiguration CFG = CfgManager.getCfg(AServer.class);
 
   /**
    *
@@ -56,14 +52,17 @@ public abstract class AServer {
   }
 
   /**
+   * Starts the server and allows utf-8 requests only. Calls {@link #mapRoutes()) to initializes the
+   * roots of the server.
    *
    */
   public final void start() {
     LOG.info("Start ...");
 
-    Runtime.getRuntime().addShutdownHook(new Thread((Runnable) () -> stop(), "shutdown hook"));
-
-    Spark.staticFileLocation("/public");
+    Runtime.getRuntime().addShutdownHook(new Thread((Runnable) () -> {
+      //
+      stop();
+    }, "shutdown hook"));
 
     Spark.before((req, res) -> {
 
@@ -77,15 +76,17 @@ public abstract class AServer {
         }
       }
     });
-
     mapRoutes();
-
     LOG.info("Server is ready to use.");
   }
 
   /**
-   *
+   * Initializes the roots of the server
    */
   public abstract void mapRoutes();
 
+  /**
+   * Runs before the server shuts down.
+   */
+  public abstract void addShutdownHook();
 }
