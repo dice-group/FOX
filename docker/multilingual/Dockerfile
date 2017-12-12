@@ -17,11 +17,12 @@ ENV MAVEN_OPTS "-Xmx20G -Dlog4j.configuration=file:/usr/bin/FOX/data/fox/log4j.p
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# get app and build
-RUN cd /usr/bin/FOX \
-        && git clone --branch master https://github.com/AKSW/FOX . \
-        && mv fox.properties-dist fox.properties \
-        && mvn clean compile -Dmaven.test.skip=true javadoc:javadoc
+# get app
+RUN cd /usr/bin/FOX 
+RUN git clone --branch master https://github.com/AKSW/FOX .
+
+#setup app
+RUN cp ./fox.properties-dist ./fox.properties 
 
 COPY run.sh /usr/bin/FOX/run.sh
 RUN chmod +x /usr/bin/FOX/run.sh
@@ -32,6 +33,8 @@ RUN ./downloadSpotlight.sh
 # FOX port
 EXPOSE 4444
 
+# build app
+RUN mvn clean compile -Dmaven.test.skip=true javadoc:javadoc
+
 # run app
-# CMD mvn exec:java -Dexec.mainClass="org.aksw.fox.ui.FoxRESTful"
 CMD ["/usr/bin/FOX/run.sh"]

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# starts spotlight
 cd /usr/bin/FOX/spotlight
 
 ./runDE.sh 
@@ -8,6 +9,7 @@ cd /usr/bin/FOX/spotlight
 ./runFR.sh 
 ./runNL.sh 
 
+# starts FOX
 cd /usr/bin/FOX
 
 mvn exec:java  -Dexec.mainClass="org.aksw.fox.ui.FoxRESTful"

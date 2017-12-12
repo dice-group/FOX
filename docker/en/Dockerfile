@@ -23,7 +23,7 @@ RUN git clone --branch master https://github.com/AKSW/FOX .
 
 #setup app
 RUN cp ./fox.properties-dist ./fox.properties
-#COPY weka.classifiers.functions.MultilayerPerceptron ./data/fox/ml/en/
+
 COPY org.aksw.fox.tools.ToolsGenerator.xml ./data/fox/cfg/
 
 COPY run.sh ./
