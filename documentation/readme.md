@@ -1,14 +1,22 @@
-[4]: https://github.com/earthquakesan/fox-py
+
+[1]: ./fox.md
+[2]: ./extendfox.md
 [5]: ./requests.md
 [6]: ./requirements.md
-[7]: ../docker
+[7]: ./docker.md
 [8]: https://github.com/AKSW/FOX/releases/tag/v2.3.0
 [9]: https://github.com/AKSW/FOX
 [10]: ../evaluation
 [11]: ../input
+[12]: ./nodocker.md
+[13]: ./bindings.md
 
 
 # Version ([2.4.0][9])
+
+## [What is FOX?][1]
+
+## [How to extend FOX?][2]
 
 ## [Requirements][6]
 
@@ -16,31 +24,13 @@
 
 ## [Docker][7]
 
-## Without Docker:
-### setup
-Copy `fox.properties-dist` to `fox.properties`.
+## [Without Docker][12]
 
-### build
-Run `ScriptBuild.sh`  to build fox.
+## [Bindings][13]
 
-Run `downloadAgdistis.sh` and  `downloadSpotlight.sh`.
+## [Datasets][11]
 
-### run
-
-Run `ScriptRunSpotlight.sh` to start spotlight services.
-
-Run `ScriptRun.sh` to start FOX.
-
-Run `stop.sh` to stop FX.
-
-
-## Bindings
-
-[Python][4]
-
-## [FOX datasets][11]
-
-## [FOX evaluation data][10]
+## [Evaluation data][10]
 
 
 <!--
