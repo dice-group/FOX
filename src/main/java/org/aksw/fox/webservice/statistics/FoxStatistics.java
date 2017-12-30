@@ -22,7 +22,7 @@ public class FoxStatistics {
     // remove data we do not want in the log
     final Map<String, String> copy = new HashMap<String, String>(parameterMap);
     copy.keySet().retainAll(FoxServer.allowedHeaderFields());
-    copy.remove(FoxParameter.Parameter.INPUT.toString().toLowerCase());
+    //copy.remove(FoxParameter.Parameter.INPUT.toString().toLowerCase());
     copy.remove(FoxParameter.Parameter.NIF.toString().toLowerCase());
 
     // add data to the log file
