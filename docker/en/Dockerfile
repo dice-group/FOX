@@ -4,6 +4,8 @@ MAINTAINER R. Speck <speck@informatik.uni-leipzig.de>
 
 # install all we need
 RUN apt-get update && apt-get -y install \
+    wget \
+    unzip \
     git \
     graphviz \
     && rm -rf /var/lib/apt/lists/*
