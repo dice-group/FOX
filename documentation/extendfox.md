@@ -39,7 +39,7 @@ Run the script.
 
 After that, you should have a new model. To use it, simple change org.aksw.fox.nerlearner.FoxClassifier.training back to false and org.aksw.fox.tools.ner.FoxNERTools.foxNERLifeTime back to 2 min.
 
-### How to evaluate a new model
+## Evaluate a new model
 
 In this scenario the model will not be stored. To get a new model use the previous section. It is important to read the section 'Learn a new model for NER'. Since this steps are required here also.
 
@@ -58,9 +58,22 @@ With the value of `org.aksw.fox.CrossValidation.runs` you are able to set up how
 
 Edit the `ScriptValidate.sh` file to set the input data you like to use and run the script.
 
-After that, you should have a folder `eval` that contain at least two files for your current chosen classifier.
+After that, you should have a folder `eval` that contain at least two files for your current chosen classifier with the confusion matrix.
 The bigger file with the classification for each repeat of the 10-fold cross validation and for each fold.
 The smaller file contains the values in total for each repeat. In the most cases the smaller file is of interest.
 
+With the confusion matrix you now able to calculate recall, precision, f-score and so on (https://en.wikipedia.org/wiki/Confusion_matrix).
 
-To calculate the measures (recall, precision, f-score) there is a script `measures.sh`. Change the script to your needs (i.e.: input and output file). Run the script and it will write a file with the measures. To run the script, the 'fox.properties' files has to be the same as in the experiment.
+An example of the matrix looks like this:
+
+|   classifier	|   class	|   a	|   b	|  c 	|  d 	|
+|---	|---	|---	|---	|---	|---	|
+|   MultilayerPerceptron	|LOCATION|   	   3096	|  128 	|152| 1455|
+|   MultilayerPerceptron	|  ORGANIZATION 	|  225 	|  8488 	|  156 	| 2096  	|
+|   MultilayerPerceptron	|   PERSON	|  128 	|   59	|  7529 	|   442	|
+|   MultilayerPerceptron	|NULL|1695|  1871 	|402|  205285 	|
+
+That means that 3096 +    128    +152+   1455=4831 entities with type LOCATION are in the dataset, 3096 are correctly classified and 128 falsely classified as ORGANIZATION.
+
+<!--
+To calculate the measures (recall, precision, f-score) there is a script `measures.sh`. Change the script to your needs (i.e.: input and output file). Run the script and it will write a file with the measures. To run the script, the 'fox.properties' files has to be the same as in the experiment.-->
