@@ -156,8 +156,15 @@ public class AFoxJenaNew {
 
   public String print() {
     final StringWriter sw = new StringWriter();
+    if (graph == null) {
+      LOG.warn("Graph is null");
+    }
+    if (lang == null) {
+      LOG.warn("lang is null: using turtle");
+      lang = Lang.TURTLE.getName();
+    }
+
     RDFDataMgr.write(sw, graph, RDFLanguages.nameToLang(lang));
     return sw.toString();
   }
-
 }
