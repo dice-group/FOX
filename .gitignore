@@ -5,7 +5,7 @@
 .directory
 .project
 .svn
-
+.idea/
 /log
 /demo/doc
 /foxFeedback.db
