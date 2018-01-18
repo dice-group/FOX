@@ -1,8 +1,6 @@
 ## FOX requirements
 
-### Installation
-
-java8, maven3, wget, unzip, tar, docker (optional)
+unix platform, java8, maven3, wget, unzip, tar, docker (optional)
 
 ### Resources
 
