@@ -218,6 +218,10 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
     return uris;
   }
 
+  /**
+   * Creates document uri {@link FoxJenaNew#createDocUri(String, int, int)} for the input and adds a
+   * resource with the uri and input to the graph.
+   */
   @Override
   public void addInput(final String input, final String uri) {
     documentCounter++;
@@ -227,10 +231,10 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
       baseuri = getDefaultDocumentURI();
     }
 
-    final String currecntUri = createDocUri(baseuri, 0, (input.length()));
+    final String currentURI = createDocUri(baseuri, 0, (input.length()));
 
     inputResource =
-        graph.createResource(currecntUri)//
+        graph.createResource(currentURI)//
             .addProperty(RDF.type, pNifContext)//
             .addLiteral(pNifBegin,
                 graph.createTypedLiteral(new Integer(0), XSD.nonNegativeInteger.getURI()))//

@@ -17,9 +17,10 @@ public class FoxRETools {
 
   public FoxRETools() {
 
-    // TODO: move RE to config
-    relationTool.put(FoxParameter.Langs.EN.name().toLowerCase(),
-        Arrays.asList(new REStanford(), new BoaEN()));
+    // TODO: move to config
+    relationTool.put(//
+        FoxParameter.Langs.EN.name().toLowerCase(), Arrays.asList(new REStanford(), new BoaEN())//
+    );
     relationTool.put(FoxParameter.Langs.DE.name().toLowerCase(), Arrays.asList(new BoaDE()));
     relationTool.put(FoxParameter.Langs.FR.name().toLowerCase(), Arrays.asList(new BoaFR()));
   }

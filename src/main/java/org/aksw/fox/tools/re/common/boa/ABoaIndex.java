@@ -21,8 +21,6 @@ import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.tools.re.AbstractRE;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -84,7 +82,6 @@ http://dbpedia.org/ontology/team
 </code>
  */
 abstract public class ABoaIndex extends AbstractRE {
-  protected static Logger LOG = LogManager.getLogger(ABoaIndex.class);
 
   protected String luceneIndexFolder = null;
   protected IndexReader indexReader = null;

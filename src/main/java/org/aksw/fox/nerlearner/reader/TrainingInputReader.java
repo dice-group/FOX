@@ -125,8 +125,7 @@ public class TrainingInputReader extends ANERReader {
       }
 
       // repair entities (use fox token)
-      final TokenManager tokenManager = new TokenManager(input);
-      tokenManager.repairEntities(set);
+      new TokenManager(input).repairEntities(set);
 
       // use
       entities.clear();

@@ -119,125 +119,131 @@ public class FoxServer extends AServer {
      * Content-Type: application/json <br>
      */
     Spark.post("/fox", (req, res) -> {
-
-      String errorMessage = "";
-
-      // checks content type
-      final String ct = req.contentType();
-      LOG.info("ContentType: " + ct);
-
-      Map<String, String> parameter = defaultParameter();
-
-      // JSON
-      if ((ct != null) && (ct.indexOf(jsonContentType) != -1)) {
-        final JSONObject jo = new JSONObject(req.body());
-
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> tmp = new ObjectMapper().readValue(jo.toString(), HashMap.class);
-        tmp.keySet().retainAll(FoxServer.allowedHeaderFields());
-        parameter = tmp.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, //
-            e -> String.valueOf(e.getValue())//
-        ));
-
-        // tranform input to RDF document with NIF
-        final FoxJenaNew foxJenaNew = new FoxJenaNew();
-        foxJenaNew.addInput(parameter.get(FoxParameter.Parameter.INPUT.toString()), null);
-        parameter.put(FoxParameter.Parameter.INPUT.toString(), foxJenaNew.print());
-      } else
-
-      // TURTLE
-      if ((ct != null) && (ct.indexOf(turtleContentType) != -1)) {
-
-        // read query parameter if any
-        final QueryParamsMap map = req.queryMap();
-        final Map<String, String[]> para = map.toMap();
-        para.keySet().retainAll(FoxServer.allowedHeaderFields());
-        // read header fields if any
-        final Set<String> headerfields = req.headers();
-
-        //
-        // set parameter
-        //
-        // task
-        String field = FoxParameter.Parameter.TASK.toString();
-        if (headerfields.contains(field)) {
-          // header
-          final String value = req.headers(field);
-          parameter.put(field, value);
-        } else if (para.keySet().contains(field)) {
-          // url query
-          final String[] values = para.get(field);
-          if (values.length > 0) {
-            parameter.put(field, values[0]);
-          }
-        }
-
-        // lang
-        field = FoxParameter.Parameter.LANG.toString();
-        if (headerfields.contains(field)) {
-          // header
-          final String value = req.headers(field);
-          parameter.put(field, value);
-        } else if (para.keySet().contains(field)) {
-          // url query
-          final String[] values = para.get(field);
-          if (values.length > 0) {
-            parameter.put(field, values[0]);
-          }
-        }
-
-        // lightversion
-        field = FoxParameter.Parameter.FOXLIGHT.toString();
-        if (headerfields.contains(field)) {
-          // header
-          final String value = req.headers(field);
-          parameter.put(field, value);
-        } else if (para.keySet().contains(field)) {
-          // url query
-          final String[] values = para.get(field);
-          if (values.length > 0) {
-            parameter.put(field, values[0]);
-          }
-        }
-
-        // add input
-        parameter.put(FoxParameter.Parameter.INPUT.toString(), req.body());
-
-      } // ESLE
-      else {
-        errorMessage = "Use a supported Content-Type please.";
-        Spark.halt(415, errorMessage);
-      }
-
-      // parse input
-      List<Document> docs = null;
       try {
-        docs =
-            new TurtleNIFParser().parseNIF(parameter.get(FoxParameter.Parameter.INPUT.toString()));
+        String errorMessage = "";
+
+        // checks content type
+        final String ct = req.contentType();
+        LOG.info("ContentType: " + ct);
+
+        Map<String, String> parameter = defaultParameter();
+
+        // JSON
+        if ((ct != null) && (ct.indexOf(jsonContentType) != -1)) {
+          final JSONObject jo = new JSONObject(req.body());
+
+          @SuppressWarnings("unchecked")
+          final Map<String, Object> tmp =
+              new ObjectMapper().readValue(jo.toString(), HashMap.class);
+          tmp.keySet().retainAll(FoxServer.allowedHeaderFields());
+          parameter = tmp.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, //
+              e -> String.valueOf(e.getValue())//
+          ));
+
+          // transform input to RDF document with NIF
+          final FoxJenaNew foxJenaNew = new FoxJenaNew();
+          foxJenaNew.addInput(parameter.get(FoxParameter.Parameter.INPUT.toString()), null);
+          parameter.put(FoxParameter.Parameter.INPUT.toString(), foxJenaNew.print());
+
+          LOG.info("parameter:");
+          LOG.info(parameter);
+
+        } else if ((ct != null) && (ct.indexOf(turtleContentType) != -1)) {
+          // TURTLE
+          // read query parameter if any
+          final QueryParamsMap map = req.queryMap();
+          final Map<String, String[]> para = map.toMap();
+          para.keySet().retainAll(FoxServer.allowedHeaderFields());
+          // read header fields if any
+          final Set<String> headerfields = req.headers();
+
+          //
+          // set parameter
+          //
+          // task
+          String field = FoxParameter.Parameter.TASK.toString();
+          if (headerfields.contains(field)) {
+            // header
+            final String value = req.headers(field);
+            parameter.put(field, value);
+          } else if (para.keySet().contains(field)) {
+            // url query
+            final String[] values = para.get(field);
+            if (values.length > 0) {
+              parameter.put(field, values[0]);
+            }
+          }
+
+          // lang
+          field = FoxParameter.Parameter.LANG.toString();
+          if (headerfields.contains(field)) {
+            // header
+            final String value = req.headers(field);
+            parameter.put(field, value);
+          } else if (para.keySet().contains(field)) {
+            // url query
+            final String[] values = para.get(field);
+            if (values.length > 0) {
+              parameter.put(field, values[0]);
+            }
+          }
+
+          // lightversion
+          field = FoxParameter.Parameter.FOXLIGHT.toString();
+          if (headerfields.contains(field)) {
+            // header
+            final String value = req.headers(field);
+            parameter.put(field, value);
+          } else if (para.keySet().contains(field)) {
+            // url query
+            final String[] values = para.get(field);
+            if (values.length > 0) {
+              parameter.put(field, values[0]);
+            }
+          }
+
+          // add input
+          parameter.put(FoxParameter.Parameter.INPUT.toString(), req.body());
+
+        } // ESLE
+        else {
+          errorMessage = "Use a supported Content-Type please.";
+          Spark.halt(415, errorMessage);
+        }
+
+        // parse input
+        List<Document> docs = null;
+        try {
+          docs = new TurtleNIFParser()
+              .parseNIF(parameter.get(FoxParameter.Parameter.INPUT.toString()));
+        } catch (final Exception e) {
+          LOG.error(e.getLocalizedMessage(), e);
+          errorMessage = "Could not parse the request body.";
+          LOG.warn(errorMessage);
+        }
+
+        // send fox request
+        if (docs != null) {
+          LOG.info("nif doc size: " + docs.size());
+
+          LOG.info(docs);
+          LOG.info(parameter);
+          // request
+          final String foxResponse = fox(docs, parameter);
+
+          // create server response
+          res.body(foxResponse);
+          res.type(turtleContentType.concat(";charset=utf-8"));
+
+          foxStatistics.client(req.ip(), parameter);
+        }
       } catch (final Exception e) {
         LOG.error(e.getLocalizedMessage(), e);
-        errorMessage = "Could not parse the request body.";
-        LOG.warn(errorMessage);
       }
-
-      // send fox request
-      if (docs != null) {
-        LOG.info("nif doc size: " + docs.size());
-
-        LOG.info(docs);
-        LOG.info(parameter);
-        // request
-        final String foxResponse = fox(docs, parameter);
-
-        // create server response
-        res.body(foxResponse);
-        res.type(turtleContentType.concat(";charset=utf-8"));
-
-        foxStatistics.client(req.ip(), parameter);
-      }
-
       return res.body();
+
     });
+
   }
 
   public String fox(final List<Document> docs, final Map<String, String> parameter) {

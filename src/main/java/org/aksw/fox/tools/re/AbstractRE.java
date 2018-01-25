@@ -6,8 +6,12 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.tools.ATool;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public abstract class AbstractRE extends ATool implements IRE {
+
+  protected static Logger LOG = LogManager.getLogger(AbstractRE.class);
 
   protected Set<Relation> relations = new HashSet<>();
   protected String input = null;
