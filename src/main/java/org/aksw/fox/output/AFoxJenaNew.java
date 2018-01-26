@@ -39,6 +39,7 @@ public class AFoxJenaNew {
   public static final String ns_its = "http://www.w3.org/2005/11/its/rdf#";
   public static final String ns_nif =
       "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#";
+  public static final String ns_oa = "http://www.w3.org/ns/oa#";
 
   protected Model graph = ModelFactory.createDefaultModel();
   protected String lang = Lang.TURTLE.getName();
@@ -89,6 +90,12 @@ public class AFoxJenaNew {
   // foaf
   protected Property pFoafName = graph.createProperty(ns_foaf.concat("name"));
 
+  // oa
+  protected Property pHasSource = graph.createProperty(ns_oa.concat("hasSource"));
+  protected Property pHasTarget = graph.createProperty(ns_oa.concat("hasTarget"));
+  protected Property pSpecificResource = graph.createProperty(ns_oa.concat("SpecificResource"));
+  protected Property pAnnotation = graph.createProperty(ns_oa.concat("Annotation"));
+
   /**
    * Maps EntityClassMap types to KB types.
    */
@@ -112,7 +119,6 @@ public class AFoxJenaNew {
             "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization", //
             "http://schema.org/Organisation", //
             "http://dbpedia.org/ontology/Organisation")));
-
   }
 
   /**
@@ -132,6 +138,7 @@ public class AFoxJenaNew {
     documentCounter = 0;
     lang = Lang.TURTLE.getName();
 
+    graph.setNsPrefix("oa", ns_oa);
     graph.setNsPrefix("foxo", ns_fox_ontology);
     graph.setNsPrefix("foxr", ns_fox_resource);
     graph.setNsPrefix("dbo", ns_dbpedia_ontology);

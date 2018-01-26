@@ -1,4 +1,4 @@
-package org.aksw.fox.output;
+package org.aksw.fox.output.legacy;
 
 import java.io.StringWriter;
 import java.net.URI;

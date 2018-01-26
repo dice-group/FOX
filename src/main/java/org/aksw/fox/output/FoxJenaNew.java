@@ -164,45 +164,80 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
     return uris;
   }
 
+  /**
+   * Expects NE resources used in relations been already added to the graph.
+   *
+   * @param relations
+   * @return
+   */
   private Set<String> _addRelations(final Set<Relation> relations) {
     final Set<String> uris = new HashSet<>();
 
     final Set<Relation> nofound = new HashSet<>();
 
     for (final Relation relation : relations) {
+      // find NE resources in graph
       final Entity oe = relation.getObjectEntity();
       final Entity se = relation.getSubjectEntity();
 
       Resource roe = null;
       Resource rse = null;
 
+      String docUri = "";
+
       final ResIterator iterEntities = graph.listSubjectsWithProperty(RDF.type, pNifPhrase);
       while (iterEntities.hasNext()) {
-        final Resource resource = iterEntities.nextResource();
+        final Resource entity = iterEntities.nextResource();
 
-        for (final Statement indicies : resource.listProperties(pNifBegin).toSet()) {
+        for (final Statement indicies : entity.listProperties(pNifBegin).toSet()) {
           final int index = indicies.getInt();
           if (oe.getIndices().contains(index)) {
-            roe = resource;
+            roe = entity;
           } else if (se.getIndices().contains(index)) {
-            rse = resource;
+            rse = entity;
           }
+
+          if ((roe != null) && (rse != null)) {
+            break;
+          }
+        }
+        if ((roe != null) && (rse != null)) {
+          String rseDocUri = "";
+          docUri = roe.getProperty(pNifreferenceContext).getResource().getURI().toString();
+          rseDocUri = rse.getProperty(pNifreferenceContext).getResource().getURI().toString();
+
+          if (!rseDocUri.isEmpty() && docUri.equals(rseDocUri)) {
+
+          } else {
+            roe = null;
+            rse = null;
+            LOG.info("should never be the case");
+          }
+          break;
         }
       }
 
-      // Add to model
+      // in case NE resources are in the graph add relation to model
       if ((roe != null) && (rse != null)) {
 
+        // number of milliseconds since January 1, 1970
+        final String time = getTime();
+
         String uri = rse.getProperty(pItsrdfTaIdentRef).getResource().getLocalName();
-        final String time = String.valueOf(
-            DatatypeConverter.parseDate(DatatypeConverter.printDateTime(new GregorianCalendar()))
-                .getTime().getTime());
         uri = ns_fox_resource.concat(uri).concat("_").concat(time);
+
+        final Resource hasTarget = graph.createResource()//
+            .addProperty(RDF.type, pSpecificResource)//
+            .addProperty(pHasSource, docUri)//
+        ;
 
         final Resource resource = graph.createResource(uri)//
             .addProperty(RDF.type, pRelationRelation)//
+            .addProperty(RDF.type, RDF.Statement)//
             .addProperty(pRelationDomain, rse.getProperty(pItsrdfTaIdentRef).getResource())//
-            .addProperty(pRelationRange, roe.getPropertyResourceValue(pItsrdfTaIdentRef));
+            .addProperty(pRelationRange, roe.getPropertyResourceValue(pItsrdfTaIdentRef))//
+            .addProperty(pHasTarget, hasTarget)//
+        ;
 
         for (final URI i : relation.getRelation()) {
           resource.addProperty(pRelationrelation, graph.createProperty(i.toString()));
@@ -214,8 +249,17 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
         LOG.debug("relation not found: " + relation);
       }
     }
+
     relations.removeAll(nofound);
     return uris;
+  }
+
+  // number of milliseconds since January 1, 1970
+  private String getTime() {
+    return String.valueOf(//
+        DatatypeConverter//
+            .parseDate(DatatypeConverter.printDateTime(new GregorianCalendar()))//
+            .getTime().getTime());
   }
 
   /**

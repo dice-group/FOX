@@ -63,6 +63,10 @@ public class Fox extends AFox {
   protected IFoxJena foxJena = new FoxJenaNew();
 
   protected FoxUtil foxUtil = new FoxUtil();
+  String startNER = "";
+  String endNER = "";
+  String startRE = "";
+  String endRE = "";
 
   /**
    *
@@ -346,17 +350,15 @@ public class Fox extends AFox {
     foxJena.setLang(output);
     foxJena.addInput(input, docuri);
 
-    final String start = DatatypeConverter.printDateTime(new GregorianCalendar());
-    final String end = DatatypeConverter.printDateTime(new GregorianCalendar());
     String light = parameter.get(FoxParameter.Parameter.FOXLIGHT.toString());
     if ((light == null) || light.equalsIgnoreCase(FoxParameter.FoxLight.OFF.toString())) {
       light = this.getClass().getName();
     }
 
-    foxJena.addEntities(entities, start, end, light, ATool.getToolVersion(light));
+    foxJena.addEntities(entities, startNER, endNER, light, ATool.getToolVersion(light));
     for (final Entry<String, Set<Relation>> e : relations.entrySet()) {
       final Set<Relation> r = e.getValue();
-      foxJena.addRelations(r, start, end, e.getKey(), ATool.getToolVersion(e.getKey()));
+      foxJena.addRelations(r, startRE, endRE, e.getKey(), ATool.getToolVersion(e.getKey()));
       infoLog("Found " + relations.size() + " relations.");
     }
     infoLog("Preparing output format done.");
@@ -437,11 +439,17 @@ public class Fox extends AFox {
             LOG.warn("Operation not supported.");
             break;
           case NER:
+            startNER = DatatypeConverter.printDateTime(new GregorianCalendar());
             entities = lightFox ? doNERLight(light) : doNER();
+            endNER = DatatypeConverter.printDateTime(new GregorianCalendar());
             break;
           case RE:
+            startNER = DatatypeConverter.printDateTime(new GregorianCalendar());
             entities = lightFox ? doNERLight(light) : doNER();
+            endNER = DatatypeConverter.printDateTime(new GregorianCalendar());
+            startRE = DatatypeConverter.printDateTime(new GregorianCalendar());
             relations = doRE(entities);
+            endRE = DatatypeConverter.printDateTime(new GregorianCalendar());
             break;
           default:
             LOG.warn("Operation not supported.");
