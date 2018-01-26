@@ -219,8 +219,13 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
 
       // in case NE resources are in the graph add relation to model
       if ((roe != null) && (rse != null)) {
-
+        // TODO: find a better solution
         // number of milliseconds since January 1, 1970
+        try {
+          Thread.sleep(2000);
+        } catch (final InterruptedException e) {
+          LOG.error(e.getLocalizedMessage(), e);
+        }
         final String time = getTime();
 
         String uri = rse.getProperty(pItsrdfTaIdentRef).getResource().getLocalName();
