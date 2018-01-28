@@ -32,16 +32,22 @@
 		<illinoisner.version>2.8.1</illinoisner.version>
 		<opennlp.version>1.5.3</opennlp.version>
 		<balie.version>1.81.0</balie.version>
-		<stanford.version>3.5.2</stanford.version>
+		<!--<stanford.version>3.5.2</stanford.version>-->
 		<spotlight.version>0.7.1</spotlight.version>
 		<boa.version>0.0.1</boa.version>
+		<ocelot.version>0.0.1</ocelot.version>
+		<commons.lang3.version>3.7</commons.lang3.version>
+
+	
+		<nd4j.version>0.0.3.5.5</nd4j.version>
+		<dl4j.version>0.0.3.2.7</dl4j.version>
+		<lucene.version>4.10.0</lucene.version>
+		<stanford.version>3.6.0</stanford.version>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
 	</properties>
 	<repositories>
-		<repository>
-			<id>local repository</id>
-			<url>file://${project.basedir}/repository</url>
-		</repository>
-		<repository>
+
+<!--		<repository>
 			<id>maven.aksw.internal</id>
 			<name>University Leipzig, AKSW Maven2 Repository</name>
 			<url>http://maven.aksw.org/archiva/repository/internal</url>
@@ -50,15 +56,31 @@
 			<id>maven.aksw.snapshots</id>
 			<name>University Leipzig, AKSW Maven2 Repository</name>
 			<url>http://maven.aksw.org/archiva/repository/snapshots</url>
-		</repository>
+		</repository>-->
 		<repository>
 			<id>edu.illinois.cs.cogcomp</id>
 			<name>Cognitive Computation Group</name>
 			<url>http://cogcomp.cs.illinois.edu/m2repo</url>
 		</repository>
-
+		<repository>
+			<id>local repository</id>
+			<url>file://${project.basedir}/repository</url>
+		</repository>
+				<repository>
+			<id>local repository ocelot</id>
+			<url>file://${project.basedir}/repositoryOcelot</url>
+		</repository>
 	</repositories>
 	<dependencies>
+
+<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-annotations</artifactId>
+    <version>2.9.4</version>
+</dependency>
+
+
 		<!-- external dependencies -->
 		<!-- nerc-fr -->
 		<dependency>
@@ -139,7 +161,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.1</version>
+			<version>${commons.lang3.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -395,6 +417,315 @@
 			<!-- <version>2.12.1-8</version> -->
 			<version>3.3.0-1</version>
 		</dependency>
+
+		
+		<!-- ocelot dependencies-->
+		<!-- ocelot dependencies-->
+		<!-- ocelot dependencies-->
+			<dependency>
+		<groupId>javax.mail</groupId>
+		<artifactId>mail</artifactId>
+		<version>1.4.7</version>
+	</dependency>
+
+	<dependency>
+		<groupId>javax.mail</groupId>
+		<artifactId>javax.mail-api</artifactId>
+		<version>1.5.5</version>
+	</dependency>
+
+		<dependency>
+			<groupId>wordnet</groupId>
+			<artifactId>rita</artifactId>
+			<version>0.0.1</version>
+			<scope>system</scope>
+			<systemPath>${system.libs}/wordnet/rita.jar</systemPath>
+		</dependency>
+		<!-- <dependency> <groupId>org.aksw.ocelot</groupId> <artifactId>ocelot-cugar</artifactId> 
+			<version>0.0.1</version> </dependency> -->
+		<!-- external dependencies -->
+		<dependency>
+			<groupId>algs</groupId>
+			<artifactId>algs</artifactId>
+			<version>0.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>rJava</groupId>
+			<artifactId>JRI</artifactId>
+			<version>0.9-8</version>
+		</dependency>
+		<dependency>
+			<groupId>rJava</groupId>
+			<artifactId>JRIEngine</artifactId>
+			<version>0.9-8</version>
+		</dependency>
+		<dependency>
+			<groupId>rJava</groupId>
+			<artifactId>REngine</artifactId>
+			<version>0.9-8</version>
+		</dependency>
+	  <dependency>
+     <groupId>com.opencsv</groupId>
+     <artifactId>opencsv</artifactId>
+     <version>4.0</version>
+  </dependency>
+		<!-- apache http -->
+				<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>fluent-hc</artifactId>
+			<version>4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.4</version>
+		</dependency>
+		<!-- -->
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>5.1.0</version>
+		</dependency>
+	<!-- stanford -->
+		<dependency>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-corenlp</artifactId>
+			<version>${stanford.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-corenlp</artifactId>
+			<version>${stanford.version}</version>
+			<classifier>models</classifier>
+		</dependency>
+		<dependency>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-parser</artifactId>
+			<version>${stanford.version}</version>
+			<classifier>models</classifier>
+		</dependency>
+		<!-- test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+		</dependency>
+
+		<!-- tregex <dependency> <groupId>edu.stanford.nlp</groupId> <artifactId>tregex</artifactId> 
+			<version>3.4</version> <scope>system</scope> <systemPath>${system.libs}/stanford-tregex-3.4.jar</systemPath> 
+			</dependency> -->
+		<!-- clearnlp -->
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+		<!-- clearnlp models (General domain) -->
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-dictionary</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-general-en-pos</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-general-en-dep</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-general-en-srl</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<!-- clearnlp models (Medical domain) -->
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-medical-en-pos</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-medical-en-dep</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-medical-en-srl</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- log -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<!-- cfg -->
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.9</version>
+		</dependency>
+		<!-- commons-io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<!-- commons-compress -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<!-- lucene -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queries</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<!-- lucene <dependency> <groupId>org.apache.lucene</groupId> <artifactId>lucene-core</artifactId> 
+			<version>4.9.0</version> </dependency> <dependency> <groupId>org.apache.lucene</groupId> 
+			<artifactId>lucene-analyzers-common</artifactId> <version>4.9.0</version> 
+			</dependency> <dependency> <groupId>org.apache.lucene</groupId> <artifactId>lucene-queries</artifactId> 
+			<version>4.9.0</version> </dependency> <dependency> <groupId>org.apache.lucene</groupId> 
+			<artifactId>lucene-queryparser</artifactId> <version>4.9.0</version> </dependency> -->
+		<!--jsoup -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.7.3</version>
+		</dependency>
+		<!-- mongo-java-driver -->
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+		<!-- nxparser -->
+		<dependency>
+			<groupId>org.semanticweb.yars</groupId>
+			<artifactId>nxparser</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		<!-- gson -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.2.4</version>
+		</dependency>
+		<!-- json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20140107</version>
+		</dependency>
+		<!-- html parser jericho -->
+		<dependency>
+			<groupId>net.htmlparser.jericho</groupId>
+			<artifactId>jericho-html</artifactId>
+			<version>3.3</version>
+		</dependency>
+		<!-- https://github.com/SkymindIO/deeplearning4j/blob/master/pom.xml <dependency> 
+			<groupId>org.deeplearning4j</groupId> <artifactId>deeplearning4j-scaleout-akka-word2vec</artifactId> 
+			<version>0.0.3.3.3.alpha1-SNAPSHOT</version> </dependency> -->
+		<!-- <dependency> <groupId>org.nd4j</groupId> <artifactId>nd4j-jblas</artifactId> 
+			<version>0.0.3.5.5.2</version> </dependency> -->
+		<dependency>
+			<groupId>org.deeplearning4j</groupId>
+			<artifactId>deeplearning4j-core</artifactId>
+			<version>${dl4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.deeplearning4j</groupId>
+			<artifactId>deeplearning4j-nlp</artifactId>
+			<version>${dl4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nd4j</groupId>
+			<artifactId>nd4j-api</artifactId>
+			<version>${nd4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nd4j</groupId>
+			<artifactId>nd4j-jblas</artifactId>
+			<version>${nd4j.version}</version>
+		</dependency>
+		<!-- weka -->
+		<dependency>
+			<groupId>nz.ac.waikato.cms.weka</groupId>
+			<artifactId>weka-stable</artifactId>
+			<version>3.6.12</version>
+		</dependency>
+		<!-- jena-sparql-api 
+		<dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-core</artifactId>
+			<version>2.12.1-8</version>
+		</dependency>-->
+
+		<!-- word net api <dependency> <groupId>edu.mit</groupId> <artifactId>jwi</artifactId> 
+			<version>2.3.3</version> </dependency> -->
+
+
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-api</artifactId>
+			<version>2.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-graph-impl</artifactId>
+			<version>2.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-algorithms</artifactId>
+			<version>2.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-io</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.owlapi</groupId>
+			<artifactId>owlapi-distribution</artifactId>
+			<version>5.0.2</version>
+		</dependency>
+		<dependency>
+    <groupId>org.jgrapht</groupId>
+    <artifactId>jgrapht-core</artifactId>
+    <version>1.0.0</version>
+</dependency>
+		<dependency>
+			<groupId>org.aksw</groupId>
+			<artifactId>ocelot</artifactId>
+			<version>${ocelot.version}</version>
+		</dependency>
+		
+		
 	</dependencies>
 	<!-- build -->
 	<build>
