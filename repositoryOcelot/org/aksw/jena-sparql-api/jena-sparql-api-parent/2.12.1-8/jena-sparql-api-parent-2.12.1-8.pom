@@ -1,0 +1,838 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.aksw.jena-sparql-api</groupId>
+    <artifactId>jena-sparql-api-parent</artifactId>
+
+    <packaging>pom</packaging>
+    <version>2.12.1-8</version>
+    <name>Jena SPARQL API - Parent</name>
+
+    <modules>
+        <module>jena-sparql-api-resources</module>
+        <module>jena-sparql-api-core</module>
+        <module>jena-sparql-api-cache</module>
+        <module>jena-sparql-api-cache-h2</module>
+        <module>jena-sparql-api-utils</module>
+        <module>jena-sparql-api-web</module>
+        <module>jena-sparql-api-server</module>
+        <module>jena-sparql-api-example-proxy</module>
+
+        <module>jena-sparql-api-concepts</module>
+        <module>jena-sparql-api-batch</module>
+        <module>jena-sparql-api-geo</module>
+    </modules>
+
+    <scm>
+        <connection>scm:git:git@github.com:AKSW/jena-sparql-api.git</connection>
+        <!-- developerConnection></developerConnection -->
+        <tag>jena-sparql-api-parent-2.12.1-8</tag>
+    </scm>
+
+    <properties>
+<!--        <jetty.version>8.1.12.v20130726</jetty.version> -->
+<!--    <jetty.version>9.3.0.M1</jetty.version> -->
+    <jetty.version>8.1.16.v20140903</jetty.version>
+
+<!--        <jetty-plugin.version>8.1.10.v20130312</jetty-plugin.version> -->
+<!--          <jersey-spring.version>1.17.1</jersey-spring.version> -->
+
+        <jersey.version>2.15</jersey.version>
+
+        <spring.version>4.1.4.RELEASE</spring.version>
+        <spring.batch.version>3.0.3.RELEASE</spring.batch.version>
+        <aksw.commons.version>0.7.5</aksw.commons.version>
+
+        <atmosphere.version>2.0.0.RC3</atmosphere.version>
+        <atmosphere-spring.version>1.1.0.RC5</atmosphere-spring.version>
+
+        <javaee-api.version>6.0</javaee-api.version>
+
+        <!-- Project Settings -->
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.6</maven.compiler.target>
+        <java.version.javadoc>http://java.sun.com/javase/6/docs/api/</java.version.javadoc>
+        <file.encoding>UTF-8</file.encoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <!-- That's a sledge hammer solution - but at least it works ... -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <arguments>-P!source-artifacts</arguments>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <goals>-Dmaven.test.skip=true deploy</goals>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+
+
+            <!--Maven Compiler Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+
+            <!-- Solution from http://stackoverflow.com/questions/4725668/how-to-deploy-snapshot-with-sources-and-javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.17</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+
+<!--             <plugin> -->
+<!--                 <groupId>org.mortbay.jetty</groupId> -->
+<!--                 <artifactId>jetty-maven-plugin</artifactId> -->
+<!--                 <version>${jetty-plugin.version}</version> -->
+<!--                 <configuration> -->
+<!--                     <systemProperties> -->
+<!--                         <systemProperty> -->
+<!--                             <name>jetty.port</name> -->
+<!--                             <value>5522</value> -->
+<!--                         </systemProperty> -->
+<!--                     </systemProperties> -->
+<!--                     <reload>manual</reload> -->
+<!--                 </configuration> -->
+<!--             </plugin> -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jboss.tattletale</groupId>
+                <artifactId>tattletale-maven</artifactId>
+                <version>1.1.0.Final</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase> <!-- needs to run after WAR package has been built -->
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</source>
+                    <destination>${project.reporting.outputDirectory}/tattletale</destination>
+                    <reports>
+                        <report>jar</report>
+                        <report>multiplejars</report>
+                    </reports>
+                    <profiles>
+                        <profile>java6</profile>
+                    </profiles>
+                    <failOnWarn>true</failOnWarn>
+                    <!-- excluding some jars, if jar name contains any of these strings
+                        it won't be analyzed -->
+                    <excludes>
+                        <!-- <exclude>commons-beanutils-core-</exclude> -->
+                        <!-- <exclude>postgresql-</exclude> -->
+                    </excludes>
+                </configuration>
+            </plugin>
+
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings
+                    only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.apache.maven.plugins
+                                        </groupId>
+                                        <artifactId>
+                                            maven-remote-resources-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.5,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>bundle</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+
+
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- Modules -->
+            <dependency>
+                <groupId>org.aksw.jena-sparql-api</groupId>
+                <artifactId>jena-sparql-api-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aksw.jena-sparql-api</groupId>
+                <artifactId>jena-sparql-api-cache</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aksw.jena-sparql-api</groupId>
+                <artifactId>jena-sparql-api-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aksw.jena-sparql-api</groupId>
+                <artifactId>jena-sparql-api-utils</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aksw.jena-sparql-api</groupId>
+                <artifactId>jena-sparql-api-concepts</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aksw.jena-sparql-api</groupId>
+                <artifactId>jena-sparql-api-geo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aksw.jena-sparql-api</groupId>
+                <artifactId>jena-sparql-api-resources</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.jena</groupId>
+                <artifactId>jena-arq</artifactId>
+                <version>2.12.1</version>
+                <scope>compile</scope>
+                <!-- <exclusions> -->
+                <!-- <exclusion> -->
+                <!-- <groupId>xerces</groupId> -->
+                <!-- <artifactId>xercesImpl</artifactId> -->
+                <!-- </exclusion> -->
+                <!-- </exclusions> -->
+            </dependency>
+            <dependency>
+                <groupId>org.apache.jena</groupId>
+                <artifactId>jena-core</artifactId>
+                <version>2.12.1</version>
+                <scope>compile</scope>
+                <!-- <exclusions> -->
+                <!-- <exclusion> -->
+                <!-- <groupId>xerces</groupId> -->
+                <!-- <artifactId>xercesImpl</artifactId> -->
+                <!-- </exclusion> -->
+                <!-- </exclusions> -->
+            </dependency>
+            <dependency>
+                <groupId>org.apache.jena</groupId>
+                <artifactId>jena-iri</artifactId>
+                <version>1.1.1</version>
+                <scope>compile</scope>
+                <!-- <exclusions> -->
+                <!-- <exclusion> -->
+                <!-- <groupId>xerces</groupId> -->
+                <!-- <artifactId>xercesImpl</artifactId> -->
+                <!-- </exclusion> -->
+                <!-- </exclusions> -->
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.jena</groupId>
+                <artifactId>jena-sdb</artifactId>
+                <version>1.5.1</version>
+                <type>jar</type>
+                <scope>compile</scope>
+
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.hp.hpl.jena</groupId>
+                        <artifactId>jena</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.hp.hpl.jena</groupId>
+                        <artifactId>iri</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.hp.hpl.jena</groupId>
+                        <artifactId>arq</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.jgrapht</groupId>
+                <artifactId>jgrapht-core</artifactId>
+                <!-- <version>0.8.3</version> -->
+                <!-- 0.9.0 is so far only deployed in the aksw internal repo (2014-02-01) -->
+                <version>0.9.0</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.glassfish.jersey.containers</groupId>
+                <artifactId>jersey-container-servlet</artifactId>
+                <version>${jersey.version}</version>
+
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.validation</groupId>
+                        <artifactId>validation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>aopalliance</groupId>
+                        <artifactId>aopalliance</artifactId>
+                    </exclusion>
+<!--
+                    <exclusion>
+                        <groupId>org.glassfish.hk2.external</groupId>
+                        <artifactId>aopalliance-repackaged</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.glassfish.hk2.external</groupId>
+                        <artifactId>javax.inject</artifactId>
+                    </exclusion>
+-->
+                </exclusions>
+
+
+<!--                 <scope>provided</scope> -->
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-multipart</artifactId>
+                <version>${jersey.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.glassfish.jersey.ext</groupId>
+                <artifactId>jersey-spring3</artifactId>
+                <version>${jersey.version}</version>
+
+                <exclusions>
+<!--                     <exclusion> -->
+<!--                         <groupId>org.glassfish.hk2.external</groupId> -->
+<!--                         <artifactId>bean-validator</artifactId> -->
+<!--                     </exclusion> -->
+<!--                     <exclusion> -->
+<!--                         <groupId>org.glassfish.hk2.external</groupId> -->
+<!--                         <artifactId>javax.inject</artifactId> -->
+<!--                     </exclusion> -->
+
+<!--
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+-->
+                    <exclusion>
+                        <groupId>javax.validation</groupId>
+                        <artifactId>validation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>aopalliance</groupId>
+                        <artifactId>aopalliance</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.inject</groupId>
+                        <artifactId>javax.inject</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.glassfish.hk2.external</groupId>
+                        <artifactId>aopalliance-repackaged</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jvnet</groupId>
+                        <artifactId>tiger-types</artifactId>
+                    </exclusion>
+
+                </exclusions>
+            </dependency>
+
+<!--             <dependency> -->
+<!--                 <groupId>com.sun.jersey</groupId> -->
+<!--                 <artifactId>jersey-servlet</artifactId> -->
+<!--                 <version>${jersey-spring.version}</version> -->
+
+<!--                 <exclusions> -->
+<!--                     <exclusion> -->
+<!--                         <groupId>org.springframework</groupId> -->
+<!--                         <artifactId>spring-aop</artifactId> -->
+<!--                     </exclusion> -->
+<!--                 </exclusions> -->
+<!--             </dependency> -->
+
+
+<!--             <dependency> -->
+<!--                 <groupId>com.sun.jersey.contribs</groupId> -->
+<!--                 <artifactId>jersey-spring</artifactId> -->
+<!--                 <version>${jersey-spring.version}</version> -->
+
+<!--                 <exclusions> -->
+<!--                     <exclusion> -->
+<!--                         <groupId>com.sun.jersey</groupId> -->
+<!--                         <artifactId>jersey-servlet</artifactId> -->
+<!--                     </exclusion> -->
+<!--                     <exclusion> -->
+<!--                         <groupId>org.springframework</groupId> -->
+<!--                         <artifactId>spring-core</artifactId> -->
+<!--                     </exclusion> -->
+<!--                     <exclusion> -->
+<!--                         <groupId>org.springframework</groupId> -->
+<!--                         <artifactId>spring-beans</artifactId> -->
+<!--                     </exclusion> -->
+<!--                     <exclusion> -->
+<!--                         <groupId>org.springframework</groupId> -->
+<!--                         <artifactId>spring-context</artifactId> -->
+<!--                     </exclusion> -->
+
+<!--                     <exclusion> -->
+<!--                         <groupId>org.springframework</groupId> -->
+<!--                         <artifactId>spring-web</artifactId> -->
+<!--                     </exclusion> -->
+<!--                     <exclusion> -->
+<!--                         <groupId>org.springframework</groupId> -->
+<!--                         <artifactId>spring-aop</artifactId> -->
+<!--                     </exclusion> -->
+<!--                 </exclusions> -->
+<!--             </dependency> -->
+
+
+            <!-- Atmosphere framework -->
+<!--             <dependency> -->
+<!--                 <groupId>org.atmosphere</groupId> -->
+<!--                 <artifactId>atmosphere-runtime</artifactId> -->
+<!--                 <version>${atmosphere.version}</version> -->
+<!--             </dependency> -->
+<!--             <dependency> -->
+<!--                 <groupId>org.atmosphere</groupId> -->
+<!--                 <artifactId>atmosphere-jersey</artifactId> -->
+<!--                 <version>${atmosphere.version}</version> -->
+<!--             </dependency> -->
+
+<!--             <dependency> -->
+<!--                 <groupId>org.atmosphere</groupId> -->
+<!--                 <artifactId>atmosphere-spring</artifactId> -->
+<!--                 <version>${atmosphere-spring.version}</version> -->
+
+<!--                 <exclusions> -->
+<!--                     <exclusion> -->
+<!--                         <groupId>org.atmosphere</groupId> -->
+<!--                         <artifactId>atmosphere-runtime</artifactId> -->
+<!--                     </exclusion> -->
+<!--                     <exclusion> -->
+<!--                         <groupId>org.springframework</groupId> -->
+<!--                         <artifactId>spring-webmvc</artifactId> -->
+<!--                     </exclusion> -->
+<!--                 </exclusions> -->
+<!--             </dependency> -->
+
+            <!-- For somet reason atmosphere is not finding this class -->
+            <dependency>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>1.4.01</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.infomas</groupId>
+                <artifactId>annotation-detector</artifactId>
+                <version>3.0.1</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency> <!-- Used for @Configuration annotation so we can inject an ApplicationContext
+                    into servlets -->
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>2.2.2</version>
+            </dependency>
+
+
+            <!-- Jetty -->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>${jetty.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-webapp</artifactId>
+                <version>${jetty.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-servlet</artifactId>
+                <version>${jetty.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-http</artifactId>
+                <version>${jetty.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-jsp</artifactId>
+                <version>${jetty.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- <dependency> -->
+            <!-- <groupId>org.eclipse.jetty</groupId> -->
+            <!-- <artifactId>jetty-websocket</artifactId> -->
+            <!-- <version>${jetty.version}</version> -->
+            <!-- <type>jar</type> -->
+            <!-- <scope>compile</scope> -->
+            <!-- </dependency> -->
+
+
+            <!-- Logging -->
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.17</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.10</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-ext</artifactId>
+                <version>1.7.10</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>1.7.10</version>
+                <type>jar</type>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- AKSW Commons -->
+            <dependency>
+                <groupId>org.aksw.commons</groupId>
+                <artifactId>aksw-commons-util</artifactId>
+                <version>${aksw.commons.version}</version>
+                <scope>compile</scope>
+
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+
+            </dependency>
+
+            <dependency>
+                <groupId>org.aksw.commons</groupId>
+                <artifactId>aksw-commons-collections</artifactId>
+                <version>${aksw.commons.version}</version>
+                <scope>compile</scope>
+            </dependency>
+
+
+            <!-- Java Topology Suite -->
+            <dependency>
+                <groupId>com.vividsolutions</groupId>
+                <artifactId>jts</artifactId>
+                <version>1.11</version>
+                <!-- Xerces delivered by Jena -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>xerces</groupId>
+                        <artifactId>xercesImpl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- Embedded Databases (will be moved to separate package) -->
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>1.4.186</version>
+                <!--<scope>runtime</scope> -->
+            </dependency>
+
+
+            <!-- JDBC Connection Pooling -->
+            <dependency>
+                <groupId>com.jolbox</groupId>
+                <artifactId>bonecp</artifactId>
+                <version>0.8.0.RELEASE</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.3.2</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+
+            <!-- Command Line Argument Parsing -->
+            <dependency>
+                <groupId>commons-cli</groupId>
+                <artifactId>commons-cli</artifactId>
+                <version>1.2</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+
+            <!-- Collection Libraries -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>18.0</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+
+
+
+
+            <!-- Servlet APIs -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.1.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>jsr311-api</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+
+            <!-- Spring Framework -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>aopalliance</groupId>
+                        <artifactId>aopalliance</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.batch</groupId>
+                <artifactId>spring-batch-core</artifactId>
+                <version>${spring.batch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.batch</groupId>
+                <artifactId>spring-batch-infrastructure</artifactId>
+                <version>${spring.batch.version}</version>
+            </dependency>
+
+            <!-- Gson: Java to Json conversion -->
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.2.4</version>
+            </dependency>
+
+
+            <!-- URL Rewriting -->
+            <dependency>
+                <groupId>org.tuckey</groupId>
+                <artifactId>urlrewritefilter</artifactId>
+                <version>4.0.3</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+                <scope>test</scope>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>3.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.googlecode.combinatoricslib</groupId>
+                <artifactId>combinatoricslib</artifactId>
+                <version>2.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aksw.coyotecache</groupId>
+                <artifactId>coyotecache-core</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+        <repositories>
+                <repository>
+                        <id>maven.aksw.internal</id>
+                        <name>University Leipzig, AKSW Maven2 Internal Repository</name>
+                        <url>http://maven.aksw.org/repository/internal/</url>
+                </repository>
+
+                <repository>
+                        <id>maven.aksw.snapshots</id>
+                        <name>University Leipzig, AKSW Maven2 Snapshot Repository</name>
+                        <url>http://maven.aksw.org/repository/snapshots/</url>
+                </repository>
+        </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>maven.aksw.internal</id>
+            <name>AKSW Internal Release Repository</name>
+            <url>http://maven.aksw.org/repository/internal</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven.aksw.snapshots</id>
+            <name>AKSW Snapshot Repository</name>
+            <url>http://maven.aksw.org/repository/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

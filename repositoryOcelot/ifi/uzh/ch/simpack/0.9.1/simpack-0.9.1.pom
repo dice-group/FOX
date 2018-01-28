@@ -1,0 +1,12 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Tue Apr 26 17:55:32 CEST 2016
+http\://nxparser.googlecode.com/svn/repository/.lastUpdated=1461686132631
+http\://nxparser.googlecode.com/svn/repository/.error=
+file\:///media/rspeck/store/GitRepos/Ocelot/repository/.lastUpdated=1461686109590
+http\://maven.aksw.org/archiva/repository/internal/.error=Could not transfer artifact ifi.uzh.ch\:simpack\:pom\:0.9.1 from/to maven.aksw.internal (http\://maven.aksw.org/archiva/repository/internal)\: Failed to transfer http\://maven.aksw.org/archiva/repository/internal/ifi/uzh/ch/simpack/0.9.1/simpack-0.9.1.pom. Error code 503, Service Unavailable
+http\://maven.aksw.org/archiva/repository/snapshots/.error=Could not transfer artifact ifi.uzh.ch\:simpack\:pom\:0.9.1 from/to maven.aksw.snapshots (http\://maven.aksw.org/archiva/repository/snapshots)\: Failed to transfer http\://maven.aksw.org/archiva/repository/snapshots/ifi/uzh/ch/simpack/0.9.1/simpack-0.9.1.pom. Error code 503, Service Unavailable
+https\://repo.maven.apache.org/maven2/.lastUpdated=1461686110567
+@default-maven.aksw.internal-http\://maven.aksw.org/archiva/repository/internal/.lastUpdated=1461686132635
+https\://repo.maven.apache.org/maven2/.error=
+@default-maven.aksw.snapshots-http\://maven.aksw.org/archiva/repository/snapshots/.lastUpdated=1461686132638
+file\:///media/rspeck/store/GitRepos/Ocelot/repository/.error=

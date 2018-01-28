@@ -1,0 +1,442 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.aksw</groupId>
+	<artifactId>ocelot</artifactId>
+	<packaging>jar</packaging>
+	<version>0.0.1</version>
+	<name>ocelot</name>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<system.libs>${project.basedir}/lib</system.libs>
+		<nd4j.version>0.0.3.5.5</nd4j.version>
+		<dl4j.version>0.0.3.2.7</dl4j.version>
+		<lucene.version>4.10.0</lucene.version>
+		<stanford.version>3.6.0</stanford.version>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+	</properties>
+
+	<repositories>
+			<repository>
+			<id>local repository</id>
+			<name>local repository</name>
+			<url>file://${project.basedir}/repository</url>
+		</repository>
+		<repository>
+			<id>Apache Repo Central</id>
+			<name>Apache Repository</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+		</repository>
+		<!--<repository>
+			<id>maven.aksw.internal</id>
+			<name>University Leipzig, AKSW Maven2 Repository</name>
+			<url>http://maven.aksw.org/archiva/repository/internal</url>
+		</repository>
+		<repository>
+			<id>maven.aksw.snapshots</id>
+			<name>University Leipzig, AKSW Maven2 Repository</name>
+			<url>http://maven.aksw.org/archiva/repository/snapshots</url>
+		</repository>-->
+		<repository>
+			<id>apache-repo-releases</id>
+			<url>https://repository.apache.org/content/repositories/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>nxparser-repo</id>
+			<url>http://nxparser.googlecode.com/svn/repository</url>
+		</repository>
+
+	</repositories>
+	<dependencies>
+
+	<dependency>
+		<groupId>javax.mail</groupId>
+		<artifactId>mail</artifactId>
+		<version>1.4.7</version>
+	</dependency>
+
+	<dependency>
+		<groupId>javax.mail</groupId>
+		<artifactId>javax.mail-api</artifactId>
+		<version>1.5.5</version>
+	</dependency>
+
+		<dependency>
+			<groupId>wordnet</groupId>
+			<artifactId>rita</artifactId>
+			<version>0.0.1</version>
+			<scope>system</scope>
+			<systemPath>${system.libs}/wordnet/rita.jar</systemPath>
+		</dependency>
+		<!-- <dependency> <groupId>org.aksw.ocelot</groupId> <artifactId>ocelot-cugar</artifactId> 
+			<version>0.0.1</version> </dependency> -->
+		<!-- external dependencies -->
+		<dependency>
+			<groupId>algs</groupId>
+			<artifactId>algs</artifactId>
+			<version>0.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>rJava</groupId>
+			<artifactId>JRI</artifactId>
+			<version>0.9-8</version>
+		</dependency>
+		<dependency>
+			<groupId>rJava</groupId>
+			<artifactId>JRIEngine</artifactId>
+			<version>0.9-8</version>
+		</dependency>
+		<dependency>
+			<groupId>rJava</groupId>
+			<artifactId>REngine</artifactId>
+			<version>0.9-8</version>
+		</dependency>
+	  <dependency>
+     <groupId>com.opencsv</groupId>
+     <artifactId>opencsv</artifactId>
+     <version>4.0</version>
+  </dependency>
+		<!-- apache http -->
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>fluent-hc</artifactId>
+			<version>4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.4</version>
+		</dependency>
+		<!-- -->
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>5.1.0</version>
+		</dependency>
+	<!-- stanford -->
+		<dependency>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-corenlp</artifactId>
+			<version>${stanford.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-corenlp</artifactId>
+			<version>${stanford.version}</version>
+			<classifier>models</classifier>
+		</dependency>
+		<dependency>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-parser</artifactId>
+			<version>${stanford.version}</version>
+			<classifier>models</classifier>
+		</dependency>
+		<!-- test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+		</dependency>
+
+		<!-- tregex <dependency> <groupId>edu.stanford.nlp</groupId> <artifactId>tregex</artifactId> 
+			<version>3.4</version> <scope>system</scope> <systemPath>${system.libs}/stanford-tregex-3.4.jar</systemPath> 
+			</dependency> -->
+		<!-- clearnlp -->
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+		<!-- clearnlp models (General domain) -->
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-dictionary</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-general-en-pos</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-general-en-dep</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-general-en-srl</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<!-- clearnlp models (Medical domain) -->
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-medical-en-pos</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-medical-en-dep</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.clearnlp</groupId>
+			<artifactId>clearnlp-medical-en-srl</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- log -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<!-- cfg -->
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.9</version>
+		</dependency>
+		<!-- commons-io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<!-- commons-compress -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<!-- lucene -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queries</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<!-- lucene <dependency> <groupId>org.apache.lucene</groupId> <artifactId>lucene-core</artifactId> 
+			<version>4.9.0</version> </dependency> <dependency> <groupId>org.apache.lucene</groupId> 
+			<artifactId>lucene-analyzers-common</artifactId> <version>4.9.0</version> 
+			</dependency> <dependency> <groupId>org.apache.lucene</groupId> <artifactId>lucene-queries</artifactId> 
+			<version>4.9.0</version> </dependency> <dependency> <groupId>org.apache.lucene</groupId> 
+			<artifactId>lucene-queryparser</artifactId> <version>4.9.0</version> </dependency> -->
+		<!--jsoup -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.7.3</version>
+		</dependency>
+		<!-- mongo-java-driver -->
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+		<!-- nxparser -->
+		<dependency>
+			<groupId>org.semanticweb.yars</groupId>
+			<artifactId>nxparser</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		<!-- gson -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.2.4</version>
+		</dependency>
+		<!-- json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20140107</version>
+		</dependency>
+		<!-- html parser jericho -->
+		<dependency>
+			<groupId>net.htmlparser.jericho</groupId>
+			<artifactId>jericho-html</artifactId>
+			<version>3.3</version>
+		</dependency>
+		<!-- https://github.com/SkymindIO/deeplearning4j/blob/master/pom.xml <dependency> 
+			<groupId>org.deeplearning4j</groupId> <artifactId>deeplearning4j-scaleout-akka-word2vec</artifactId> 
+			<version>0.0.3.3.3.alpha1-SNAPSHOT</version> </dependency> -->
+		<!-- <dependency> <groupId>org.nd4j</groupId> <artifactId>nd4j-jblas</artifactId> 
+			<version>0.0.3.5.5.2</version> </dependency> -->
+		<dependency>
+			<groupId>org.deeplearning4j</groupId>
+			<artifactId>deeplearning4j-core</artifactId>
+			<version>${dl4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.deeplearning4j</groupId>
+			<artifactId>deeplearning4j-nlp</artifactId>
+			<version>${dl4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nd4j</groupId>
+			<artifactId>nd4j-api</artifactId>
+			<version>${nd4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nd4j</groupId>
+			<artifactId>nd4j-jblas</artifactId>
+			<version>${nd4j.version}</version>
+		</dependency>
+		<!-- weka -->
+		<dependency>
+			<groupId>nz.ac.waikato.cms.weka</groupId>
+			<artifactId>weka-stable</artifactId>
+			<version>3.6.12</version>
+		</dependency>
+		<!-- jena-sparql-api -->
+		<dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-core</artifactId>
+			<version>2.12.1-8</version>
+		</dependency>
+
+		<!-- word net api <dependency> <groupId>edu.mit</groupId> <artifactId>jwi</artifactId> 
+			<version>2.3.3</version> </dependency> -->
+
+
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-api</artifactId>
+			<version>2.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-graph-impl</artifactId>
+			<version>2.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-algorithms</artifactId>
+			<version>2.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-io</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.owlapi</groupId>
+			<artifactId>owlapi-distribution</artifactId>
+			<version>5.0.2</version>
+		</dependency>
+
+		<!-- <dependency> <groupId>ifi.uzh.ch</groupId> <artifactId>simpack</artifactId> 
+			<version>0.9.1</version> </dependency> <dependency> <groupId>uk.ac.shef.wit</groupId> 
+			<artifactId>simmetrics</artifactId> <version>1.6.2</version> </dependency> -->
+	<!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-core -->
+<dependency>
+    <groupId>org.jgrapht</groupId>
+    <artifactId>jgrapht-core</artifactId>
+    <version>1.0.0</version>
+</dependency>
+
+	</dependencies>
+	<!-- -->
+	<!-- build -->
+	<!-- -->
+	<build>
+		<directory>release</directory>
+		<finalName>${project.artifactId}_${project.version}</finalName>
+		
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<excludes>
+					<exclude>/main/java/org/aksw/legacy/**</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+		
+		<plugins>
+
+			<!-- http://stackoverflow.com/questions/1456901/how-to-wrap-an-ant-build-with-maven 
+				<plugin> <artifactId>maven-antrun-plugin</artifactId> <executions> <execution> 
+				<id>ant-magic</id> <phase>prepare-package</phase> <goals> <goal>dependency:copy-dependencies</goal> 
+				</goals> <configuration> <tasks> <property name="compile_classpath" refid="maven.compile.classpath" 
+				/> <property name="outputDir" value="${project.build.outputDirectory}" /> 
+				<property name="sourceDir" value="${project.build.sourceDirectory}" /> <ant 
+				antfile="${basedir}/cugar.xml" target="clean" /> <ant antfile="${basedir}/cugar.xml" 
+				target="init" /> <ant antfile="${basedir}/cugar.xml" target="build" /> <ant 
+				antfile="${basedir}/cugar.xml" target="make-plugins-jar" /> <ant antfile="${basedir}/cugar.xml" 
+				target="create-cugar-release-jar" /> </tasks> </configuration> </execution> 
+				</executions> </plugin> -->
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-dependency-plugin</artifactId> 
+				<version>2.10</version> <executions> <execution> <id>copy-dependencies</id> 
+				<phase>package</phase> <goals> <goal>copy-dependencies</goal> </goals> <configuration> 
+				<outputDirectory>${project.build.directory}/classes/lib</outputDirectory> 
+				<overWriteReleases>false</overWriteReleases> <overWriteSnapshots>false</overWriteSnapshots> 
+				<overWriteIfNewer>true</overWriteIfNewer> </configuration> </execution> </executions> 
+				</plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<skip>false</skip>
+					<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+					<docletArtifact>
+						<groupId>org.umlgraph</groupId>
+						<artifactId>umlgraph</artifactId>
+						<version>5.6</version>
+					</docletArtifact>
+					<additionalparam>-views -all</additionalparam>
+					<useStandardDocletOptions>true</useStandardDocletOptions>
+					<reportOutputDirectory>${project.build.directory}/</reportOutputDirectory>
+					<destDir>javadoc</destDir>
+					<failOnError>false</failOnError>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<argLine>-Xmx8G -Djava.library.path=lib/rJava</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration> 
+					<encoding>UTF-8</encoding>
+					<argLine>-Xmx8G -Djava.library.path=lib/rJava</argLine>
+									<excludes>
+					<exclude>src/main/java/org/aksw/legacy/**</exclude>
+				</excludes>
+				</configuration>
+				</plugin>
+		</plugins>
+	</build> 
+</project>
