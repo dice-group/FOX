@@ -6,15 +6,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.aksw.fox.FoxParameter;
 import org.aksw.fox.data.Entity;
@@ -145,38 +142,6 @@ abstract public class ABoaIndex extends AbstractRE {
    */
   public Set<String> getSupportedBoaRelations(final String domain, final String range) {
     return supportedRelations.get(domain).get(range);
-  }
-
-  /**
-   * Each entity with just one index and sorted.
-   *
-   * @param entities
-   * @return sorted entities with one index in the index set
-   */
-  public List<Entity> breakdownAndSortEntity(final Set<Entity> entities) {
-
-    final Map<Integer, Entity> sorted = new HashMap<>();
-
-    for (final Entity entity : entities) {
-      if (entity.getIndices().size() > 1) {
-        final Iterator<Integer> iter = entity.getIndices().iterator();
-        while (iter.hasNext()) {
-          final Entity e = new Entity(entity.getText(), entity.getType(), entity.getRelevance(),
-              entity.getToolName());
-
-          final int index = iter.next();
-          e.addIndicies(index);
-          sorted.put(index, e);
-        }
-      } else {
-        sorted.put(entity.getIndices().iterator().next(), entity);
-      }
-    }
-    final List<Entity> breakdownEntity = new ArrayList<>();
-    for (final Integer i : sorted.keySet().stream().sorted().collect(Collectors.toList())) {
-      breakdownEntity.add(sorted.get(i));
-    }
-    return breakdownEntity;
   }
 
   public Map<String, BoaPattern> processSearch(final String p) throws IOException {

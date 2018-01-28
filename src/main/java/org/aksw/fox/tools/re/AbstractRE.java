@@ -1,7 +1,12 @@
 package org.aksw.fox.tools.re;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Relation;
@@ -35,5 +40,37 @@ public abstract class AbstractRE extends ATool implements IRE {
   @Override
   public Set<Relation> getResults() {
     return relations;
+  }
+
+  /**
+   * Each entity with just one index and sorted.
+   *
+   * @param entities
+   * @return sorted entities with one index in the index set
+   */
+  public List<Entity> breakdownAndSortEntity(final Set<Entity> entities) {
+
+    final Map<Integer, Entity> sorted = new HashMap<>();
+
+    for (final Entity entity : entities) {
+      if (entity.getIndices().size() > 1) {
+        final Iterator<Integer> iter = entity.getIndices().iterator();
+        while (iter.hasNext()) {
+          final Entity e = new Entity(//
+              entity.getText(), entity.getType(), entity.getRelevance(), entity.getToolName()//
+          );
+
+          final int index = iter.next();
+          e.addIndicies(index);
+          sorted.put(index, e);
+        }
+      } else {
+        sorted.put(entity.getIndices().iterator().next(), entity);
+      }
+    }
+
+    return sorted.keySet()//
+        .stream().sorted().collect(Collectors.toList())//
+        .stream().map(sorted::get).collect(Collectors.toList());
   }
 }

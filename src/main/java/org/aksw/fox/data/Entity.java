@@ -111,24 +111,28 @@ public class Entity implements IData {
    * Adds start indices
    *
    * @param index
+   * @return self
    */
-  public void addIndicies(final int index) {
+  public Entity addIndicies(final int index) {
     if (indicies == null) {
       indicies = new TreeSet<>();
     }
     indicies.add(index);
+    return this;
   }
 
   /**
    * Adds start indices.
    *
    * @param indices
+   * @return self
    */
-  public void addAllIndicies(final Set<Integer> indices) {
+  public Entity addAllIndicies(final Set<Integer> indices) {
     if (indicies == null) {
       indicies = new HashSet<>();
     }
     indicies.addAll(indices);
+    return this;
   }
 
   @Override

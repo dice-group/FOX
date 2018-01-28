@@ -8,6 +8,7 @@ import java.util.Map;
 import org.aksw.fox.FoxParameter;
 import org.aksw.fox.tools.re.de.BoaDE;
 import org.aksw.fox.tools.re.en.BoaEN;
+import org.aksw.fox.tools.re.en.OcelotEN;
 import org.aksw.fox.tools.re.en.REStanford;
 import org.aksw.fox.tools.re.fr.BoaFR;
 
@@ -19,7 +20,9 @@ public class FoxRETools {
 
     // TODO: move to config
     relationTool.put(//
-        FoxParameter.Langs.EN.name().toLowerCase(), Arrays.asList(new REStanford(), new BoaEN())//
+        FoxParameter.Langs.EN.name().toLowerCase(),
+        Arrays.asList(new REStanford(), new BoaEN(), new OcelotEN())//
+    // Arrays.asList(new REStanford(), new BoaEN())//
     );
     relationTool.put(FoxParameter.Langs.DE.name().toLowerCase(), Arrays.asList(new BoaDE()));
     relationTool.put(FoxParameter.Langs.FR.name().toLowerCase(), Arrays.asList(new BoaFR()));

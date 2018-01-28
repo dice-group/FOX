@@ -228,8 +228,9 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
         }
         final String time = getTime();
 
-        String uri = rse.getProperty(pItsrdfTaIdentRef).getResource().getLocalName();
-        uri = ns_fox_resource.concat(uri).concat("_").concat(time);
+        // String uri = rse.getProperty(pItsrdfTaIdentRef).getResource().getLocalName();
+        // uri = ns_fox_resource.concat(uri).concat("_").concat(time);
+        final String uri = ns_fox_resource.concat(time);
 
         final Resource hasTarget = graph.createResource()//
             .addProperty(RDF.type, pSpecificResource)//
@@ -239,6 +240,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
         final Resource resource = graph.createResource(uri)//
             .addProperty(RDF.type, pRelationRelation)//
             .addProperty(RDF.type, RDF.Statement)//
+            .addProperty(RDF.type, pAnnotation)//
             .addProperty(pRelationDomain, rse.getProperty(pItsrdfTaIdentRef).getResource())//
             .addProperty(pRelationRange, roe.getPropertyResourceValue(pItsrdfTaIdentRef))//
             .addProperty(pHasTarget, hasTarget)//
