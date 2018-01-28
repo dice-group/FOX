@@ -1,0 +1,6 @@
+<file>predicates/location/lo.properties</file>
+<!-- PERSON LOCATION ORGANIZATION -->
+<domain>LOCATION</domain>
+<range>ORGANIZATION</range>
+<domainPlaceholder>?D</domainPlaceholder>
+<rangePlaceholder>?R</rangePlaceholder>

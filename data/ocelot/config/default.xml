@@ -1,0 +1,81 @@
+<!-- -->
+<!-- general settings -->
+<!-- -->
+<ocelot>
+  <dataFolder>../ocelot-data</dataFolder>
+  <tmpFolder>tmp</tmpFolder>
+</ocelot>
+
+<!-- -->
+<!-- properties -->
+<!-- -->
+<properties>
+&predicates;
+</properties>
+
+<!-- -->
+<!-- settings -->
+<!-- -->
+<settings>
+  <maxTriples>100</maxTriples>
+  <!-- number of characters   -->
+  <minSurfaceformsLength>3</minSurfaceformsLength>
+  <!-- search limit of the index results -->
+  <limit>-1</limit>
+  <!-- max punctation in a sentence -->
+  <maxPunct>10</maxPunct>
+  <!-- the triples processed in the pipe -->
+  <tripleSteps>-1</tripleSteps>
+</settings>
+
+<!-- -->
+<!-- index -->
+<!-- -->
+<index>
+  <!-- how many WikiDocs -->
+  <threads>4</threads>
+  <!-- timeout for one WikiDocs in s -->
+  <timeout>180</timeout>
+  <!--sentences -->
+  <sentenceLengthMin>4</sentenceLengthMin>
+  <sentenceLengthMax>40</sentenceLengthMax>
+  <!-- surfaceforms -->
+  <sfSetSizeMin>1</sfSetSizeMin>
+  <sfSetSizeMax>10</sfSetSizeMax>
+  <!-- in sec. -->
+  <searchTimeoutSF>30</searchTimeoutSF>
+  <!-- surfaceforms search threads (one sf per thread)in index -->
+  <searchThreadsSF>4</searchThreadsSF>
+</index>
+
+<!-- -->
+<!-- SOLR config -->
+<!-- -->
+<solr>
+  <indexCore>ocelot</indexCore>
+  <surfaceformsCore>surfaceforms</surfaceformsCore>
+  <threads>4</threads>
+  <queue>10</queue>
+  <rows>1000</rows>
+  <url>http://localhost:8983/solr</url>
+  <!-- in sec -->
+  <timeout>600</timeout>
+  <!--
+  <maxResults>-1</maxResults>-->
+</solr>
+
+<!-- -->
+<!-- corpus settings -->
+<!-- -->
+<corpus>
+  <folder>/media/rspeck/store/GitRepos/Relation-Extraction-Ocelot/ocelot-data/wiki_data/</folder>
+</corpus>
+
+<!-- -->
+<!-- word2vec -->
+<!-- -->
+<word2vec>
+  <key>1234</key>
+  <uri>http://0.0.0.0:4441/word2vec</uri>
+  <threshold>0.3</threshold>
+</word2vec>

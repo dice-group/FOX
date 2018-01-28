@@ -1,0 +1,7 @@
+<file>predicates/person/po.properties</file>
+<!-- PERSON LOCATION ORGANIZATION -->
+<domain>PERSON</domain>
+<range>ORGANIZATION</range>
+<!-- -->
+<domainPlaceholder>?D</domainPlaceholder>
+<rangePlaceholder>?R</rangePlaceholder>

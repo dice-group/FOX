@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE doc [
+<!ENTITY default SYSTEM "default.xml">
+<!ENTITY deploy SYSTEM "deploy.xml">
+<!ENTITY predicates SYSTEM "predicates/person/pp.xml">
+]>
+<config>&deploy;</config>
