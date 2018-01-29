@@ -19,6 +19,7 @@ import org.aksw.fox.tools.re.AbstractRE;
 import org.aksw.fox.tools.re.IRE;
 import org.aksw.ocelot.application.Application;
 import org.aksw.ocelot.application.IOcelot;
+import org.aksw.ocelot.common.config.CfgManager;
 import org.aksw.ocelot.common.nlp.stanford.StanfordPipe;
 import org.aksw.ocelot.core.nlp.StanfordPipeExtended;
 
@@ -28,7 +29,9 @@ import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.util.CoreMap;
 
 public class OcelotEN extends AbstractRE {
-
+  static {
+    CfgManager.setFolder("data/ocelot/config");
+  }
   IOcelot ocelot = new Application("data/ocelot/config");
   final StanfordPipe stanford = StanfordPipeExtended.getStanfordPipe();
 
