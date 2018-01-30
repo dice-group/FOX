@@ -15,7 +15,9 @@ cache:
     - ~/.m2
 
 install:
-    - 
+    - true
+
+script: mvn clean compile -DskipTests=true
 
 notifications:
   email:
