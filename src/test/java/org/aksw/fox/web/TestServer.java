@@ -25,8 +25,8 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.junit.Assert;
-import org.junit.Test;
 
+@Deprecated
 public class TestServer {
 
   public final static Logger LOG = LogManager.getLogger(TestServer.class);
@@ -35,7 +35,6 @@ public class TestServer {
 
   long waitingTime = 10 * 60 * 1000; // 5m
 
-  @Test
   public void serverTest() {
     // start server
     final long startTime = System.currentTimeMillis();
