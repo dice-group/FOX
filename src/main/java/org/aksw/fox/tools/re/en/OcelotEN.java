@@ -3,7 +3,6 @@ package org.aksw.fox.tools.re.en;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -13,10 +12,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.tools.re.AbstractRE;
-import org.aksw.fox.tools.re.IRE;
 import org.aksw.ocelot.application.Application;
 import org.aksw.ocelot.application.IOcelot;
 import org.aksw.ocelot.common.config.CfgManager;
@@ -29,10 +26,12 @@ import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.util.CoreMap;
 
 public class OcelotEN extends AbstractRE {
+
+  static String file = "data/ocelot/config";
   static {
-    CfgManager.setFolder("data/ocelot/config");
+    CfgManager.setFolder(file);
   }
-  IOcelot ocelot = new Application("data/ocelot/config");
+  IOcelot ocelot = new Application(file);
   final StanfordPipe stanford = StanfordPipeExtended.getStanfordPipe();
 
   /**
@@ -168,50 +167,8 @@ public class OcelotEN extends AbstractRE {
           relations.add(relation);
         }
       } // end for
-
       offset += sentence.length();
-
     }
     return relations;
-  }
-
-  public static void main(final String[] a) {
-    LOG.info("Main");
-    final IRE ocelotFox = new OcelotEN();
-    LOG.info("OcelotEN");
-
-    ocelotFox.setInput("B. Miller was born in Leipzig in 2010.",
-        new HashSet<>(Arrays.asList(//
-            new Entity("B. Miller", EntityClassMap.P).addIndicies(0), //
-            new Entity("Leipzig", EntityClassMap.L).addIndicies("B. Miller was born in ".length())//
-        )));
-
-    ocelotFox.extract();
-    ocelotFox.getResults().forEach(LOG::info);
-
-    ocelotFox
-        .setInput("Anna was born in Berlin. Paul married Paula. ",
-            new HashSet<>(Arrays.asList(//
-
-                new Entity("Anna", EntityClassMap.P).addIndicies(0), //
-                new Entity("Berlin", EntityClassMap.L).addIndicies("Anna was born in ".length()), //
-
-                new Entity("Paul", EntityClassMap.P)
-                    .addIndicies("Anna was born in Berlin. ".length()), //
-                new Entity("Paula", EntityClassMap.P)
-                    .addIndicies("Anna was born in Berlin. Paul married ".length())//
-            )));
-    ocelotFox.extract();
-    ocelotFox.getResults().forEach(LOG::info);
-
-    ocelotFox.setInput("Paul married Paula. A was born in B.", new HashSet<>(Arrays.asList(//
-        new Entity("Paul", EntityClassMap.P).addIndicies(0), //
-        new Entity("Paula", EntityClassMap.P).addIndicies("Paul married ".length()), //
-        new Entity("A", EntityClassMap.P).addIndicies("Paul married Paula. ".length()), //
-        new Entity("B", EntityClassMap.L).addIndicies("Paul married Paula. A was born in ".length())//
-    )));
-    ocelotFox.extract();
-    ocelotFox.getResults().forEach(LOG::info);
-
   }
 }
