@@ -1,6 +1,6 @@
 package org.aksw.fox.webservice;
 
-import org.aksw.fox.data.exception.PortInUseException;
+import org.aksw.fox.exception.PortInUseException;
 import org.aksw.fox.utils.CfgManager;
 import org.aksw.fox.utils.FoxServerUtil;
 import org.apache.commons.configuration.XMLConfiguration;

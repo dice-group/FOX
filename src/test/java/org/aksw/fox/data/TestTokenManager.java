@@ -1,5 +1,6 @@
 package org.aksw.fox.data;
 
+import org.aksw.fox.nerlearner.TokenManager;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -9,9 +9,9 @@ import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
-import org.aksw.fox.data.TokenManager;
 import org.aksw.fox.nerlearner.IPostProcessing;
 import org.aksw.fox.nerlearner.PostProcessing;
+import org.aksw.fox.nerlearner.TokenManager;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.nerlearner.reader.INERReader;
 import org.aksw.fox.nerlearner.reader.NERReaderFactory;
@@ -53,6 +53,10 @@ public class CrossValidation {
   static StringBuffer outDetail = null;
   static StringBuffer outTotal = null;
 
+  /**
+   *
+   * @param tools
+   */
   public CrossValidation(final Tools tools) {
     this.tools = tools;
   }
@@ -63,8 +67,9 @@ public class CrossValidation {
 
   public void crossValidation(final Classifier cls, final String[] inputFiles) throws Exception {
     classifierName = cls.getClass().getName();
-    classifierName = classifierName
-        .substring(classifierName.lastIndexOf('.') == -1 ? 0 : classifierName.lastIndexOf('.') + 1);
+    classifierName = classifierName.substring(//
+        classifierName.lastIndexOf('.') == -1 ? 0 : classifierName.lastIndexOf('.') + 1//
+    );
 
     // read data
     // read training data
@@ -164,31 +169,17 @@ public class CrossValidation {
       // write totals
       if (outTotal == null) {
         outTotal = new StringBuffer();
-        outTotal.append("run,");
-        outTotal.append("classifier,");
-        outTotal.append("class,");
-        outTotal.append("a,");
-        outTotal.append("b,");
-        outTotal.append("c,");
-        outTotal.append("d");
-        outTotal.append('\n');
+        outTotal.append("run,").append("classifier,").append("class,").append("a,").append("b,")
+            .append("c,").append("d").append('\n');
       }
       final double[][] cmMatrix = evalAll.confusionMatrix();
       for (int k = 0; k < EntityClassMap.entityClasses.size(); k++) {
-        outTotal.append(i + 1);
-        outTotal.append(',');
-        outTotal.append(classifierName);
-        outTotal.append(',');
-        outTotal.append(EntityClassMap.entityClasses.get(k));
-        outTotal.append(',');
-        outTotal.append(new Double(cmMatrix[k][0]).intValue());
-        outTotal.append(',');
-        outTotal.append(new Double(cmMatrix[k][1]).intValue());
-        outTotal.append(',');
-        outTotal.append(new Double(cmMatrix[k][2]).intValue());
-        outTotal.append(',');
-        outTotal.append(new Double(cmMatrix[k][3]).intValue());
-        outTotal.append('\n');
+        outTotal.append(i + 1).append(',').append(classifierName).append(',')
+            .append(EntityClassMap.entityClasses.get(k)).append(',')
+            .append(new Double(cmMatrix[k][0]).intValue()).append(',')
+            .append(new Double(cmMatrix[k][1]).intValue()).append(',')
+            .append(new Double(cmMatrix[k][2]).intValue()).append(',')
+            .append(new Double(cmMatrix[k][3]).intValue()).append('\n');
       }
       myprint(evalAll, cls, instances);
     }
@@ -283,32 +274,15 @@ public class CrossValidation {
   public static void writeBuffer(final String run, final String fold, final String classifier,
       final String classs, final String a, final String b, final String c, final String d) {
     if (outDetail == null) {
-      outDetail = new StringBuffer();
-      outDetail.append("run,");
-      outDetail.append("fold,");
-      outDetail.append("classifier,");
-      outDetail.append("class,");
-      outDetail.append("a,");
-      outDetail.append("b,");
-      outDetail.append("c,");
-      outDetail.append("d");
-      outDetail.append('\n');
+      outDetail = new StringBuffer()//
+          .append("run,").append("fold,").append("classifier,").append("class,")//
+          .append("a,").append("b,").append("c,").append("d")//
+          .append('\n');
     }
-    outDetail.append(run);
-    outDetail.append(',');
-    outDetail.append(fold);
-    outDetail.append(',');
-    outDetail.append(classifier);
-    outDetail.append(',');
-    outDetail.append(classs);
-    outDetail.append(',');
-    outDetail.append(a);
-    outDetail.append(',');
-    outDetail.append(b);
-    outDetail.append(',');
-    outDetail.append(c);
-    outDetail.append(',');
-    outDetail.append(d);
-    outDetail.append('\n');
+    outDetail//
+        .append(run).append(',').append(fold).append(',').append(classifier).append(',')
+        .append(classs).append(',')//
+        .append(a).append(',').append(b).append(',').append(c).append(',').append(d)//
+        .append('\n');
   }
 }

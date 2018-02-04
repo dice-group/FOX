@@ -1,7 +1,7 @@
 package org.aksw.fox.webservice.util;
 
-import org.aksw.fox.FoxParameter;
-import org.aksw.fox.FoxParameter.Output;
+import org.aksw.fox.data.FoxParameter;
+import org.aksw.fox.data.FoxParameter.Output;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

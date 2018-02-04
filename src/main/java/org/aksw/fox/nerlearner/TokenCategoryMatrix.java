@@ -1,10 +1,11 @@
-package org.aksw.fox.data;
+package org.aksw.fox.nerlearner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.fox.data.Entity;
 import org.apache.log4j.Logger;
 
 /**
@@ -60,7 +61,7 @@ public class TokenCategoryMatrix {
       // DEBUG
     }
 
-    final String[] split = entity.text.split(splitregText);
+    final String[] split = entity.getText().split(splitregText);
 
     // TRACE
     if (logger.isTraceEnabled()) {
@@ -76,7 +77,7 @@ public class TokenCategoryMatrix {
             values[tokenIndex][i] = false;
           }
 
-          values[tokenIndex][categories.indexOf(entity.type)] = true;
+          values[tokenIndex][categories.indexOf(entity.getType())] = true;
         } else {
           logger.error("token not found: " + s);
         }

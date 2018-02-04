@@ -12,7 +12,7 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.Relation;
-import org.aksw.fox.output.AFoxJenaNew;
+import org.aksw.fox.data.Voc;
 import org.aksw.fox.tools.ner.en.StanfordENOldVersion;
 import org.aksw.fox.tools.re.AbstractRE;
 import org.aksw.fox.utils.FoxConst;
@@ -83,12 +83,10 @@ public class REStanford extends AbstractRE {
     props.setProperty("annotators", "tokenize,ssplit,lemma,pos,parse,ner");
     relationExtractorAnnotator = new RelationExtractorAnnotator(props);
 
-    initURIs(StanfordRelations.Live_In, AFoxJenaNew.ns_fox_ontology.concat("stanford_livein"));
-    initURIs(StanfordRelations.Located_In,
-        AFoxJenaNew.ns_fox_ontology.concat("stanford_locatedin"));
-    initURIs(StanfordRelations.OrgBased_In,
-        AFoxJenaNew.ns_fox_ontology.concat("stanford_orgbasedin"));
-    initURIs(StanfordRelations.Work_For, AFoxJenaNew.ns_fox_ontology.concat("stanford_workfor"));
+    initURIs(StanfordRelations.Live_In, Voc.ns_fox_ontology.concat("stanford_livein"));
+    initURIs(StanfordRelations.Located_In, Voc.ns_fox_ontology.concat("stanford_locatedin"));
+    initURIs(StanfordRelations.OrgBased_In, Voc.ns_fox_ontology.concat("stanford_orgbasedin"));
+    initURIs(StanfordRelations.Work_For, Voc.ns_fox_ontology.concat("stanford_workfor"));
   }
 
   /**

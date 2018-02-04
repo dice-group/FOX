@@ -6,14 +6,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.aksw.fox.Fox;
-import org.aksw.fox.FoxParameter;
 import org.aksw.fox.IFox;
-import org.aksw.fox.data.exception.PortInUseException;
+import org.aksw.fox.data.FoxParameter;
+import org.aksw.fox.exception.PortInUseException;
 import org.aksw.fox.output.FoxJenaNew;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.FoxLanguageDetector;
@@ -63,7 +64,7 @@ public class FoxServer extends AServer {
   }
 
   protected static void initPools() throws Exception {
-    pool = new HashMap<>();
+    pool = new ConcurrentHashMap<>();
     for (final String lang : ToolsGenerator.usedLang) {
       int poolsize = CFG.getInt(CFG_KEY_POOL_SIZE.concat("[@").concat(lang).concat("]"));
       if (poolsize < 1) {

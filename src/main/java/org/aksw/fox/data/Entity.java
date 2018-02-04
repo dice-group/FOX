@@ -17,7 +17,7 @@ public class Entity implements IData {
 
   protected String type = "";
 
-  public String uri = null;
+  protected String uri = "";
 
   protected float relevance = DEFAULT_RELEVANCE;
 
@@ -152,6 +152,14 @@ public class Entity implements IData {
     return relevance;
   }
 
+  public String getUri() {
+    return uri;
+  }
+
+  public void setUri(final String uri) {
+    this.uri = uri;
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -167,7 +175,7 @@ public class Entity implements IData {
 
   @Override
   public String toString() {
-    return "Entity [text=" + text + ", type=" + type + ", tool=" + tool + ", relevance=" + relevance
-        + (indicies != null ? ", indicies=" + indicies : "") + "]";
+    return "Entity [text=" + text + ", type=" + type + ", uri=" + uri + ", tool=" + tool
+        + ", relevance=" + relevance + (indicies != null ? ", indicies=" + indicies : "") + "]";
   }
 }

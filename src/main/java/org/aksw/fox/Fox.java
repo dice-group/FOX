@@ -16,10 +16,11 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.bind.DatatypeConverter;
 
 import org.aksw.fox.data.Entity;
+import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.data.Relation;
-import org.aksw.fox.data.TokenManager;
-import org.aksw.fox.data.exception.LoadingNotPossibleException;
-import org.aksw.fox.data.exception.UnsupportedLangException;
+import org.aksw.fox.exception.LoadingNotPossibleException;
+import org.aksw.fox.exception.UnsupportedLangException;
+import org.aksw.fox.nerlearner.TokenManager;
 import org.aksw.fox.output.FoxJenaNew;
 import org.aksw.fox.output.IFoxJena;
 import org.aksw.fox.tools.ATool;
@@ -387,9 +388,9 @@ public class Fox extends AFox {
     int last = 0;
     for (final Integer index : startIndices) {
       final Entity entity = indexEntityMap.get(index);
-      if ((entity.uri != null) && !entity.uri.trim().isEmpty()) {
+      if ((entity.getUri() != null) && !entity.getUri().trim().isEmpty()) {
         html += input.substring(last, index);
-        html += "<a class=\"" + entity.getType().toLowerCase() + "\" href=\"" + entity.uri
+        html += "<a class=\"" + entity.getType().toLowerCase() + "\" href=\"" + entity.getUri()
             + "\"  target=\"_blank\"  title=\"" + entity.getType().toLowerCase() + "\" >"
             + entity.getText() + "</a>";
         last = index + entity.getText().length();

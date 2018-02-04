@@ -3,7 +3,7 @@ package org.aksw.fox.webservice.statistics;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.aksw.fox.FoxParameter;
+import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.webservice.FoxServer;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

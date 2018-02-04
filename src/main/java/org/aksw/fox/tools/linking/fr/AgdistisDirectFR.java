@@ -3,7 +3,7 @@ package org.aksw.fox.tools.linking.fr;
 import java.io.IOException;
 
 import org.aksw.agdistis.algorithm.NEDAlgo_HITS;
-import org.aksw.fox.data.exception.LoadingNotPossibleException;
+import org.aksw.fox.exception.LoadingNotPossibleException;
 import org.aksw.fox.tools.linking.common.Agdistis;
 import org.aksw.fox.utils.FoxCfg;
 

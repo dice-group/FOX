@@ -1,4 +1,4 @@
-package org.aksw.fox.data.exception;
+package org.aksw.fox.exception;
 
 /**
  * 

@@ -1,6 +1,6 @@
 package org.aksw.fox;
 
-import org.aksw.fox.data.exception.PortInUseException;
+import org.aksw.fox.exception.PortInUseException;
 import org.aksw.fox.webservice.FoxServer;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

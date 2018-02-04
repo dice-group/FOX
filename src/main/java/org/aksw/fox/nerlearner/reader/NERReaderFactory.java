@@ -1,6 +1,6 @@
 package org.aksw.fox.nerlearner.reader;
 
-import org.aksw.fox.data.exception.LoadingNotPossibleException;
+import org.aksw.fox.exception.LoadingNotPossibleException;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

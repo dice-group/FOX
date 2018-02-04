@@ -1,6 +1,6 @@
 package org.aksw.fox.nerlearner;
 
-import org.aksw.fox.data.exception.LoadingNotPossibleException;
+import org.aksw.fox.exception.LoadingNotPossibleException;
 import org.aksw.fox.nerlearner.classifier.ClassVoteClassifier;
 import org.aksw.fox.nerlearner.classifier.FoxVote;
 import org.aksw.fox.nerlearner.classifier.ResultVoteClassifier;

@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.aksw.fox.FoxParameter;
 import org.aksw.fox.IFox;
+import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxLanguageDetector;
 import org.aksw.fox.utils.FoxStringUtil;

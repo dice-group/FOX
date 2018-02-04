@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.fox.FoxParameter;
+import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.tools.re.de.BoaDE;
 import org.aksw.fox.tools.re.en.BoaEN;
 import org.aksw.fox.tools.re.en.OcelotEN;

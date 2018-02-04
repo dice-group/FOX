@@ -22,8 +22,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-import org.aksw.fox.FoxParameter;
 import org.aksw.fox.IFox;
+import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.legacy.FoxHttpHandler;
 import org.aksw.fox.legacy.Server;
 import org.aksw.fox.utils.FoxCfg;

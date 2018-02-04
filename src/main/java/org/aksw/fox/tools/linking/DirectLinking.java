@@ -40,7 +40,7 @@ public class DirectLinking extends AbstractLinking {
   @Override
   public void setUris(final Set<Entity> entities, final String input) {
     for (final Entity e : entities) {
-      e.uri = lookup(e.getText(), e.getType(), "");
+      e.setUri(lookup(e.getText(), e.getType(), ""));
     }
     this.entities = entities;
   }

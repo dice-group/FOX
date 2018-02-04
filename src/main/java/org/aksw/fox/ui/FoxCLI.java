@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aksw.fox.data.exception.LoadingNotPossibleException;
-import org.aksw.fox.data.exception.UnsupportedLangException;
 import org.aksw.fox.evaluation.CrossValidation;
+import org.aksw.fox.exception.LoadingNotPossibleException;
+import org.aksw.fox.exception.UnsupportedLangException;
 import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.FoxClassifierFactory;
 import org.aksw.fox.nerlearner.reader.INERReader;

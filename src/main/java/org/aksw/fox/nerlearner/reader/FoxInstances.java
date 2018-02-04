@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
-import org.aksw.fox.data.TokenCategoryMatrix;
+import org.aksw.fox.nerlearner.TokenCategoryMatrix;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.Logger;
 import org.jetlang.fibers.Fiber;

@@ -140,8 +140,8 @@ public class FoxJena {
     }
 
     for (final Entity entity : set) {
-      if (!urlValidator.isValid(entity.uri)) {
-        LOG.error("uri isn't valid: " + entity.uri);
+      if (!urlValidator.isValid(entity.getUri())) {
+        LOG.error("uri isn't valid: " + entity.getUri());
       } else {
         final Resource resource = graph.createResource();
 
@@ -154,7 +154,7 @@ public class FoxJena {
               graph.createTypedLiteral(new Integer(index + entity.getText().length())));
         }
 
-        resource.addProperty(means, graph.createResource(entity.uri));
+        resource.addProperty(means, graph.createResource(entity.getUri()));
         resource.addProperty(source, graph.createResource(nsScmssource + entity.getToolName()));
         resource.addLiteral(body, entity.getText());
       }
@@ -268,23 +268,23 @@ public class FoxJena {
   /**
    * <code>
    public static void main(final String args[]) {
-
+  
      // test data
      final DataTestFactory dtf = new DataTestFactory();
      final Set<Entity> entities = new ArrayList<Set<Entity>>(dtf.getTestEntities().values()).get(0);
      final Set<Relation> relations = dtf.getTestRelations().entrySet().iterator().next().getValue();
-
+  
      final String input = dtf.getTestEntities().entrySet().iterator().next().getKey();
-
+  
      // test
      final FoxJena fj = new FoxJena();
-
+  
      fj.setAnnotations(entities);
      fj.setRelations(relations);
-
+  
      final String out = fj.print(FoxParameter.Output.TURTLE.name(), false, input);
      System.out.println(out);
-
+  
    }
    </code>
    */

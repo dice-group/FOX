@@ -1,10 +1,11 @@
-package org.aksw.fox.data;
+package org.aksw.fox.nerlearner;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.fox.data.Entity;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;

@@ -10,11 +10,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.TokenManager;
-import org.aksw.fox.data.exception.LoadingNotPossibleException;
+import org.aksw.fox.exception.LoadingNotPossibleException;
 import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.IPostProcessing;
 import org.aksw.fox.nerlearner.PostProcessing;
+import org.aksw.fox.nerlearner.TokenManager;
 import org.aksw.fox.tools.ner.INER;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.LogManager;

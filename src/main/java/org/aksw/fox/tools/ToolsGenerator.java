@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.aksw.fox.data.exception.LoadingNotPossibleException;
-import org.aksw.fox.data.exception.UnsupportedLangException;
+import org.aksw.fox.exception.LoadingNotPossibleException;
+import org.aksw.fox.exception.UnsupportedLangException;
 import org.aksw.fox.tools.linking.ILinking;
 import org.aksw.fox.utils.CfgManager;
 import org.aksw.fox.utils.FoxCfg;

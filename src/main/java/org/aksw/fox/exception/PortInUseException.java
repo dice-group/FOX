@@ -1,4 +1,4 @@
-package org.aksw.fox.data.exception;
+package org.aksw.fox.exception;
 
 public class PortInUseException extends Exception {
     private static final long serialVersionUID = 8440331545375107244L;

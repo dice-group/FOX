@@ -12,7 +12,7 @@ import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.aksw.fox.Fox;
 import org.aksw.fox.IFox;
-import org.aksw.fox.data.exception.PortInUseException;
+import org.aksw.fox.exception.PortInUseException;
 import org.aksw.fox.legacy.api.ApiResource;
 import org.aksw.fox.legacy.feedback.FeedbackHttpHandler;
 import org.aksw.fox.tools.ToolsGenerator;

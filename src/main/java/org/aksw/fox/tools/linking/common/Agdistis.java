@@ -18,7 +18,7 @@ import org.aksw.agdistis.datatypes.DocumentText;
 import org.aksw.agdistis.datatypes.NamedEntitiesInText;
 import org.aksw.agdistis.datatypes.NamedEntityInText;
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.output.AFoxJenaNew;
+import org.aksw.fox.data.Voc;
 import org.aksw.fox.tools.linking.AbstractLinking;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.IOUtils;
@@ -154,16 +154,16 @@ public class Agdistis extends AbstractLinking {
               URI uri;
               try {
 
-                uri = new URI(AFoxJenaNew.ns_fox_resource + entity.getText().replaceAll(" ", "_"));
-                entity.uri = uri.toASCIIString(); // TODO: why?
+                uri = new URI(Voc.ns_fox_resource + entity.getText().replaceAll(" ", "_"));
+                entity.setUri(uri.toASCIIString()); // TODO: why?
               } catch (final URISyntaxException e) {
-                entity.uri = AFoxJenaNew.ns_fox_resource + entity.getText();
-                LOG.error(entity.uri + "\n", e);
+                entity.setUri(Voc.ns_fox_resource + entity.getText());
+                LOG.error(entity.getUri() + "\n", e);
               }
 
             } else {
               // TODO: ?
-              entity.uri = urlencode(disambiguatedURL);
+              entity.setUri(urlencode(disambiguatedURL));
             }
           }
         }
@@ -192,7 +192,7 @@ public class Agdistis extends AbstractLinking {
 
     for (final NamedEntityInText namedEntity : d.getNamedEntitiesInText()) {
       if (!namedEntity.getNamedEntityUri().contains("http")) {
-        namedEntity.setNamedEntity(AFoxJenaNew.akswNotInWiki + namedEntity.getSingleWordLabel());
+        namedEntity.setNamedEntity(Voc.akswNotInWiki + namedEntity.getSingleWordLabel());
       }
       final JSONObject obj = new JSONObject();
       obj.put("namedEntity", namedEntity.getLabel());

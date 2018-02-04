@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.aksw.fox.FoxParameter;
+import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.legacy.Server;
 import org.aksw.fox.utils.FoxConst;
 import org.apache.commons.io.IOUtils;

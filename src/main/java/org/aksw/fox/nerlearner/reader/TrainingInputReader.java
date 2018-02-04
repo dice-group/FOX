@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
-import org.aksw.fox.data.TokenManager;
+import org.aksw.fox.nerlearner.TokenManager;
 import org.aksw.fox.utils.FoxTextUtil;
 
 /**

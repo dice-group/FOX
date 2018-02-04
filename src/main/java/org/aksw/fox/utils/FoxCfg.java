@@ -4,10 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
-import org.aksw.fox.data.exception.LoadingNotPossibleException;
+import org.aksw.fox.exception.LoadingNotPossibleException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -96,25 +95,9 @@ public class FoxCfg {
       final Constructor<?> constructor = clazz.getConstructor();
       return constructor.newInstance();
 
-    } catch (ClassNotFoundException | NoSuchMethodException | SecurityException
-        | InstantiationException | IllegalAccessException | IllegalArgumentException
-        | InvocationTargetException e) {
+    } catch (final Exception e) {
       LOG.error(e.getLocalizedMessage(), e);
       throw new LoadingNotPossibleException("Could not load class: " + classPath);
-    }
-  }
-
-  public static void main(final String[] a) {
-
-    final String key = "org.aksw.fox.nerlearner.reader.NERReaderFactory.readerclass";
-    final String c = FoxCfg.get(key);
-    LOG.info(c);
-
-    try {
-      FoxCfg.getClass(c);
-    } catch (final LoadingNotPossibleException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
     }
   }
 }

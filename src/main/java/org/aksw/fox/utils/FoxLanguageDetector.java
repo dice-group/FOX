@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.aksw.fox.FoxParameter;
+import org.aksw.fox.data.FoxParameter;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
