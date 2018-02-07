@@ -25,7 +25,7 @@
 		<lucene.version>4.10.0</lucene.version>
 		<jena.version>3.1.0</jena.version>
 		<jsonld.version>0.10.0</jsonld.version>
-		<agdistis.version>0.4.0</agdistis.version>
+		<agdistis.version>0.4.1</agdistis.version>
 		<illinoisner.version>2.8.1</illinoisner.version>
 		<opennlp.version>1.5.3</opennlp.version>
 		<balie.version>1.81.0</balie.version>
@@ -689,7 +689,7 @@
 		<dependency>
 			<groupId>net.sourceforge.owlapi</groupId>
 			<artifactId>owlapi-distribution</artifactId>
-			<version>5.0.2</version>
+			<version>5.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jgrapht</groupId>
