@@ -239,7 +239,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
 
         final Resource hasTarget = graph.createResource()//
             .addProperty(RDF.type, Voc.pSpecificResource)//
-            .addProperty(Voc.pHasSource, docUri)//
+            .addProperty(Voc.pHasSource, graph.createResource(docUri))//
         ;
 
         final Resource resource = graph.createResource(uri)//
