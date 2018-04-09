@@ -5,14 +5,14 @@
 [6]: ./requirements.md
 [7]: ./docker.md
 [8]: https://github.com/AKSW/FOX/releases/tag/v2.3.0
-[9]: https://github.com/AKSW/FOX
+[9]: https://github.com/dice-group/FOX/tree/2.5.0
 [10]: ../evaluation
 [11]: ../input
 [12]: ./nodocker.md
 [13]: ./bindings.md
 
 
-# Version ([2.4.0][9])
+# Version ([2.5.0][9])
 
 ## [What is FOX?][1]
 
