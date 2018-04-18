@@ -120,13 +120,26 @@ public class FoxServer extends AServer {
      * Content-Type: application/json <br>
      */
     Spark.post("/fox", (req, res) -> {
+
+      // ban titan
+      final String titanIP = "139.18.2.38";
+      try {
+        final String ip = req.ip();
+        if (ip.startsWith(titanIP)) {
+          LOG.info("Titan request ignored.");
+          Spark.halt(406, "Too many requests.");
+
+        }
+      } catch (final Exception e) {
+        LOG.error(e.getLocalizedMessage(), e);
+      }
+
       try {
         String errorMessage = "";
 
         // checks content type
         final String ct = req.contentType();
         LOG.info("ContentType: " + ct);
-
         Map<String, String> parameter = defaultParameter();
 
         // JSON
