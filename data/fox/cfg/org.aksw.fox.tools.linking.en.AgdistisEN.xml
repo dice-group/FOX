@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <agdistis>
-        <endpoint>http://titan.informatik.uni-leipzig.de:8080/AGDISTIS</endpoint>
+        <endpoint>http://akswnc9.informatik.uni-leipzig.de:8114/AGDISTIS</endpoint>
     </agdistis>
 </config>
