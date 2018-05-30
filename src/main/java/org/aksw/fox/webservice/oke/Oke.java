@@ -139,7 +139,7 @@ public class Oke {
 
                 final List<URI> relation = new ArrayList<>();
                 try {
-                  relation.add(new URI("http://dbpedia.org/resource/" + r));
+                  relation.add(new URI("http://dbpedia.org/ontology/" + r));
                   final Relation foxRelation = addRelation(s, o, r, relation);
                   relations.add(foxRelation);
                 } catch (final URISyntaxException e) {
