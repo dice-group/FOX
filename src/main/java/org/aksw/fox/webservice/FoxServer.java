@@ -18,6 +18,7 @@ import org.aksw.fox.exception.PortInUseException;
 import org.aksw.fox.output.FoxJenaNew;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.FoxLanguageDetector;
+import org.aksw.fox.webservice.oke.Oke;
 import org.aksw.fox.webservice.statistics.FoxStatistics;
 import org.aksw.fox.webservice.util.Pool;
 import org.aksw.fox.webservice.util.RouteConfig;
@@ -35,6 +36,9 @@ import spark.Spark;
 
 public class FoxServer extends AServer {
 
+  private final Oke oke = new Oke();
+
+  private final String blockedIP = "xxx";
   final String turtleContentType = "application/x-turtle";
   final String jsonContentType = "application/json";
   FoxLanguageDetector languageDetector = new FoxLanguageDetector();
@@ -42,7 +46,7 @@ public class FoxServer extends AServer {
 
   public static Map<String, Pool<IFox>> pool = null;
 
-  protected FoxStatistics foxStatistics = new FoxStatistics();
+  public FoxStatistics foxStatistics = new FoxStatistics();
 
   static {
     try {
@@ -102,9 +106,7 @@ public class FoxServer extends AServer {
     return parameter;
   }
 
-  @Override
-  public void mapRoutes() {
-
+  public void mapCfg() {
     /**
      * path: config <br>
      * method: GET <br>
@@ -113,6 +115,12 @@ public class FoxServer extends AServer {
       res.type(jsonContentType.concat(";charset=utf-8"));
       return routeConfig.getConfig();
     });
+  }
+
+  @Override
+  public void mapRoutes() {
+
+    mapCfg();
 
     /**
      * path: fox <br>
@@ -121,14 +129,19 @@ public class FoxServer extends AServer {
      */
     Spark.post("/fox", (req, res) -> {
 
-      // ban titan
-      final String titanIP = "139.18.2.38";
       try {
         final String ip = req.ip();
-        if (ip.startsWith(titanIP)) {
-          LOG.info("Titan request ignored.");
-          Spark.halt(406, "Too many requests.");
 
+        if (ip.startsWith(blockedIP)) {
+          // block this IP
+          Spark.halt(406, "you are blocked");
+
+        } else if (ip.startsWith("139.18.118.17")) {
+          // OKE switch
+          final String foxResponse = oke.reTask(req, res);
+          res.body(foxResponse);
+          res.type(turtleContentType.concat(";charset=utf-8"));
+          return res.body();
         }
       } catch (final Exception e) {
         LOG.error(e.getLocalizedMessage(), e);
@@ -224,6 +237,7 @@ public class FoxServer extends AServer {
           errorMessage = "Use a supported Content-Type please.";
           Spark.halt(415, errorMessage);
         }
+        ////////// end if
 
         // parse input
         List<Document> docs = null;
@@ -255,9 +269,7 @@ public class FoxServer extends AServer {
         LOG.error(e.getLocalizedMessage(), e);
       }
       return res.body();
-
     });
-
   }
 
   public String fox(final List<Document> docs, final Map<String, String> parameter) {

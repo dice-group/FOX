@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 public class AFoxJenaNew {
   public static Logger LOG = LogManager.getLogger(AFoxJenaNew.class);
 
-  protected Model graph = ModelFactory.createDefaultModel();
+  protected Model graph = null;
   protected String lang = Lang.TURTLE.getName();
 
   int documentCounter = 0;
@@ -65,15 +65,24 @@ public class AFoxJenaNew {
    * Constructor.
    *
    */
-  public AFoxJenaNew() {
+  public AFoxJenaNew(final Model graph) {
+    this.graph = graph;
     initGraph();
+  }
+
+  /**
+   *
+   * Constructor.
+   *
+   */
+  public AFoxJenaNew() {
+    this(ModelFactory.createDefaultModel());
   }
 
   /**
    * Initializes an empty Model.
    */
   public void initGraph() {
-    graph = ModelFactory.createDefaultModel();
     documentCounter = 0;
     lang = Lang.TURTLE.getName();
 

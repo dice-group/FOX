@@ -5,6 +5,14 @@ branches:
   only:
     - master
 sudo: true
+cache:
+  apt: true
+  directories:
+    - ~/.m2
+
+install:
+    - 
+
 notifications:
   email:
     recipients:

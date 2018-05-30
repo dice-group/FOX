@@ -22,23 +22,27 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<system.libs>${project.basedir}/lib</system.libs>
 		<system.data>${project.basedir}/data</system.data>
-		<lucene.version>4.10.0</lucene.version>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+		
+		<!-- versions -->
+		<agdistis.version>0.4.0</agdistis.version>
+		<balie.version>1.81.0</balie.version>
+		<boa.version>0.0.1</boa.version>
+		<commons.lang3.version>3.7</commons.lang3.version>
+		<dl4j.version>0.0.3.2.7</dl4j.version>
+		<illinoisner.version>2.8.1</illinoisner.version>
 		<jena.version>3.1.0</jena.version>
 		<jsonld.version>0.10.0</jsonld.version>
-		<agdistis.version>0.4.0</agdistis.version>
-		<illinoisner.version>2.8.1</illinoisner.version>
-		<opennlp.version>1.5.3</opennlp.version>
-		<balie.version>1.81.0</balie.version>
-		<spotlight.version>0.7.1</spotlight.version>
-		<boa.version>0.0.1</boa.version>
-		<ocelot.version>0.0.1</ocelot.version>
-		<commons.lang3.version>3.7</commons.lang3.version>
-		<nd4j.version>0.0.3.5.5</nd4j.version>
-		<dl4j.version>0.0.3.2.7</dl4j.version>
 		<lucene.version>4.10.0</lucene.version>
+		<lucene.version>4.10.0</lucene.version>
+		<nd4j.version>0.0.3.5.5</nd4j.version>
+		<ocelot.version>0.0.1</ocelot.version>
+		<opennlp.version>1.5.3</opennlp.version>
+		<spotlight.version>0.7.1</spotlight.version>
 		<stanford.version>3.6.0</stanford.version>
-		<maven.javadoc.skip>true</maven.javadoc.skip>
+
 	</properties>
+	
 	<repositories>
 
 		<!-- <repository> <id>maven.aksw.internal</id> <name>University Leipzig, 
@@ -62,6 +66,12 @@
 	</repositories>
 	<dependencies>
 
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>apache-jena-libs</artifactId>
+			<version>${jena.version}</version>
+			<type>pom</type>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -388,16 +398,14 @@
 		<dependency>
 			<groupId>org.aksw</groupId>
 			<artifactId>gerbil.nif.transfer</artifactId>
-			<version>1.2.4-jena3.1-SNAPSHOT</version>
+			<version>1.2.6-jena3.1-SNAPSHOT</version>
 		</dependency>
 		<!-- jena-sparql-api -->
 		<dependency>
 			<groupId>org.aksw.jena-sparql-api</groupId>
 			<artifactId>jena-sparql-api-core</artifactId>
-			<!-- <version>2.12.1-8</version> -->
 			<version>3.3.0-1</version>
 		</dependency>
-
 
 		<!-- ocelot dependencies -->
 		<!-- ocelot dependencies -->
@@ -484,6 +492,7 @@
 			<version>${stanford.version}</version>
 			<classifier>models</classifier>
 		</dependency>
+		
 		<!-- test -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -491,9 +500,6 @@
 			<version>4.4</version>
 		</dependency>
 
-		<!-- tregex <dependency> <groupId>edu.stanford.nlp</groupId> <artifactId>tregex</artifactId> 
-			<version>3.4</version> <scope>system</scope> <systemPath>${system.libs}/stanford-tregex-3.4.jar</systemPath> 
-			</dependency> -->
 		<!-- clearnlp -->
 		<dependency>
 			<groupId>com.clearnlp</groupId>
@@ -582,12 +588,7 @@
 			<artifactId>lucene-queryparser</artifactId>
 			<version>${lucene.version}</version>
 		</dependency>
-		<!-- lucene <dependency> <groupId>org.apache.lucene</groupId> <artifactId>lucene-core</artifactId> 
-			<version>4.9.0</version> </dependency> <dependency> <groupId>org.apache.lucene</groupId> 
-			<artifactId>lucene-analyzers-common</artifactId> <version>4.9.0</version> 
-			</dependency> <dependency> <groupId>org.apache.lucene</groupId> <artifactId>lucene-queries</artifactId> 
-			<version>4.9.0</version> </dependency> <dependency> <groupId>org.apache.lucene</groupId> 
-			<artifactId>lucene-queryparser</artifactId> <version>4.9.0</version> </dependency> -->
+
 		<!--jsoup -->
 		<dependency>
 			<groupId>org.jsoup</groupId>

@@ -12,6 +12,7 @@ import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.data.Voc;
 import org.aksw.fox.utils.DataTestFactory;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
@@ -52,6 +53,14 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
     foxJena.addRelations(relations, start, end, "na", "na");
 
     LOG.info("Jena model: \n\n" + foxJena.print());
+  }
+
+  public FoxJenaNew() {
+    super();
+  }
+
+  public FoxJenaNew(final Model graph) {
+    super(graph);
   }
 
   /**
@@ -120,9 +129,11 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
       final String toolName, final String version) {
 
     if ((relations != null) && !relations.isEmpty()) {
-      final Set<String> uris = _addRelations(relations);
+      final Set<String> uris = _addRelations(relations, graph);
       final String toolUri = addSoftwareAgent(toolName, version);
       addActivity(uris, start, end, Voc.pFoxRE, toolUri);
+    } else {
+      LOG.warn("No relations");
     }
   }
 
@@ -175,7 +186,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
    * @param relations
    * @return
    */
-  private Set<String> _addRelations(final Set<Relation> relations) {
+  public Set<String> _addRelations(final Set<Relation> relations, final Model graph) {
     final Set<String> uris = new HashSet<>();
 
     final Set<Relation> nofound = new HashSet<>();
