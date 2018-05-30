@@ -141,7 +141,10 @@ public class FoxServer extends AServer {
           final String foxResponse = oke.reTask(req, res);
           res.body(foxResponse);
           res.type(turtleContentType.concat(";charset=utf-8"));
-          return res.body();
+
+          final String body = res.body();
+          LOG.info(body);
+          return body;
         }
       } catch (final Exception e) {
         LOG.error(e.getLocalizedMessage(), e);
