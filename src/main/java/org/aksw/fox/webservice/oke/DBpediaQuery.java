@@ -34,11 +34,14 @@ public class DBpediaQuery {
    * @return pair of URIs, first for s,o order and second for o,s order.
    */
   public Pair<Set<String>, Set<String>> query(final String s, final String o) {
-    final String query = makeQuery(s, o);
-    final Map<String, Set<String>> map = queryExecution(query);
     final Pair<Set<String>, Set<String>> pair = new Pair<Set<String>, Set<String>>();
-    pair.first = map.get("x");
-    pair.second = map.get("y");
+    if ((s != null) && !s.isEmpty() && (o != null) && !o.isEmpty()) {
+      final String query = makeQuery(s, o);
+      final Map<String, Set<String>> map = queryExecution(query);
+
+      pair.first = map.get("x");
+      pair.second = map.get("y");
+    }
     return pair;
   }
 
