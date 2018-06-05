@@ -38,7 +38,6 @@ public class FoxServer extends AServer {
 
   private final Oke oke = new Oke();
 
-  private final String blockedIP = "xxx";
   final String turtleContentType = "application/x-turtle";
   final String jsonContentType = "application/json";
   FoxLanguageDetector languageDetector = new FoxLanguageDetector();
@@ -130,22 +129,25 @@ public class FoxServer extends AServer {
     Spark.post("/fox", (req, res) -> {
 
       try {
-        final String ip = req.ip();
+        /**
+         * <code>
+         final String ip = req.ip();
+         if (ip.startsWith(blockedIP)) {
+           // block this IP
+           Spark.halt(406, "you are blocked");
 
-        if (ip.startsWith(blockedIP)) {
-          // block this IP
-          Spark.halt(406, "you are blocked");
+         } else if (ip.startsWith("139.18.118.17")) {
+           // OKE switch
+           final String foxResponse = oke.reTask(req, res);
+           res.body(foxResponse);
+           res.type(turtleContentType.concat(";charset=utf-8"));
 
-        } else if (ip.startsWith("139.18.118.17")) {
-          // OKE switch
-          final String foxResponse = oke.reTask(req, res);
-          res.body(foxResponse);
-          res.type(turtleContentType.concat(";charset=utf-8"));
-
-          final String body = res.body();
-          LOG.info(body);
-          return body;
-        }
+           final String body = res.body();
+           LOG.info(body);
+           return body;
+         }
+         </code>
+         */
       } catch (final Exception e) {
         LOG.error(e.getLocalizedMessage(), e);
       }
