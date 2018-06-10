@@ -22,7 +22,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<system.libs>${project.basedir}/lib</system.libs>
 		<system.data>${project.basedir}/data</system.data>
-		<maven.javadoc.skip>true</maven.javadoc.skip>
+
+		<!-- Java DOC -->
+		<maven.javadoc.skip>false</maven.javadoc.skip>
 		
 		<!-- versions -->
 		<agdistis.version>0.4.0</agdistis.version>
@@ -607,12 +609,7 @@
 			<artifactId>nxparser</artifactId>
 			<version>1.2.3</version>
 		</dependency>
-		<!-- gson -->
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.2.4</version>
-		</dependency>
+
 		<!-- json -->
 		<dependency>
 			<groupId>org.json</groupId>
