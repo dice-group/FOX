@@ -82,7 +82,7 @@ public class AFoxJenaNew {
   /**
    * Initializes an empty Model.
    */
-  public void initGraph() {
+  private void initGraph() {
     documentCounter = 0;
     lang = Lang.TURTLE.getName();
 
@@ -106,6 +106,7 @@ public class AFoxJenaNew {
   }
 
   public void reset() {
+    graph = ModelFactory.createDefaultModel();
     initGraph();
   }
 
