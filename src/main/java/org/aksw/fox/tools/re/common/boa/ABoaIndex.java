@@ -84,7 +84,7 @@ abstract public class ABoaIndex extends AbstractRE {
   protected IndexReader indexReader = null;
   protected IndexSearcher indexSearcher = null;
   protected Directory dir = null;
-
+  protected static final int maxpattern = 10;
   protected String lang = FoxParameter.Langs.EN.name().toLowerCase();
 
   // domain to range and relation
@@ -186,9 +186,9 @@ abstract public class ABoaIndex extends AbstractRE {
           );
       pattern.language = lang;
 
-      final int maxpattern = 10;
       if (!pattern.getNormalized().trim().isEmpty()
-          && !patterns.containsKey(pattern.getNormalized()) && (patterns.size() < maxpattern)) {
+          && !patterns.containsKey(pattern.getNormalized().trim())
+          && (patterns.size() < maxpattern)) {
         patterns.put(pattern.getNormalized().trim(), pattern);
       }
     }
