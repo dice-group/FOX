@@ -3,7 +3,7 @@
 
 [7]: https://github.com/AKSW/FOX/releases/tag/v2.2.1
 [8]: https://github.com/AKSW/FOX/releases/tag/v2.3.0
-[9]: https://github.com/AKSW/FOX
+[9]: https://github.com/dice-group/FOX/tree/2.5.0
 
 [![Build Status](https://travis-ci.org/dice-group/FOX.svg?branch=master)](https://travis-ci.org/dice-group/FOX)
 
@@ -24,7 +24,7 @@ This version supports multiple languages for NER, NED and RE.
 
 Live Demo: [http://fox-demo.aksw.org][6]
 
-Release: [(Version 2.4.0) ][9]
+Release: [(Version 2.5.0)][9]
 
 ## How to cite
 
