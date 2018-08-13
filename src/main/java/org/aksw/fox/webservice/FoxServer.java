@@ -36,7 +36,7 @@ import spark.Spark;
 
 public class FoxServer extends AServer {
 
-  private final Oke oke = new Oke();
+  protected final Oke oke = new Oke();
 
   final String turtleContentType = "application/x-turtle";
   final String jsonContentType = "application/json";
@@ -62,8 +62,7 @@ public class FoxServer extends AServer {
    * @throws PortInUseException
    */
   public FoxServer() throws PortInUseException {
-    super();
-    Spark.staticFileLocation("/public/demo");
+    super("/public/demo");
   }
 
   protected static void initPools() throws Exception {
@@ -135,13 +134,13 @@ public class FoxServer extends AServer {
          if (ip.startsWith(blockedIP)) {
            // block this IP
            Spark.halt(406, "you are blocked");
-
+        
          } else if (ip.startsWith("139.18.118.17")) {
            // OKE switch
            final String foxResponse = oke.reTask(req, res);
            res.body(foxResponse);
            res.type(turtleContentType.concat(";charset=utf-8"));
-
+        
            final String body = res.body();
            LOG.info(body);
            return body;

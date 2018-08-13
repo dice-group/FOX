@@ -31,17 +31,18 @@ public abstract class AServer {
    * @throws PortInUseException
    *
    */
-  public AServer() throws PortInUseException {
+  public AServer(final String staticLocation) throws PortInUseException {
+
+    // must be called before all other methods
+    Spark.staticFileLocation(staticLocation);
 
     final int port = CFG.getInt(KEY_PORT);
-
     if (!FoxServerUtil.isPortAvailable(port)) {
       throw new PortInUseException(port);
     }
+    Spark.port(port);
 
     FoxServerUtil.writeShutDownFile("stop");
-
-    Spark.port(port);
   }
 
   /**

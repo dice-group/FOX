@@ -6,7 +6,7 @@ import org.apache.jena.vocabulary.RDF;
 
 public class Voc {
 
-  public static final String akswNotInWiki = "http://aksw.org/notInWiki/";
+  public static final String akswNotInWiki = "http://aksw.org/notinwiki/";
   public static final String ns_fox_ontology = "http://ns.aksw.org/fox/ontology#";
   public static final String ns_fox_resource = "http://ns.aksw.org/fox/resource#";
   public static final String ns_dbpedia_ontology = "http://dbpedia.org/ontology/";

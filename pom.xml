@@ -545,12 +545,7 @@
 			<artifactId>clearnlp-medical-en-srl</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<!-- log -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
+
 		<!-- cfg -->
 		<dependency>
 			<groupId>commons-configuration</groupId>
