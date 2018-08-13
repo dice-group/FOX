@@ -30,9 +30,10 @@ public class FoxRETools {
     // TODO: move to config
 
     // en
+    // relationTool.put(FoxParameter.Langs.EN.name().toLowerCase(),
+    //    Arrays.asList(new REStanford(), new BoaEN(), new OcelotEN()));
     relationTool.put(FoxParameter.Langs.EN.name().toLowerCase(),
-        Arrays.asList(new REStanford(), new BoaEN(), new OcelotEN()));
-
+        Arrays.asList(new REStanford(), new BoaEN()));
     // de
     relationTool.put(FoxParameter.Langs.DE.name().toLowerCase(), Arrays.asList(new BoaDE()));
 
