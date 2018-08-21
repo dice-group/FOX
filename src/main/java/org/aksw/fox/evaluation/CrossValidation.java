@@ -15,7 +15,7 @@ import org.aksw.fox.nerlearner.TokenManager;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.nerlearner.reader.INERReader;
 import org.aksw.fox.nerlearner.reader.NERReaderFactory;
-import org.aksw.fox.tools.Tools;
+import org.aksw.fox.tools.NERTools;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -38,7 +38,7 @@ public class CrossValidation {
   public static final String CFG_KEY_CROSSVALIDATION_RUNS =
       CrossValidation.class.getName().concat(".runs");
 
-  protected Tools tools;
+  protected NERTools tools;
 
   // cross-validation options
   static int seed = 1;
@@ -57,11 +57,11 @@ public class CrossValidation {
    *
    * @param tools
    */
-  public CrossValidation(final Tools tools) {
+  public CrossValidation(final NERTools tools) {
     this.tools = tools;
   }
 
-  public Tools getTools() {
+  public NERTools getTools() {
     return tools;
   }
 

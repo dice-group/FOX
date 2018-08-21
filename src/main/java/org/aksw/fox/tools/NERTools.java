@@ -22,16 +22,19 @@ import org.apache.log4j.Logger;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
 
+// FIXME: move to ner package
+
 /**
+ *
  * Runs tools and uses this results as input for the {@link FoxClassifier}.
  *
  * @author rspeck
  *
  */
-public class Tools {
+public class NERTools {
 
-  public static final Logger LOG = LogManager.getLogger(Tools.class);
-  public final static String CFG_KEY_LIFETIME = Tools.class.getName().concat(".lifeTime");
+  public static final Logger LOG = LogManager.getLogger(NERTools.class);
+  public final static String CFG_KEY_LIFETIME = NERTools.class.getName().concat(".lifeTime");
 
   /*
    * Contains all tools to be used to retrieve entities.
@@ -52,29 +55,34 @@ public class Tools {
 
   /**
    * Initializes {@link #tools} and fills {@link #toolResults} with the tool names.
-   * 
+   *
    * @throws LoadingNotPossibleException
    */
-  public Tools(final List<String> toolsList, final String lang) throws LoadingNotPossibleException {
-    LOG.info(Tools.class.getName().concat(" ..."));
-    LOG.info("tools list" + toolsList);
+  public NERTools(final List<String> toolsList, final String lang) {
+    LOG.info("NERTools loading ...");
+    LOG.info("NERTools list" + toolsList);
+
     this.lang = lang;
 
     // init tools
-    if ((toolsList != null) && !toolsList.isEmpty()) {
+    if (toolsList != null) {
       for (final String cl : toolsList) {
-        tools.add((INER) FoxCfg.getClass(cl));
+        try {
+          tools.add((INER) FoxCfg.getClass(cl));
+        } catch (final LoadingNotPossibleException e) {
+          LOG.warn("Could not load " + cl);
+        }
       }
     }
 
     // init toolResults
     tools.forEach(tool -> toolResults.put(tool.getToolName(), null));
 
-    LOG.info(Tools.class.getName().concat(" done."));
+    LOG.info("NERTools loading done.");
   }
 
   /**
-   * 
+   *
    * @param input
    * @return entities
    */
@@ -140,19 +148,13 @@ public class Tools {
       toolResults = pp.getToolResults();
 
       results = foxClassifier.classify(pp);
-
-      // try {
-      // foxClassifier.eva();
-      // } catch (Exception e) {
-      // logger.error("\n", e);
-      // }
     }
     LOG.info("get entities done.");
     return results;
   }
 
   /**
-   * 
+   *
    * @return tools
    */
   public List<INER> getNerTools() {
@@ -160,7 +162,7 @@ public class Tools {
   }
 
   /**
-   * 
+   *
    * @return results
    */
   public Map<String, Set<Entity>> getToolResult() {
@@ -168,7 +170,7 @@ public class Tools {
   }
 
   /**
-   * 
+   *
    * @param doTraining
    */
   public void setTraining(final boolean doTraining) {

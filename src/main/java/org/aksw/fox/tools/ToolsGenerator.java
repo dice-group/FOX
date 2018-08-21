@@ -1,6 +1,6 @@
 package org.aksw.fox.tools;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.aksw.fox.exception.LoadingNotPossibleException;
 import org.aksw.fox.exception.UnsupportedLangException;
 import org.aksw.fox.tools.linking.ILinking;
+import org.aksw.fox.tools.re.RETools;
 import org.aksw.fox.utils.CfgManager;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -18,10 +19,16 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 interface IToolsGenerator {
-
+  // FIXME: implement me
 }
 
 
+/**
+ * Reads the config file and initializes the tools to be needed.
+ *
+ * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
+ *
+ */
 public class ToolsGenerator implements IToolsGenerator {
 
   public static final Logger LOG = LogManager.getLogger(ToolsGenerator.class);
@@ -30,6 +37,7 @@ public class ToolsGenerator implements IToolsGenerator {
   public static final String CFG_KEY_SUPPORTED_LANG = "toolsGenerator.lang";
   public static final String CFG_KEY_USED_LANG = "toolsGenerator.usedLang";
   public static final String CFG_KEY_NER_TOOLS = "toolsGenerator.nerTools";
+  public static final String CFG_KEY_RE_TOOLS = "toolsGenerator.reTools";
   public static final String CFG_KEY_DISAMBIGUATION_TOOL = "toolsGenerator.disambiguationTool";
   public static final String CFG_KEY_LIGHT_TOOL = "toolsGenerator.lightTool";
 
@@ -40,8 +48,10 @@ public class ToolsGenerator implements IToolsGenerator {
       .stream().map(p -> p.toString()).collect(Collectors.toSet());
 
   public static final Map<String, String> disambiguationTools = new HashMap<>();
+
   public static final Map<String, List<String>> nerTools = new HashMap<>();
 
+  public static final Map<String, List<String>> reTools = new HashMap<>();
   static {
     init();
   }
@@ -50,27 +60,39 @@ public class ToolsGenerator implements IToolsGenerator {
    * Read xml cfg.
    */
   public static void init() {
+
     if (supportedLang.containsAll(usedLang)) {
       for (final String lang : usedLang) {
 
         final String key = "[@".concat(lang).concat("]");
+
+        // disambiguation tool
         final String disambiguationTool = CFG.getString(CFG_KEY_DISAMBIGUATION_TOOL.concat(key));
         if ((disambiguationTool != null) && !disambiguationTool.isEmpty()) {
           disambiguationTools.put(lang, disambiguationTool);
         }
 
-        final List<String> tools = ((List<?>) CFG.getList(CFG_KEY_NER_TOOLS.concat(key)))//
-            .stream().map(p -> p.toString()).collect(Collectors.toList());
+        // ner tools
+        final List<String> nertools = ((List<?>) CFG.getList(CFG_KEY_NER_TOOLS.concat(key)))//
+            .stream().map(p -> p.toString()).collect(Collectors.toList())//
+            .stream().sorted().collect(Collectors.toList());
+        if (!nertools.isEmpty()) {
+          nerTools.put(lang, nertools);
+        }
 
-        Collections.sort(tools);
-        if (!tools.isEmpty()) {
-          nerTools.put(lang, tools);
+        // re tools
+        final List<String> retools = ((List<?>) CFG.getList(CFG_KEY_RE_TOOLS.concat(key)))//
+            .stream().map(p -> p.toString()).collect(Collectors.toList())//
+            .stream().sorted().collect(Collectors.toList());
+        if (!retools.isEmpty()) {
+          reTools.put(lang, retools);
         }
       }
     } else {
       final Set<String> l = new HashSet<>();
       l.addAll(usedLang);
       l.removeAll(supportedLang);
+      LOG.warn("language ".concat(l.toString()).concat(" is not supported."));
     }
 
     LOG.info("disambiguationTools:" + disambiguationTools);
@@ -84,13 +106,21 @@ public class ToolsGenerator implements IToolsGenerator {
    * @throws UnsupportedLangException
    * @throws LoadingNotPossibleException
    */
-  public Tools getNERTools(final String lang)
-      throws UnsupportedLangException, LoadingNotPossibleException {
+  public NERTools getNERTools(final String lang) {
     if (usedLang.contains(lang) && (nerTools.get(lang) != null) && !nerTools.get(lang).isEmpty()) {
-      final Tools tools = new Tools(nerTools.get(lang), lang);
+      final NERTools tools = new NERTools(nerTools.get(lang), lang);
       return tools;
     } else {
-      throw new UnsupportedLangException("Language " + lang + " is not supported.");
+      return new NERTools(new ArrayList<>(), lang);
+    }
+  }
+
+  public RETools getRETools(final String lang) {
+    if (usedLang.contains(lang) && (reTools.get(lang) != null) && !reTools.get(lang).isEmpty()) {
+      final RETools tools = new RETools(reTools.get(lang), lang);
+      return tools;
+    } else {
+      return new RETools(new ArrayList<>(), lang);
     }
   }
 

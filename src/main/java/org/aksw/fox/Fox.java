@@ -24,13 +24,13 @@ import org.aksw.fox.nerlearner.TokenManager;
 import org.aksw.fox.output.FoxJenaNew;
 import org.aksw.fox.output.IFoxJena;
 import org.aksw.fox.tools.ATool;
-import org.aksw.fox.tools.Tools;
+import org.aksw.fox.tools.NERTools;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.tools.linking.ILinking;
 import org.aksw.fox.tools.linking.NoLinking;
 import org.aksw.fox.tools.ner.INER;
-import org.aksw.fox.tools.re.FoxRETools;
 import org.aksw.fox.tools.re.IRE;
+import org.aksw.fox.tools.re.RETools;
 import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.jetlang.fibers.Fiber;
@@ -51,12 +51,12 @@ public class Fox extends AFox {
   /**
    *
    */
-  protected Tools nerTools = null;
+  protected NERTools nerTools = null;
 
   /**
    *
    */
-  protected FoxRETools reTools = new FoxRETools();
+  protected RETools reTools = null;
 
   /**
    *
@@ -76,14 +76,12 @@ public class Fox extends AFox {
    * @param lang
    */
   public Fox(final String lang) {
+
     this.lang = lang;
 
-    try {
-      final ToolsGenerator toolsGenerator = new ToolsGenerator();
-      nerTools = toolsGenerator.getNERTools(lang);
-    } catch (UnsupportedLangException | LoadingNotPossibleException e) {
-      LOG.error(e.getLocalizedMessage(), e);
-    }
+    final ToolsGenerator toolsGenerator = new ToolsGenerator();
+    nerTools = toolsGenerator.getNERTools(lang);
+    reTools = toolsGenerator.getRETools(lang);
   }
 
   @Override
@@ -99,8 +97,9 @@ public class Fox extends AFox {
    */
   protected Set<Entity> doNER() {
     infoLog("Start NER (" + lang + ")...");
-    final Set<Entity> entities =
-        nerTools.getEntities(parameter.get(FoxParameter.Parameter.INPUT.toString()));
+
+    final Set<Entity> entities;
+    entities = nerTools.getEntities(parameter.get(FoxParameter.Parameter.INPUT.toString()));
 
     // remove duplicate annotations
     final Map<String, Entity> wordEntityMap = new HashMap<>();
@@ -130,6 +129,7 @@ public class Fox extends AFox {
   protected Map<String, Set<Relation>> doRE(final Set<Entity> entities) {
     final Map<String, Set<Relation>> relations = new HashMap<>();
 
+    // FIXME: more parallel calls to RETools
     final List<IRE> tools = reTools.getRETool(lang);
 
     if ((tools == null) || (tools.size() == 0)) {
@@ -153,7 +153,7 @@ public class Fox extends AFox {
       }
 
       // wait for finish
-      final int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
+      final int min = Integer.parseInt(FoxCfg.get(NERTools.CFG_KEY_LIFETIME));
       try {
         latch.await(min, TimeUnit.MINUTES);
       } catch (final InterruptedException e) {
@@ -228,7 +228,7 @@ public class Fox extends AFox {
       fiber.start();
       fiber.execute(nerLight);
 
-      final int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
+      final int min = Integer.parseInt(FoxCfg.get(NERTools.CFG_KEY_LIFETIME));
       try {
         latch.await(min, TimeUnit.MINUTES);
       } catch (final InterruptedException e) {
@@ -314,7 +314,7 @@ public class Fox extends AFox {
       fiber.execute(linking);
 
       // use another time for the uri lookup?
-      final int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
+      final int min = Integer.parseInt(FoxCfg.get(NERTools.CFG_KEY_LIFETIME));
       try {
         latch.await(min, TimeUnit.MINUTES);
       } catch (final InterruptedException e) {

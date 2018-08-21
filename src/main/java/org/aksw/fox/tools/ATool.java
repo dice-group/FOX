@@ -7,6 +7,12 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+/**
+ * The tool version it set in the maven pom.xml file.
+ *
+ * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
+ *
+ */
 abstract public class ATool implements ITool {
 
   public static final Logger LOG = LogManager.getLogger(ATool.class);

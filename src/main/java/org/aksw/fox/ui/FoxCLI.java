@@ -14,7 +14,7 @@ import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.FoxClassifierFactory;
 import org.aksw.fox.nerlearner.reader.INERReader;
 import org.aksw.fox.nerlearner.reader.NERReaderFactory;
-import org.aksw.fox.tools.Tools;
+import org.aksw.fox.tools.NERTools;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.FoxCfg;
 import org.apache.log4j.LogManager;
@@ -183,7 +183,7 @@ public class FoxCLI {
       throws IOException, UnsupportedLangException, LoadingNotPossibleException {
     final ToolsGenerator toolsGenerator = new ToolsGenerator();
 
-    final Tools foxNERTools = toolsGenerator.getNERTools(lang);
+    final NERTools foxNERTools = toolsGenerator.getNERTools(lang);
     final FoxClassifier foxClassifier = new FoxClassifier();
 
     final Set<String> toolResultKeySet = foxNERTools.getToolResult().keySet();

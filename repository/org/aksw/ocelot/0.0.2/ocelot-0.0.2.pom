@@ -4,7 +4,7 @@
 	<groupId>org.aksw</groupId>
 	<artifactId>ocelot</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<name>ocelot</name>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -20,17 +20,12 @@
 	</properties>
 
 	<repositories>
-			<repository>
-			<id>local repository</id>
-			<name>local repository</name>
-			<url>file://${project.basedir}/repository</url>
-		</repository>
 		<repository>
 			<id>Apache Repo Central</id>
 			<name>Apache Repository</name>
 			<url>http://repo.maven.apache.org/maven2</url>
 		</repository>
-		<!--<repository>
+		<repository>
 			<id>maven.aksw.internal</id>
 			<name>University Leipzig, AKSW Maven2 Repository</name>
 			<url>http://maven.aksw.org/archiva/repository/internal</url>
@@ -39,7 +34,7 @@
 			<id>maven.aksw.snapshots</id>
 			<name>University Leipzig, AKSW Maven2 Repository</name>
 			<url>http://maven.aksw.org/archiva/repository/snapshots</url>
-		</repository>-->
+		</repository>
 		<repository>
 			<id>apache-repo-releases</id>
 			<url>https://repository.apache.org/content/repositories/releases/</url>
@@ -51,7 +46,11 @@
 			<id>nxparser-repo</id>
 			<url>http://nxparser.googlecode.com/svn/repository</url>
 		</repository>
-
+		<repository>
+			<id>local repository</id>
+			<name>local repository</name>
+			<url>file://${project.basedir}/repository</url>
+		</repository>
 	</repositories>
 	<dependencies>
 
@@ -366,17 +365,6 @@
 	<build>
 		<directory>release</directory>
 		<finalName>${project.artifactId}_${project.version}</finalName>
-		
-		<resources>
-			<resource>
-				<directory>src</directory>
-				<excludes>
-					<exclude>/main/java/org/aksw/legacy/**</exclude>
-				</excludes>
-				<filtering>false</filtering>
-			</resource>
-		</resources>
-		
 		<plugins>
 
 			<!-- http://stackoverflow.com/questions/1456901/how-to-wrap-an-ant-build-with-maven 
@@ -432,9 +420,6 @@
 				<configuration> 
 					<encoding>UTF-8</encoding>
 					<argLine>-Xmx8G -Djava.library.path=lib/rJava</argLine>
-									<excludes>
-					<exclude>src/main/java/org/aksw/legacy/**</exclude>
-				</excludes>
 				</configuration>
 				</plugin>
 		</plugins>

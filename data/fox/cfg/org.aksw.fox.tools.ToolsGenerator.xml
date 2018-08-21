@@ -2,14 +2,14 @@
 <config>
     <toolsGenerator>
         <lang>de, en, es, fr, it, nl</lang>
-<usedLang>de, en, es, fr, nl</usedLang>
+        <usedLang>de, en, es, fr, nl</usedLang>
         <disambiguationTool
-            de="org.aksw.fox.tools.linking.de.AgdistisDirectDE"
-            en="org.aksw.fox.tools.linking.en.AgdistisDirectEN"
-            es="org.aksw.fox.tools.linking.es.AgdistisDirectES"
-            fr="org.aksw.fox.tools.linking.fr.AgdistisDirectFR"
-            it="org.aksw.fox.tools.linking.it.AgdistisDirectIT"
-            nl="org.aksw.fox.tools.linking.nl.AgdistisDirectNL"
+            de="org.aksw.fox.tools.linking.de.AgdistisDE"
+            en="org.aksw.fox.tools.linking.en.AgdistisEN"
+            es="org.aksw.fox.tools.linking.es.AgdistisES"
+            fr="org.aksw.fox.tools.linking.fr.AgdistisFR"
+            it="org.aksw.fox.tools.linking.it.AgdistisIT"
+            nl="org.aksw.fox.tools.linking.nl.AgdistisNL"
         ></disambiguationTool>
 	
         <nerTools
@@ -28,7 +28,7 @@
 
             es="
             org.aksw.fox.tools.ner.es.OpenNLPES, 
-	    org.aksw.fox.tools.ner.es.SpotlightES,
+	        org.aksw.fox.tools.ner.es.SpotlightES,
             org.aksw.fox.tools.ner.es.StanfordES, 
             org.aksw.fox.tools.ner.es.BalieES
             " 
@@ -51,6 +51,23 @@
             "
 
         ></nerTools>
+        
+        <reTools
+            en="
+            org.aksw.fox.tools.re.en.REStanford,
+            org.aksw.fox.tools.re.en.BoaEN,
+            org.aksw.fox.tools.re.en.OcelotEN,
+            org.aksw.fox.tools.re.en.PattyEN" 
+            
+            de="
+            org.aksw.fox.tools.re.de.BoaDE
+            "
+            
+            fr="
+            org.aksw.fox.tools.re.fr.BoaFR
+            "
+           
+        ></reTools>        
         <lightTool
             de="org.aksw.fox.tools.ner.de.StanfordDE"
             en="org.aksw.fox.tools.ner.en.StanfordEN"

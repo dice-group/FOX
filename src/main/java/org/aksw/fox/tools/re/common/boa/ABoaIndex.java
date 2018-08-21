@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
-import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.tools.re.AbstractRE;
 import org.apache.lucene.document.Document;
@@ -84,8 +83,11 @@ abstract public class ABoaIndex extends AbstractRE {
   protected IndexReader indexReader = null;
   protected IndexSearcher indexSearcher = null;
   protected Directory dir = null;
+
+  // TODO: add to config
   protected static final int maxpattern = 10;
-  protected String lang = FoxParameter.Langs.EN.name().toLowerCase();
+
+  protected String lang = null;
 
   // domain to range and relation
   Map<String, Map<String, Set<String>>> supportedRelations = new HashMap<>();
@@ -99,9 +101,10 @@ abstract public class ABoaIndex extends AbstractRE {
   public ABoaIndex(final String lang) {
     this.lang = lang;
 
+    // TODO: add to config
     luceneIndexFolder = "data/boa/" + lang;
     if (!Files.exists(Paths.get(luceneIndexFolder))) {
-
+      // TODO: add to config
       final File tarFile = Paths.get("data/boa/boa_" + lang + "_10.tar.gz").toFile();
       final Project p = new Project();
       final Untar ut = new Untar();
@@ -214,26 +217,14 @@ abstract public class ABoaIndex extends AbstractRE {
     return patterns;
   }
 
-  @Override
-  public Set<Relation> extract() {
-    relations.clear();
-
-    if ((entities != null) && !entities.isEmpty()) {
-      return _extract(input, breakdownAndSortEntity(entities));
-    } else {
-      LOG.warn("Entities not given!");
-    }
-
-    return relations;
-  }
-
   /**
    *
    * @param text
    * @param entities
    * @return
    */
-  private Set<Relation> _extract(final String text, final List<Entity> entities) {
+  @Override
+  protected Set<Relation> _extract(final String text, final List<Entity> entities) {
 
     for (int i = 0; (i + 1) < entities.size(); i++) {
       final Entity subject = entities.get(i);
@@ -244,6 +235,13 @@ abstract public class ABoaIndex extends AbstractRE {
 
       final Set<String> uris = getSupportedBoaRelations(sType, oType);
       LOG.debug("uris that match the entity types: " + uris);
+
+      if ((subject.getIndices().size() > 1) || (object.getIndices().size() > 1)) {
+        throw new UnsupportedOperationException( //
+            "The Entity list contains at least one Entity with multiple indices. "
+                + "This operation allows only entities with one index!"//
+        );
+      }
 
       final int sIndex = subject.getIndices().iterator().next();
       final int oIndex = object.getIndices().iterator().next();
@@ -293,6 +291,7 @@ abstract public class ABoaIndex extends AbstractRE {
   }
 
   protected void createSupportedBoaRelations() {
+    // FIXME: use in config?
     supportedRelations.put(EntityClassMap.L, new HashMap<>());
     supportedRelations.put(EntityClassMap.P, new HashMap<>());
     supportedRelations.put(EntityClassMap.O, new HashMap<>());

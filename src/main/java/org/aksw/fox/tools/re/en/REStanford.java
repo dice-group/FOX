@@ -169,7 +169,8 @@ public class REStanford extends AbstractRE {
   }
 
   @Override
-  public Set<Relation> extract() {
+  protected Set<Relation> _extract(final String text, final List<Entity> unused) {
+
     final Set<Relation> set = new HashSet<>();
     // ----------------------------------------------------------------------------
     // tokenize and clean text
@@ -189,7 +190,7 @@ public class REStanford extends AbstractRE {
     try {
       LOG.info("Start...");
 
-      final Annotation doc = new Annotation(input);
+      final Annotation doc = new Annotation(text);
       LOG.debug("Annotate the doc...");
       stanfordNLP.annotate(doc);
       LOG.debug("RelationExtractorAnnotator the doc...");
@@ -203,10 +204,10 @@ public class REStanford extends AbstractRE {
 
           final boolean c = checkrules(relationMention);
           if (c) {
-            final List<EntityMention> entities = relationMention.getEntityMentionArgs();
+            final List<EntityMention> entityMention = relationMention.getEntityMentionArgs();
 
-            final EntityMention emOne = entities.get(0);
-            final EntityMention emTwo = entities.get(1);
+            final EntityMention emOne = entityMention.get(0);
+            final EntityMention emTwo = entityMention.get(1);
 
             final Entity a =
                 new Entity(emOne.getExtentString(), StanfordENOldVersion.stanford(emOne.getType()),
@@ -286,4 +287,5 @@ public class REStanford extends AbstractRE {
       LOG.info(rr);
     }
   }
+
 }
