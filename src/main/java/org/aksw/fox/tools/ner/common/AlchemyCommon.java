@@ -15,14 +15,13 @@ import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.fox.utils.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.io.Requests;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.entity.ContentType;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import de.renespeck.swissknife.http.Requests;
+import org.json.JSONObject;;
 
 public abstract class AlchemyCommon extends AbstractNER {
   /**

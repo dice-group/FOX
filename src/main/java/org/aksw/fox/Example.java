@@ -8,13 +8,12 @@ import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.tools.ner.en.StanfordEN;
 import org.aksw.fox.utils.FoxConst;
+import org.aksw.simba.knowledgeextraction.commons.io.Requests;
 import org.apache.http.entity.ContentType;
 import org.apache.jena.riot.Lang;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
-
-import de.renespeck.swissknife.http.Requests;
 
 public class Example {
 

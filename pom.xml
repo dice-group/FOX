@@ -386,12 +386,7 @@
 			<artifactId>maui</artifactId>
 			<version>1.3.0</version>
 		</dependency>
-		<!-- -->
-		<dependency>
-			<groupId>de.renespeck</groupId>
-			<artifactId>swissknife</artifactId>
-			<version>0.0.2</version>
-		</dependency>
+
 		<!-- http://sourceforge.net/projects/balie -->
 		<dependency>
 			<groupId>ca.uottawa</groupId>

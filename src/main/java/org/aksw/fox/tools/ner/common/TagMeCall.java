@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.utils.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.io.Requests;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.entity.ContentType;
@@ -18,8 +19,6 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import de.renespeck.swissknife.http.Requests;
 
 class TagMeCall implements Callable<List<Entity>> {
   public static final Logger LOG = LogManager.getLogger(TagMeCall.class);

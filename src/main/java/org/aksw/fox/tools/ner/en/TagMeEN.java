@@ -13,8 +13,7 @@ import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.common.TagMeCommon;
 import org.aksw.fox.tools.ner.common.WikipediaCategories;
 import org.aksw.fox.utils.FoxConst;
-
-import de.renespeck.swissknife.io.SerializationUtil;
+import org.aksw.simba.knowledgeextraction.commons.io.SerializationUtil;
 
 public class TagMeEN extends TagMeCommon {
   final String file = "dataEN.bin";
