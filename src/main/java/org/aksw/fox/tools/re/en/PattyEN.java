@@ -37,7 +37,9 @@ import edu.stanford.nlp.ling.CoreLabel;
 public class PattyEN extends AbstractRE {
 
   protected final StanfordPipe stanford = StanfordPipe.getStanfordPipe();
-  String dbpediaOntology = "http://dbpedia.org/ontology/";
+
+  // FIXME: move to config.
+  public static String dbpediaOntology = "http://dbpedia.org/ontology/";
 
   protected Map<String, Set<String>> paraphrases = null;
   // pattern to relation,e.g. married; -> spouse,birthplace
