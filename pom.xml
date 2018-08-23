@@ -41,8 +41,9 @@
 		<opennlp.version>1.5.3</opennlp.version>
 		<spotlight.version>0.7.1</spotlight.version>
 		<stanford.version>3.6.0</stanford.version>
-		<!-- <log4j.version>1.2.17</log4j.version> -->
-	<junit.version>4.12</junit.version>
+		<!-- the patty version is used in the maven resources -->
+		<patty.version>0.0.1</patty.version>
+		<junit.version>4.12</junit.version>
 		<log4j.version>1.2.17</log4j.version>
 	</properties>
 	
