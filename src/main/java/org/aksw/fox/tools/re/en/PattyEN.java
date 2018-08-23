@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,8 +20,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.aksw.fox.data.Entity;
+import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.tools.re.AbstractRE;
+import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpedia;
+import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpediaOntology;
+import org.aksw.simba.knowledgeextraction.commons.dbpedia.IDBpediaOntology;
 import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipe;
 
 import edu.stanford.nlp.ling.CoreLabel;
@@ -37,15 +42,20 @@ import edu.stanford.nlp.ling.CoreLabel;
 public class PattyEN extends AbstractRE {
 
   protected final StanfordPipe stanford = StanfordPipe.getStanfordPipe();
-
-  // FIXME: move to config.
-  public static String dbpediaOntology = "http://dbpedia.org/ontology/";
+  protected final IDBpediaOntology dbpediaOntology = new DBpediaOntology();
 
   protected Map<String, Set<String>> paraphrases = null;
   // pattern to relation,e.g. married; -> spouse,birthplace
   protected Map<String, Set<String>> paraphrasesIndex = null;
 
   protected Map<String, String> ptbToUniPos = null;
+
+  public static void main(final String[] a) {
+    final String paraphrases = "data/patty/dbpedia-relation-paraphrases.txt";
+    final String posTagMap = "data/patty/en-ptb.map";
+
+    new PattyEN(paraphrases, posTagMap);
+  }
 
   /**
    * Calls {@link #PattyEN(String, String)} with "data/patty/dbpedia-relation-paraphrases.txt" and
@@ -244,18 +254,27 @@ public class PattyEN extends AbstractRE {
             found = true;
           }
         } // end for
+
         final Set<String> relationLabel = new HashSet<String>(checkPattern(pattern));
         for (final String label : relationLabel) {
-          try {
 
-            final Relation relation = addRelation(//
-                idMap.get(new Integer(s.id)), idMap.get(new Integer(o.id)), label,
-                Arrays.asList(new URI(dbpediaOntology.concat(label)))//
-            );
+          // check if domain and range match the relation
+          final Entity sEntity = idMap.get(s.id);
+          final Entity oEntity = idMap.get(o.id);
 
-            relations.add(relation);
-          } catch (final URISyntaxException e) {
-            LOG.error(e.getLocalizedMessage(), e);
+          final String sType = mapFoxTypesToDBpediaTypes(sEntity.getType());
+          final String p = DBpedia.ns_dbpedia_ontology.concat(label);
+          final String oType = mapFoxTypesToDBpediaTypes(oEntity.getType());
+
+          if (checkDomainRange(sType, p, oType)) {
+            try {
+              final Relation relation = addRelation(//
+                  sEntity, oEntity, label, Arrays.asList(new URI(p))//
+              );
+
+              relations.add(relation);
+            } catch (final URISyntaxException e) {
+            }
           }
         }
       }
@@ -263,6 +282,46 @@ public class PattyEN extends AbstractRE {
     return relations;
   }
 
+  protected String mapFoxTypesToDBpediaTypes(final String foxType) {
+    switch (foxType) {
+      case EntityClassMap.P: {
+        return DBpedia.ns_dbpedia_ontology.concat("Person");
+      }
+      case EntityClassMap.L: {
+        return DBpedia.ns_dbpedia_ontology.concat("Place");
+      }
+      case EntityClassMap.O: {
+        return DBpedia.ns_dbpedia_ontology.concat("Organisation");
+      }
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Checks domain and range of the given predicate.
+   *
+   * @param s domain e.g. http://dbpedia.org/ontology/Person
+   * @param p predicate http://dbpedia.org/ontology/spouse
+   * @param o range http://dbpedia.org/ontology/Person
+   * @return true, in case the given s and o are the domain and range of p
+   */
+  protected boolean checkDomainRange(final String s, final String p, final String o) {
+    final SimpleEntry<Set<String>, Set<String>> domainRange = dbpediaOntology.getDomainRange(p);
+    final boolean rightDomain = domainRange.getKey().contains(s);
+    final boolean rightRange = domainRange.getValue().contains(o);
+    return rightDomain && rightRange;
+  }
+
+  /**
+   * Helper class to create a Relation instance.
+   *
+   * @param s
+   * @param o
+   * @param relationLabel
+   * @param relation
+   * @return Relation instance
+   */
   private Relation addRelation(//
       final Entity s, final Entity o, final String relationLabel, final List<URI> relation) {
 
@@ -272,6 +331,13 @@ public class PattyEN extends AbstractRE {
     return new Relation(s, relationLabel, relationByTool, o, relation, getToolName(), relevance);
   }
 
+  /**
+   * Compares the patty pattern with the CoreLabels that come from Stanfords NLP Tool. In case it is
+   * a match, the method returns the relation that is associated by Patty.
+   *
+   * @param sentencePath
+   * @return e.g. {spouse, relative,...}
+   */
   protected List<String> checkPattern(final List<CoreLabel> sentencePath) {
     final List<String> _relations = new ArrayList<>();
     // each pattern
