@@ -5,7 +5,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,12 +19,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.tools.re.AbstractRE;
 import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpedia;
-import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpediaOntology;
-import org.aksw.simba.knowledgeextraction.commons.dbpedia.IDBpediaOntology;
 import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipe;
 
 import edu.stanford.nlp.ling.CoreLabel;
@@ -42,7 +38,6 @@ import edu.stanford.nlp.ling.CoreLabel;
 public class PattyEN extends AbstractRE {
 
   protected final StanfordPipe stanford = StanfordPipe.getStanfordPipe();
-  protected final IDBpediaOntology dbpediaOntology = new DBpediaOntology();
 
   protected Map<String, Set<String>> paraphrases = null;
   // pattern to relation,e.g. married; -> spouse,birthplace
@@ -280,37 +275,6 @@ public class PattyEN extends AbstractRE {
       }
     }
     return relations;
-  }
-
-  protected String mapFoxTypesToDBpediaTypes(final String foxType) {
-    switch (foxType) {
-      case EntityClassMap.P: {
-        return DBpedia.ns_dbpedia_ontology.concat("Person");
-      }
-      case EntityClassMap.L: {
-        return DBpedia.ns_dbpedia_ontology.concat("Place");
-      }
-      case EntityClassMap.O: {
-        return DBpedia.ns_dbpedia_ontology.concat("Organisation");
-      }
-      default:
-        return null;
-    }
-  }
-
-  /**
-   * Checks domain and range of the given predicate.
-   *
-   * @param s domain e.g. http://dbpedia.org/ontology/Person
-   * @param p predicate http://dbpedia.org/ontology/spouse
-   * @param o range http://dbpedia.org/ontology/Person
-   * @return true, in case the given s and o are the domain and range of p
-   */
-  protected boolean checkDomainRange(final String s, final String p, final String o) {
-    final SimpleEntry<Set<String>, Set<String>> domainRange = dbpediaOntology.getDomainRange(p);
-    final boolean rightDomain = domainRange.getKey().contains(s);
-    final boolean rightRange = domainRange.getValue().contains(o);
-    return rightDomain && rightRange;
   }
 
   /**

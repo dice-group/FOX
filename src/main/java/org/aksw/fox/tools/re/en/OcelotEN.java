@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Relation;
@@ -15,6 +16,7 @@ import org.aksw.fox.tools.re.AbstractRE;
 import org.aksw.ocelot.application.Application;
 import org.aksw.ocelot.application.IOcelot;
 import org.aksw.ocelot.common.config.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpedia;
 import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipe;
 import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipeExtended;
 
@@ -24,10 +26,21 @@ public class OcelotEN extends AbstractRE {
   static {
     CfgManager.setFolder(file);
   }
+
   IOcelot ocelot = new Application(file);
+
   final StanfordPipe stanford = StanfordPipeExtended.getStanfordPipe();
 
-  private Set<URI> getUris(final Set<String> uris) {
+  protected URI getUri(final String uri) {
+    try {
+      return (new URI(uri));
+    } catch (final URISyntaxException e) {
+      LOG.error("URISyntaxException for: " + uri);
+    }
+    return null;
+  }
+
+  protected Set<URI> getUris(final Set<String> uris) {
     final Set<URI> _uris = new HashSet<>();
     for (final String uri : uris) {
       try {
@@ -55,51 +68,66 @@ public class OcelotEN extends AbstractRE {
     // find entities for sentence
     final Map<Integer, List<Entity>> sentenceToEntities =
         sentenceToEntities(sentences, copiedEntities);
-    LOG.info(sentenceToEntities);
 
     // each sentence
-    int offset = 0;
     for (final Entry<Integer, String> entry : sentences.entrySet()) {
-      final int id = entry.getKey();
+      final int sentenceID = entry.getKey();
       final String sentence = entry.getValue();
-      LOG.info(sentence);
 
-      final List<Entity> sentenceEntities = sentenceToEntities.get(id);
-      for (int i = 0; (i + 1) < sentenceEntities.size(); i++) {
-        final Entity subject = sentenceEntities.get(i);
-        final Entity object = sentenceEntities.get(i + 1);
+      final Map<Integer, Entity> index = Entity.indexToEntity(sentenceToEntities.get(sentenceID));
+      final List<Integer> sorted = new ArrayList<>(new TreeSet<Integer>(index.keySet()));
+
+      for (int i = 0; (i + 1) < sorted.size(); i++) {
+
+        final Entity subject = index.get(sorted.get(i));
+        final Entity object = index.get(sorted.get(i + 1));
+
+        final int sStart = Entity.getIndex(subject);
+        final int oStart = Entity.getIndex(object);
 
         final String sType = subject.getType();
         final String oType = object.getType();
 
-        final int si = subject.getIndices().iterator().next() - offset;
-        final int oi = object.getIndices().iterator().next() - offset;
-
         final Set<String> uris = ocelot//
             .run(//
                 sentence, sType, oType, //
-                si, si + subject.getText().length(), //
-                oi, oi + object.getText().length()//
+                sStart, sStart + subject.getText().length(), //
+                oStart, oStart + object.getText().length()//
         );
 
         if ((null != uris) && (uris.size() > 0)) {
+          for (final String uri : uris) {
+            final String p = uri.startsWith(DBpedia.ns_dbpedia_ontology) ? //
+                uri : DBpedia.ns_dbpedia_ontology.concat(uri);
 
-          final String uri = "";
-          final String reLabel = "";
+            if (checkDomainRange(//
+                mapFoxTypesToDBpediaTypes(sType), //
+                p, //
+                mapFoxTypesToDBpediaTypes(oType)//
+            )) {
 
-          Relation relation = null;
-          relation = new Relation(//
-              idMap.get(subject.id), reLabel, //
-              uri, //
-              idMap.get(object.id), //
-              new ArrayList<>(getUris(uris)), //
-              getToolName(), //
-              Relation.DEFAULT_RELEVANCE//
-          );
-          relations.add(relation);
-        }
+              final String reLabel = p.replace(DBpedia.ns_dbpedia_ontology, "");
+
+              final List<URI> ad = new ArrayList<URI>();
+              ad.add(getUri(uri));
+
+              Relation relation = null;
+              relation = new Relation(//
+                  idMap.get(subject.id), //
+                  reLabel, //
+                  uri, //
+                  idMap.get(object.id), //
+                  ad, //
+                  getToolName(), //
+                  Relation.DEFAULT_RELEVANCE//
+              );
+
+              LOG.info("found relation: " + relation);
+              relations.add(relation);
+            }
+          }
+        } // end if
       } // end for
-      offset += sentence.length();
     }
     return relations;
   }

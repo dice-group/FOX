@@ -21,11 +21,6 @@ public class TestPatty {
 
   PattyEN patty = null;
 
-  String dbpediaPerson = "http://dbpedia.org/ontology/Person";
-  String dbpediaPlace = "http://dbpedia.org/ontology/Place";
-  String dbpediaSpouse = "http://dbpedia.org/ontology/spouse";
-  String dbpediaBirthPlace = "http://dbpedia.org/ontology/birthPlace";
-
   /**
    * Loads Patty.
    */
@@ -36,30 +31,6 @@ public class TestPatty {
 
     // load class
     patty = new PattyEN(paraphrases, posTagMap);
-  }
-
-  @Test
-  public void testC() {
-    Assert.assertEquals(patty.mapFoxTypesToDBpediaTypes(EntityClassMap.L),
-        DBpedia.ns_dbpedia_ontology.concat("Place"));
-    Assert.assertEquals(patty.mapFoxTypesToDBpediaTypes(EntityClassMap.P),
-        DBpedia.ns_dbpedia_ontology.concat("Person"));
-    Assert.assertEquals(patty.mapFoxTypesToDBpediaTypes(EntityClassMap.O),
-        DBpedia.ns_dbpedia_ontology.concat("Organisation"));
-  }
-
-  /**
-   * Tests the checkDomainRange method.
-   */
-  @Test
-  public void testA() {
-    Assert.assertTrue(patty.checkDomainRange(dbpediaPerson, dbpediaSpouse, dbpediaPerson));
-    Assert.assertFalse(patty.checkDomainRange(dbpediaPlace, dbpediaSpouse, dbpediaPerson));
-    Assert.assertFalse(patty.checkDomainRange(dbpediaPlace, dbpediaSpouse, dbpediaPlace));
-    Assert.assertFalse(patty.checkDomainRange(dbpediaPerson, dbpediaSpouse, dbpediaPlace));
-
-    Assert.assertTrue(patty.checkDomainRange(dbpediaPerson, dbpediaBirthPlace, dbpediaPlace));
-    Assert.assertFalse(patty.checkDomainRange(dbpediaPlace, dbpediaBirthPlace, dbpediaPerson));
   }
 
   /**
