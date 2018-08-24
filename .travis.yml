@@ -1,17 +1,24 @@
 language: java
+
 jdk:
   - oraclejdk8
+
 branches:
   only:
-    - master
+    - 2.5.1
+
 sudo: true
+
 cache:
   apt: true
   directories:
-    - ~/.m2
+    - $HOME/.m2
 
 install:
-    - 
+  -
+
+script:
+  - travis_wait 30 mvn clean compile
 
 notifications:
   email:
