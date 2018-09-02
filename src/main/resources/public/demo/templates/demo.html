@@ -4,12 +4,7 @@
   <!-- input -->
   <form class="form-horizontal ">
     <fieldset>
-      <!--
-      <div data-ng-hide="!response.output">
-        <a class="btn-link" data-ng-click="collapsed = !collapsed">Go Back</a>
-      </div>-->
 
-      <!--<div data-collapse="collapsed">-->
       <div>
         <div class="row">
           <div class="control-group span4">
@@ -60,14 +55,7 @@
               </select>
             </div>
           </div>
-          <!--
-          <div class="control-group span1">
-          <label class="control-label" style="width:70px">NIF-draft</label>
-          <div class="controls" style="margin-left: 90px;">
-          <input type="checkbox" id="nif" data-ng-model="request.nif" data-ng-checked="request.nif">
-          </div>
-          </div>
-          -->
+
           <div class="control-group span4">
             <label class="control-label">Fox Light</label>
             <div class="controls">
@@ -91,43 +79,23 @@
              <input type="radio" name="defaults" value="4" data-ng-model="request.defaults"></div>
           </div>
           <div class="span1">
-            <button type="submit" data-ng-click="request.send()" data-ng-disabled="request.state!='done'" class="btn btn-custom">Submit</button>
+            <button type="submit" data-ng-click="send()" data-ng-disabled="request.state!='done'" class="btn btn-custom">Submit</button>
           </div>
+          <!-- TEST
+          <div class="span1">
+            <button type="submit" data-ng-click="sendTest()"  class="btn btn-custom">Test</button>
+          </div>-->
+          <!-- TEST -->
         </div>
       </div>
     </fieldset>
   </form>
 </div>
 
-
-
-
-<!--  <div data-collapse="!collapsed"> -->
-    <!-- log -->
-      <!--
-    <div class="container">
-      <div class="input" data-ng-bind-html-unsafe="response.input"></div>
-    </div>
-    <br>-->
-
-    <div class="container">
-      <div setfn="setDirectiveFn(theDirFn)" ng-brat>
-        <div id="annotations"></div>
-      </div>
-    <!--
-    <button ng-click="directiveFn()">
-    Call Directive Function
-    </button>
-    <button ng-click="embed()">click</button>
-    -->
-      <pre class="output">{{response.output}}</pre>
-
-    
-      <!--
-    <div class="container">
-      <pre class="log">{{response.log}}</pre>
-  </div>-->
-
-
+<div class="container">
+  <div setfn="setDirectiveFn(theDirFn)" ng-brat>
+    <div id="annotations"></div>
+  </div>
+  <pre class="output">{{response}}</pre>
   <div data-ng-include src="'templates/partials/footer.html'"></div>
 </div>

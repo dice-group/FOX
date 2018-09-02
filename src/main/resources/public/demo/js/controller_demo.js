@@ -2,220 +2,380 @@
 
 Fox.DemoCtrl = function($routeParams, $scope, $http) {
 
+  String.prototype.hashCode = function() {
+    var hash = 0, i, chr;
+    if (this.length === 0) return hash;
+    for (i = 0; i < this.length; i++) {
+      chr   = this.charCodeAt(i);
+      hash  = ((hash << 5) - hash) + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+  };
+
 // demo data
-$scope.democtrl = {};
 $scope.currentCtrl = 'DemoCtrl';
-
-$scope.request = {
-    type: 'text',
-    task: 'ner',
-    input: '',
-    output: 'Turtle',
-    nif: 0,
-    foxlight: 'OFF',
-    defaults: 0,
-    state: 'done'
-};
-
-$scope.response = {
-    input: '',
-    output: '',
-    log: ''
-};
+$scope.response = {};
 
 // register directive function
 $scope.setDirectiveFn = function(directiveFn){
   $scope.directiveFn = directiveFn;
-}
+};
 
-// send data for annotations
-var docData = {text: "",entities:[]};
 $scope.embed = function(){
   $scope.directiveFn();
-  Util.embed('annotations', collData, docData,webFontURLs);
-}
+  Util.embed('annotations', collData, docData, webFontURLs);
+};
+
 // get cfg
 $http({method: 'GET', url: 'http://' + $scope.host + '/config'}).
-success(function(data, status, headers, config) {
+  success(function(data, status, headers, config) {
     $scope.config = data;
-    Util.embed('annotations', collData, docData,webFontURLs);
-}).
-error(function(data, status, headers, config) {
-  console.log(status);
+    Util.embed('annotations', collData, docData, webFontURLs);
+  }).error(function(data, status, headers, config) {
+    console.error(status);
 });
 
-//
-// reads turtle to store
-//
-var queryPhrase = 'PREFIX rdf:  <' + ns_rdf + '> ' +
-                  'PREFIX nif:  <' + ns_nif + '> ' +
-                    'SELECT ?s WHERE { ?s a nif:Phrase . } ';
+/*
+ Gets the subject URIs which have the given uri as rdf type.
+*/
+var queryForTypURI = function(o){
+  return 'SELECT ?s WHERE {  \
+            ?s <' + voc.rdf.type + '> <' + o + '> .\
+          } ';
+};
 
-var queryContext = 'PREFIX rdf:  <' + ns_rdf + '> ' +
-                  'PREFIX nif:  <' + ns_nif + '> ' +
-                  'SELECT ?s WHERE { ?s a nif:Context . } ';
+/*
+*/
+var queryForRelationExtraction = function(){
+  return 'SELECT ?s ?u ?g WHERE { \
+            ?s  <' + voc.rdf.type + '> <' + voc.foxo.RelationExtraction + '>; \
+                <' + voc.prov.used + '> ?u ; \
+                <' + voc.prov.generated + '> ?g . \
+          } ';
+};
 
+/*
+  @param  uri of a generated relation e.g. 'http://ns.aksw.org/fox/resource#1535891212055'.
+*/
+var queryForRelation = function(g){
+  return 'SELECT ?b ?s ?p ?o ?d ?sp ?op WHERE {\
+          <' + g + '> <'+ voc.oa.hasTarget +'> ?b . \
+          <' + g + '> <'+ voc.rdf.subject +'> ?s . \
+          <' + g + '> <'+ voc.rdf.predicate +'> ?p . \
+          <' + g + '> <'+ voc.rdf.object +'> ?o . \
+          <' + g + '> <'+ voc.foxo.subjectphrase +'> ?sp . \
+          <' + g + '> <'+ voc.foxo.objectphrase +'> ?op . \
+          ?b <'+ voc.oa.hasSource +'> ?d \
+        }';
+};
+
+/*
+*/
+var queryForRef = function(referenceContext,taIdentRef ){
+  return 'SELECT ?us  WHERE {\
+           ?us  <'+ voc.nif.referenceContext +'> <'+referenceContext+'> . \
+           ?us  <'+ voc.its.taIdentRef +'> <'+taIdentRef+'> . \
+       }';
+};
+
+/*
+  loads turtle to store and callbacks it
+*/
 var loadStore = function(turtle,callback){
   rdfstore.create(function(err, store) {
-     store.setPrefix("nif", '<' + ns_nif + '> ');
-     store.setPrefix("its", '<' + ns_its + '> ');
      store.load("text/turtle", turtle, function(err, results) {
-       callback(store);
+       if (!err) {
+         callback(store);
+       }else {
+         console.error(err);
+       }
      });
    });
 };
 
+/*
+ executes query to store and callbacks results
+*/
 var queryStore = function(store, query, callback){
-  // queery phrases
   store.execute(query, function(err, results) {
       if (!err) {
-          for (var i = 0; i < results.length; i++) {
-              store.node(results[i].s.value, function(err, graph){
-                if (!err) {
-                  callback(graph.triples)
-                }
-              });
-          }
+        callback(results);
+      }else {
+        console.error(err);
       }
-  });//execute
-}
-
-// triples for a specific subject
-var showPhrases =  function(triples,callback) {
-  var
-      uri = triples[0].subject.nominalValue,
-      type,beginIndex,endIndex;
-
-  for (var i = 0; i < triples.length; i++) {
-    uri = triples[i].subject.nominalValue;
-
-      if (triples[i].predicate.nominalValue == nif.beginIndex ){
-          beginIndex = triples[i].object.nominalValue;
-      }else
-      if (triples[i].predicate.nominalValue == nif.endIndex ){
-          endIndex = triples[i].object.nominalValue;
-      } else
-      if (triples[i].predicate.nominalValue == its.taClassRef &&
-      triples[i].object.nominalValue.startsWith(ns_foxo) ){
-          type = triples[i].object.nominalValue.substring(ns_foxo.length);
-      }
-  }
-  docData.entities.push([uri, type, [[beginIndex, endIndex]]]);
-  callback();
-};
-
-//triples for a specific subject
-var showContext =  function(triples,callback) {
-  for (var i = 0; i < triples.length; i++) {
-      if (triples[i].predicate.nominalValue == nif.isString ){
-        docData.text = triples[i].object.nominalValue;
-      }
-  }
-  callback();
-};
-
-var parseTutle = function(turtle,callback) {
-  docData = {
-      text     : "",
-      entities : [// Format: [${ID}, ${TYPE}, [[${START},${END}]])
-      ],
-      relations :[ // Format: [${ID}, ${TYPE}, [[${ARGNAME}, ${TARGET}], [${ARGNAME}, ${TARGET}]]]
-        //  ['R1', 'Anaphora', [['Anaphor', 'T2'], ['Entity', 'T1']]]
-      ]
-  };
-
-  loadStore(turtle,function(store){
-    queryStore(store, queryContext, function(triples){
-        showContext(triples,function(){
-          queryStore(store, queryPhrase, function(triples){
-              showPhrases(triples,callback);
-          });
-        });
-    });
   });
 };
 
+/*
+ pushs entities to the brat data
+*/
+var showPhrases =  function(store,triples,callback) {
+  for (var i = 0; i < triples.length; i++) {
+    store.node(triples[i].s.value, function(err, graph){
+        if (!err) {
+          var uri, type,beginIndex,endIndex;
+          for (var i = 0; i < graph.triples.length; i++) {
 
-// send demo request
-$scope.request.send = function() {
-    $scope.request.state = 'sending';
+            uri = graph.triples[i].subject.nominalValue;
 
-    // clear old data
-    $scope.response = {input: '',output: '', log: ''};
-
-
-    // prepare request
-    var request = angular.copy($scope.request);
-
-    // send request
-    $http({
-        method: 'POST',
-        url: 'http://' + $scope.host + '/fox',
-        data: request
-    }).
-    success(function(data, status, headers, config) {
-
-      // demo response data post process
-      parseTutle(data,function(){
-          $scope.embed();
+            if (graph.triples[i].predicate.nominalValue == voc.nif.beginIndex ){
+                beginIndex = graph.triples[i].object.nominalValue;
+            }else
+            if (graph.triples[i].predicate.nominalValue == voc.nif.endIndex ){
+                endIndex = graph.triples[i].object.nominalValue;
+            } else
+            if (graph.triples[i].predicate.nominalValue == voc.its.taClassRef &&
+            graph.triples[i].object.nominalValue.startsWith(voc.ns_foxo) ){
+                type = graph.triples[i].object.nominalValue.substring(voc.ns_foxo.length);
+            }
+          }
+          docData.entities.push([uri, type, [[beginIndex, endIndex]]]);
+          if(docData.entities.length == triples.length){
+            callback();
+          }
+        }
       });
-      $scope.response = {
-          output: data
-      };
-      $scope.request.state = 'done';
-    }).
-    error(function(data, status, headers, config) {
-        $scope.request.state = 'done';
-    });
+  }
 };
 
+/*
+triples for a specific subject
+*/
+var showContext =  function(store, results, callback) {
+  if(results.length > 0){
+    store.node(results[0].s.value, function(err, graph){
+        if (!err) {
+          for (var i = 0; i < graph.triples.length; i++) {
+              if (graph.triples[i].predicate.nominalValue == voc.nif.isString ){
+                docData.text = graph.triples[i].object.nominalValue;
+                break;
+              }
+          }
+        }
+        callback();
+      });
+    }else {
+      callback();
+    }
+};
+
+/*
+  @param
+  @return array of relations
+*/
+var getRelations = function(store, data, callback){
+  var annos = [];
+  // for all generated of the tools
+  for (var i = 0; i < data.length; i++) {
+    // for the generated of one tool
+    var used = data[i].u.value; // tool
+    var g = data[i].g.value; // generated
+    getGenerated(store, g,used,function(anno){
+      annos.push(anno);
+      if(annos.length == data.length)
+        callback(null,annos);
+    });
+  } // end for
+};
+
+
+var getGenerated = function(store,g,used, callback){
+  store.execute(queryForRelation(g), function(err, results) {
+    if (!!err){ console.error(err); } else {
+      var found = false;
+      var anno = {};
+      anno.used = used;
+      anno.hasTarget = results[0].b.value;
+      anno.subject = results[0].s.value;
+      anno.predicate = results[0].p.value;
+      anno.object = results[0].o.value;
+      anno.hasSource = results[0].d.value;
+
+      anno.subjectRef = results[0].sp.value;
+      anno.objectRef = results[0].op.value;
+      callback(anno);
+      /*
+      store.execute(queryForRef(anno.hasSource, anno.subject), function(err, innresults) {
+        if (!!err){ console.error(err);callback(); } else
+        if (!err && innresults.length > 0){
+          anno.subjectRef = innresults[0].us.value;
+          if(!!found)
+            callback(anno);
+          found =true;
+
+        }else callback();
+      });// end store.execute
+
+      store.execute(queryForRef(anno.hasSource, anno.object), function(err, innresults) {
+        if (!!err){ console.error(err);callback(); } else
+        if (!err && innresults.length > 0){
+          anno.objectRef = innresults[0].us.value;
+          if(!!found)
+            callback(anno);
+         found = true;
+        }else callback();
+      });// end store.execute
+      */
+    } // end if
+  }); // end store.execute
+};
+
+/*
+  handles FOX response to show annoations in brat
+*/
+var handleResponse = function(turtle,callback) {
+  // clean data
+  collData.relation_types = [];
+  docData = { text: "", entities: [], relations:[]};
+  Util.embed('annotations', collData, docData, webFontURLs);
+
+// load store with data
+loadStore(turtle,function(store){
+
+  var contextDone = false;
+  var phrasesDone = false;
+  var relationsDone = false;
+
+  // handles Context annotation
+  queryStore(store, queryForTypURI(voc.nif.Context), function(data){
+    showContext(store, data,function(){
+      contextDone=true;
+      if(contextDone && phrasesDone && relationsDone) {
+        callback();
+      }
+    });
+  });
+
+  // handles Phrase annotation
+  queryStore(store, queryForTypURI(voc.nif.Phrase), function(data){
+    showPhrases(store, data, function(){
+      phrasesDone = true;
+      if(contextDone && phrasesDone && relationsDone) {
+        callback();
+      }
+    });
+  });
+
+  // handles Relation annotation
+  queryStore(store, queryForRelationExtraction(), function(data){
+    if(data.length > 0){
+      getRelations(store, data, function(err, annos){
+          if (!!err){ console.error(err); } else {
+
+            var getEnd = function (str,sep) {
+                return str.substring(str.lastIndexOf(sep)+1, str.length);
+            };
+
+            var colors = ['darkblue', 'darkred', 'darkolivegreen', 'darkgoldenrod'];
+
+            var tools = [];
+            function uniqSorted(a) {
+                return a.sort().filter(function(item, pos, ary) {
+                    return !pos || item != ary[pos - 1];
+                });
+            }
+            for (var j = 0; j < annos.length; j++) {
+              tools.push(getEnd(annos[j].used, '.'));
+            }
+            tools = uniqSorted(tools);
+
+            for (var j = 0; j < annos.length; j++) {
+
+                var p = getEnd(annos[j].used, '.') +':'+getEnd(getEnd(annos[j].predicate,'/'),'#');
+              // adds types
+              var color = colors[tools.lastIndexOf(getEnd(annos[j].used, '.'))];
+              collData.relation_types.push({
+                  type     :p,
+                  labels   : [p,p],
+                  dashArray: '3,3',
+                  color    :  color
+              });
+
+              // adds instances
+              var id = 'R'+j;
+
+              var e1 = annos[j].subjectRef;
+              var e2 = annos[j].objectRef;
+              docData.relations.push([id,p, [['A', e1], ['B', e2]]]);
+            }
+
+            relationsDone=true;
+            if(contextDone && phrasesDone && relationsDone) {
+              callback();
+            }
+          }
+      }); // end getRelations
+    }else{
+      // no relations
+      relationsDone=true;
+      if(contextDone && phrasesDone && relationsDone) {
+        callback();
+      }
+    }
+  }); // end queryStore
+}); // end loadStore
+};
+
+$scope.sendTest = function() {
+  console.log('Start test...');
+
+  var file = (!Math.round(Math.random()))?
+  'http://0.0.0.0:4444/test/test.ttl':'http://0.0.0.0:4444/test/test2.ttl';
+
+  // get test file content
+  $http({method: 'GET', url: file}).
+      success(function(data, status, headers, config) {
+        handleResponse(data,function(){
+            $scope.embed();
+            console.log('Done test...');
+        });
+      }); // end http
+};
+
+/*
+ send demo request
+*/
+$scope.send = function() {
+  console.log('Start...');
+  $scope.request.state = 'sending';
+  $scope.response = {};
+  var request = angular.copy($scope.request);
+
+  // send request
+  $http({
+      method: 'POST',
+      url: 'http://' + $scope.host + '/fox',
+      data: request
+  }).
+  success(function(data, status, headers, config) {
+    handleResponse(data,function(){
+        $scope.embed();
+        console.log('Done.');
+    });
+
+    $scope.response = data;
+    $scope.request.state = 'done';
+  }).
+  error(function(data, status, headers, config) {
+    console.err(status);
+    $scope.request.state = 'done';
+  });
+};
+
+/*
+*/
 $scope.$watch('request.lang', function(newValue, oldValue) {
     $scope.request.foxlight = 'OFF';
 });
 
-// remove that
+/*
+*/
 $scope.$watch('request.defaults', function(newValue, oldValue) {
-
-    $scope.request.lang = 'en';
-
-    if (newValue == 1) {
-        $scope.request.lang = 'de';
-        $scope.request.type = 'text';
-        $scope.request.input = "Diese Aufnahme mit Pablo Escobar seiner Frau Victoria Eugenia Henau und Sohn Juan Pablo suggeriert ein ganz normales Familienleben.";
-        $scope.request.output = 'Turtle';
-
-    } else if (newValue == 2) {
-        $scope.request.lang = 'fr';
-        $scope.request.type = 'text';
-        $scope.request.input = "Gottfried Wilhelm Leibniz né à Leipzig, le 1er juillet 1646 est un philosophe, scientifique, mathématicien, logicien, diplomate, juriste, bibliothécaire et philologue allemand qui a écrit en latin, allemand et français. Leibniz mort à Hanovre, le 14 novembre 1716.";
-        $scope.request.output = 'Turtle';
-    } else if (newValue == 3) {
-        $scope.request.input = "In 1672 vertrok Leibniz naar Parijs. Toen was zijn wiskundige kennis beperkt tot die van het Oude Griekenland. Christiaan Huygens begeleidde Leibniz in zijn studies en vertelde hem welke eigentijdse problemen hij moest bestuderen.";
-        $scope.request.lang = 'nl';
-        $scope.request.type = 'text';
-
-        $scope.request.output = 'Turtle';
-
-    } else if (newValue == 4) {
-        $scope.request.lang = 'en';
-
-        $scope.request.type = 'text';
-        $scope.request.input = "Cologne German: Köln, Kölsch: Kölle is Germany's fourth-largest city (after Berlin, Hamburg, and Munich), and is the largest city both in the German Federal State of North Rhine-Westphalia and within the Rhine-Ruhr Metropolitan Area, one of the major European metropolitan areas with more than ten million inhabitants. Cologne is located on both sides of the Rhine River. The city's famous Cologne Cathedral (Kölner Dom) is the seat of the Catholic Archbishop of Cologne. The University of Cologne (Universität zu Köln) is one of Europe's oldest and largest universities.";
-        $scope.request.output = 'Turtle';
-
-    } else if (newValue == 5) {
-        $scope.request.lang = 'es';
-        $scope.request.type = 'text';
-        $scope.request.input = "Gottfried Leibniz nació el 1 de julio de 1646 en Leipzig, dos años antes de que terminara la Guerra de los Treinta Años, hijo de Federico Leibniz, jurista y profesor de filosofía moral en la Universidad de Leipzig, y Catherina Schmuck, hija de un profesor de leyes.";
-        $scope.request.output = 'Turtle';
-
-    } else { // default 0 or not def.
-        $scope.request.lang = 'en';
-        $scope.request.type = 'text';
-        $scope.request.input = "The philosopher and mathematician Leibniz was born in Leipzig in 1646 and attended the University of Leipzig from 1661-1666. The current chancellor of Germany, Angela Merkel, also attended this university. ";
-        $scope.request.output = 'Turtle';
-    }
+  if(newValue === undefined ) newValue= 0;
+  $scope.request = examples[newValue];
+  $scope.request.defaults = newValue;
 });
-};
 
+}; // end Fox.DemoCtrl
 Fox.controller('DemoCtrl', Fox.DemoCtrl);

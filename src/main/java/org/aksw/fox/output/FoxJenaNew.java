@@ -260,6 +260,8 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
             .addProperty(Voc.pRdfSubject, rse.getProperty(Voc.pItsrdfTaIdentRef).getResource())//
             .addProperty(Voc.pRdfObject, roe.getPropertyResourceValue(Voc.pItsrdfTaIdentRef))//
             .addProperty(Voc.pHasTarget, hasTarget)//
+            .addProperty(Voc.pFoxPSubjectPhrase, rse.getURI())//
+            .addProperty(Voc.pFoxPObjectPhrase, roe.getURI())//
         ;
 
         for (final URI i : relation.getRelation()) {
