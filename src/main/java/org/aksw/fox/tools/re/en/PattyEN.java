@@ -229,7 +229,7 @@ public class PattyEN extends AbstractRE {
 
       final List<CoreLabel> labels = stanford.getLabels(stentence);
       // for all words between two entities
-      for (int i = 0; i < (sorted.size() - 1); i++) {
+      for (int i = 0; (i + 1) < sorted.size(); i++) {
         final Entity s = index.get(sorted.get(i));
         final Entity o = index.get(sorted.get(i + 1));
 
@@ -245,7 +245,7 @@ public class PattyEN extends AbstractRE {
           if (found) {
             pattern.add(coreLabel);
           }
-          if (coreLabel.beginPosition() == sStart) {
+          if (coreLabel.endPosition() == (sStart + s.getText().length())) {
             found = true;
           }
         } // end for
