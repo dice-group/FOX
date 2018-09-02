@@ -33,6 +33,77 @@ public class TestPatty {
     patty = new PattyEN(paraphrases, posTagMap);
   }
 
+  @Test
+  public void testA() throws URISyntaxException {
+    {
+      final String bob = "Bob Right";
+      final String alice = "Alice Right";
+      final String karl = "Karl Mueller";
+      final String paula = "Paula Petersen";
+
+      final String sentenceA = bob.concat(" married ").concat(alice).concat(".");
+
+      final String sentenceB = karl.concat(" small cousin of ").concat(paula).concat(".");
+      final String text = sentenceA.concat(" ").concat(sentenceB);
+
+      final List<Entity> entities = new ArrayList<>();
+
+      final Entity eBob = new Entity(bob, EntityClassMap.P);
+      eBob.addIndicies(text.indexOf(bob));
+
+      final Entity eAlice = new Entity(alice, EntityClassMap.P);
+      eAlice.addIndicies(text.indexOf(alice));
+
+      final Entity eKarl = new Entity(karl, EntityClassMap.P);
+      eKarl.addIndicies(text.indexOf(karl));
+
+      final Entity ePaula = new Entity(paula, EntityClassMap.P);
+      ePaula.addIndicies(text.indexOf(paula));
+
+      entities.add(eBob);
+      entities.add(eAlice);
+      entities.add(eKarl);
+      entities.add(ePaula);
+
+      final Set<Relation> relations = patty._extract(text, entities);
+      relations.forEach(LOG::info);
+
+      // checks one relation
+      // bob spouse alice
+      {
+        boolean found = false;
+        for (final Relation relation : relations) {
+          final boolean sub = relation.getSubjectEntity().equals(eBob);
+          final boolean obj = relation.getObjectEntity().equals(eAlice);
+          final boolean spouse = relation.getRelation().contains(//
+              new URI(DBpedia.ns_dbpedia_ontology.concat("spouse"))//
+          );
+
+          if (sub && obj && spouse) {
+            found = true;
+          }
+        }
+        Assert.assertTrue(found);
+      }
+      {
+        boolean found = false;
+        for (final Relation relation : relations) {
+          final boolean sub = relation.getSubjectEntity().equals(eKarl);
+          final boolean obj = relation.getObjectEntity().equals(ePaula);
+          final boolean spouse = relation.getRelation().contains(//
+              new URI(DBpedia.ns_dbpedia_ontology.concat("parent"))//
+          );
+
+          if (sub && obj && spouse) {
+            found = true;
+          }
+        }
+        Assert.assertTrue(found);
+      }
+    }
+
+  }
+
   /**
    * Tests the partty extraction.
    *
@@ -82,21 +153,39 @@ public class TestPatty {
     entities.add(ePaula);
 
     final Set<Relation> relations = patty._extract(text, entities);
+    relations.forEach(LOG::info);
 
     // checks one relation
     // bob spouse alice
-    boolean found = false;
-    for (final Relation relation : relations) {
-      final boolean sub = relation.getSubjectEntity().equals(eBob);
-      final boolean obj = relation.getObjectEntity().equals(eAlice);
-      final boolean spouse = relation.getRelation().contains(//
-          new URI(DBpedia.ns_dbpedia_ontology.concat("spouse"))//
-      );
+    {
+      boolean found = false;
+      for (final Relation relation : relations) {
+        final boolean sub = relation.getSubjectEntity().equals(eBob);
+        final boolean obj = relation.getObjectEntity().equals(eAlice);
+        final boolean spouse = relation.getRelation().contains(//
+            new URI(DBpedia.ns_dbpedia_ontology.concat("spouse"))//
+        );
 
-      if (sub && obj && spouse) {
-        found = true;
+        if (sub && obj && spouse) {
+          found = true;
+        }
       }
+      Assert.assertTrue(found);
     }
-    Assert.assertTrue(found);
+    {
+      boolean found = false;
+      for (final Relation relation : relations) {
+        final boolean sub = relation.getSubjectEntity().equals(eKarl);
+        final boolean obj = relation.getObjectEntity().equals(ePaula);
+        final boolean spouse = relation.getRelation().contains(//
+            new URI(DBpedia.ns_dbpedia_ontology.concat("parent"))//
+        );
+
+        if (sub && obj && spouse) {
+          found = true;
+        }
+      }
+      Assert.assertTrue(found);
+    }
   }
 }
