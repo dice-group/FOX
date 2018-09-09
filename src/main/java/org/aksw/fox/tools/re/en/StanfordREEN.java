@@ -32,7 +32,7 @@ import edu.stanford.nlp.util.CoreMap;
  * @author rspeck
  *
  */
-public class REStanford extends AbstractRE {
+public class StanfordREEN extends AbstractRE {
 
   public enum StanfordRelations {
 
@@ -72,7 +72,7 @@ public class REStanford extends AbstractRE {
   /**
    *
    */
-  public REStanford() {
+  public StanfordREEN() {
     init();
   }
 
@@ -83,10 +83,10 @@ public class REStanford extends AbstractRE {
     props.setProperty("annotators", "tokenize,ssplit,lemma,pos,parse,ner");
     relationExtractorAnnotator = new RelationExtractorAnnotator(props);
 
-    initURIs(StanfordRelations.Live_In, Voc.ns_fox_ontology.concat("stanford_livein"));
-    initURIs(StanfordRelations.Located_In, Voc.ns_fox_ontology.concat("stanford_locatedin"));
-    initURIs(StanfordRelations.OrgBased_In, Voc.ns_fox_ontology.concat("stanford_orgbasedin"));
-    initURIs(StanfordRelations.Work_For, Voc.ns_fox_ontology.concat("stanford_workfor"));
+    initURIs(StanfordRelations.Live_In, Voc.ns_fox_ontology.concat("livein"));
+    initURIs(StanfordRelations.Located_In, Voc.ns_fox_ontology.concat("locatedin"));
+    initURIs(StanfordRelations.OrgBased_In, Voc.ns_fox_ontology.concat("orgbasedin"));
+    initURIs(StanfordRelations.Work_For, Voc.ns_fox_ontology.concat("workfor"));
   }
 
   /**
@@ -97,12 +97,8 @@ public class REStanford extends AbstractRE {
    */
   private void initURIs(final StanfordRelations relation, final String cfgkey) {
     try {
-      // final URI[] urisc = Converter.convertArray(FoxCfg.get(cfgkey).replaceAll(" ",
-      // "").split(","),
-      // URI::create, URI[]::new);
-      relationURIs.put(relation, cfgkey);// Arrays.asList(urisc));
+      relationURIs.put(relation, cfgkey);
     } catch (final Exception e) {
-      LOG.error("Check the config file. Something went wrong.");
       LOG.error(e.getLocalizedMessage(), e);
     }
   }
@@ -216,15 +212,11 @@ public class REStanford extends AbstractRE {
                 new Entity(emTwo.getExtentString(), StanfordENOldVersion.stanford(emTwo.getType()),
                     Entity.DEFAULT_RELEVANCE, getToolName());
 
-            /*
-             * for (Class classs : emOne.getSentence().keySet()) {
-             * LOG.info(emOne.getSentence().get(classs)); }
-             */
-
             final int index_a =
                 emOne.getSyntacticHeadToken().endPosition() - emOne.getExtentString().length();
             final int index_b =
                 emTwo.getSyntacticHeadToken().endPosition() - emTwo.getExtentString().length();
+
             a.addIndicies(index_a);
             b.addIndicies(index_b);
 
@@ -276,16 +268,10 @@ public class REStanford extends AbstractRE {
 
   /**
    * Test.
-   *
-   * @param args
    */
   public static void main(final String[] args) {
-    final REStanford reStanford = new REStanford();
+    final StanfordREEN reStanford = new StanfordREEN();
     reStanford.setInput(FoxConst.RE_EN_EXAMPLE_1, null);
-
-    for (final Relation rr : reStanford.extract()) {
-      LOG.info(rr);
-    }
+    reStanford.extract().forEach(LOG::info);
   }
-
 }
