@@ -25,7 +25,7 @@ import org.apache.jena.vocabulary.XSD;
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
-public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
+public class FoxJena extends AFoxJena implements IFoxJena {
 
   Resource inputResource = null;
   String baseuri = null;
@@ -33,7 +33,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
 
   public static void main(final String args[]) {
 
-    final IFoxJena foxJena = new FoxJenaNew();
+    final IFoxJena foxJena = new FoxJena();
 
     // final Calendar i = Calendar.getInstance();
     // i.setTime("");
@@ -55,11 +55,11 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
     LOG.info("Jena model: \n\n" + foxJena.print());
   }
 
-  public FoxJenaNew() {
+  public FoxJena() {
     super();
   }
 
-  public FoxJenaNew(final Model graph) {
+  public FoxJena(final Model graph) {
     super(graph);
   }
 
@@ -288,7 +288,7 @@ public class FoxJenaNew extends AFoxJenaNew implements IFoxJena {
   }
 
   /**
-   * Creates document uri {@link FoxJenaNew#createDocUri(String, int, int)} for the input and adds a
+   * Creates document uri {@link FoxJena#createDocUri(String, int, int)} for the input and adds a
    * resource with the uri and input to the graph.
    */
   @Override

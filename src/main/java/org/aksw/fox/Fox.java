@@ -21,7 +21,7 @@ import org.aksw.fox.data.Relation;
 import org.aksw.fox.exception.LoadingNotPossibleException;
 import org.aksw.fox.exception.UnsupportedLangException;
 import org.aksw.fox.nerlearner.TokenManager;
-import org.aksw.fox.output.FoxJenaNew;
+import org.aksw.fox.output.FoxJena;
 import org.aksw.fox.output.IFoxJena;
 import org.aksw.fox.tools.ATool;
 import org.aksw.fox.tools.NERTools;
@@ -61,7 +61,7 @@ public class Fox extends AFox {
   /**
    *
    */
-  protected IFoxJena foxJena = new FoxJenaNew();
+  protected IFoxJena foxJena = new FoxJena();
 
   protected FoxUtil foxUtil = new FoxUtil();
   String startNER = "";

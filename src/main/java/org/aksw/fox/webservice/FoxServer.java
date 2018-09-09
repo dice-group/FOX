@@ -15,7 +15,7 @@ import org.aksw.fox.Fox;
 import org.aksw.fox.IFox;
 import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.exception.PortInUseException;
-import org.aksw.fox.output.FoxJenaNew;
+import org.aksw.fox.output.FoxJena;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.FoxLanguageDetector;
 import org.aksw.fox.webservice.oke.Oke;
@@ -172,7 +172,7 @@ public class FoxServer extends AServer {
           ));
 
           // transform input to RDF document with NIF
-          final FoxJenaNew foxJenaNew = new FoxJenaNew();
+          final FoxJena foxJenaNew = new FoxJena();
           foxJenaNew.addInput(parameter.get(FoxParameter.Parameter.INPUT.toString()), null);
           parameter.put(FoxParameter.Parameter.INPUT.toString(), foxJenaNew.print());
 

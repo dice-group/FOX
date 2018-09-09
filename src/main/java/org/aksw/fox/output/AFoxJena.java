@@ -26,8 +26,8 @@ import org.apache.log4j.Logger;
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
-public class AFoxJenaNew {
-  public static Logger LOG = LogManager.getLogger(AFoxJenaNew.class);
+public class AFoxJena {
+  public static Logger LOG = LogManager.getLogger(AFoxJena.class);
 
   protected Model graph = null;
   protected String lang = Lang.TURTLE.getName();
@@ -65,7 +65,7 @@ public class AFoxJenaNew {
    * Constructor.
    *
    */
-  public AFoxJenaNew(final Model graph) {
+  public AFoxJena(final Model graph) {
     this.graph = graph;
     initGraph();
   }
@@ -75,7 +75,7 @@ public class AFoxJenaNew {
    * Constructor.
    *
    */
-  public AFoxJenaNew() {
+  public AFoxJena() {
     this(ModelFactory.createDefaultModel());
   }
 
