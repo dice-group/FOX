@@ -68,9 +68,9 @@ public class Voc {
   public static final Property pFoxRelation =
       ResourceFactory.createProperty(ns_fox_ontology.concat("Relation"));
   public static final Property pFoxPSubjectPhrase =
-      ResourceFactory.createProperty(ns_fox_ontology.concat("subjectphrase"));
+      ResourceFactory.createProperty(ns_fox_ontology.concat("subjectPhrase"));
   public static final Property pFoxPObjectPhrase =
-      ResourceFactory.createProperty(ns_fox_ontology.concat("objectphrase"));
+      ResourceFactory.createProperty(ns_fox_ontology.concat("objectPhrase"));
 
   // RDF
   public static final Property pRdfSubject =

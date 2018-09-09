@@ -21,8 +21,8 @@ voc.oa = {
 
 voc.foxo = {
   RelationExtraction : voc.ns_foxo + 'RelationExtraction',
-  subjectphrase : voc.ns_foxo + 'subjectphrase',
-  objectphrase : voc.ns_foxo + 'objectphrase'
+  subjectphrase : voc.ns_foxo + 'subjectPhrase',
+  objectphrase : voc.ns_foxo + 'objectPhrase'
 };
 
 voc.nif = {
