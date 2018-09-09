@@ -20,6 +20,11 @@ import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpedia;
 import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipe;
 import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipeExtended;
 
+/**
+ *
+ * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
+ *
+ */
 public class OcelotEN extends AbstractRE {
 
   static String file = "data/ocelot/config";
@@ -31,30 +36,28 @@ public class OcelotEN extends AbstractRE {
 
   final StanfordPipe stanford = StanfordPipeExtended.getStanfordPipe();
 
-  protected URI getUri(final String uri) {
+  protected URI toUri(final String uri) {
     try {
       return (new URI(uri));
     } catch (final URISyntaxException e) {
-      LOG.error("URISyntaxException for: " + uri);
+      LOG.error(e.getLocalizedMessage(), e);
     }
     return null;
   }
 
-  protected Set<URI> getUris(final Set<String> uris) {
-    final Set<URI> _uris = new HashSet<>();
-    for (final String uri : uris) {
-      try {
-        _uris.add(new URI(uri));
-      } catch (final URISyntaxException e) {
-        LOG.error("URISyntaxException for: " + uri);
+  protected Set<URI> toUris(final Set<String> uris) {
+    final Set<URI> urisSet = new HashSet<>();
+    for (final String u : uris) {
+      final URI uri = toUri(u);
+      if (uri != null) {
+        urisSet.add((uri));
       }
     }
-    return _uris;
+    return urisSet;
   }
 
   @Override
   protected Set<Relation> _extract(final String text, final List<Entity> entities) {
-
     // keep the original entities with IDs
     final Map<Integer, Entity> idMap = setEntityIDs(entities);
 
@@ -109,7 +112,7 @@ public class OcelotEN extends AbstractRE {
               final String reLabel = p.replace(DBpedia.ns_dbpedia_ontology, "");
 
               final List<URI> ad = new ArrayList<URI>();
-              ad.add(getUri(uri));
+              ad.add(toUri(uri));
 
               Relation relation = null;
               relation = new Relation(//

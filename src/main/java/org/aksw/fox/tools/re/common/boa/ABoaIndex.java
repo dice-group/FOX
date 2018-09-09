@@ -79,13 +79,13 @@ http://dbpedia.org/ontology/team
  */
 abstract public class ABoaIndex extends AbstractRE {
 
+  // TODO: Add to config
+  static int maxpattern = 10;
+
   protected String luceneIndexFolder = null;
   protected IndexReader indexReader = null;
   protected IndexSearcher indexSearcher = null;
   protected Directory dir = null;
-
-  // TODO: add to config
-  protected static final int maxpattern = 10;
 
   protected String lang = null;
 
@@ -147,7 +147,14 @@ abstract public class ABoaIndex extends AbstractRE {
     return supportedRelations.get(domain).get(range);
   }
 
-  public Map<String, BoaPattern> processSearch(final String p) throws IOException {
+  /**
+   *
+   * @param p
+   * @return
+   * @throws IOException
+   */
+  public Map<String, BoaPattern> processSearch(final String p, final int maxPatterns)
+      throws IOException {
     final Map<String, BoaPattern> patterns = new HashMap<String, BoaPattern>();
 
     final IndexSearcher searcher = openIndexSearcher();
@@ -156,16 +163,12 @@ abstract public class ABoaIndex extends AbstractRE {
     final BooleanQuery query = new BooleanQuery();
     query.add(new TermQuery(new Term(BoaEnum.URI.getLabel(), p)), Occur.MUST);
 
-    final int numResults = 50;
-
     final Sort sort = new Sort(new SortField(//
         BoaEnum.SUPPORT_NUMBER_OF_PAIRS_LEARNED_FROM.getLabel(), SortField.Type.DOUBLE, true//
     ));
 
     // search
-    final ScoreDoc[] hits = searcher.search(query, numResults, sort).scoreDocs;
-
-    LOG.info("hits:" + hits.length);
+    final ScoreDoc[] hits = searcher.search(query, Integer.MAX_VALUE, sort).scoreDocs;
 
     final Set<String> gPattern = new HashSet<>();
     final Set<String> noVarPattern = new HashSet<>();
@@ -191,7 +194,7 @@ abstract public class ABoaIndex extends AbstractRE {
 
       if (!pattern.getNormalized().trim().isEmpty()
           && !patterns.containsKey(pattern.getNormalized().trim())
-          && (patterns.size() < maxpattern)) {
+          && (patterns.size() < maxPatterns)) {
         patterns.put(pattern.getNormalized().trim(), pattern);
       }
     }
@@ -280,10 +283,19 @@ abstract public class ABoaIndex extends AbstractRE {
    * @return pattern
    */
   public Map<String, BoaPattern> getPattern(final String uri) {
+    return getPattern(uri, maxpattern);
+  }
+
+  /**
+   * Gets boa pattern from index.
+   *
+   * @param uri
+   * @param maxpattern
+   * @return
+   */
+  public Map<String, BoaPattern> getPattern(final String uri, final int maxpattern) {
     try {
-      final Map<String, BoaPattern> pattern = processSearch(uri);
-      pattern.keySet().forEach(LOG::info);
-      return pattern;
+      return processSearch(uri, maxpattern);
     } catch (final IOException e) {
       LOG.error(e.getLocalizedMessage(), e);
     }
