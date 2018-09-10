@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <toolsGenerator>
-        <lang>de, en, es, fr, it, nl</lang>
+        <lang>de, en, es, fr, nl</lang>
         <usedLang>de, en, es, fr, nl</usedLang>
         <disambiguationTool
             de="org.aksw.fox.tools.linking.de.AgdistisDE"
@@ -54,7 +54,7 @@
         
         <reTools
             en="
-            org.aksw.fox.tools.re.en.REStanford,
+            org.aksw.fox.tools.re.en.StanfordREEN,
             org.aksw.fox.tools.re.en.BoaEN,
             org.aksw.fox.tools.re.en.OcelotEN,
             org.aksw.fox.tools.re.en.PattyEN" 
