@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.Relation;
-import org.aksw.fox.output.FoxJenaNew;
+import org.aksw.fox.output.FoxJena;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
@@ -114,7 +114,7 @@ public class Oke {
           new ByteArrayInputStream(turtleDoc.getBytes(StandardCharsets.UTF_8));
       Model graph = ModelFactory.createDefaultModel();
       graph = graph.read(stream, "", "Turtle");
-      final FoxJenaNew jena = new FoxJenaNew(graph);
+      final FoxJena jena = new FoxJena(graph);
 
       // each doc
       for (int ii = 0; ii < docs.size(); ii++) {
