@@ -18,11 +18,5 @@ install:
   -
 
 script:
-  - travis_wait 60 mvn clean compile
-
-notifications:
-  email:
-    recipients:
-      - speck@informatik.uni-leipzig.de
-    on_success: change
-    on_failure: change
+  - mvn clean compile -q 
+  #- travis_wait 60 mvn clean compile -q 
