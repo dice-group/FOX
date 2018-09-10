@@ -36,6 +36,8 @@ public class OcelotEN extends AbstractRE {
 
   final StanfordPipe stanford = StanfordPipeExtended.getStanfordPipe();
 
+  public OcelotEN() {}
+
   protected URI toUri(final String uri) {
     try {
       return (new URI(uri));
