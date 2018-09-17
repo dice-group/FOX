@@ -18,10 +18,12 @@ import org.aksw.fox.tools.ATool;
 import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpedia;
 import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpediaOntology;
 import org.aksw.simba.knowledgeextraction.commons.dbpedia.IDBpediaOntology;
+import org.aksw.simba.knowledgeextraction.commons.time.SimpleStopwatch;
 
 public abstract class AbstractRE extends ATool implements IRE {
 
   protected final IDBpediaOntology dbpediaOntology = new DBpediaOntology();
+  protected final SimpleStopwatch watch = new SimpleStopwatch();
 
   protected Set<Relation> relations = new HashSet<>();
   protected String input = null;
@@ -40,10 +42,14 @@ public abstract class AbstractRE extends ATool implements IRE {
     relations.clear();
 
     if ((entities != null) && !entities.isEmpty()) {
-      return _extract(input, Entity.breakdownAndSortEntity(entities));
-    } else {
-      LOG.warn("Entities not given!");
+      watch.start();
+      relations = _extract(input, Entity.breakdownAndSortEntity(entities));
+      watch.stop();
     }
+
+    LOG.info(getToolName() + " found " + relations.size() + " relations in " + watch.getTimeInSec()
+        + "s: ");
+    relations.forEach(LOG::info);
 
     return relations;
   }
@@ -135,8 +141,9 @@ public abstract class AbstractRE extends ATool implements IRE {
    */
   protected boolean checkDomainRange(final String s, final String p, final String o) {
     final SimpleEntry<Set<String>, Set<String>> domainRange = dbpediaOntology.getDomainRange(p);
-    final boolean rightDomain = domainRange.getKey().contains(s);
-    final boolean rightRange = domainRange.getValue().contains(o);
+    final boolean rightDomain = domainRange.getKey().contains(s) || domainRange.getKey().isEmpty();
+    final boolean rightRange =
+        domainRange.getValue().contains(o) || domainRange.getValue().isEmpty();
     return rightDomain && rightRange;
   }
 
@@ -155,5 +162,4 @@ public abstract class AbstractRE extends ATool implements IRE {
         return null;
     }
   }
-
 }

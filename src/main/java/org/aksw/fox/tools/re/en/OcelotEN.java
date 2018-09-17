@@ -80,7 +80,7 @@ public class OcelotEN extends AbstractRE {
       final String sentence = entry.getValue();
 
       final Map<Integer, Entity> index = Entity.indexToEntity(sentenceToEntities.get(sentenceID));
-      final List<Integer> sorted = new ArrayList<>(new TreeSet<Integer>(index.keySet()));
+      final List<Integer> sorted = new ArrayList<>(new TreeSet<>(index.keySet()));
 
       for (int i = 0; (i + 1) < sorted.size(); i++) {
 
@@ -98,7 +98,7 @@ public class OcelotEN extends AbstractRE {
                 sentence, sType, oType, //
                 sStart, sStart + subject.getText().length(), //
                 oStart, oStart + object.getText().length()//
-        );
+            );
 
         if ((null != uris) && (uris.size() > 0)) {
           for (final String uri : uris) {
@@ -111,23 +111,19 @@ public class OcelotEN extends AbstractRE {
                 mapFoxTypesToDBpediaTypes(oType)//
             )) {
 
-              final String reLabel = p.replace(DBpedia.ns_dbpedia_ontology, "");
-
-              final List<URI> ad = new ArrayList<URI>();
+              final List<URI> ad = new ArrayList<>();
               ad.add(toUri(uri));
 
               Relation relation = null;
               relation = new Relation(//
                   idMap.get(subject.id), //
-                  reLabel, //
+                  p.replace(DBpedia.ns_dbpedia_ontology, ""), //
                   uri, //
                   idMap.get(object.id), //
                   ad, //
                   getToolName(), //
                   Relation.DEFAULT_RELEVANCE//
               );
-
-              LOG.info("found relation: " + relation);
               relations.add(relation);
             }
           }

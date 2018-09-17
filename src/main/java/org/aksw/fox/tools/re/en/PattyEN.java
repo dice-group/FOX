@@ -27,10 +27,7 @@ import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipe;
 import edu.stanford.nlp.ling.CoreLabel;
 
 /**
- * TODO: type check (NER types are not checked against the relations domain and range).
- *
- *
- * Uses the patty pattern in 'dbpedia-relation-paraphrases.txt' to extract relations.
+ * Uses the patty patterns in 'dbpedia-relation-paraphrases.txt' to extract relations.
  *
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
@@ -48,7 +45,6 @@ public class PattyEN extends AbstractRE {
   public static void main(final String[] a) {
     final String paraphrases = "data/patty/dbpedia-relation-paraphrases.txt";
     final String posTagMap = "data/patty/en-ptb.map";
-
     new PattyEN(paraphrases, posTagMap);
   }
 
@@ -85,63 +81,10 @@ public class PattyEN extends AbstractRE {
   }
 
   /**
-   * Needs an update.
    *
+   * @param posTagMapFile
    * @return
    */
-  @Deprecated
-  protected Map<String, Set<String>> readTop10Wikipedia() {
-    final String top = "/home/rspeck/Downloads/patty/patty-eval/wikipedia-top100.txt";
-    final Map<String, Set<String>> map = new ConcurrentHashMap<>();
-    final Map<String, Set<String>> topMap = new ConcurrentHashMap<>();
-    // read top
-    try (Stream<String> stream = Files.lines(Paths.get(top))) {
-      final List<String> list = stream//
-          .filter(line -> !line.startsWith("Synset"))//
-          .filter(line -> !line.startsWith("TrueORFalse"))//
-          // .filter(line->line.isEmpty())//
-          .collect(Collectors.toList());
-
-      final Set<String> patternBlock = new TreeSet<>();
-      boolean newBlock = false;
-      for (final String pattern : list) {
-
-        // read block
-        if (!pattern.trim().isEmpty()) {
-          patternBlock.add(pattern);
-        } else {
-          newBlock = true;
-        }
-
-        // process block
-        if (newBlock) {
-          String p = "";
-          for (final Entry<String, Set<String>> entry : map.entrySet()) {
-            if (entry.getValue().containsAll(patternBlock)) {
-              p = entry.getKey();
-              if (topMap.containsKey(p)) {
-                topMap.get(p).addAll(patternBlock);
-              } else {
-                topMap.put(p, new HashSet<>(patternBlock));
-              }
-              break;
-            }
-          } // end for
-          if (p.isEmpty()) {
-            LOG.error("not found " + patternBlock);
-          }
-
-          newBlock = false;
-          patternBlock.clear();
-        } // end block
-      }
-    } catch (final IOException e) {
-      LOG.error(e.getLocalizedMessage(), e);
-    }
-    topMap.entrySet().forEach(LOG::info);
-    return topMap;
-  }
-
   private Map<String, String> readPosTagMapFile(final String posTagMapFile) {
     final Map<String, String> ptbToUniPos = new HashMap<>();
     try (final Stream<String> stream = Files.lines(Paths.get(posTagMapFile))) {
@@ -163,13 +106,12 @@ public class PattyEN extends AbstractRE {
    * Reads the content of {@link #paraphrasesFile} and returns the content.
    *
    * @return property to patterns, e.g. spouse -> {"married";"[[num]] married in","is married"}
-   *
    */
   private Map<String, Set<String>> readDBpediaRelationParaphrases(final String paraphrasesFile) {
 
     if (paraphrases == null) {
-      paraphrases = new ConcurrentHashMap<String, Set<String>>();
-      paraphrasesIndex = new ConcurrentHashMap<String, Set<String>>();
+      paraphrases = new ConcurrentHashMap<>();
+      paraphrasesIndex = new ConcurrentHashMap<>();
       try (final Stream<String> stream = Files.lines(Paths.get(paraphrasesFile))) {
 
         // all lines in the file
@@ -185,8 +127,8 @@ public class PattyEN extends AbstractRE {
                 pattern = pattern.substring(0, pattern.length() - 1);
               }
 
-              paraphrases.computeIfAbsent(split[0], k -> new HashSet<String>());
-              paraphrasesIndex.computeIfAbsent(pattern, k -> new HashSet<String>());
+              paraphrases.computeIfAbsent(split[0], k -> new HashSet<>());
+              paraphrasesIndex.computeIfAbsent(pattern, k -> new HashSet<>());
 
               paraphrases.get(split[0]).add(pattern);
               paraphrasesIndex.get(pattern).add(split[0]);
@@ -200,8 +142,6 @@ public class PattyEN extends AbstractRE {
     return paraphrases;
   }
 
-  // FIXME: check domain and range of the relations to the entities. so that e.g. 2 persons are not
-  // a member of a band.
   @Override
   protected Set<Relation> _extract(final String text, final List<Entity> entities) {
 
@@ -225,7 +165,7 @@ public class PattyEN extends AbstractRE {
       final String stentence = entry.getValue();
 
       final Map<Integer, Entity> index = Entity.indexToEntity(sentenceToEntities.get(sentenceID));
-      final List<Integer> sorted = new ArrayList<>(new TreeSet<Integer>(index.keySet()));
+      final List<Integer> sorted = new ArrayList<>(new TreeSet<>(index.keySet()));
 
       final List<CoreLabel> labels = stanford.getLabels(stentence);
       // for all words between two entities
@@ -250,7 +190,7 @@ public class PattyEN extends AbstractRE {
           }
         } // end for
 
-        final Set<String> relationLabel = new HashSet<String>(checkPattern(pattern));
+        final Set<String> relationLabel = new HashSet<>(checkPattern(pattern));
         for (final String label : relationLabel) {
 
           // check if domain and range match the relation
@@ -339,4 +279,65 @@ public class PattyEN extends AbstractRE {
     }
     return _relations;
   }
+
+  /**
+   * Needs an update.
+   *
+   * @return
+   */
+  /**
+   * <code>
+   protected Map<String, Set<String>> readTop10Wikipedia() {
+     final String top = "/home/rspeck/Downloads/patty/patty-eval/wikipedia-top100.txt";
+     final Map<String, Set<String>> map = new ConcurrentHashMap<>();
+     final Map<String, Set<String>> topMap = new ConcurrentHashMap<>();
+     // read top
+     try (Stream<String> stream = Files.lines(Paths.get(top))) {
+       final List<String> list = stream//
+           .filter(line -> !line.startsWith("Synset"))//
+           .filter(line -> !line.startsWith("TrueORFalse"))//
+           // .filter(line->line.isEmpty())//
+           .collect(Collectors.toList());
+
+       final Set<String> patternBlock = new TreeSet<>();
+       boolean newBlock = false;
+       for (final String pattern : list) {
+
+         // read block
+         if (!pattern.trim().isEmpty()) {
+           patternBlock.add(pattern);
+         } else {
+           newBlock = true;
+         }
+
+         // process block
+         if (newBlock) {
+           String p = "";
+           for (final Entry<String, Set<String>> entry : map.entrySet()) {
+             if (entry.getValue().containsAll(patternBlock)) {
+               p = entry.getKey();
+               if (topMap.containsKey(p)) {
+                 topMap.get(p).addAll(patternBlock);
+               } else {
+                 topMap.put(p, new HashSet<>(patternBlock));
+               }
+               break;
+             }
+           } // end for
+           if (p.isEmpty()) {
+             LOG.error("not found " + patternBlock);
+           }
+
+           newBlock = false;
+           patternBlock.clear();
+         } // end block
+       }
+     } catch (final IOException e) {
+       LOG.error(e.getLocalizedMessage(), e);
+     }
+     topMap.entrySet().forEach(LOG::info);
+     return topMap;
+   }</code>
+   */
+
 }
