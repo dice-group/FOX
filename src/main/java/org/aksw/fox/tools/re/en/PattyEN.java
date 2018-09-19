@@ -22,7 +22,7 @@ import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.tools.re.AbstractRE;
 import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpedia;
-import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipe;
+import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipeExtended;
 
 import edu.stanford.nlp.ling.CoreLabel;
 
@@ -33,8 +33,6 @@ import edu.stanford.nlp.ling.CoreLabel;
  *
  */
 public class PattyEN extends AbstractRE {
-
-  protected final StanfordPipe stanford = StanfordPipe.getStanfordPipe();
 
   protected Map<String, Set<String>> paraphrases = null;
   // pattern to relation,e.g. married; -> spouse,birthplace
@@ -56,7 +54,7 @@ public class PattyEN extends AbstractRE {
     // FIXME: add to resources
     this(//
         "data/patty/dbpedia-relation-paraphrases.txt", //
-        "data/patty/en-ptb.map"//
+        "data/patty/en-ptb.map" //
     );
   }
 
@@ -144,6 +142,8 @@ public class PattyEN extends AbstractRE {
 
   @Override
   protected Set<Relation> _extract(final String text, final List<Entity> entities) {
+
+    final StanfordPipeExtended stanford = StanfordPipeExtended.instance();
 
     // keep the original entities with IDs
     final Map<Integer, Entity> idMap = setEntityIDs(entities);

@@ -17,7 +17,6 @@ import org.aksw.ocelot.application.Application;
 import org.aksw.ocelot.application.IOcelot;
 import org.aksw.ocelot.common.config.CfgManager;
 import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpedia;
-import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipe;
 import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipeExtended;
 
 /**
@@ -33,8 +32,6 @@ public class OcelotEN extends AbstractRE {
   }
 
   IOcelot ocelot = new Application(file);
-
-  final StanfordPipe stanford = StanfordPipeExtended.getStanfordPipe();
 
   public OcelotEN() {}
 
@@ -66,6 +63,8 @@ public class OcelotEN extends AbstractRE {
     // copies all entities since we change the index of those
     final List<Entity> copiedEntities = new ArrayList<>();
     entities.forEach(entity -> copiedEntities.add(new Entity(entity)));
+
+    final StanfordPipeExtended stanford = StanfordPipeExtended.instance();
 
     // splits text to sentences
     final Map<Integer, String> sentences = stanford.getSentenceIndex(text);
