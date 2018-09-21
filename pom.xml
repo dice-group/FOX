@@ -34,7 +34,6 @@
 		<dl4j.version>0.0.3.2.7</dl4j.version>
 		<illinoisner.version>2.8.1</illinoisner.version>
 		<jena.version>3.1.0</jena.version>
-		<jsonld.version>0.10.0</jsonld.version>
 		<lucene.version>4.10.0</lucene.version>
 		<nd4j.version>0.0.3.5.5</nd4j.version>
 		<ocelot.version>0.0.1</ocelot.version>
@@ -120,8 +119,6 @@
 			<artifactId>ocelot</artifactId>
 			<version>${ocelot.version}</version>
 		</dependency>
-
-
 
 		<!-- -->
 		<dependency>
@@ -308,11 +305,23 @@
 			<artifactId>jena-arq</artifactId>
 			<version>${jena.version}</version>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/fluent-hc -->
 		<dependency>
-			<groupId>com.github.jsonld-java</groupId>
-			<artifactId>jsonld-java</artifactId>
-			<version>${jsonld.version}</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>fluent-hc</artifactId>
+			<version>4.5.6</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.10</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.6</version>
 		</dependency>
 
 		<!-- grizzly -->
@@ -497,13 +506,6 @@
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>
 			<version>5.1.0</version>
-		</dependency>
-
-		<!-- test -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.4</version>
 		</dependency>
 
 		<!-- clearnlp -->
