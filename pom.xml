@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
@@ -25,7 +26,7 @@
 
 		<!-- Java DOC -->
 		<maven.javadoc.skip>false</maven.javadoc.skip>
-		
+
 		<!-- versions -->
 		<agdistis.version>0.4.0</agdistis.version>
 		<balie.version>1.81.0</balie.version>
@@ -40,12 +41,12 @@
 		<opennlp.version>1.5.3</opennlp.version>
 		<spotlight.version>0.7.1</spotlight.version>
 		<stanford.version>3.6.0</stanford.version>
-		<!-- the patty version is used in the maven resources -->
+		<!-- the patty version for Maven Java src resources -->
 		<patty.version>0.0.1</patty.version>
 		<junit.version>4.12</junit.version>
 		<log4j.version>1.2.17</log4j.version>
 	</properties>
-	
+
 	<repositories>
 		<repository>
 			<id>Apache Repo Central</id>
@@ -85,17 +86,9 @@
 			<artifactId>log4j</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
-		<!--  
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>2.11.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.11.1</version>
-		</dependency>-->
+		<!-- <dependency> <groupId>org.apache.logging.log4j</groupId> <artifactId>log4j-api</artifactId> 
+			<version>2.11.1</version> </dependency> <dependency> <groupId>org.apache.logging.log4j</groupId> 
+			<artifactId>log4j-core</artifactId> <version>2.11.1</version> </dependency> -->
 
 
 		<!-- org.aksw.simba.knowledgeextraction -->
@@ -104,12 +97,8 @@
 			<artifactId>commons</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-		<!--  
-		<dependency>
-			<groupId>org.aksw.simba.knowledgeextraction</groupId>
-			<artifactId>ocelot</artifactId>
-			<version>0.0.1</version>
-		</dependency>-->
+		<!-- <dependency> <groupId>org.aksw.simba.knowledgeextraction</groupId> 
+			<artifactId>ocelot</artifactId> <version>0.0.1</version> </dependency> -->
 		<!-- <dependency> <groupId>org.aksw.simba.knowledgeextraction</groupId> 
 			<artifactId>fox</artifactId> <version>0.0.1</version> </dependency> -->
 
@@ -160,13 +149,14 @@
 			<scope>system</scope>
 			<systemPath>${system.libs}/nerd/client-0.0.1-SNAPSHOT.jar</systemPath>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.github.mpkorstanje/simmetrics-core -->
 		<dependency>
-			<groupId>uk.ac.shef.wit</groupId>
-			<artifactId>simmetrics</artifactId>
-			<version>1.6.2</version>
-			<scope>system</scope>
-			<systemPath>${system.libs}/simmetrics_jar_v1_6_2_d07_02_07.jar</systemPath>
+			<groupId>com.github.mpkorstanje</groupId>
+			<artifactId>simmetrics-core</artifactId>
+			<version>4.1.1</version>
 		</dependency>
+
 		<!-- regular dependencies -->
 		<!-- Illinois -->
 		<dependency>
@@ -196,11 +186,11 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
 		<dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-collections4</artifactId>
-		    <version>4.2</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.2</version>
 		</dependency>
-		<!-- --> 
+		<!-- -->
 		<dependency>
 			<groupId>nz.ac.waikato.cms.weka</groupId>
 			<artifactId>weka-stable</artifactId>
@@ -639,7 +629,7 @@
 			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
-	
+
 	<!-- build -->
 	<build>
 		<directory>release</directory>
@@ -661,11 +651,9 @@
 					<include>**/*</include>
 				</includes>
 			</resource>
-			<!-- versioning <resource> <directory>src/main/resources</directory> <filtering>false</filtering> 
-				<excludes> <exclude>**/Dockerfile</exclude> <exclude>**/scripts/*</exclude> 
-				</excludes> </resource> -->
 		</resources>
 
+		<!-- plugins -->
 		<plugins>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -694,7 +682,8 @@
 									/> <copy file="${project.build.outputDirectory}/Dockerfile" toFile="${project.build.directory}/Dockerfile" 
 									overwrite="true" /> -->
 
-								<copy file="fox.properties-dist" tofile="${project.build.directory}/fox.properties-dist" />
+								<copy file="fox.properties-dist"
+									tofile="${project.build.directory}/fox.properties-dist" />
 								<chmod dir="${project.build.directory}" perm="700"
 									includes="**/*.sh" />
 							</target>
@@ -712,15 +701,10 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<!-- <mainClass>org.aksw.fox.MainServer</mainClass> -->
 							<addClasspath>true</addClasspath>
 						</manifest>
-						<manifestEntries>
-							<Class-Path>lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
-						</manifestEntries>
 					</archive>
 				</configuration>
-				<!-- nothing here -->
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -732,12 +716,8 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<!-- <mainClass>org.aksw.fox.MainServer</mainClass> -->
 							<addClasspath>true</addClasspath>
 						</manifest>
-						<manifestEntries>
-							<Class-Path>lib/simmetrics_jar_v1_6_2_d07_02_07.jar</Class-Path>
-						</manifestEntries>
 					</archive>
 				</configuration>
 				<executions>

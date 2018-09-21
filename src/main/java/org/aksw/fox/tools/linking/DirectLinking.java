@@ -15,8 +15,8 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
 import org.apache.log4j.Logger;
-
-import uk.ac.shef.wit.simmetrics.similaritymetrics.QGramsDistance;
+import org.simmetrics.StringMetric;
+import org.simmetrics.metrics.StringMetrics;
 
 /**
  *
@@ -202,7 +202,7 @@ public class DirectLinking extends AbstractLinking {
     if (logger.isDebugEnabled()) {
       logger.debug("Looking for <" + label + ", " + type + ">");
     }
-    final HashMap<String, Double> result = new HashMap<String, Double>();
+    final HashMap<String, Double> result = new HashMap<>();
     if ((label.length() == 0) || (label == null)) {
       return result;
     } else {
@@ -273,7 +273,7 @@ public class DirectLinking extends AbstractLinking {
    */
   protected ArrayList<String> possibleLabels(final String label) {
 
-    final ArrayList<String> result = new ArrayList<String>();
+    final ArrayList<String> result = new ArrayList<>();
     String upperCaseLabel = label.substring(0, 1).toUpperCase() + label.substring(1);
     upperCaseLabel = upperCaseLabel.replaceAll(" ", "_");
     result.add(upperCaseLabel);
@@ -303,7 +303,8 @@ public class DirectLinking extends AbstractLinking {
   }
 
   private String getUriFromIndex(String label, final String type, final String inputText) {
-    final QGramsDistance q = new QGramsDistance();
+
+    final StringMetric q = StringMetrics.qGramsDistance();
 
     final HashMap<String, Double> map = getUri(label, type, 10);
     if (map.size() == 0) {
@@ -314,8 +315,7 @@ public class DirectLinking extends AbstractLinking {
     try {
       for (final String fetchedUri : map.keySet()) {
         label = label.replaceAll(" ", "_").toLowerCase();
-        sim =
-            q.getSimilarity(fetchedUri.toLowerCase().substring(fetchedUri.lastIndexOf("/")), type);
+        sim = q.compare(fetchedUri.toLowerCase().substring(fetchedUri.lastIndexOf("/")), type);
         if (sim > max) {
           result = fetchedUri;
           max = sim;
