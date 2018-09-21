@@ -44,7 +44,7 @@
 		<!-- the patty version for Maven Java src resources -->
 		<patty.version>0.0.1</patty.version>
 		<junit.version>4.12</junit.version>
-		<log4j.version>1.2.17</log4j.version>
+		<log4j.version>2.11.1</log4j.version>
 	</properties>
 
 	<repositories>
@@ -80,16 +80,16 @@
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
 		</dependency>
-		<!-- log -->
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.apache.logging.log4j</groupId> <artifactId>log4j-api</artifactId> 
-			<version>2.11.1</version> </dependency> <dependency> <groupId>org.apache.logging.log4j</groupId> 
-			<artifactId>log4j-core</artifactId> <version>2.11.1</version> </dependency> -->
-
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
 
 		<!-- org.aksw.simba.knowledgeextraction -->
 		<dependency>
@@ -115,16 +115,6 @@
 			<artifactId>apache-jena-libs</artifactId>
 			<version>${jena.version}</version>
 			<type>pom</type>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
 		<dependency>
@@ -399,16 +389,6 @@
 			<groupId>org.aksw</groupId>
 			<artifactId>AGDISTIS</artifactId>
 			<version>${agdistis.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<!-- ant -->
 		<dependency>
@@ -426,16 +406,6 @@
 			<groupId>org.aksw</groupId>
 			<artifactId>gerbil.nif.transfer</artifactId>
 			<version>1.2.6-jena3.1-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<!-- jena-sparql-api -->
 		<dependency>
