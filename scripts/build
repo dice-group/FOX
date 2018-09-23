@@ -1,0 +1,6 @@
+# Build 
+echo "# Building FOX..."
+echo "# Check $0.log file for the build result."
+echo "##############################################################################" 
+nohup mvn clean compile -Dmaven.test.skip=true javadoc:javadoc >  $0.log 2>&1  </dev/null &
+# 
