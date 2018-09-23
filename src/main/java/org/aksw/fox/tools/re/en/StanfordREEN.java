@@ -15,7 +15,6 @@ import org.aksw.fox.data.Relation;
 import org.aksw.fox.data.Voc;
 import org.aksw.fox.tools.ner.en.StanfordENOldVersion;
 import org.aksw.fox.tools.re.AbstractRE;
-import org.aksw.fox.utils.FoxConst;
 
 import edu.stanford.nlp.ie.machinereading.structure.EntityMention;
 import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations.RelationMentionsAnnotation;
@@ -111,8 +110,8 @@ public class StanfordREEN extends AbstractRE {
    */
   public boolean checkrules(final RelationMention relationMention) {
     boolean valid = false;
-    if ((relationMention.getType() != null)
-        && (relationMention.getType() != StanfordRelations.NoRelation.toString())) {
+    if (relationMention.getType() != null
+        && relationMention.getType() != StanfordRelations.NoRelation.toString()) {
       final List<EntityMention> entities = relationMention.getEntityMentionArgs();
       if (entities.size() != 2) {
         LOG.warn("EntityMention for relation is not 2!");
@@ -194,7 +193,7 @@ public class StanfordREEN extends AbstractRE {
       LOG.debug("For all relation ...");
       for (final CoreMap sentenceAnnotation : doc.get(CoreAnnotations.SentencesAnnotation.class)) {
         final List<RelationMention> relationMentions =
-            (sentenceAnnotation.get(RelationMentionsAnnotation.class));
+            sentenceAnnotation.get(RelationMentionsAnnotation.class);
         LOG.debug("relationMentions.size():" + relationMentions.size());
         for (final RelationMention relationMention : relationMentions) {
 
@@ -264,14 +263,5 @@ public class StanfordREEN extends AbstractRE {
     }
     relations = set;
     return set;
-  }
-
-  /**
-   * Test.
-   */
-  public static void main(final String[] args) {
-    final StanfordREEN reStanford = new StanfordREEN();
-    reStanford.setInput(FoxConst.RE_EN_EXAMPLE_1, null);
-    reStanford.extract().forEach(LOG::info);
   }
 }

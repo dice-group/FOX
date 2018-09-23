@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.aksw.fox.data.EntityClassMap;
-import org.aksw.fox.utils.FileUtil;
+import org.aksw.simba.knowledgeextraction.commons.io.FileUtil;
 
 public class Conll2002 extends ANERReader {
 
@@ -129,7 +129,7 @@ public class Conll2002 extends ANERReader {
           }
           word.append(currentToken);
         } else {
-          if (!(lastClass).equals(EntityClassMap.getNullCategory())) {
+          if (!lastClass.equals(EntityClassMap.getNullCategory())) {
             addE(word.toString().trim(), lastClass);
           }
 

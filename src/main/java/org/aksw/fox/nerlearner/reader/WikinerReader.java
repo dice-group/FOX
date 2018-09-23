@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.aksw.fox.data.EntityClassMap;
-import org.aksw.fox.utils.FileUtil;
+import org.aksw.simba.knowledgeextraction.commons.io.FileUtil;
 
 public class WikinerReader extends ANERReader {
 
@@ -62,11 +62,11 @@ public class WikinerReader extends ANERReader {
     StringBuilder currentEntity = new StringBuilder();
     String currentTag = "";
     for (int i = 0; i < inputFiles.length; i++) {
-      if ((maxSentences > 0) && (sentenceCount >= maxSentences)) {
+      if (maxSentences > 0 && sentenceCount >= maxSentences) {
         break;
       }
       for (final String line : FileUtil.bzip2ToList(inputFiles[i].getAbsolutePath())) {
-        if ((maxSentences > 0) && (sentenceCount >= maxSentences)) {
+        if (maxSentences > 0 && sentenceCount >= maxSentences) {
           break;
         }
         final String[] taggedWords = line.split(" ");
@@ -114,7 +114,7 @@ public class WikinerReader extends ANERReader {
                       if (disambEntities.get(e) == null) {
                         disambEntities.put(e, new ArrayList<SimpleEntry<String, Integer>>());
                         disambEntities.get(e)
-                            .add(new SimpleEntry<String, Integer>(entities.get(e), 1));
+                            .add(new SimpleEntry<>(entities.get(e), 1));
                       }
                       {
 
@@ -128,7 +128,7 @@ public class WikinerReader extends ANERReader {
                         }
                         if (!found) {
                           disambEntities.get(e)
-                              .add(new SimpleEntry<String, Integer>(currentTag, 1));
+                              .add(new SimpleEntry<>(currentTag, 1));
                         }
                       }
                     }

@@ -21,7 +21,6 @@ import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.fox.utils.CfgManager;
-import org.aksw.fox.utils.FoxConst;
 import org.apache.commons.configuration.XMLConfiguration;
 
 public class TextProIT extends AbstractNER {
@@ -44,7 +43,7 @@ public class TextProIT extends AbstractNER {
   };
 
   /**
-   * 
+   *
    */
   @Override
   public List<Entity> retrieve(final String input) {
@@ -59,7 +58,7 @@ public class TextProIT extends AbstractNER {
   }
 
   /**
-   * 
+   *
    * @param input
    * @param filename
    */
@@ -82,7 +81,7 @@ public class TextProIT extends AbstractNER {
   }
 
   /**
-   * 
+   *
    * @param filename
    */
   protected void runTextPro(final String filename) {
@@ -97,7 +96,7 @@ public class TextProIT extends AbstractNER {
   }
 
   /**
-   * 
+   *
    * @param file
    * @return
    */
@@ -138,7 +137,7 @@ public class TextProIT extends AbstractNER {
   }
 
   /**
-   * 
+   *
    * @param file
    */
   protected void removeFiles(final String file) {
@@ -147,12 +146,12 @@ public class TextProIT extends AbstractNER {
   }
 
   /**
-   * 
+   *
    * @param answer
    * @return
    */
   protected List<Entity> createEntities(final String answer) {
-    entityList = new ArrayList<Entity>();
+    entityList = new ArrayList<>();
 
     int mode = 0;
     int current_entity_ID = 0;
@@ -194,7 +193,4 @@ public class TextProIT extends AbstractNER {
     return entityList;
   }
 
-  public static void main(final String[] a) throws IOException {
-    LOG.info(new TextProIT().retrieve(FoxConst.NER_IT_EXAMPLE_1));
-  }
 }

@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.common.StanfordCommon;
-import org.aksw.fox.utils.FoxConst;
 
 /**
  *
@@ -15,9 +14,9 @@ public class StanfordDE extends StanfordCommon {
 
   /**
    * <code>
-
+  
      https://github.com/stanfordnlp/CoreNLP/blob/master/src/edu/stanford/nlp/pipeline/StanfordCoreNLP-german.properties
-
+  
      </code>
    */
   private static Properties props = new Properties();
@@ -50,9 +49,5 @@ public class StanfordDE extends StanfordCommon {
     entityClasses.put("B-PER", EntityClassMap.P);
     entityClasses.put("O", EntityClassMap.N);
     entityClasses.put("B-MISC", EntityClassMap.N);
-  }
-
-  public static void main(final String[] a) {
-    LOG.info(new StanfordDE().retrieve(FoxConst.NER_GER_EXAMPLE_1));
   }
 }

@@ -21,7 +21,7 @@ import org.apache.http.client.fluent.Form;
 import org.apache.http.entity.ContentType;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;;
+import org.json.JSONObject;
 
 public abstract class AlchemyCommon extends AbstractNER {
   /**
@@ -86,14 +86,13 @@ public abstract class AlchemyCommon extends AbstractNER {
     for (final String sen : _sentences) {
       JSONObject o = null;
       try {
-        final String response = Requests.postForm(url,
-            Form.form()//
-                .add("apikey", api_key)//
-                .add("text", sen) //
-                .add("outputMode", outputMode)//
-                .add("maxRetrieve", max) //
-                .add("coreference", "0")//
-                .add("linkedData", "0"), //
+        final String response = Requests.postForm(url, Form.form()//
+            .add("apikey", api_key)//
+            .add("text", sen) //
+            .add("outputMode", outputMode)//
+            .add("maxRetrieve", max) //
+            .add("coreference", "0")//
+            .add("linkedData", "0"), //
             ContentType.APPLICATION_JSON);
         o = new JSONObject(response);
       } catch (JSONException | IOException e) {

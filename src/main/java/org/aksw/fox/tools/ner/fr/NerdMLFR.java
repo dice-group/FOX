@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.fox.utils.FoxCfg;
-import org.aksw.fox.utils.FoxConst;
 
 import fr.eurecom.nerd.client.NERD;
 import fr.eurecom.nerd.client.schema.Entity;
@@ -17,8 +16,8 @@ import fr.eurecom.nerd.client.type.ExtractorType;
  * "nerdType":"http://nerd.eurecom.fr/ontology#Location",
  * "uri":"http://dbpedia.org/resource/Leipzig", "confidence":0.206021, "relevance":0.5,
  * "extractor":"nerdml", "startChar":54, "endChar":61
- * 
- * 
+ *
+ *
  */
 
 public class NerdMLFR extends AbstractNER {
@@ -29,15 +28,6 @@ public class NerdMLFR extends AbstractNER {
   public static final String CFG_KEY_DocumentType =
       NerdMLFR.class.getName().concat(".documentType");
 
-  public static void main(final String[] a) {
-    for (final org.aksw.fox.data.Entity e : new NerdMLFR().retrieve(FoxConst.NER_FR_EXAMPLE_1)) {
-      AbstractNER.LOG.info(e);
-      /*
-       * [text=Gottfried Wilhelm Leibniz, type=http://nerd.eurecom.fr/ontology#Person,
-       * tool=NERNerdML, relevance=0.5]
-       */
-    }
-  }
 
   @Override
   public List<org.aksw.fox.data.Entity> retrieve(final String input) {

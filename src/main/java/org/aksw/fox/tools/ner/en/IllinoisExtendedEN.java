@@ -7,7 +7,6 @@ import java.util.Vector;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.fox.utils.FoxConst;
 
 import edu.illinois.cs.cogcomp.LbjNer.ExpressiveFeatures.ExpressiveFeaturesAnnotator;
 import edu.illinois.cs.cogcomp.LbjNer.InferenceMethods.Decoder;
@@ -29,9 +28,6 @@ public class IllinoisExtendedEN extends AbstractNER {
   NETaggerLevel1 tagger1;
   NETaggerLevel2 tagger2;
 
-  public static void main(final String[] args) throws Exception {
-    LOG.info(new IllinoisExtendedEN().retrieve(FoxConst.NER_EN_EXAMPLE_1));
-  }
 
   public IllinoisExtendedEN() {
     try {
@@ -93,8 +89,8 @@ public class IllinoisExtendedEN extends AbstractNER {
       NEWord w = null;
       for (int j = 0; j < vector.size(); j++) {
         w = (NEWord) vector.get(j);
-        if (predictions[j].startsWith("B-") || ((j > 0) && predictions[j].startsWith("I-")
-            && (!predictions[j - 1].endsWith(predictions[j].substring(2))))) {
+        if (predictions[j].startsWith("B-") || j > 0 && predictions[j].startsWith("I-")
+            && !predictions[j - 1].endsWith(predictions[j].substring(2))) {
           res.append("[" + predictions[j].substring(2) + " ");
           tag = predictions[j].substring(2);
           prob = 0f;
@@ -108,7 +104,7 @@ public class IllinoisExtendedEN extends AbstractNER {
           word += words[j] + " ";
           prob += shapePred(w, tag);
           probcount++;
-          if (j == (vector.size() - 1)) {
+          if (j == vector.size() - 1) {
             close = true;
           } else {
             if (predictions[j + 1].startsWith("B-")) {
@@ -117,8 +113,8 @@ public class IllinoisExtendedEN extends AbstractNER {
             if (predictions[j + 1].equals("O")) {
               close = true;
             }
-            if ((predictions[j + 1].indexOf('-') > -1)
-                && (!predictions[j].endsWith(predictions[j + 1].substring(2)))) {
+            if (predictions[j + 1].indexOf('-') > -1
+                && !predictions[j].endsWith(predictions[j + 1].substring(2))) {
               close = true;
             }
           }

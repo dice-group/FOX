@@ -44,7 +44,7 @@ public class FoxLanguageDetector {
    */
   public static void main(final String[] a) {
     final FoxLanguageDetector ld = new FoxLanguageDetector();
-    final FoxParameter.Langs lang = ld.detect(FoxConst.NER_NL_EXAMPLE_1);
+    final FoxParameter.Langs lang = ld.detect(DataTestFactory.NER_NL_EXAMPLE_1);
     LOG.info(lang.toString() + " text.");
   }
 

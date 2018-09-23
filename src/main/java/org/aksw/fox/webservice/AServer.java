@@ -2,7 +2,7 @@ package org.aksw.fox.webservice;
 
 import org.aksw.fox.exception.PortInUseException;
 import org.aksw.fox.utils.CfgManager;
-import org.aksw.fox.utils.FoxServerUtil;
+import org.aksw.simba.knowledgeextraction.commons.io.WebAppsUtil;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -37,12 +37,12 @@ public abstract class AServer {
     Spark.staticFileLocation(staticLocation);
 
     final int port = CFG.getInt(KEY_PORT);
-    if (!FoxServerUtil.isPortAvailable(port)) {
+    if (!WebAppsUtil.isPortAvailable(port)) {
       throw new PortInUseException(port);
     }
     Spark.port(port);
 
-    FoxServerUtil.writeShutDownFile("stop");
+    WebAppsUtil.writeShutDownFile("stop");
   }
 
   /**
@@ -72,7 +72,7 @@ public abstract class AServer {
         // utf-8 only
         final String encoding = req.raw().getCharacterEncoding();
         LOG.info("requested encoding:" + encoding);
-        if ((encoding == null) || !encoding.toLowerCase().trim().equals("utf-8")) {
+        if (encoding == null || !encoding.toLowerCase().trim().equals("utf-8")) {
           Spark.halt(415, "Use utf-8");
         }
       }

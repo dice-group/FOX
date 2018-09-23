@@ -2,6 +2,7 @@ package org.aksw.fox.utils;
 
 import java.io.File;
 
+import org.aksw.simba.knowledgeextraction.commons.io.FileUtil;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;

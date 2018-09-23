@@ -95,7 +95,7 @@ public abstract class AbstractNER extends ATool implements INER {
       }
       entity.setText(cleanText.toString().trim());
     }
-    list = new ArrayList<Entity>(list);
+    list = new ArrayList<>(list);
 
     LOG.info("clean entities done.");
     return list;
