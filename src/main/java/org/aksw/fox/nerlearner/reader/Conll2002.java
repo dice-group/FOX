@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.aksw.fox.data.EntityClassMap;
-import org.aksw.simba.knowledgeextraction.commons.io.FileUtil;
+import org.aksw.simba.knowledgeextraction.commons.io.Compress;
 
 public class Conll2002 extends ANERReader {
 
@@ -89,7 +89,8 @@ public class Conll2002 extends ANERReader {
 
     final List<String> lines = new ArrayList<>();
     for (int i = 0; i < inputFiles.length; i++) {
-      final List<String> l = FileUtil.gunzipItToList(inputFiles[i].getAbsolutePath());
+
+      final List<String> l = Compress.gunzipItToList(inputFiles[i].getAbsolutePath());
       if (!l.isEmpty()) {
         if (!lines.isEmpty()) {
           lines.add("");
