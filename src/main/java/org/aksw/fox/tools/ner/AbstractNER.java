@@ -25,10 +25,14 @@ public abstract class AbstractNER extends ATool implements INER {
   abstract public List<Entity> retrieve(String input);
 
   public List<Entity> _retrieve(final String input) {
+    LOG.info("retrieve ...");
+
     final List<Entity> list = new ArrayList<>();
     final Set<Entity> set = new HashSet<>(retrieve(input));
     list.addAll(set);
     entityList = clean(list);
+
+    LOG.info("retrieve done");
     return entityList;
   }
 
@@ -109,7 +113,7 @@ public abstract class AbstractNER extends ATool implements INER {
     int end = sentenceIterator.next();
     while (end != BreakIterator.DONE) {
       final String sentence = input.substring(start, end);
-      if ((sentence != null) && !sentence.isEmpty()) {
+      if (sentence != null && !sentence.isEmpty()) {
         sentences.add(sentence);
       }
       start = end;

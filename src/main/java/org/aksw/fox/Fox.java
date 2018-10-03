@@ -127,7 +127,6 @@ public class Fox extends AFox {
   protected Map<String, Set<Relation>> doRE(final Set<Entity> entities) {
     final Map<String, Set<Relation>> relations = new HashMap<>();
 
-    // FIXME: more parallel calls to RETools
     final List<IRE> tools = reTools.getRETool(lang);
 
     if (tools == null || tools.size() == 0) {

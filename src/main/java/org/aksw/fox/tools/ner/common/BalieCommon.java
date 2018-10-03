@@ -64,7 +64,6 @@ public abstract class BalieCommon extends AbstractNER {
 
   @Override
   public List<Entity> retrieve(final String input) {
-    LOG.info("retrieve ...");
 
     final Tokenizer tokenizer = new Tokenizer(lang, true);
     tokenizer.Reset(); // ?
@@ -92,13 +91,13 @@ public abstract class BalieCommon extends AbstractNER {
       // }
       final Token token = tokenList.Get(i);
       String type = token.EntityType().GetLabel(NamedEntityTypeEnumMappingNerf.values());
-      if ((type != null) && !type.equals("nothing")) {
+      if (type != null && !type.equals("nothing")) {
         type = type.toLowerCase();
         LOG.debug(token + ":" + type);
       }
 
-      if ((type != null) && (mapTypeToSupportedType(type) != EntityClassMap.getNullCategory())
-          && type.equals(lastType) && (list.size() > 0)) {
+      if (type != null && mapTypeToSupportedType(type) != EntityClassMap.getNullCategory()
+          && type.equals(lastType) && list.size() > 0) {
 
         list.get(list.size() - 1).addText(token.Raw());
 

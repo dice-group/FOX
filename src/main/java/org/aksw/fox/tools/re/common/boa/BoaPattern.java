@@ -15,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class BoaPattern {
 
-  public Map<String, Double> features = new HashMap<String, Double>();
+  public Map<String, Double> features = new HashMap<>();
   public String naturalLanguageRepresentationNormalized = "";
   public String naturalLanguageRepresentationWithoutVariables = "";
   public String naturalLanguageRepresentation = "";
@@ -32,9 +32,7 @@ public class BoaPattern {
     this.language = language;
   }
 
-  public BoaPattern() {
-    // TODO Auto-generated constructor stub
-  }
+  public BoaPattern() {}
 
   /*
    * (non-Javadoc)
@@ -84,7 +82,7 @@ public class BoaPattern {
 
       }
 
-      final Set<String> naturalLanguageRepresentationChunks = new HashSet<String>(
+      final Set<String> naturalLanguageRepresentationChunks = new HashSet<>(
           // Arrays.asList(naturalLanguageRepresentationNormalized.toLowerCase().trim().split("
           // ")));
           Arrays.asList(naturalLanguageRepresentationNormalized.trim().split(" ")));
@@ -118,7 +116,7 @@ public class BoaPattern {
 
     final List<String> naturalLanguageRepresentationChunks =
         // new ArrayList<String>(Arrays.asList(s.toLowerCase().trim().split(" ")));
-        new ArrayList<String>(Arrays.asList(s.trim().split(" ")));
+        new ArrayList<>(Arrays.asList(s.trim().split(" ")));
 
     // TODO: !!! REMOVE STOPWORDS
     // naturalLanguageRepresentationChunks.removeAll(Constants.NEW_STOP_WORDS);
@@ -137,9 +135,9 @@ public class BoaPattern {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = (prime * result) + ((language == null) ? 0 : language.hashCode());
-    result = (prime * result)
-        + ((naturalLanguageRepresentation == null) ? 0 : naturalLanguageRepresentation.hashCode());
+    result = prime * result + (language == null ? 0 : language.hashCode());
+    result = prime * result
+        + (naturalLanguageRepresentation == null ? 0 : naturalLanguageRepresentation.hashCode());
     return result;
   }
 
