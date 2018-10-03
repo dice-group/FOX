@@ -4,9 +4,8 @@ import java.util.List;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.utils.DataTestFactory;
+import org.junit.Assert;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 public class TestBalie {
 
@@ -14,7 +13,6 @@ public class TestBalie {
   public void getNER() {
     final BalieEN balie = new BalieEN();
     final List<Entity> e = balie.retrieve(DataTestFactory.NER_EN_EXAMPLE_1);
-
     Assert.assertTrue(e.size() > 0);
   }
 }

@@ -11,9 +11,8 @@ import org.aksw.fox.utils.DataTestFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 public class TestExample {
 
