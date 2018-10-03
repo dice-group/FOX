@@ -10,7 +10,7 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.LogManager;
@@ -80,13 +80,13 @@ public class FoxClassifier {
   protected void initInstances(final Set<String> input, final Map<String, Set<Entity>> toolResults,
       final Map<String, String> oracle) {
     LOG.info("init. instances ...");
-    instances = (oracle == null) ? foxInstances.getInstances(input, toolResults)
+    instances = oracle == null ? foxInstances.getInstances(input, toolResults)
         : foxInstances.getInstances(input, toolResults, oracle);
   }
 
   protected String getName(final String lang) {
-    return FoxCfg.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator + lang + File.separator
-        + FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER);
+    return PropertiesLoader.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator + lang
+        + File.separator + PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER);
   }
 
   /**

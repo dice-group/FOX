@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.utils.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.aksw.simba.knowledgeextraction.commons.io.Requests;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.http.client.fluent.Form;
@@ -67,13 +67,13 @@ class TagMeCall implements Callable<List<Entity>> {
       for (int i = 0; i < annos.length(); i++) {
         final JSONObject anno = annos.getJSONObject(i);
         if (anno.has("dbpedia_categories") && anno.has("spot") && anno.has("rho")
-            && (anno.getDouble("rho") >= MIN_RHO)) {
+            && anno.getDouble("rho") >= MIN_RHO) {
           final JSONArray ja = anno.getJSONArray("dbpedia_categories");
 
           for (int ii = 0; ii < ja.length(); ii++) {
             final String tmpType = entityClassMap.get(ja.getString(ii).replace(" ", "_"));
 
-            if ((tmpType != null)) {
+            if (tmpType != null) {
               entities.add(new Entity(anno.getString("spot"), tmpType));
               break;
             }
@@ -93,16 +93,14 @@ class TagMeCall implements Callable<List<Entity>> {
   public JSONObject send() {
     String response = "";
     try {
-      response = Requests.postForm(ENDPOINT,
-          Form.form()//
-              .add("key", TAGME_KEY)//
-              .add("text", sentence)//
-              .add("lang", lang.getLanguage())//
-              .add("epsilon", epsilon)//
-              .add("min_comm", min_comm)//
-              .add("min_link", min_link)//
-              .add("include_categories", include_categories),
-          ContentType.APPLICATION_JSON);
+      response = Requests.postForm(ENDPOINT, Form.form()//
+          .add("key", TAGME_KEY)//
+          .add("text", sentence)//
+          .add("lang", lang.getLanguage())//
+          .add("epsilon", epsilon)//
+          .add("min_comm", min_comm)//
+          .add("min_link", min_link)//
+          .add("include_categories", include_categories), ContentType.APPLICATION_JSON);
       return new JSONObject(response);
     } catch (final IOException e) {
       LOG.error(e.getLocalizedMessage(), e);

@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -17,7 +17,8 @@ public abstract class ANERReader implements INERReader {
       .concat(key_maxsentences);
 
   public static final Logger LOG = LogManager.getLogger(INERReader.class);
-  public static final int maxSentences = Integer.valueOf(FoxCfg.get(CFG_KEY_MAX_SENTENCES));
+  public static final int maxSentences =
+      Integer.valueOf(PropertiesLoader.get(CFG_KEY_MAX_SENTENCES));
 
   public ANERReader(final String[] inputPaths) throws IOException {
     initFiles(inputPaths);

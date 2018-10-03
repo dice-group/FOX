@@ -1,5 +1,6 @@
 package org.aksw.fox.tools;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,13 +11,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.exception.LoadingNotPossibleException;
 import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.IPostProcessing;
 import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.nerlearner.TokenManager;
 import org.aksw.fox.tools.ner.INER;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.jetlang.fibers.Fiber;
@@ -68,8 +68,8 @@ public class NERTools {
     if (toolsList != null) {
       for (final String cl : toolsList) {
         try {
-          tools.add((INER) FoxCfg.getClass(cl));
-        } catch (final LoadingNotPossibleException e) {
+          tools.add((INER) PropertiesLoader.getClass(cl));
+        } catch (final IOException e) {
           LOG.warn("Could not load " + cl);
         }
       }
@@ -107,7 +107,7 @@ public class NERTools {
     }
 
     // wait till finished
-    final int min = Integer.parseInt(FoxCfg.get(CFG_KEY_LIFETIME));
+    final int min = Integer.parseInt(PropertiesLoader.get(CFG_KEY_LIFETIME));
     try {
       latch.await(min, TimeUnit.MINUTES);
     } catch (final InterruptedException e) {
@@ -125,7 +125,7 @@ public class NERTools {
     if (latch.getCount() == 0) {
       // TODO: relevance list
       for (final INER nerTool : tools) {
-        toolResults.put(nerTool.getToolName(), new HashSet<Entity>(nerTool.getResults()));
+        toolResults.put(nerTool.getToolName(), new HashSet<>(nerTool.getResults()));
       }
 
       if (LOG.isTraceEnabled()) {

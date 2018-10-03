@@ -427,14 +427,6 @@
 			<version>1.5.5</version>
 		</dependency>
 
-		<dependency>
-			<groupId>wordnet</groupId>
-			<artifactId>rita</artifactId>
-			<version>0.0.1</version>
-			<scope>system</scope>
-			<systemPath>${system.libs}/wordnet/rita.jar</systemPath>
-		</dependency>
-
 		<!-- external dependencies -->
 		<dependency>
 			<groupId>algs</groupId>
@@ -512,18 +504,12 @@
 			<version>1.0</version>
 		</dependency>
 
-		<!-- cfg -->
-		<dependency>
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
-			<version>1.9</version>
-		</dependency>
-		<!-- commons-compress -->
+		<!-- commons-compress
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
 			<version>1.8</version>
-		</dependency>
+		</dependency> -->
 
 		<!--jsoup -->
 		<dependency>

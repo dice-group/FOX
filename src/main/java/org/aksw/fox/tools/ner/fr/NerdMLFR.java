@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 
 import fr.eurecom.nerd.client.NERD;
 import fr.eurecom.nerd.client.schema.Entity;
@@ -33,11 +33,11 @@ public class NerdMLFR extends AbstractNER {
   public List<org.aksw.fox.data.Entity> retrieve(final String input) {
     final List<org.aksw.fox.data.Entity> foxlist = new ArrayList<>();
 
-    final NERD nerd = new NERD(FoxCfg.get(CFG_KEY_API_KEY));
+    final NERD nerd = new NERD(PropertiesLoader.get(CFG_KEY_API_KEY));
 
     final List<Entity> nerdlist =
-        nerd.annotate(ExtractorType.valueOf(FoxCfg.get(CFG_KEY_ExtractorType)),
-            DocumentType.valueOf(FoxCfg.get(CFG_KEY_DocumentType)), input);
+        nerd.annotate(ExtractorType.valueOf(PropertiesLoader.get(CFG_KEY_ExtractorType)),
+            DocumentType.valueOf(PropertiesLoader.get(CFG_KEY_DocumentType)), input);
     /*
      * for (Entity e : nerdlist) System.out.println(e.getUri());
      */

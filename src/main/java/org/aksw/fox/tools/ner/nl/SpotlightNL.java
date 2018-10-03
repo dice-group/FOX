@@ -8,5 +8,4 @@ public class SpotlightNL extends SpotlightCommon {
   public SpotlightNL() {
     super(new Locale("nl"));
   }
-
 }

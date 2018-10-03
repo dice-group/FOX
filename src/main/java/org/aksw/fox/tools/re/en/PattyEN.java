@@ -169,7 +169,7 @@ public class PattyEN extends AbstractRE {
 
       final List<CoreLabel> labels = stanford.getLabels(stentence);
       // for all words between two entities
-      for (int i = 0; (i + 1) < sorted.size(); i++) {
+      for (int i = 0; i + 1 < sorted.size(); i++) {
         final Entity s = index.get(sorted.get(i));
         final Entity o = index.get(sorted.get(i + 1));
 
@@ -179,13 +179,13 @@ public class PattyEN extends AbstractRE {
         boolean found = false;
         final List<CoreLabel> pattern = new ArrayList<>();
         for (final CoreLabel coreLabel : labels) {
-          if (found && (coreLabel.beginPosition() == oStart)) {
+          if (found && coreLabel.beginPosition() == oStart) {
             found = false;
           }
           if (found) {
             pattern.add(coreLabel);
           }
-          if (coreLabel.endPosition() == (sStart + s.getText().length())) {
+          if (coreLabel.endPosition() == sStart + s.getText().length()) {
             found = true;
           }
         } // end for
@@ -267,7 +267,7 @@ public class PattyEN extends AbstractRE {
             break;
           }
 
-          if ((counter == sentencePath.size()) && (counter == pattyPatternToken.size())) {
+          if (counter == sentencePath.size() && counter == pattyPatternToken.size()) {
             _relations.addAll(paraphrasesIndex.get(pattern));
           }
           index++;
@@ -298,18 +298,18 @@ public class PattyEN extends AbstractRE {
            .filter(line -> !line.startsWith("TrueORFalse"))//
            // .filter(line->line.isEmpty())//
            .collect(Collectors.toList());
-
+  
        final Set<String> patternBlock = new TreeSet<>();
        boolean newBlock = false;
        for (final String pattern : list) {
-
+  
          // read block
          if (!pattern.trim().isEmpty()) {
            patternBlock.add(pattern);
          } else {
            newBlock = true;
          }
-
+  
          // process block
          if (newBlock) {
            String p = "";
@@ -327,7 +327,7 @@ public class PattyEN extends AbstractRE {
            if (p.isEmpty()) {
              LOG.error("not found " + patternBlock);
            }
-
+  
            newBlock = false;
            patternBlock.clear();
          } // end block

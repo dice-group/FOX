@@ -15,7 +15,7 @@ import org.aksw.fox.data.Relation;
 import org.aksw.fox.tools.re.AbstractRE;
 import org.aksw.ocelot.application.Application;
 import org.aksw.ocelot.application.IOcelot;
-import org.aksw.ocelot.common.config.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpedia;
 import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipeExtended;
 
@@ -26,18 +26,17 @@ import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipeExtended;
  */
 public class OcelotEN extends AbstractRE {
 
-  static String file = "data/ocelot/config";
   static {
-    CfgManager.setFolder(file);
+    CfgManager.cfgFolder = "data/ocelot/config";
   }
 
-  IOcelot ocelot = new Application(file);
+  IOcelot ocelot = new Application(CfgManager.cfgFolder);
 
   public OcelotEN() {}
 
   protected URI toUri(final String uri) {
     try {
-      return (new URI(uri));
+      return new URI(uri);
     } catch (final URISyntaxException e) {
       LOG.error(e.getLocalizedMessage(), e);
     }
@@ -49,7 +48,7 @@ public class OcelotEN extends AbstractRE {
     for (final String u : uris) {
       final URI uri = toUri(u);
       if (uri != null) {
-        urisSet.add((uri));
+        urisSet.add(uri);
       }
     }
     return urisSet;
@@ -81,7 +80,7 @@ public class OcelotEN extends AbstractRE {
       final Map<Integer, Entity> index = Entity.indexToEntity(sentenceToEntities.get(sentenceID));
       final List<Integer> sorted = new ArrayList<>(new TreeSet<>(index.keySet()));
 
-      for (int i = 0; (i + 1) < sorted.size(); i++) {
+      for (int i = 0; i + 1 < sorted.size(); i++) {
 
         final Entity subject = index.get(sorted.get(i));
         final Entity object = index.get(sorted.get(i + 1));
@@ -99,7 +98,7 @@ public class OcelotEN extends AbstractRE {
                 oStart, oStart + object.getText().length()//
             );
 
-        if ((null != uris) && (uris.size() > 0)) {
+        if (null != uris && uris.size() > 0) {
           for (final String uri : uris) {
             final String p = uri.startsWith(DBpedia.ns_dbpedia_ontology) ? //
                 uri : DBpedia.ns_dbpedia_ontology.concat(uri);

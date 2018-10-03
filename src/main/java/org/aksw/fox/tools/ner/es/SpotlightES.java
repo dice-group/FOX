@@ -9,6 +9,4 @@ public class SpotlightES extends SpotlightCommon {
   public SpotlightES() {
     super(new Locale("es", "ES"));
   }
-
-
 }

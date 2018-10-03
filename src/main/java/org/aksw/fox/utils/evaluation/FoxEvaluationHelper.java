@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.evaluation.CrossValidation;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -30,7 +30,7 @@ public class FoxEvaluationHelper {
       CrossValidation.class.getName().concat(".runs");
 
   protected int folds = 10;
-  protected int runs = Integer.valueOf(FoxCfg.get(CFG_KEY_CROSSVALIDATION_RUNS));
+  protected int runs = Integer.valueOf(PropertiesLoader.get(CFG_KEY_CROSSVALIDATION_RUNS));
 
   // columns
   protected int col_run = 0;
@@ -93,7 +93,7 @@ public class FoxEvaluationHelper {
           foxEval.setOutputFile(String.valueOf(getopt.getOptarg()));
           break;
         case 'm':
-          meanOn = (Boolean.valueOf(getopt.getOptarg()));
+          meanOn = Boolean.valueOf(getopt.getOptarg());
           break;
       }
     }
@@ -154,7 +154,7 @@ public class FoxEvaluationHelper {
     cur.add(list.get(col_classs));
 
     for (int i = row_a; i < list.size(); i++) {
-      final double v = (Double.valueOf(list.get(i)) / runs);
+      final double v = Double.valueOf(list.get(i)) / runs;
       cur.add(String.valueOf(v));
     }
     meanValues.add(cur);
@@ -219,7 +219,7 @@ public class FoxEvaluationHelper {
         for (int i = 0; i < row_recallIndex; i++) {
           l.add(value.get(i));
         }
-        for (int i = row_recallIndex; i < (value.size() - 2); i++) {
+        for (int i = row_recallIndex; i < value.size() - 2; i++) {
           l.add(String.valueOf(Math.round(Double.valueOf(value.get(i)) * 10000) / 100D));
         }
         l.add(
@@ -435,7 +435,7 @@ public class FoxEvaluationHelper {
 
       Double mcc = 0D;
       if (d > 0) {
-        mcc = ((tp * tn) - (fp * fn)) / Math.sqrt(d);
+        mcc = (tp * tn - fp * fn) / Math.sqrt(d);
       }
 
       row.add(mcc.toString());
@@ -452,8 +452,8 @@ public class FoxEvaluationHelper {
 
       final Double tp = getTP(row), fp = getFP(row), fn = getFN(row), tn = getTN(row);
       Double accuracy = 0D;
-      if ((tp + fn + fp + tn) > 0) {
-        accuracy = 1D - (Double.valueOf(tp + tn) / Double.valueOf(tp + fn + fp + tn));
+      if (tp + fn + fp + tn > 0) {
+        accuracy = 1D - Double.valueOf(tp + tn) / Double.valueOf(tp + fn + fp + tn);
       }
 
       row.add(accuracy.toString());
@@ -471,7 +471,7 @@ public class FoxEvaluationHelper {
 
       final Double tp = getTP(row), fp = getFP(row), fn = getFN(row), tn = getTN(row);
       Double accuracy = 0D;
-      if ((tp + fn + fp + tn) > 0) {
+      if (tp + fn + fp + tn > 0) {
         accuracy = Double.valueOf(tp + tn) / Double.valueOf(tp + fn + fp + tn);
       }
 
@@ -489,7 +489,7 @@ public class FoxEvaluationHelper {
       }
       final Double precision = Double.valueOf(row.get(row_precisionIndex));
       final Double recall = Double.valueOf(row.get(row_recallIndex));
-      if ((precision + recall) > 0) {
+      if (precision + recall > 0) {
         row.add(String.valueOf(
             2 * (Double.valueOf(precision * recall) / Double.valueOf(precision + recall))));
       } else {
@@ -568,11 +568,11 @@ public class FoxEvaluationHelper {
       String[] row = null;
       while ((row = csvReader.readNext()) != null) {
         if (!headeradded) {
-          values.add(new ArrayList<String>(Arrays.asList(header)));
+          values.add(new ArrayList<>(Arrays.asList(header)));
           headeradded = true;
         }
         if (row.length == header.length) {
-          values.add(new ArrayList<String>(Arrays.asList(row)));
+          values.add(new ArrayList<>(Arrays.asList(row)));
         }
       }
       csvReader.close();

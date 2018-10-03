@@ -1,12 +1,13 @@
 package org.aksw.fox;
 
-import org.aksw.fox.exception.PortInUseException;
+import java.io.IOException;
+
 import org.aksw.fox.webservice.FoxServer;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Test;
 
-import junit.framework.Assert;
 
 public class TestServer {
 
@@ -14,7 +15,7 @@ public class TestServer {
 
   FoxServer server = null;
 
-  public TestServer() throws PortInUseException {
+  public TestServer() throws IOException {
     server = new FoxServer();
   }
 

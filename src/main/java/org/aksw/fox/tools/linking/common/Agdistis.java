@@ -20,6 +20,7 @@ import org.aksw.agdistis.datatypes.NamedEntityInText;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Voc;
 import org.aksw.fox.tools.linking.AbstractLinking;
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
@@ -35,6 +36,11 @@ public class Agdistis extends AbstractLinking {
   protected String endpoint;
 
   public Agdistis() {}
+
+  public Agdistis(final Class<?> classs) {
+    this(CfgManager.getCfg(classs));
+
+  }
 
   public Agdistis(final XMLConfiguration cfg) {
     endpoint = cfg.getString(CFG_KEY_AGDISTIS_ENDPOINT);
@@ -137,7 +143,7 @@ public class Agdistis extends AbstractLinking {
       LOG.debug("addURItoEntities ...");
     }
 
-    if ((json != null) && (json.length() > 0)) {
+    if (json != null && json.length() > 0) {
 
       final JSONArray array = (JSONArray) JSONValue.parse(json);
       if (array != null) {
@@ -147,7 +153,7 @@ public class Agdistis extends AbstractLinking {
           final String disambiguatedURL =
               (String) ((JSONObject) array.get(i)).get("disambiguatedURL");
 
-          if ((start != null) && (start > -1)) {
+          if (start != null && start > -1) {
             final Entity entity = indexMap.get(start);
 
             if (disambiguatedURL == null) {

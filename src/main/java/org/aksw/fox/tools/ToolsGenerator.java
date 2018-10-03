@@ -1,5 +1,6 @@
 package org.aksw.fox.tools;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,12 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.aksw.fox.exception.LoadingNotPossibleException;
-import org.aksw.fox.exception.UnsupportedLangException;
 import org.aksw.fox.tools.linking.ILinking;
 import org.aksw.fox.tools.re.RETools;
-import org.aksw.fox.utils.CfgManager;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -68,7 +67,7 @@ public class ToolsGenerator implements IToolsGenerator {
 
         // disambiguation tool
         final String disambiguationTool = CFG.getString(CFG_KEY_DISAMBIGUATION_TOOL.concat(key));
-        if ((disambiguationTool != null) && !disambiguationTool.isEmpty()) {
+        if (disambiguationTool != null && !disambiguationTool.isEmpty()) {
           disambiguationTools.put(lang, disambiguationTool);
         }
 
@@ -107,7 +106,7 @@ public class ToolsGenerator implements IToolsGenerator {
    * @throws LoadingNotPossibleException
    */
   public NERTools getNERTools(final String lang) {
-    if (usedLang.contains(lang) && (nerTools.get(lang) != null) && !nerTools.get(lang).isEmpty()) {
+    if (usedLang.contains(lang) && nerTools.get(lang) != null && !nerTools.get(lang).isEmpty()) {
       final NERTools tools = new NERTools(nerTools.get(lang), lang);
       return tools;
     } else {
@@ -116,7 +115,7 @@ public class ToolsGenerator implements IToolsGenerator {
   }
 
   public RETools getRETools(final String lang) {
-    if (usedLang.contains(lang) && (reTools.get(lang) != null) && !reTools.get(lang).isEmpty()) {
+    if (usedLang.contains(lang) && reTools.get(lang) != null && !reTools.get(lang).isEmpty()) {
       final RETools tools = new RETools(reTools.get(lang), lang);
       return tools;
     } else {
@@ -128,25 +127,22 @@ public class ToolsGenerator implements IToolsGenerator {
    *
    * @param lang
    * @return
-   * @throws UnsupportedLangException
-   * @throws LoadingNotPossibleException
+   * @throws IOException
    */
-  public ILinking getDisambiguationTool(final String lang)
-      throws UnsupportedLangException, LoadingNotPossibleException {
+  public ILinking getDisambiguationTool(final String lang) throws IOException {
     if (usedLang.contains(lang)) {
       if (disambiguationTools.get(lang) != null) {
-        return (ILinking) FoxCfg.getClass(disambiguationTools.get(lang));
+        return (ILinking) PropertiesLoader.getClass(disambiguationTools.get(lang));
       } else {
-        throw new UnsupportedLangException(
+        throw new UnsupportedOperationException(
             "Disambiguation tool for language " + lang + " is not supported");
       }
     } else {
-      throw new UnsupportedLangException("Language " + lang + " is not supported.");
+      throw new UnsupportedOperationException("Language " + lang + " is not supported.");
     }
   }
 
-  public static void main(final String[] a)
-      throws UnsupportedLangException, LoadingNotPossibleException {
+  public static void main(final String[] a) throws UnsupportedOperationException {
     final ToolsGenerator tg = new ToolsGenerator();
     for (final String l : usedLang) {
       tg.getNERTools(l);

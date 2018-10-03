@@ -39,5 +39,4 @@ public class StanfordES extends StanfordCommon {
     entityClasses.put("O", EntityClassMap.N);
     entityClasses.put("OTROS", EntityClassMap.N);
   }
-
 }

@@ -1,5 +1,6 @@
 package org.aksw.fox.webservice;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,7 +15,6 @@ import java.util.stream.Collectors;
 import org.aksw.fox.Fox;
 import org.aksw.fox.IFox;
 import org.aksw.fox.data.FoxParameter;
-import org.aksw.fox.exception.PortInUseException;
 import org.aksw.fox.output.FoxJena;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.FoxLanguageDetector;
@@ -58,10 +58,11 @@ public class FoxServer extends AServer {
   /**
    *
    * Constructor.
+   * 
+   * @throws IOException
    *
-   * @throws PortInUseException
    */
-  public FoxServer() throws PortInUseException {
+  public FoxServer() throws IOException {
     super("/public/demo");
   }
 
@@ -160,7 +161,7 @@ public class FoxServer extends AServer {
         Map<String, String> parameter = defaultParameter();
 
         // JSON
-        if ((ct != null) && (ct.indexOf(jsonContentType) != -1)) {
+        if (ct != null && ct.indexOf(jsonContentType) != -1) {
           final JSONObject jo = new JSONObject(req.body());
 
           @SuppressWarnings("unchecked")
@@ -179,7 +180,7 @@ public class FoxServer extends AServer {
           LOG.info("parameter:");
           LOG.info(parameter);
 
-        } else if ((ct != null) && (ct.indexOf(turtleContentType) != -1)) {
+        } else if (ct != null && ct.indexOf(turtleContentType) != -1) {
           // TURTLE
           // read query parameter if any
           final QueryParamsMap map = req.queryMap();

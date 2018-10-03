@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.fox.exception.LoadingNotPossibleException;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -42,8 +41,8 @@ public class RETools {
       relationTool.put(lang, new ArrayList<>());
       for (final String cl : toolsList) {
         try {
-          relationTool.get(lang).add(((IRE) FoxCfg.getClass(cl)));
-        } catch (final LoadingNotPossibleException e) {
+          relationTool.get(lang).add((IRE) PropertiesLoader.getClass(cl));
+        } catch (final Exception e) {
           LOG.warn("Could not load " + cl);
         }
       }

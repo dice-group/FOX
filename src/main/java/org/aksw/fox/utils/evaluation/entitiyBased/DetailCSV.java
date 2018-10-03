@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.evaluation.CrossValidation;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import weka.core.Instances;
@@ -34,13 +34,13 @@ public class DetailCSV {
   // need to be set
   public static final String CFG_KEY_CROSSVALIDATION_RUNS =
       CrossValidation.class.getName().concat(".runs");
-  protected static int runs = Integer.valueOf(FoxCfg.get(CFG_KEY_CROSSVALIDATION_RUNS));
+  protected static int runs = Integer.valueOf(PropertiesLoader.get(CFG_KEY_CROSSVALIDATION_RUNS));
 
   //
   static int currentRow = 0;
 
-  static Map<String, Integer> defaultmap = new HashMap<String, Integer>();
-  static Map<String, Map<String, Integer>> matrix = new HashMap<String, Map<String, Integer>>();
+  static Map<String, Integer> defaultmap = new HashMap<>();
+  static Map<String, Map<String, Integer>> matrix = new HashMap<>();
   static {
     defaultmap.put(EntityClassMap.L, 0); // a
     defaultmap.put(EntityClassMap.O, 0); // b
@@ -56,10 +56,10 @@ public class DetailCSV {
                            // debugging
 
   public static void init() {
-    matrix.put(EntityClassMap.L, new HashMap<String, Integer>(defaultmap));
-    matrix.put(EntityClassMap.O, new HashMap<String, Integer>(defaultmap));
-    matrix.put(EntityClassMap.P, new HashMap<String, Integer>(defaultmap));
-    matrix.put(EntityClassMap.N, new HashMap<String, Integer>(defaultmap));
+    matrix.put(EntityClassMap.L, new HashMap<>(defaultmap));
+    matrix.put(EntityClassMap.O, new HashMap<>(defaultmap));
+    matrix.put(EntityClassMap.P, new HashMap<>(defaultmap));
+    matrix.put(EntityClassMap.N, new HashMap<>(defaultmap));
 
     currentRow = 0;
     nullRows = 0;
@@ -91,7 +91,7 @@ public class DetailCSV {
 
           //
           if (lastOracleClass.equals(oracelclasss) && !oracelclasss.equals(EntityClassMap.N)
-              && (ii < (part.numInstances() - 1))) {
+              && ii < part.numInstances() - 1) {
             classifiedClasses.add(classifiedClass);
           } else {
 

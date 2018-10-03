@@ -9,5 +9,4 @@ public class SpotlightFR extends SpotlightCommon {
   public SpotlightFR() {
     super(Locale.FRENCH);
   }
-
 }

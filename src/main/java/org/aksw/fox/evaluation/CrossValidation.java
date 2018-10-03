@@ -16,7 +16,7 @@ import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.fox.nerlearner.reader.INERReader;
 import org.aksw.fox.nerlearner.reader.NERReaderFactory;
 import org.aksw.fox.tools.NERTools;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -43,7 +43,7 @@ public class CrossValidation {
   // cross-validation options
   static int seed = 1;
   static int folds = 10;
-  static int runs = Integer.valueOf(FoxCfg.get(CFG_KEY_CROSSVALIDATION_RUNS));
+  static int runs = Integer.valueOf(PropertiesLoader.get(CFG_KEY_CROSSVALIDATION_RUNS));
 
   // current states
   static String run = "";
@@ -123,7 +123,7 @@ public class CrossValidation {
       // perform cross-validation
       final Evaluation evalAll = new Evaluation(instances);
       for (int n = 0; n < folds; n++) {
-        LOG.info("Validation run = " + (run));
+        LOG.info("Validation run = " + run);
         LOG.info("Validation fold k = " + (n + 1));
         fold = new Integer(n + 1).toString();
 

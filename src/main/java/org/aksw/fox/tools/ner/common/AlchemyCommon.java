@@ -14,7 +14,7 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.fox.utils.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.aksw.simba.knowledgeextraction.commons.io.Requests;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.http.client.fluent.Form;
@@ -107,7 +107,7 @@ public abstract class AlchemyCommon extends AbstractNER {
 
   protected List<Entity> alchemyNERResponseParser(final JSONObject o) {
     final List<Entity> list = new ArrayList<>();
-    if ((o == null) || (!o.has("entities"))) {
+    if (o == null || !o.has("entities")) {
       return list;
     } else {
       final JSONArray entities = o.getJSONArray("entities");

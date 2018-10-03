@@ -2,8 +2,6 @@ package org.aksw.fox.tools.re;
 
 import java.util.List;
 
-import org.aksw.fox.exception.LoadingNotPossibleException;
-import org.aksw.fox.exception.UnsupportedLangException;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -14,7 +12,7 @@ public class REToolsTest {
   public static final Logger LOG = LogManager.getLogger(REToolsTest.class);
 
   @Test
-  public void test() throws UnsupportedLangException, LoadingNotPossibleException {
+  public void test() {
 
     LOG.info("REToolsTest start ...");
     final ToolsGenerator toolsGenerator = new ToolsGenerator();

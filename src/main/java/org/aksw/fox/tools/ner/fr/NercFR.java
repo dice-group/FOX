@@ -9,8 +9,8 @@ import java.util.List;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.common.OpenNLPCommon;
-import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxTextUtil;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.vicomtech.opennlp.tools.namefind.NameFinderME;
 import org.vicomtech.opennlp.tools.namefind.TokenNameFinderModel;
 
@@ -93,8 +93,8 @@ public class NercFR extends OpenNLPCommon {
             word = word.trim();
 
             float p = Entity.DEFAULT_RELEVANCE;
-            if (FoxCfg.get("openNLPDefaultRelevance") != null
-                && !Boolean.valueOf(FoxCfg.get("openNLPDefaultRelevance"))) {
+            if (PropertiesLoader.get("openNLPDefaultRelevance") != null
+                && !Boolean.valueOf(PropertiesLoader.get("openNLPDefaultRelevance"))) {
               p = Double.valueOf(probs[ii]).floatValue();
             }
             final String cl = mapTypeToSupportedType(span.getType());
@@ -106,11 +106,6 @@ public class NercFR extends OpenNLPCommon {
         nameFinder.clearAdaptiveData();
       }
     }
-    // TRACE
-    if (LOG.isTraceEnabled()) {
-      LOG.trace(list);
-    } // TRACE
     return list;
   }
-
 }

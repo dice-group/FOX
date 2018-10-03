@@ -10,5 +10,4 @@ public class OpenNLPNL extends OpenNLPCommon {
   public OpenNLPNL() {
     super(modelPath);
   }
-
 }

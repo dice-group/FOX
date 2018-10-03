@@ -10,5 +10,4 @@ public class OpenNLPFR extends OpenNLPCommon {
   public OpenNLPFR() {
     super(modelPath);
   }
-
 }

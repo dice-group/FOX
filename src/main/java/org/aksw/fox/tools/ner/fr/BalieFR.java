@@ -9,5 +9,4 @@ public class BalieFR extends BalieCommon {
   public BalieFR() {
     super(Balie.LANGUAGE_FRENCH);
   }
-
 }

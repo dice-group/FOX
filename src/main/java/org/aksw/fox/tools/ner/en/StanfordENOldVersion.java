@@ -9,8 +9,8 @@ import java.util.Properties;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.fox.utils.FoxCfg;
 import org.aksw.fox.utils.FoxTextUtil;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ie.crf.CRFCliqueTree;
@@ -39,7 +39,7 @@ public class StanfordENOldVersion extends AbstractNER {
       StanfordENOldVersion.class.getName().concat(".classifier");
 
   protected CRFClassifier<CoreLabel> classifier =
-      CRFClassifier.getClassifierNoExceptions(FoxCfg.get(CFG_KEY_STANFORD_CLASSIFIER));
+      CRFClassifier.getClassifierNoExceptions(PropertiesLoader.get(CFG_KEY_STANFORD_CLASSIFIER));
 
   /*
    * Gets a list with (CoreLabel, likelihood) with max likelihood at each point in a document.
@@ -80,7 +80,7 @@ public class StanfordENOldVersion extends AbstractNER {
 
       // token
       final String options = "americanize=false,asciiQuotes=true,ptb3Escaping=false";
-      final PTBTokenizer<CoreLabel> tokenizer = new PTBTokenizer<CoreLabel>(
+      final PTBTokenizer<CoreLabel> tokenizer = new PTBTokenizer<>(
           new StringReader(sentence), new CoreLabelTokenFactory(), options);
 
       sentence = null;
@@ -125,8 +125,8 @@ public class StanfordENOldVersion extends AbstractNER {
           } else {
             if (type != EntityClassMap.getNullCategory()) {
               float p = Entity.DEFAULT_RELEVANCE;
-              if ((FoxCfg.get("stanfordDefaultRelevance") != null)
-                  && !Boolean.valueOf(FoxCfg.get("stanfordDefaultRelevance"))) {
+              if (PropertiesLoader.get("stanfordDefaultRelevance") != null
+                  && !Boolean.valueOf(PropertiesLoader.get("stanfordDefaultRelevance"))) {
                 p = prob.second().floatValue();
               }
               list.add(getEntity(currentToken, type, p, getToolName()));
@@ -145,15 +145,15 @@ public class StanfordENOldVersion extends AbstractNER {
   public static String stanford(final String stanfordTag) {
     switch (stanfordTag) {
       case "ORGANIZATION":
-        return (EntityClassMap.O);
+        return EntityClassMap.O;
       case "LOCATION":
-        return (EntityClassMap.L);
+        return EntityClassMap.L;
       case "PERSON":
-        return (EntityClassMap.P);
+        return EntityClassMap.P;
       case "PEOPLE":
-        return (EntityClassMap.P);
+        return EntityClassMap.P;
       case "O":
-        return (EntityClassMap.N);
+        return EntityClassMap.N;
     }
     return EntityClassMap.N;
   }

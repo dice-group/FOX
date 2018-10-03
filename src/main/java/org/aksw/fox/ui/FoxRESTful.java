@@ -1,8 +1,10 @@
 package org.aksw.fox.ui;
 
-import org.aksw.fox.exception.PortInUseException;
-import org.aksw.fox.utils.FoxCfg;
+import java.io.IOException;
+
 import org.aksw.fox.webservice.FoxServer;
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -18,18 +20,23 @@ public class FoxRESTful {
   /**
    * Starts FOX web service.
    *
+   * @throws IOException
+   *
    * @throws PortInUseException
    */
-  public static void main(final String[] args) throws PortInUseException {
-    LOG.info("Fox web service starting ...");
+  public static void main(final String[] args) throws IOException {
+
+
+    PropertiesLoader.setPropertiesFile("fox.properties");
+    CfgManager.cfgFolder = "data/fox/cfg";
+
     final FoxServer server = new FoxServer();
-    if (FoxCfg.loadFile(FoxCfg.CFG_FILE)) {
-      try {
-        server.start();
-      } catch (final Exception e) {
-        LOG.error(e.getLocalizedMessage(), e);
-      }
+    try {
+      server.start();
+    } catch (final Exception e) {
+      LOG.error(e.getLocalizedMessage(), e);
     }
+
     LOG.info("Fox web service ready.");
   }
 }
