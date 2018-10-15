@@ -53,9 +53,9 @@
 			Leipzig, AKSW Maven2 Repository</name> <url>http://maven.aksw.org/archiva/repository/snapshots</url> 
 			</repository> -->
 		<repository>
-			<id>edu.illinois.cs.cogcomp</id>
-			<name>Cognitive Computation Group</name>
-			<url>http://cogcomp.cs.illinois.edu/m2repo</url>
+			<id>CogCompSoftware</id>
+			<name>CogCompSoftware</name>
+			<url>http://cogcomp.org/m2repo/</url>
 		</repository>
 		<repository>
 			<id>local repository</id>
