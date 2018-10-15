@@ -150,7 +150,7 @@ public class Agdistis extends AbstractLinking {
       if (array != null) {
         for (int i = 0; i < array.length(); i++) {
 
-          final Integer start = ((Long) array.getJSONObject(i).get("start")).intValue();
+          final Integer start = array.getJSONObject(i).getInt("start");
           final String disambiguatedURL = (String) array.getJSONObject(i).get("disambiguatedURL");
 
           if (start != null && start > -1) {

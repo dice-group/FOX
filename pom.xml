@@ -23,7 +23,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<system.libs>${project.basedir}/lib</system.libs>
 		<system.data>${project.basedir}/data</system.data>
-        <project.javadocdir>/src/main/resources/public/demo/doc</project.javadocdir>
+		<project.javadocdir>/src/main/resources/public/demo/doc</project.javadocdir>
 		<!-- Java DOC -->
 		<maven.javadoc.skip>false</maven.javadoc.skip>
 
@@ -59,9 +59,9 @@
 			Leipzig, AKSW Maven2 Repository</name> <url>http://maven.aksw.org/archiva/repository/snapshots</url> 
 			</repository> -->
 		<repository>
-			<id>edu.illinois.cs.cogcomp</id>
-			<name>Cognitive Computation Group</name>
-			<url>http://cogcomp.cs.illinois.edu/m2repo</url>
+			<id>CogCompSoftware</id>
+			<name>CogCompSoftware</name>
+			<url>http://cogcomp.org/m2repo/</url>
 		</repository>
 		<repository>
 			<id>local repository</id>
@@ -74,6 +74,12 @@
 	</repositories>
 
 	<dependencies>
+		<!-- sparkjava -->
+		<dependency>
+			<groupId>com.sparkjava</groupId>
+			<artifactId>spark-core</artifactId>
+			<version>2.8.0</version>
+		</dependency>
 		<!-- test -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -131,14 +137,9 @@
 			<scope>system</scope>
 			<systemPath>${system.libs}/nerc-fr/opennlp-tools-custom-0.0.1.jar</systemPath>
 		</dependency>
-		<!-- https://github.com/giusepperizzo/nerd4java -->
-		<dependency>
-			<groupId>fr.eurecom</groupId>
-			<artifactId>nerd</artifactId>
-			<version>0.0.1</version>
-			<scope>system</scope>
-			<systemPath>${system.libs}/nerd/client-0.0.1-SNAPSHOT.jar</systemPath>
-		</dependency>
+		<!-- https://github.com/giusepperizzo/nerd4java <dependency> <groupId>fr.eurecom</groupId> 
+			<artifactId>nerd</artifactId> <version>0.0.1</version> <scope>system</scope> 
+			<systemPath>${system.libs}/nerd/client-0.0.1-SNAPSHOT.jar</systemPath> </dependency> -->
 
 		<!-- https://mvnrepository.com/artifact/com.github.mpkorstanje/simmetrics-core -->
 		<dependency>
@@ -304,38 +305,6 @@
 			<version>4.5.6</version>
 		</dependency>
 
-		<!-- grizzly -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<!-- <version>3.0.1</version> -->
-			<version>3.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.containers</groupId>
-			<artifactId>jersey-container-grizzly2-servlet</artifactId>
-			<!-- <version>2.9.1</version> -->
-			<version>2.26-b03</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-processing</artifactId>
-			<!-- <version>2.11</version> -->
-			<version>2.26-b03</version>
-		</dependency>
-
-		<!-- nerdml dependency -->
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-core</artifactId>
-			<version>1.17.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>1.17.1</version>
-		</dependency>
-		<!-- nerdml dependency end -->
 		<dependency>
 			<groupId>org.xerial</groupId>
 			<artifactId>sqlite-jdbc</artifactId>
@@ -391,12 +360,7 @@
 			<artifactId>ant</artifactId>
 			<version>1.10.1</version>
 		</dependency>
-		<!-- sparkjava -->
-		<dependency>
-			<groupId>com.sparkjava</groupId>
-			<artifactId>spark-core</artifactId>
-			<version>2.5</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.aksw</groupId>
 			<artifactId>gerbil.nif.transfer</artifactId>
@@ -410,17 +374,6 @@
 		</dependency>
 
 		<!-- ocelot dependencies -->
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4.7</version>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>javax.mail-api</artifactId>
-			<version>1.5.5</version>
-		</dependency>
 
 		<!-- external dependencies -->
 		<dependency>
@@ -455,69 +408,13 @@
 			<version>5.1.0</version>
 		</dependency>
 
-		<!-- clearnlp -->
-		<dependency>
-			<groupId>com.clearnlp</groupId>
-			<artifactId>clearnlp</artifactId>
-			<version>2.0.2</version>
-		</dependency>
-		<!-- clearnlp models (General domain) -->
-		<dependency>
-			<groupId>com.clearnlp</groupId>
-			<artifactId>clearnlp-dictionary</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.clearnlp</groupId>
-			<artifactId>clearnlp-general-en-pos</artifactId>
-			<version>1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.clearnlp</groupId>
-			<artifactId>clearnlp-general-en-dep</artifactId>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.clearnlp</groupId>
-			<artifactId>clearnlp-general-en-srl</artifactId>
-			<version>1.1</version>
-		</dependency>
-		<!-- clearnlp models (Medical domain) -->
-		<dependency>
-			<groupId>com.clearnlp</groupId>
-			<artifactId>clearnlp-medical-en-pos</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.clearnlp</groupId>
-			<artifactId>clearnlp-medical-en-dep</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.clearnlp</groupId>
-			<artifactId>clearnlp-medical-en-srl</artifactId>
-			<version>1.0</version>
-		</dependency>
-
-		<!-- commons-compress
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-compress</artifactId>
-			<version>1.8</version>
-		</dependency> -->
-
 		<!--jsoup -->
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>1.7.3</version>
 		</dependency>
-		<!-- mongo-java-driver -->
-		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongo-java-driver</artifactId>
-			<version>3.0.2</version>
-		</dependency>
+
 		<!-- nxparser -->
 		<dependency>
 			<groupId>org.semanticweb.yars</groupId>
@@ -525,60 +422,14 @@
 			<version>1.2.3</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.deeplearning4j</groupId>
-			<artifactId>deeplearning4j-core</artifactId>
-			<version>${dl4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.deeplearning4j</groupId>
-			<artifactId>deeplearning4j-nlp</artifactId>
-			<version>${dl4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.nd4j</groupId>
-			<artifactId>nd4j-api</artifactId>
-			<version>${nd4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.nd4j</groupId>
-			<artifactId>nd4j-jblas</artifactId>
-			<version>${nd4j.version}</version>
-		</dependency>
 
-		<dependency>
-			<groupId>net.sf.jung</groupId>
-			<artifactId>jung-api</artifactId>
-			<version>2.1</version>
-		</dependency>
 
-		<dependency>
-			<groupId>net.sf.jung</groupId>
-			<artifactId>jung-graph-impl</artifactId>
-			<version>2.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>net.sf.jung</groupId>
-			<artifactId>jung-algorithms</artifactId>
-			<version>2.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>net.sf.jung</groupId>
-			<artifactId>jung-io</artifactId>
-			<version>2.1</version>
-		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.owlapi</groupId>
 			<artifactId>owlapi-distribution</artifactId>
 			<version>5.1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jgrapht</groupId>
-			<artifactId>jgrapht-core</artifactId>
-			<version>1.0.0</version>
-		</dependency>
+
 	</dependencies>
 
 	<!-- build -->
