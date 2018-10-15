@@ -17,7 +17,7 @@ cache:
 install:
     - true
 
-script: mvn clean compile -DskipTests=true
+script: mvn clean compile --quiet -DskipTests=true
 
 notifications:
   email:
