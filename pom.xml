@@ -67,10 +67,6 @@
 			<id>local repository</id>
 			<url>file://${project.basedir}/repository</url>
 		</repository>
-		<repository>
-			<id>local repository ocelot</id>
-			<url>file://${project.basedir}/repositoryOcelot</url>
-		</repository>
 	</repositories>
 
 	<dependencies>
@@ -375,7 +371,7 @@
 
 		<!-- ocelot dependencies -->
 
-		<!-- external dependencies -->
+		<!-- external dependencies
 		<dependency>
 			<groupId>algs</groupId>
 			<artifactId>algs</artifactId>
@@ -400,7 +396,7 @@
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
 			<version>4.0</version>
-		</dependency>
+		</dependency> -->
 		<!-- -->
 		<dependency>
 			<groupId>org.apache.solr</groupId>
