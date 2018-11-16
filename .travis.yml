@@ -18,10 +18,3 @@ install:
     - true
 
 script: mvn clean compile --quiet -DskipTests=true
-
-notifications:
-  email:
-    recipients:
-      - speck@informatik.uni-leipzig.de
-    on_success: change
-    on_failure: change
