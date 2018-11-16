@@ -240,9 +240,9 @@
 
 		<!-- apache -->
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-compress</artifactId>
-			<version>1.0</version>
+		  <groupId>org.apache.commons</groupId>
+		  <artifactId>commons-compress</artifactId>
+		  <version>[1.18,)</version>
 		</dependency>
 		<!-- open nlp -->
 		<dependency>
