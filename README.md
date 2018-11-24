@@ -1,16 +1,18 @@
 [4]: http://fox.aksw.org
 [6]: http://fox-demo.aksw.org
-
 [7]: https://github.com/AKSW/FOX/releases/tag/v2.2.1
 [8]: https://github.com/AKSW/FOX/releases/tag/v2.3.0
 [9]: https://github.com/dice-group/FOX/tree/2.5.0
 
 [![Build Status](https://travis-ci.org/dice-group/FOX.svg?branch=master)](https://travis-ci.org/dice-group/FOX)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/348e14317ea140cbb98a110c40718d88)](https://www.codacy.com/app/renespeck/FOX?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dice-group/FOX&amp;utm_campaign=Badge_Grade)
+[![BCH compliance](https://bettercodehub.com/edge/badge/dice-group/FOX?branch=master)](https://bettercodehub.com/)
+[![Project Stats](https://www.openhub.net/p/FOX-Framework/widgets/project_thin_badge.gif)](https://www.openhub.net/p/FOX-Framework)
+
 
 ## FOX - Federated Knowledge Extraction Framework
 FOX ([http://fox.aksw.org][4]) is a framework that integrates the Linked Data Cloud and makes use of the diversity of NLP algorithms to extract RDF triples of high accuracy out of NL.
-In its current version, it integrates and merges the results of Named Entity Recognition tools.
-<!--Keyword Extraction and Relation Extraction tools will be merged soon.-->
+In its current version, it integrates and merges the results of Named Entity Recognition tools as well as it integrates tools for Relation Extraction. 
 
 ## Requirements
 Java 8, Maven 3, graphviz (for JavaDoc only)
@@ -23,8 +25,6 @@ Java 8, Maven 3, graphviz (for JavaDoc only)
 This version supports multiple languages for NER, NED and RE.
 
 Live Demo: [http://fox-demo.aksw.org][6]
-
-Release: [(Version 2.5.0)][9]
 
 ## How to cite
 
@@ -58,7 +58,7 @@ extended version for multiple languages
  ```
 
 ## License
-FOX is licensed under the [GNU GPL Version 2, June 1991](LICENSE) (license document is in the application folder).
+FOX is licensed under the [GNU Affero General Public License v3.0](LICENSE) (license document is in the application folder).
 
 FOX uses several other libraries. An incomplete list is as follows:
 * Illinois NLP Pipeline  (University of Illinois Research and Academic Use License)
