@@ -370,33 +370,6 @@
 		</dependency>
 
 		<!-- ocelot dependencies -->
-
-		<!-- external dependencies
-		<dependency>
-			<groupId>algs</groupId>
-			<artifactId>algs</artifactId>
-			<version>0.0.4</version>
-		</dependency>
-		<dependency>
-			<groupId>rJava</groupId>
-			<artifactId>JRI</artifactId>
-			<version>0.9-8</version>
-		</dependency>
-		<dependency>
-			<groupId>rJava</groupId>
-			<artifactId>JRIEngine</artifactId>
-			<version>0.9-8</version>
-		</dependency>
-		<dependency>
-			<groupId>rJava</groupId>
-			<artifactId>REngine</artifactId>
-			<version>0.9-8</version>
-		</dependency>
-		<dependency>
-			<groupId>com.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-			<version>4.0</version>
-		</dependency> -->
 		<!-- -->
 		<dependency>
 			<groupId>org.apache.solr</groupId>
@@ -417,8 +390,6 @@
 			<artifactId>nxparser</artifactId>
 			<version>1.2.3</version>
 		</dependency>
-
-
 
 		<dependency>
 			<groupId>net.sourceforge.owlapi</groupId>
@@ -535,15 +506,7 @@
 					<argLine>-Xmx16G</argLine>
 				</configuration>
 			</plugin>
-			<!-- UML with less information -->
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId> 
-				<version>2.5</version> <configuration> <doclet>org.jboss.apiviz.APIviz</doclet> 
-				<docletArtifact> <groupId>org.jboss.apiviz</groupId> <artifactId>apiviz</artifactId> 
-				<version>1.3.2.GA</version> </docletArtifact> <useStandardDocletOptions>true</useStandardDocletOptions> 
-				<charset>UTF-8</charset> <encoding>UTF-8</encoding> <docencoding>UTF-8</docencoding> 
-				<breakiterator>true</breakiterator> <version>true</version> <author>true</author> 
-				<keywords>true</keywords> <additionalparam> -sourceclasspath ${project.build.directory}/ 
-				</additionalparam> </configuration> </plugin> -->
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
