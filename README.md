@@ -2,12 +2,16 @@
 [6]: http://fox-demo.aksw.org
 [9]: https://github.com/AKSW/FOX
 
-
 [![Build Status](https://travis-ci.org/dice-group/FOX.svg?branch=master)](https://travis-ci.org/dice-group/FOX)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/348e14317ea140cbb98a110c40718d88)](https://www.codacy.com/app/renespeck/FOX?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dice-group/FOX&amp;utm_campaign=Badge_Grade)
+[![BCH compliance](https://bettercodehub.com/edge/badge/dice-group/FOX?branch=master)](https://bettercodehub.com/)
+[![Project Stats](https://www.openhub.net/p/FOX-Framework/widgets/project_thin_badge.gif)](https://www.openhub.net/p/FOX-Framework)
+
 
 ## FOX - Federated Knowledge Extraction Framework
 FOX ([http://fox.aksw.org][4]) is a framework that integrates the Linked Data Cloud and makes use of the diversity of NLP algorithms to extract RDF triples of high accuracy out of NL.
-In its current version, it integrates and merges the results of Named Entity Recognition tools as well as integrates several Relation Extraction tools.
+
+In its current version, it integrates and merges the results of Named Entity Recognition tools as well as it integrates several Relation Extraction tools.
 
 ## Requirements
 Java 8, Maven 3, graphviz (for JavaDoc only)
@@ -55,7 +59,15 @@ The extended version for multiple languages:
  ```
 
 ## License
-FOX is licensed under the [GNU GPL Version 3, November 2007](LICENSE) (license document is in the application folder). FOX depends on several other libraries. 
+
+FOX is licensed under the [GNU Affero General Public License v3.0](LICENSE) (license document is in the application folder).
+
+FOX uses several other libraries. An incomplete list is as follows:
+* Illinois NLP Pipeline  (University of Illinois Research and Academic Use License)
+* Stanford CoreNLP (GNU GPL Version 2)
+* Apache OpenNLP (Apache License, Version 2)
+* Balie (GNU GPL Version 2)
+
 
 ## Bugs
 Found a :bug: bug? [Open an issue](https://github.com/AKSW/fox/issues/new) with some [emojis](http://emoji.muan.co). Issues without emojis are not valid. :trollface:

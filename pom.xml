@@ -243,6 +243,14 @@
 			<systemPath>${system.data}/stanford/stanford-spanish-corenlp-2015-01-08-models.jar</systemPath> 
 			</dependency> -->
 
+
+		<!-- apache -->
+		<dependency>
+		  <groupId>org.apache.commons</groupId>
+		  <artifactId>commons-compress</artifactId>
+		  <version>[1.18,)</version>
+		</dependency>
+
 		<!-- open nlp -->
 		<dependency>
 			<groupId>org.apache.opennlp</groupId>
