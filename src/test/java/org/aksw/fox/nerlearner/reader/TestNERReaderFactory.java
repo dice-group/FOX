@@ -1,15 +1,16 @@
 package org.aksw.fox.nerlearner.reader;
 
-import org.aksw.fox.exception.LoadingNotPossibleException;
-import org.aksw.fox.utils.FoxCfg;
+import java.io.IOException;
+
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class TestNERReaderFactory {
-    @Test
-    public void testInstanceofINERReader() throws LoadingNotPossibleException {
-        Assert.assertTrue(FoxCfg.loadFile("fox.properties-dist"));
-        Assert.assertNotNull(FoxCfg.get(NERReaderFactory.INER_READER_KEY));
-        Assert.assertTrue(NERReaderFactory.getINERReader() instanceof INERReader);
-    }
+  @Test
+  public void testInstanceofINERReader() throws IOException {
+    Assert.assertTrue(PropertiesLoader.loadFile("fox.properties-dist"));
+    Assert.assertNotNull(PropertiesLoader.get(NERReaderFactory.INER_READER_KEY));
+    Assert.assertTrue(NERReaderFactory.getINERReader() instanceof INERReader);
+  }
 }

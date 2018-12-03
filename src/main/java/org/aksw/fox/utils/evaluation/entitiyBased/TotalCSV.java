@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.evaluation.CrossValidation;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -23,11 +23,11 @@ public class TotalCSV {
   public static final String CFG_KEY_CROSSVALIDATION_RUNS =
       CrossValidation.class.getName().concat(".runs");
 
-  protected static int runs = Integer.valueOf(FoxCfg.get(CFG_KEY_CROSSVALIDATION_RUNS));
+  protected static int runs = Integer.valueOf(PropertiesLoader.get(CFG_KEY_CROSSVALIDATION_RUNS));
 
   public static StringBuffer csv_out = null;
-  static Map<String, Integer> defaultmap = new HashMap<String, Integer>();
-  static Map<String, Map<String, Integer>> matrix = new HashMap<String, Map<String, Integer>>();
+  static Map<String, Integer> defaultmap = new HashMap<>();
+  static Map<String, Map<String, Integer>> matrix = new HashMap<>();
   static {
     defaultmap.put(EntityClassMap.L, 0); // a
     defaultmap.put(EntityClassMap.O, 0); // b
@@ -46,10 +46,10 @@ public class TotalCSV {
   static int d = 7;
 
   public static void init() {
-    matrix.put(EntityClassMap.L, new HashMap<String, Integer>(defaultmap));
-    matrix.put(EntityClassMap.O, new HashMap<String, Integer>(defaultmap));
-    matrix.put(EntityClassMap.P, new HashMap<String, Integer>(defaultmap));
-    matrix.put(EntityClassMap.N, new HashMap<String, Integer>(defaultmap));
+    matrix.put(EntityClassMap.L, new HashMap<>(defaultmap));
+    matrix.put(EntityClassMap.O, new HashMap<>(defaultmap));
+    matrix.put(EntityClassMap.P, new HashMap<>(defaultmap));
+    matrix.put(EntityClassMap.N, new HashMap<>(defaultmap));
   }
 
   public static void start() throws Exception {
@@ -67,7 +67,7 @@ public class TotalCSV {
     String currentAlg = "na";
 
     while ((nextLine = reader.readNext()) != null) {
-      if ((nextLine.length - 1) < d) {
+      if (nextLine.length - 1 < d) {
         break;
       }
       currentAlg = nextLine[classifier];

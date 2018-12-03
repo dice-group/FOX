@@ -1,7 +1,8 @@
 package org.aksw.fox.nerlearner.reader;
 
-import org.aksw.fox.exception.LoadingNotPossibleException;
-import org.aksw.fox.utils.FoxCfg;
+import java.io.IOException;
+
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -11,14 +12,14 @@ public class NERReaderFactory {
   public final static String INER_READER_KEY =
       NERReaderFactory.class.getName().concat(".readerclass");
 
-  public static INERReader getINERReader() throws LoadingNotPossibleException {
-    return getINERReader(FoxCfg.get(INER_READER_KEY));
+  public static INERReader getINERReader() throws IOException {
+    return getINERReader(PropertiesLoader.get(INER_READER_KEY));
 
   }
 
-  public static INERReader getINERReader(final String classes) throws LoadingNotPossibleException {
-    if ((classes != null) && !classes.trim().isEmpty()) {
-      return (INERReader) FoxCfg.getClass(classes);
+  public static INERReader getINERReader(final String classes) throws IOException {
+    if (classes != null && !classes.trim().isEmpty()) {
+      return (INERReader) PropertiesLoader.getClass(classes);
     } else {
       return null;
     }

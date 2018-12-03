@@ -13,7 +13,7 @@ ensemble learning.
 
 At first you have to set up the 'fox.properties' file.
 
-The value of org.aksw.fox.tools.Tools.lifeTime describes how long each NER tool will life in minutes. For the learning mode you have to set a high value, otherwise it could be that the tools will stop in the middle of the learning process.
+The value of org.aksw.fox.tools.NERTools.lifeTime describes how long each NER tool will life in minutes. For the learning mode you have to set a high value, otherwise it could be that the tools will stop in the middle of the learning process.
 
 To not override a learned model by mistake there is a lock. Set org.aksw.fox.nerlearner.FoxClassifier.training to true.
 

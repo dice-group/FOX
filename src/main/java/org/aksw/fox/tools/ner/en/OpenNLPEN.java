@@ -1,7 +1,6 @@
 package org.aksw.fox.tools.ner.en;
 
 import org.aksw.fox.tools.ner.common.OpenNLPCommon;
-import org.aksw.fox.utils.FoxConst;
 
 public class OpenNLPEN extends OpenNLPCommon {
 
@@ -12,7 +11,4 @@ public class OpenNLPEN extends OpenNLPCommon {
     super(modelPath);
   }
 
-  public static void main(final String[] a) {
-    LOG.info(new OpenNLPEN().retrieve(FoxConst.NER_EN_EXAMPLE_1));
-  }
 }

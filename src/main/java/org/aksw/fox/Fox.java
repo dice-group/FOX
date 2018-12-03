@@ -18,21 +18,19 @@ import javax.xml.bind.DatatypeConverter;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.data.Relation;
-import org.aksw.fox.exception.LoadingNotPossibleException;
-import org.aksw.fox.exception.UnsupportedLangException;
 import org.aksw.fox.nerlearner.TokenManager;
-import org.aksw.fox.output.FoxJenaNew;
+import org.aksw.fox.output.FoxJena;
 import org.aksw.fox.output.IFoxJena;
 import org.aksw.fox.tools.ATool;
-import org.aksw.fox.tools.Tools;
+import org.aksw.fox.tools.NERTools;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.tools.linking.ILinking;
 import org.aksw.fox.tools.linking.NoLinking;
 import org.aksw.fox.tools.ner.INER;
-import org.aksw.fox.tools.re.FoxRETools;
 import org.aksw.fox.tools.re.IRE;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.fox.tools.re.RETools;
 import org.aksw.fox.utils.FoxTextUtil;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
 
@@ -51,17 +49,17 @@ public class Fox extends AFox {
   /**
    *
    */
-  protected Tools nerTools = null;
+  protected NERTools nerTools = null;
 
   /**
    *
    */
-  protected FoxRETools reTools = new FoxRETools();
+  protected RETools reTools = null;
 
   /**
    *
    */
-  protected IFoxJena foxJena = new FoxJenaNew();
+  protected IFoxJena foxJena = new FoxJena();
 
   protected FoxUtil foxUtil = new FoxUtil();
   String startNER = "";
@@ -76,14 +74,12 @@ public class Fox extends AFox {
    * @param lang
    */
   public Fox(final String lang) {
+
     this.lang = lang;
 
-    try {
-      final ToolsGenerator toolsGenerator = new ToolsGenerator();
-      nerTools = toolsGenerator.getNERTools(lang);
-    } catch (UnsupportedLangException | LoadingNotPossibleException e) {
-      LOG.error(e.getLocalizedMessage(), e);
-    }
+    final ToolsGenerator toolsGenerator = new ToolsGenerator();
+    nerTools = toolsGenerator.getNERTools(lang);
+    reTools = toolsGenerator.getRETools(lang);
   }
 
   @Override
@@ -99,8 +95,9 @@ public class Fox extends AFox {
    */
   protected Set<Entity> doNER() {
     infoLog("Start NER (" + lang + ")...");
-    final Set<Entity> entities =
-        nerTools.getEntities(parameter.get(FoxParameter.Parameter.INPUT.toString()));
+
+    final Set<Entity> entities;
+    entities = nerTools.getEntities(parameter.get(FoxParameter.Parameter.INPUT.toString()));
 
     // remove duplicate annotations
     final Map<String, Entity> wordEntityMap = new HashMap<>();
@@ -132,7 +129,7 @@ public class Fox extends AFox {
 
     final List<IRE> tools = reTools.getRETool(lang);
 
-    if ((tools == null) || (tools.size() == 0)) {
+    if (tools == null || tools.size() == 0) {
       infoLog("Relation tool for " + lang.toUpperCase() + " not supported yet.");
     } else {
       infoLog("Start RE with " + tools.size() + " tools ...");
@@ -153,7 +150,7 @@ public class Fox extends AFox {
       }
 
       // wait for finish
-      final int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
+      final int min = Integer.parseInt(PropertiesLoader.get(NERTools.CFG_KEY_LIFETIME));
       try {
         latch.await(min, TimeUnit.MINUTES);
       } catch (final InterruptedException e) {
@@ -173,7 +170,7 @@ public class Fox extends AFox {
         for (final IRE tool : tools) {
 
           final Set<Relation> rs = tool.getResults();
-          if ((rs != null) && !rs.isEmpty()) {
+          if (rs != null && !rs.isEmpty()) {
             relations.put(tool.getToolName(), rs);
           }
         }
@@ -195,7 +192,7 @@ public class Fox extends AFox {
   protected Set<Entity> doNERLight(final String name) {
     infoLog("Starting light NER version ...");
     Set<Entity> entities = new HashSet<>();
-    if ((name == null) || name.isEmpty()) {
+    if (name == null || name.isEmpty()) {
       return entities;
     }
 
@@ -228,7 +225,7 @@ public class Fox extends AFox {
       fiber.start();
       fiber.execute(nerLight);
 
-      final int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
+      final int min = Integer.parseInt(PropertiesLoader.get(NERTools.CFG_KEY_LIFETIME));
       try {
         latch.await(min, TimeUnit.MINUTES);
       } catch (final InterruptedException e) {
@@ -241,7 +238,7 @@ public class Fox extends AFox {
       fiber.dispose();
       // get results
       if (latch.getCount() == 0) {
-        entities = new HashSet<Entity>(nerLight.getResults());
+        entities = new HashSet<>(nerLight.getResults());
 
       } else {
         if (LOG.isDebugEnabled()) {
@@ -280,7 +277,7 @@ public class Fox extends AFox {
     {
       final Set<Entity> cleanEntity = new HashSet<>();
       for (final Entity e : entities) {
-        if ((e.getIndices() != null) && (e.getIndices().size() > 0)) {
+        if (e.getIndices() != null && e.getIndices().size() > 0) {
           cleanEntity.add(e);
         }
       }
@@ -293,7 +290,7 @@ public class Fox extends AFox {
   }
 
   protected void setURIs(Set<Entity> entities) {
-    if ((entities != null) && !entities.isEmpty()) {
+    if (entities != null && !entities.isEmpty()) {
       infoLog("Start NE linking ...");
 
       final CountDownLatch latch = new CountDownLatch(1);
@@ -301,7 +298,7 @@ public class Fox extends AFox {
       if (linking == null) {
         try {
           linking = toolsGenerator.getDisambiguationTool(lang);
-        } catch (UnsupportedLangException | LoadingNotPossibleException e1) {
+        } catch (final Exception e1) {
           infoLog(e1.getLocalizedMessage());
           linking = new NoLinking();
         }
@@ -314,7 +311,7 @@ public class Fox extends AFox {
       fiber.execute(linking);
 
       // use another time for the uri lookup?
-      final int min = Integer.parseInt(FoxCfg.get(Tools.CFG_KEY_LIFETIME));
+      final int min = Integer.parseInt(PropertiesLoader.get(NERTools.CFG_KEY_LIFETIME));
       try {
         latch.await(min, TimeUnit.MINUTES);
       } catch (final InterruptedException e) {
@@ -326,7 +323,7 @@ public class Fox extends AFox {
       fiber.dispose();
       // get results
       if (latch.getCount() == 0) {
-        entities = new HashSet<Entity>(linking.getResults());
+        entities = new HashSet<>(linking.getResults());
       } else {
         infoLog("Timeout after " + min + " min (" + linking.getClass().getName() + ").");
         // use dev lookup after timeout
@@ -338,7 +335,7 @@ public class Fox extends AFox {
   }
 
   protected void setOutput(final Set<Entity> entities, final Map<String, Set<Relation>> relations) {
-    if ((entities == null) || (relations == null)) {
+    if (entities == null || relations == null) {
       LOG.warn("Parameter NULL");
     }
 
@@ -352,7 +349,7 @@ public class Fox extends AFox {
     foxJena.addInput(input, docuri);
 
     String light = parameter.get(FoxParameter.Parameter.FOXLIGHT.toString());
-    if ((light == null) || light.equalsIgnoreCase(FoxParameter.FoxLight.OFF.toString())) {
+    if (light == null || light.equalsIgnoreCase(FoxParameter.FoxLight.OFF.toString())) {
       light = this.getClass().getName();
     }
 
@@ -364,7 +361,7 @@ public class Fox extends AFox {
     }
     infoLog("Preparing output format done.");
 
-    if ((parameter.get("returnHtml") != null)
+    if (parameter.get("returnHtml") != null
         && parameter.get("returnHtml").toLowerCase().endsWith("true")) {
       html(entities, input);
     }
@@ -388,7 +385,7 @@ public class Fox extends AFox {
     int last = 0;
     for (final Integer index : startIndices) {
       final Entity entity = indexEntityMap.get(index);
-      if ((entity.getUri() != null) && !entity.getUri().trim().isEmpty()) {
+      if (entity.getUri() != null && !entity.getUri().trim().isEmpty()) {
         html += input.substring(last, index);
         html += "<a class=\"" + entity.getType().toLowerCase() + "\" href=\"" + entity.getUri()
             + "\"  target=\"_blank\"  title=\"" + entity.getType().toLowerCase() + "\" >"
@@ -426,7 +423,7 @@ public class Fox extends AFox {
       Set<Entity> entities = new HashSet<>();
       Map<String, Set<Relation>> relations = new HashMap<>();
 
-      if ((input == null) || (task == null)) {
+      if (input == null || task == null) {
         LOG.error("Input or task parameter not set.");
       } else {
         final TokenManager tokenManager = new TokenManager(input);
@@ -434,7 +431,7 @@ public class Fox extends AFox {
         input = tokenManager.getInput();
         parameter.put(FoxParameter.Parameter.INPUT.toString(), input);
         final boolean lightFox =
-            ((light != null) && !light.equalsIgnoreCase(FoxParameter.FoxLight.OFF.toString()));
+            light != null && !light.equalsIgnoreCase(FoxParameter.FoxLight.OFF.toString());
         switch (FoxParameter.Task.fromString(task.toLowerCase())) {
           case KE:
             LOG.warn("Operation not supported.");
@@ -479,7 +476,7 @@ public class Fox extends AFox {
       }
 
       try {
-        linking = (ILinking) FoxCfg.getClass(paraUriLookup.trim());
+        linking = (ILinking) PropertiesLoader.getClass(paraUriLookup.trim());
       } catch (final Exception e) {
         LOG.error("InterfaceURI not found. Check parameter: "
             + FoxParameter.Parameter.LINKING.toString());

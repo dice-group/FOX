@@ -20,11 +20,12 @@ import org.aksw.agdistis.datatypes.NamedEntityInText;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Voc;
 import org.aksw.fox.tools.linking.AbstractLinking;
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 
 public class Agdistis extends AbstractLinking {
 
@@ -35,6 +36,11 @@ public class Agdistis extends AbstractLinking {
   protected String endpoint;
 
   public Agdistis() {}
+
+  public Agdistis(final Class<?> classs) {
+    this(CfgManager.getCfg(classs));
+
+  }
 
   public Agdistis(final XMLConfiguration cfg) {
     endpoint = cfg.getString(CFG_KEY_AGDISTIS_ENDPOINT);
@@ -137,17 +143,17 @@ public class Agdistis extends AbstractLinking {
       LOG.debug("addURItoEntities ...");
     }
 
-    if ((json != null) && (json.length() > 0)) {
+    if (json != null && json.length() > 0) {
+      final JSONArray array = new JSONArray(json);
 
-      final JSONArray array = (JSONArray) JSONValue.parse(json);
+      // final JSONArray array = (JSONArray) JSONValue.parse(json);
       if (array != null) {
-        for (int i = 0; i < array.size(); i++) {
+        for (int i = 0; i < array.length(); i++) {
 
-          final Integer start = ((Long) ((JSONObject) array.get(i)).get("start")).intValue();
-          final String disambiguatedURL =
-              (String) ((JSONObject) array.get(i)).get("disambiguatedURL");
+          final Integer start = array.getJSONObject(i).getInt("start");
+          final String disambiguatedURL = (String) array.getJSONObject(i).get("disambiguatedURL");
 
-          if ((start != null) && (start > -1)) {
+          if (start != null && start > -1) {
             final Entity entity = indexMap.get(start);
 
             if (disambiguatedURL == null) {
@@ -155,14 +161,12 @@ public class Agdistis extends AbstractLinking {
               try {
 
                 uri = new URI(Voc.ns_fox_resource + entity.getText().replaceAll(" ", "_"));
-                entity.setUri(uri.toASCIIString()); // TODO: why?
+                entity.setUri(uri.toASCIIString());
               } catch (final URISyntaxException e) {
                 entity.setUri(Voc.ns_fox_resource + entity.getText());
                 LOG.error(entity.getUri() + "\n", e);
               }
-
             } else {
-              // TODO: ?
               entity.setUri(urlencode(disambiguatedURL));
             }
           }
@@ -199,7 +203,7 @@ public class Agdistis extends AbstractLinking {
       obj.put("start", namedEntity.getStartPos());
       obj.put("offset", namedEntity.getLength());
       obj.put("disambiguatedURL", namedEntity.getNamedEntityUri());
-      arr.add(obj);
+      arr.put(obj);
     }
     return arr.toString();
 
@@ -207,7 +211,7 @@ public class Agdistis extends AbstractLinking {
 
   public Document textToDocument(final String preAnnotatedText) {
     final Document document = new Document();
-    final ArrayList<NamedEntityInText> list = new ArrayList<NamedEntityInText>();
+    final ArrayList<NamedEntityInText> list = new ArrayList<>();
     int startpos = 0, endpos = 0;
     final StringBuilder sb = new StringBuilder();
     startpos = preAnnotatedText.indexOf("<entity>", startpos);

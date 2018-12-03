@@ -8,15 +8,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.fox.evaluation.CrossValidation;
-import org.aksw.fox.exception.LoadingNotPossibleException;
-import org.aksw.fox.exception.UnsupportedLangException;
 import org.aksw.fox.nerlearner.FoxClassifier;
 import org.aksw.fox.nerlearner.FoxClassifierFactory;
 import org.aksw.fox.nerlearner.reader.INERReader;
 import org.aksw.fox.nerlearner.reader.NERReaderFactory;
-import org.aksw.fox.tools.Tools;
+import org.aksw.fox.tools.NERTools;
 import org.aksw.fox.tools.ToolsGenerator;
-import org.aksw.fox.utils.FoxCfg;
+import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -61,7 +59,7 @@ public class FoxCLI {
           a = String.valueOf(getopt.getOptarg());
           if (a.toLowerCase().startsWith("tr")) {
             a = "train";
-            if (FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER_TRAINING).toLowerCase()
+            if (PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER_TRAINING).toLowerCase()
                 .startsWith("false")) {
               throw new Exception("You need to change the fox.properties file and set "
                   + FoxClassifier.CFG_KEY_LEARNER_TRAINING + " to true. "
@@ -69,14 +67,15 @@ public class FoxCLI {
             }
             /*
              * } else if (a.toLowerCase().startsWith("re")) { a = "retrieve"; if
-             * (FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER_TRAINING).toLowerCase().startsWith("tr")) {
-             * throw new Exception("You need to change the fox.properties file and set " +
+             * (PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER_TRAINING).toLowerCase().
+             * startsWith("tr")) { throw new
+             * Exception("You need to change the fox.properties file and set " +
              * FoxClassifier.CFG_KEY_LEARNER_TRAINING +
              * " to false. Also you should set file for a trained model."); }
              */
           } else if (a.toLowerCase().startsWith("va")) {
             a = "validate";
-            if (FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER_TRAINING).toLowerCase()
+            if (PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER_TRAINING).toLowerCase()
                 .startsWith("true")) {
               throw new Exception("You need to change the fox.properties file and set "
                   + FoxClassifier.CFG_KEY_LEARNER_TRAINING + " to false.");
@@ -130,7 +129,7 @@ public class FoxCLI {
   }
 
   public static void validate(final String[] inputFiles, final String lang) {
-    if ((lang == null) || lang.isEmpty()) {
+    if (lang == null || lang.isEmpty()) {
       LOG.warn("Missing lang paramerter!");
     }
     try {
@@ -179,11 +178,10 @@ public class FoxCLI {
    * @throws LoadingNotPossibleException
    * @throws Exception
    */
-  public static void training(final String[] inputFiles, final String lang)
-      throws IOException, UnsupportedLangException, LoadingNotPossibleException {
+  public static void training(final String[] inputFiles, final String lang) throws IOException {
     final ToolsGenerator toolsGenerator = new ToolsGenerator();
 
-    final Tools foxNERTools = toolsGenerator.getNERTools(lang);
+    final NERTools foxNERTools = toolsGenerator.getNERTools(lang);
     final FoxClassifier foxClassifier = new FoxClassifier();
 
     final Set<String> toolResultKeySet = foxNERTools.getToolResult().keySet();
@@ -205,8 +203,8 @@ public class FoxCLI {
 
     try {
       foxClassifier.training(input, foxNERTools.getToolResult(), oracle);
-      final String file = FoxCfg.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator
-          + FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER).trim();
+      final String file = PropertiesLoader.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator
+          + PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER).trim();
       foxClassifier.writeClassifier(file, lang);
       foxClassifier.eva();
     } catch (final Exception e) {
@@ -215,8 +213,8 @@ public class FoxCLI {
   }
 
   private static void setClassifier(final FoxClassifier foxClassifier, final String[] prefix)
-      throws LoadingNotPossibleException {
-    switch (FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER).trim()) {
+      throws IOException {
+    switch (PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER).trim()) {
       case "result_vote": {
         foxClassifier.setIsTrained(true);
         foxClassifier.setClassifier(FoxClassifierFactory.getClassifierResultVote(prefix));
@@ -228,9 +226,9 @@ public class FoxCLI {
         break;
       }
       default:
-        foxClassifier
-            .setClassifier(FoxClassifierFactory.get(FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER),
-                FoxCfg.get(FoxClassifier.CFG_KEY_LEARNER_OPTIONS)));
+        foxClassifier.setClassifier(
+            FoxClassifierFactory.get(PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER),
+                PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER_OPTIONS)));
     }
   }
 }

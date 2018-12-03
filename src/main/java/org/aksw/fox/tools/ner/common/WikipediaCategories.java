@@ -8,14 +8,13 @@ import java.util.Set;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.jena_sparql_api.pagination.core.QueryExecutionFactoryPaginated;
+import org.aksw.simba.knowledgeextraction.commons.io.SerializationUtil;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import de.renespeck.swissknife.io.SerializationUtil;
 
 /**
  * Creates dbpedia types for TagMe
@@ -24,6 +23,7 @@ import de.renespeck.swissknife.io.SerializationUtil;
  *
  */
 public class WikipediaCategories {
+
   public static final Logger LOG = LogManager.getLogger(WikipediaCategories.class);
 
   public String getQuery(final String type) {

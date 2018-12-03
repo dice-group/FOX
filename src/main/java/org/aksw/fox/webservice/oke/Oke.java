@@ -6,9 +6,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,7 +16,7 @@ import java.util.stream.Collectors;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.Relation;
-import org.aksw.fox.output.FoxJenaNew;
+import org.aksw.fox.output.FoxJena;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
@@ -116,7 +114,7 @@ public class Oke {
           new ByteArrayInputStream(turtleDoc.getBytes(StandardCharsets.UTF_8));
       Model graph = ModelFactory.createDefaultModel();
       graph = graph.read(stream, "", "Turtle");
-      final FoxJenaNew jena = new FoxJenaNew(graph);
+      final FoxJena jena = new FoxJena(graph);
 
       // each doc
       for (int ii = 0; ii < docs.size(); ii++) {
@@ -125,12 +123,12 @@ public class Oke {
         final Document doc = docs.get(ii);
         //
         final List<Entity> entities = getEntities(doc);
-        final Map<Integer, Entity> sorted = sortEntities(entities);
-        final List<Integer> index = new ArrayList<>(new TreeSet<Integer>(sorted.keySet()));
+        final Map<Integer, Entity> index = Entity.indexToEntity(entities);
+        final List<Integer> sorted = new ArrayList<>(new TreeSet<Integer>(index.keySet()));
 
-        for (int i = 0; i < (index.size() - 1); i++) {
-          final Entity s = sorted.get(index.get(i));
-          final Entity o = sorted.get(index.get(i + 1));
+        for (int i = 0; i < (sorted.size() - 1); i++) {
+          final Entity s = index.get(sorted.get(i));
+          final Entity o = index.get(sorted.get(i + 1));
 
           final Pair<Set<String>, Set<String>> pair = db.query(s.getUri(), o.getUri());
           if (pair.first != null) {
@@ -141,6 +139,7 @@ public class Oke {
                 try {
                   relation.add(new URI("http://dbpedia.org/ontology/" + r));
                   final Relation foxRelation = addRelation(s, o, r, relation);
+
                   relations.add(foxRelation);
                 } catch (final URISyntaxException e) {
                   LOG.error(e.getMessage(), e);
@@ -158,35 +157,13 @@ public class Oke {
     return "";
   }
 
-  public Relation addRelation(final Entity s, final Entity o, final String relationLabel,
-      final List<URI> relation) {
+  private Relation addRelation(//
+      final Entity s, final Entity o, final String relationLabel, final List<URI> relation) {
+
+    final float relevance = 0f;
     final String tool = "baseline";
     final String relationByTool = relationLabel;
-    final float relevance = 0f;
-    final Relation foxRelation = new Relation( //
-        s, relationLabel, relationByTool, o, relation, tool, relevance//
-    );
-    return foxRelation;
-  }
 
-  private int getIndex(final Entity e) {
-    int index = -1;
-    if (e.getIndices().size() > 1) {
-      throw new UnsupportedOperationException("Break down entitiy indices to single index pair.");
-    } else if (e.getIndices().size() > 0) {
-      index = e.getIndices().iterator().next();
-    }
-    return index;
-  }
-
-  protected Map<Integer, Entity> sortEntities(final List<Entity> entities) {
-    final Map<Integer, Entity> sorted = new HashMap<>();
-    final Iterator<Entity> iter = entities.iterator();
-    while (iter.hasNext()) {
-      final Entity e = iter.next();
-      final int index = getIndex(e);
-      sorted.put(index, e);
-    }
-    return sorted;
+    return new Relation(s, relationLabel, relationByTool, o, relation, tool, relevance);
   }
 }

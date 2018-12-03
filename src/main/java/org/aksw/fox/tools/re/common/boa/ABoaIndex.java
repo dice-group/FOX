@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
-import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.tools.re.AbstractRE;
 import org.apache.lucene.document.Document;
@@ -80,12 +79,15 @@ http://dbpedia.org/ontology/team
  */
 abstract public class ABoaIndex extends AbstractRE {
 
+  // TODO: Add to config
+  static int maxpattern = 10;
+
   protected String luceneIndexFolder = null;
   protected IndexReader indexReader = null;
   protected IndexSearcher indexSearcher = null;
   protected Directory dir = null;
-  protected static final int maxpattern = 10;
-  protected String lang = FoxParameter.Langs.EN.name().toLowerCase();
+
+  protected String lang = null;
 
   // domain to range and relation
   Map<String, Map<String, Set<String>>> supportedRelations = new HashMap<>();
@@ -99,9 +101,10 @@ abstract public class ABoaIndex extends AbstractRE {
   public ABoaIndex(final String lang) {
     this.lang = lang;
 
+    // TODO: add to config
     luceneIndexFolder = "data/boa/" + lang;
     if (!Files.exists(Paths.get(luceneIndexFolder))) {
-
+      // TODO: add to config
       final File tarFile = Paths.get("data/boa/boa_" + lang + "_10.tar.gz").toFile();
       final Project p = new Project();
       final Untar ut = new Untar();
@@ -144,7 +147,14 @@ abstract public class ABoaIndex extends AbstractRE {
     return supportedRelations.get(domain).get(range);
   }
 
-  public Map<String, BoaPattern> processSearch(final String p) throws IOException {
+  /**
+   *
+   * @param p
+   * @return
+   * @throws IOException
+   */
+  public Map<String, BoaPattern> processSearch(final String p, final int maxPatterns)
+      throws IOException {
     final Map<String, BoaPattern> patterns = new HashMap<String, BoaPattern>();
 
     final IndexSearcher searcher = openIndexSearcher();
@@ -153,16 +163,12 @@ abstract public class ABoaIndex extends AbstractRE {
     final BooleanQuery query = new BooleanQuery();
     query.add(new TermQuery(new Term(BoaEnum.URI.getLabel(), p)), Occur.MUST);
 
-    final int numResults = 50;
-
     final Sort sort = new Sort(new SortField(//
         BoaEnum.SUPPORT_NUMBER_OF_PAIRS_LEARNED_FROM.getLabel(), SortField.Type.DOUBLE, true//
     ));
 
     // search
-    final ScoreDoc[] hits = searcher.search(query, numResults, sort).scoreDocs;
-
-    LOG.info("hits:" + hits.length);
+    final ScoreDoc[] hits = searcher.search(query, Integer.MAX_VALUE, sort).scoreDocs;
 
     final Set<String> gPattern = new HashSet<>();
     final Set<String> noVarPattern = new HashSet<>();
@@ -188,7 +194,7 @@ abstract public class ABoaIndex extends AbstractRE {
 
       if (!pattern.getNormalized().trim().isEmpty()
           && !patterns.containsKey(pattern.getNormalized().trim())
-          && (patterns.size() < maxpattern)) {
+          && (patterns.size() < maxPatterns)) {
         patterns.put(pattern.getNormalized().trim(), pattern);
       }
     }
@@ -214,26 +220,14 @@ abstract public class ABoaIndex extends AbstractRE {
     return patterns;
   }
 
-  @Override
-  public Set<Relation> extract() {
-    relations.clear();
-
-    if ((entities != null) && !entities.isEmpty()) {
-      return _extract(input, breakdownAndSortEntity(entities));
-    } else {
-      LOG.warn("Entities not given!");
-    }
-
-    return relations;
-  }
-
   /**
    *
    * @param text
    * @param entities
    * @return
    */
-  private Set<Relation> _extract(final String text, final List<Entity> entities) {
+  @Override
+  protected Set<Relation> _extract(final String text, final List<Entity> entities) {
 
     for (int i = 0; (i + 1) < entities.size(); i++) {
       final Entity subject = entities.get(i);
@@ -244,6 +238,13 @@ abstract public class ABoaIndex extends AbstractRE {
 
       final Set<String> uris = getSupportedBoaRelations(sType, oType);
       LOG.debug("uris that match the entity types: " + uris);
+
+      if ((subject.getIndices().size() > 1) || (object.getIndices().size() > 1)) {
+        throw new UnsupportedOperationException( //
+            "The Entity list contains at least one Entity with multiple indices. "
+                + "This operation allows only entities with one index!"//
+        );
+      }
 
       final int sIndex = subject.getIndices().iterator().next();
       final int oIndex = object.getIndices().iterator().next();
@@ -282,10 +283,19 @@ abstract public class ABoaIndex extends AbstractRE {
    * @return pattern
    */
   public Map<String, BoaPattern> getPattern(final String uri) {
+    return getPattern(uri, maxpattern);
+  }
+
+  /**
+   * Gets boa pattern from index.
+   *
+   * @param uri
+   * @param maxpattern
+   * @return
+   */
+  public Map<String, BoaPattern> getPattern(final String uri, final int maxpattern) {
     try {
-      final Map<String, BoaPattern> pattern = processSearch(uri);
-      pattern.keySet().forEach(LOG::info);
-      return pattern;
+      return processSearch(uri, maxpattern);
     } catch (final IOException e) {
       LOG.error(e.getLocalizedMessage(), e);
     }
@@ -293,6 +303,7 @@ abstract public class ABoaIndex extends AbstractRE {
   }
 
   protected void createSupportedBoaRelations() {
+    // FIXME: use in config?
     supportedRelations.put(EntityClassMap.L, new HashMap<>());
     supportedRelations.put(EntityClassMap.P, new HashMap<>());
     supportedRelations.put(EntityClassMap.O, new HashMap<>());

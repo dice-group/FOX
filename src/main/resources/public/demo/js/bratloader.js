@@ -1,5 +1,5 @@
 
-var serverAddress = 'http://localhost:4444';
+//var serverAddress = 'http://localhost:4444';
 //var serverAddress = '';
 
 /**
@@ -33,34 +33,34 @@ var webFontURLs = [
 
 var collData = {
     entity_types: [ {
-            type   : 'PERSON',
-            labels : ['Person', 'Person'],
-            bgColor: '#7fa2ff',
-            borderColor: 'darken'
-    },
-    {
-            type   : 'LOCATION',
-            labels : ['Place', 'Place'],
-            bgColor: '#468746',
-            borderColor: 'darken'
-    },
-    {
-            type   : 'ORGANIZATION',
-            labels : ['Organisation', 'Organisation'],
-            bgColor: '#AF4A52',
-            borderColor: 'darken'
-
+            type   : 'PERSON', labels : ['Person', 'Person'],
+            bgColor: '#7fa2ff', borderColor: 'darken'
+    },{
+            type   : 'LOCATION', labels : ['Place', 'Place'],
+            bgColor: '#468746', borderColor: 'darken'
+    }, {
+            type   : 'ORGANIZATION', labels : ['Organisation', 'Organisation'],
+            bgColor: '#AF4A52', borderColor: 'darken'
     }
    ],
-    relation_types: [ {
+    relation_types: [{
         type     : 'Anaphora',
         labels   : ['Anaphora', 'Ana'],
         dashArray: '3,3',
         color    : 'purple',
         args     : [
-            {role: 'Anaphor', targets: ['Person'] },
-            {role: 'Entity',  targets: ['Person'] }
+            {role: 'A', targets: ['Person'] },
+            {role: 'B',  targets: ['Person'] }
         ]
-    } ]
+    }]
 };
-//collData['relation_types']
+
+// clean data
+var docData = {
+    text     : "",
+    entities : [// Format: [${ID}, ${TYPE}, [[${START},${END}]])
+    ],
+    relations :[ // Format: [${ID}, ${TYPE}, [[${ARGNAME}, ${TARGET}], [${ARGNAME}, ${TARGET}]]]
+      //  ['R1', 'Anaphora', [['Anaphor', 'T2'], ['Entity', 'T1']]]
+    ]
+};

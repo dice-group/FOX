@@ -1,0 +1,50 @@
+# Check for dependencies
+echo "##############################################################################" 
+echo "Checking dependencies..."
+
+#########################################################################################
+if yesno "# Maven install of https://github.com/renespeck/knowledgeextraction.git (yes/no): "; then
+    git clone https://github.com/renespeck/knowledgeextraction.git xyz    
+    cd xyz
+    mvn compile install
+    cd ..
+    rm -rf xyz
+fi
+
+#########################################################################################
+if yesno "# Maven install of https://github.com/dice-group/Ocelot.git (yes/no): "; then
+    git clone https://github.com/dice-group/Ocelot.git xyz    
+    cd xyz
+    git checkout dev
+    mvn -Dmaven.test.skip=true compile install
+    cd ..
+    rm -rf xyz
+fi
+
+#########################################################################################
+pkg="graphviz"
+if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then
+     echo "# $pkg is already installed."
+else
+    if yesno "# Should $pkg be installed (for javadoc only)? (yes/no): "; then
+        sudo apt-get update && sudo apt-get install $pkg
+    fi
+fi
+
+#########################################################################################
+# Download agdistis
+DIRECTORY="./agdistis"
+if [ ! -d "$DIRECTORY" ]; then
+    if yesno "# Download agdistis files (yes/no): "; then
+        ./downloadAgdistis.sh 
+    fi
+fi
+
+#########################################################################################
+# Download spotlight
+DIRECTORY="./spotlight"
+if [ ! -d "$DIRECTORY" ]; then
+    if yesno "# Download spotlight files (yes/no): "; then
+        ./downloadSpotlight.sh 
+    fi
+fi 

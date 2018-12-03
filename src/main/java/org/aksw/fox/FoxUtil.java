@@ -3,7 +3,7 @@ package org.aksw.fox;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.tools.Tools;
+import org.aksw.fox.tools.NERTools;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -15,7 +15,7 @@ public class FoxUtil {
    *
    * @param entities final entities
    */
-  public void infotrace(final Tools nerTools, final Set<Entity> entities) {
+  public void infotrace(final NERTools nerTools, final Set<Entity> entities) {
     if (LOG.isTraceEnabled()) {
 
       LOG.trace("entities:");

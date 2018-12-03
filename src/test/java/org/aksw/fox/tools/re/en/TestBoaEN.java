@@ -10,9 +10,9 @@ import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.Relation;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Test;
 
-import junit.framework.Assert;
 
 public class TestBoaEN {
   public final static Logger LOG = LogManager.getLogger(TestBoaEN.class);

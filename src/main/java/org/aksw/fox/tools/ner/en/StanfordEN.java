@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.common.StanfordCommon;
-import org.aksw.fox.utils.FoxConst;
 
 /**
  *
@@ -31,9 +30,5 @@ public class StanfordEN extends StanfordCommon {
     entityClasses.put("PERSON", EntityClassMap.P);
     entityClasses.put("PEOPLE", EntityClassMap.P);
     entityClasses.put("O", EntityClassMap.N);
-  }
-
-  public static void main(final String[] a) {
-    LOG.info(new StanfordEN().retrieve(FoxConst.NER_EN_EXAMPLE_1));
   }
 }

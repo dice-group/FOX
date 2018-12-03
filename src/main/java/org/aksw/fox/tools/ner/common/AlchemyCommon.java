@@ -14,15 +14,14 @@ import java.util.Set;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.fox.utils.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.io.Requests;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.entity.ContentType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import de.renespeck.swissknife.http.Requests;
 
 public abstract class AlchemyCommon extends AbstractNER {
   /**
@@ -87,14 +86,13 @@ public abstract class AlchemyCommon extends AbstractNER {
     for (final String sen : _sentences) {
       JSONObject o = null;
       try {
-        final String response = Requests.postForm(url,
-            Form.form()//
-                .add("apikey", api_key)//
-                .add("text", sen) //
-                .add("outputMode", outputMode)//
-                .add("maxRetrieve", max) //
-                .add("coreference", "0")//
-                .add("linkedData", "0"), //
+        final String response = Requests.postForm(url, Form.form()//
+            .add("apikey", api_key)//
+            .add("text", sen) //
+            .add("outputMode", outputMode)//
+            .add("maxRetrieve", max) //
+            .add("coreference", "0")//
+            .add("linkedData", "0"), //
             ContentType.APPLICATION_JSON);
         o = new JSONObject(response);
       } catch (JSONException | IOException e) {
@@ -109,7 +107,7 @@ public abstract class AlchemyCommon extends AbstractNER {
 
   protected List<Entity> alchemyNERResponseParser(final JSONObject o) {
     final List<Entity> list = new ArrayList<>();
-    if ((o == null) || (!o.has("entities"))) {
+    if (o == null || !o.has("entities")) {
       return list;
     } else {
       final JSONArray entities = o.getJSONArray("entities");

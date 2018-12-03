@@ -18,7 +18,7 @@ import java.util.concurrent.Future;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.fox.utils.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.apache.commons.configuration.XMLConfiguration;
 
 public abstract class TagMeCommon extends AbstractNER {
@@ -120,7 +120,7 @@ public abstract class TagMeCommon extends AbstractNER {
         final Future<List<Entity>> future = completionService.take();
         final List<Entity> result = future.get();
 
-        if ((result != null) && !result.isEmpty()) {
+        if (result != null && !result.isEmpty()) {
           set.addAll(result);
         } else {
           LOG.warn("No entities found.");

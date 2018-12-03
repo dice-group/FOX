@@ -1,16 +1,13 @@
 [4]: http://fox.aksw.org
 [6]: http://fox-demo.aksw.org
+[9]: https://github.com/AKSW/FOX
 
-[7]: https://github.com/AKSW/FOX/releases/tag/v2.2.1
-[8]: https://github.com/AKSW/FOX/releases/tag/v2.3.0
-[9]: https://github.com/dice-group/FOX/tree/2.5.0
 
 [![Build Status](https://travis-ci.org/dice-group/FOX.svg?branch=master)](https://travis-ci.org/dice-group/FOX)
 
 ## FOX - Federated Knowledge Extraction Framework
 FOX ([http://fox.aksw.org][4]) is a framework that integrates the Linked Data Cloud and makes use of the diversity of NLP algorithms to extract RDF triples of high accuracy out of NL.
-In its current version, it integrates and merges the results of Named Entity Recognition tools.
-<!--Keyword Extraction and Relation Extraction tools will be merged soon.-->
+In its current version, it integrates and merges the results of Named Entity Recognition tools as well as integrates several Relation Extraction tools.
 
 ## Requirements
 Java 8, Maven 3, graphviz (for JavaDoc only)
@@ -24,11 +21,11 @@ This version supports multiple languages for NER, NED and RE.
 
 Live Demo: [http://fox-demo.aksw.org][6]
 
-Release: [(Version 2.5.0)][9]
+Release: [(Version 2.5.1) ][9]
 
 ## How to cite
 
-english version with details
+English version with details:
 
 ```Tex
 @incollection{
@@ -43,7 +40,7 @@ english version with details
 }
 ```
 
-extended version for multiple languages
+The extended version for multiple languages:
 
 ```Tex
 @InProceedings{speck2017,
@@ -58,13 +55,7 @@ extended version for multiple languages
  ```
 
 ## License
-FOX is licensed under the [GNU GPL Version 2, June 1991](LICENSE) (license document is in the application folder).
-
-FOX uses several other libraries. An incomplete list is as follows:
-* Illinois NLP Pipeline  (University of Illinois Research and Academic Use License)
-* Stanford CoreNLP (GNU GPL Version 2)
-* Apache OpenNLP (Apache License, Version 2)
-* Balie (GNU GPL Version 2)
+FOX is licensed under the [GNU GPL Version 3, November 2007](LICENSE) (license document is in the application folder). FOX depends on several other libraries. 
 
 ## Bugs
 Found a :bug: bug? [Open an issue](https://github.com/AKSW/fox/issues/new) with some [emojis](http://emoji.muan.co). Issues without emojis are not valid. :trollface:

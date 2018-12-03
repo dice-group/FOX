@@ -7,8 +7,8 @@ import java.util.Locale;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.fox.utils.CfgManager;
-import org.aksw.fox.utils.FoxConst;
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.io.Requests;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.entity.ContentType;
@@ -17,8 +17,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import de.renespeck.swissknife.http.Requests;
 
 public abstract class SpotlightCommon extends AbstractNER {
 
@@ -36,11 +34,17 @@ public abstract class SpotlightCommon extends AbstractNER {
   public SpotlightCommon(final Locale lang) {
     CFG = CfgManager.getCfg(this.getClass());
 
-    SPOTLIGHT_URL = CFG.getString(FoxConst.CFG_KEY_SPOTLIGHT_URL);
-    SPOTLIGHT_CONFIDENCE = CFG.getString(FoxConst.CFG_KEY_SPOTLIGHT_CONFIDENCE);
-    SPOTLIGHT_SUPPORT = CFG.getString(FoxConst.CFG_KEY_SPOTLIGHT_SUPPORT);
-    SPOTLIGHT_TYPES = CFG.getString(FoxConst.CFG_KEY_SPOTLIGHT_TYPES);
-    SPOTLIGHT_SPARQL = CFG.getString(FoxConst.CFG_KEY_SPOTLIGHT_SPARQL);
+    final String CFG_KEY_SPOTLIGHT_URL = "spotlight.url";
+    final String CFG_KEY_SPOTLIGHT_CONFIDENCE = "spotlight.confidence";
+    final String CFG_KEY_SPOTLIGHT_SUPPORT = "spotlight.support";
+    final String CFG_KEY_SPOTLIGHT_TYPES = "spotlight.types";
+    final String CFG_KEY_SPOTLIGHT_SPARQL = "spotlight.sparql";
+
+    SPOTLIGHT_URL = CFG.getString(CFG_KEY_SPOTLIGHT_URL);
+    SPOTLIGHT_CONFIDENCE = CFG.getString(CFG_KEY_SPOTLIGHT_CONFIDENCE);
+    SPOTLIGHT_SUPPORT = CFG.getString(CFG_KEY_SPOTLIGHT_SUPPORT);
+    SPOTLIGHT_TYPES = CFG.getString(CFG_KEY_SPOTLIGHT_TYPES);
+    SPOTLIGHT_SPARQL = CFG.getString(CFG_KEY_SPOTLIGHT_SPARQL);
 
     this.lang = lang;
   }
@@ -57,7 +61,7 @@ public abstract class SpotlightCommon extends AbstractNER {
     entityList = new ArrayList<>();
     for (final String sentence : sentences) {
       input += sentence;
-      if ((counter % concatSentences) != 0) {
+      if (counter % concatSentences != 0) {
         counter++;
         if (!sentences.get(sentences.size() - 1).equals(sentence)) {
           continue;
@@ -71,8 +75,7 @@ public abstract class SpotlightCommon extends AbstractNER {
         try {
 
           spotlightResponse = Requests.postForm(//
-              SPOTLIGHT_URL,
-              Form.form()//
+              SPOTLIGHT_URL, Form.form()//
                   .add("confidence", SPOTLIGHT_CONFIDENCE)//
                   .add("support", SPOTLIGHT_SUPPORT)//
                   // .add("types", SPOTLIGHT_TYPES)//
@@ -130,7 +133,7 @@ public abstract class SpotlightCommon extends AbstractNER {
    */
   protected String spotlight(final String spotlightTag) {
     String t = EntityClassMap.getNullCategory();
-    if ((spotlightTag == null) || spotlightTag.trim().isEmpty()) {
+    if (spotlightTag == null || spotlightTag.trim().isEmpty()) {
       return t;
     }
 

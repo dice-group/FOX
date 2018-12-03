@@ -1,8 +1,9 @@
 package org.aksw.fox.webservice;
 
-import org.aksw.fox.exception.PortInUseException;
-import org.aksw.fox.utils.CfgManager;
-import org.aksw.fox.utils.FoxServerUtil;
+import java.io.IOException;
+
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
+import org.aksw.simba.knowledgeextraction.commons.io.WebAppsUtil;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -22,27 +23,27 @@ public abstract class AServer {
   public final static String KEY_DEFAULT_NETWORK_HOST = "server.host";
   public static final String CFG_KEY_FOX_LIFETIME = "server.lifetime";
 
-  public static final XMLConfiguration CFG = CfgManager.getCfg(AServer.class);
+  public static XMLConfiguration CFG = CfgManager.getCfg(AServer.class);
 
   /**
    *
    * Constructor.
    *
-   * @throws PortInUseException
+   * @throws IOException
    *
    */
-  public AServer(final String staticLocation) throws PortInUseException {
-
+  public AServer(final String staticLocation) throws IOException {
+    LOG.info("Fox web service starting ...");
     // must be called before all other methods
     Spark.staticFileLocation(staticLocation);
 
     final int port = CFG.getInt(KEY_PORT);
-    if (!FoxServerUtil.isPortAvailable(port)) {
-      throw new PortInUseException(port);
+    if (!WebAppsUtil.isPortAvailable(port)) {
+      throw new IOException("Port " + port + " in use.");
     }
     Spark.port(port);
 
-    FoxServerUtil.writeShutDownFile("stop");
+    WebAppsUtil.writeShutDownFile("stop");
   }
 
   /**
@@ -72,7 +73,7 @@ public abstract class AServer {
         // utf-8 only
         final String encoding = req.raw().getCharacterEncoding();
         LOG.info("requested encoding:" + encoding);
-        if ((encoding == null) || !encoding.toLowerCase().trim().equals("utf-8")) {
+        if (encoding == null || !encoding.toLowerCase().trim().equals("utf-8")) {
           Spark.halt(415, "Use utf-8");
         }
       }
