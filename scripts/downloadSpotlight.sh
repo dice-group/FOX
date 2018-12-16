@@ -7,20 +7,13 @@ if [ ! -d "$DIRECTORY" ]; then
 	mkdir $DIRECTORY
 	cd $DIRECTORY
 
-	wget http://downloads.dbpedia-spotlight.org/spotlight/dbpedia-spotlight-0.7.1.jar
-	# wget http://spotlight.sztaki.hu/downloads/dbpedia-spotlight-latest.jar 
-	# wget http://spotlight.sztaki.hu/downloads/latest_models/de.tar.gz 
-	# wget http://spotlight.sztaki.hu/downloads/latest_models/en.tar.gz 
-	# wget http://spotlight.sztaki.hu/downloads/latest_models/es.tar.gz 
-	# wget http://spotlight.sztaki.hu/downloads/latest_models/fr.tar.gz 
-	# wget http://spotlight.sztaki.hu/downloads/latest_models/nl.tar.gz 
-	wget http://downloads.dbpedia-spotlight.org/2016-04/de/model/de.tar.gz
-	wget http://downloads.dbpedia-spotlight.org/2016-04/en/model/en_2%2b2.tar.gz
-	wget http://downloads.dbpedia-spotlight.org/2016-04/es/model/es.tar.gz
-	wget http://downloads.dbpedia-spotlight.org/2016-04/fr/model/fr.tar.gz
-	wget http://downloads.dbpedia-spotlight.org/2016-04/nl/model/nl.tar.gz
 
-
+	wget https://sourceforge.net/projects/dbpedia-spotlight/files/spotlight/dbpedia-spotlight-0.7.1.jar
+	wget https://sourceforge.net/projects/dbpedia-spotlight/files/2016-04/de/model/de.tar.gz
+	wget https://sourceforge.net/projects/dbpedia-spotlight/files/2016-04/en/model/en_2%2b2.tar.gz
+	wget https://sourceforge.net/projects/dbpedia-spotlight/files/2016-04/es/model/es.tar.gz
+	wget https://sourceforge.net/projects/dbpedia-spotlight/files/2016-04/fr/model/fr.tar.gz
+	wget https://sourceforge.net/projects/dbpedia-spotlight/files/2016-04/nl/model/nl.tar.gz
 
 	tar -xzf de.tar.gz 
 	tar -xzf en_2+2.tar.gz

@@ -15,7 +15,7 @@ fi
 if yesno "# Maven install of https://github.com/dice-group/Ocelot.git (yes/no): "; then
     git clone https://github.com/dice-group/Ocelot.git xyz    
     cd xyz
-    git checkout dev
+    #git checkout dev
     mvn -Dmaven.test.skip=true compile install
     cd ..
     rm -rf xyz
@@ -36,7 +36,7 @@ fi
 DIRECTORY="./agdistis"
 if [ ! -d "$DIRECTORY" ]; then
     if yesno "# Download agdistis files (yes/no): "; then
-        ./downloadAgdistis.sh 
+        . ./scripts/downloadAgdistis.sh 
     fi
 fi
 
@@ -45,6 +45,6 @@ fi
 DIRECTORY="./spotlight"
 if [ ! -d "$DIRECTORY" ]; then
     if yesno "# Download spotlight files (yes/no): "; then
-        ./downloadSpotlight.sh 
+        . ./scripts/downloadSpotlight.sh 
     fi
 fi 
