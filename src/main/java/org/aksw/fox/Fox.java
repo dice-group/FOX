@@ -28,7 +28,6 @@ import org.aksw.fox.tools.linking.ILinking;
 import org.aksw.fox.tools.linking.NoLinking;
 import org.aksw.fox.tools.ner.INER;
 import org.aksw.fox.tools.re.IRE;
-import org.aksw.fox.tools.re.RETools;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.jetlang.fibers.Fiber;
@@ -41,24 +40,10 @@ import org.jetlang.fibers.ThreadFiber;
  */
 public class Fox extends AFox {
 
-  /**
-   *
-   */
+  protected final ToolsGenerator toolsGenerator = new ToolsGenerator();
+
   protected ILinking linking = null;
 
-  /**
-   *
-   */
-  protected NERTools nerTools = null;
-
-  /**
-   *
-   */
-  protected RETools reTools = null;
-
-  /**
-   *
-   */
   protected IFoxJena foxJena = new FoxJena();
 
   protected FoxUtil foxUtil = new FoxUtil();
@@ -77,9 +62,6 @@ public class Fox extends AFox {
 
     this.lang = lang;
 
-    final ToolsGenerator toolsGenerator = new ToolsGenerator();
-    nerTools = toolsGenerator.getNERTools(lang);
-    reTools = toolsGenerator.getRETools(lang);
   }
 
   @Override
@@ -97,7 +79,8 @@ public class Fox extends AFox {
     infoLog("Start NER (" + lang + ")...");
 
     final Set<Entity> entities;
-    entities = nerTools.getEntities(parameter.get(FoxParameter.Parameter.INPUT.toString()));
+    entities = toolsGenerator.getNERTools(lang)
+        .getEntities(parameter.get(FoxParameter.Parameter.INPUT.toString()));
 
     // remove duplicate annotations
     final Map<String, Entity> wordEntityMap = new HashMap<>();
@@ -127,7 +110,7 @@ public class Fox extends AFox {
   protected Map<String, Set<Relation>> doRE(final Set<Entity> entities) {
     final Map<String, Set<Relation>> relations = new HashMap<>();
 
-    final List<IRE> tools = reTools.getRETool(lang);
+    final List<IRE> tools = toolsGenerator.getRETools(lang).getRETool(lang);
 
     if (tools == null || tools.size() == 0) {
       infoLog("Relation tool for " + lang.toUpperCase() + " not supported yet.");
@@ -197,7 +180,7 @@ public class Fox extends AFox {
     }
 
     INER nerLight = null;
-    for (final INER t : nerTools.getNerTools()) {
+    for (final INER t : toolsGenerator.getNERTools(lang).getNerTools()) {
       if (name.equals(t.getClass().getName())) {
         nerLight = t;
       }
@@ -294,7 +277,7 @@ public class Fox extends AFox {
       infoLog("Start NE linking ...");
 
       final CountDownLatch latch = new CountDownLatch(1);
-      final ToolsGenerator toolsGenerator = new ToolsGenerator();
+
       if (linking == null) {
         try {
           linking = toolsGenerator.getDisambiguationTool(lang);
@@ -400,7 +383,8 @@ public class Fox extends AFox {
     parameter.put(FoxParameter.Parameter.INPUT.toString(), html);
 
     if (LOG.isTraceEnabled()) {
-      foxUtil.infotrace(nerTools, entities);
+
+      foxUtil.infotrace(toolsGenerator.getNERTools(lang), entities);
     }
   }
 
