@@ -3,7 +3,7 @@ var examples = [];
 //examples.push({ task:'ner',lang : 'en', type : 'text', input : 'The philosopher and mathematician Leibniz was born in Leipzig in 1646 and attended the University of Leipzig from 1661-1666. The current chancellor of Germany, Angela Merkel, also attended this university.', output : 'Turtle', foxlight:'OFF',  state: 'done'});
 
 
-examples.push({ task:'re',lang : 'en', type : 'text', input : 'Barack Obama and Michelle are married since 1992. Obama was born at Kapiolani Medical Center for Women and Children in Honolulu. ', output : 'Turtle', foxlight:'OFF',  state: 'done'});
+examples.push({ task:'re',lang : 'en', type : 'text', input : 'Barack Obama and Michelle are married since 1992. Obama was born at Kapiolani Medical Center for Women and Children in Honolulu. Obama was rumored to be born in Kenya. But, Obama was born in Hawaii.', output : 'Turtle', foxlight:'OFF',  state: 'done'});
 
 examples.push({ task:'ner', lang : 'de', type : 'text', input : 'Diese Aufnahme mit Pablo Escobar seiner Frau Victoria Eugenia Henau und Sohn Juan Pablo suggeriert ein ganz normales Familienleben.', output : 'Turtle', foxlight:'OFF',  state: 'done'});
 
