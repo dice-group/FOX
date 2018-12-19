@@ -20,12 +20,9 @@ import org.aksw.agdistis.datatypes.NamedEntityInText;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Voc;
 import org.aksw.fox.tools.linking.AbstractLinking;
-import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 
 public class Agdistis extends AbstractLinking {
 
@@ -38,12 +35,7 @@ public class Agdistis extends AbstractLinking {
   public Agdistis() {}
 
   public Agdistis(final Class<?> classs) {
-    this(CfgManager.getCfg(classs));
-
-  }
-
-  public Agdistis(final XMLConfiguration cfg) {
-    endpoint = cfg.getString(CFG_KEY_AGDISTIS_ENDPOINT);
+    endpoint = cfgManager.getCfg(classs).getString(CFG_KEY_AGDISTIS_ENDPOINT);
   }
 
   @Override

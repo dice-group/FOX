@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.aksw.fox.Fox;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
@@ -23,7 +24,8 @@ import org.apache.commons.configuration.XMLConfiguration;
 
 public abstract class TagMeCommon extends AbstractNER {
 
-  public static final XMLConfiguration CFG = CfgManager.getCfg(TagMeCommon.class);
+  public static final XMLConfiguration CFG =
+      new CfgManager(Fox.cfgFolder).getCfg(TagMeCommon.class);
 
   public static final String CFG_KEY_TAGME_KEY = "tagMe.key";
   public static final String CFG_KEY_SPARQL_ENDPOINT = "tagMe.sparqlEndpoint";

@@ -2,9 +2,7 @@ package org.aksw.fox.webservice;
 
 import java.io.IOException;
 
-import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.aksw.simba.knowledgeextraction.commons.io.WebAppsUtil;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -13,31 +11,21 @@ import spark.Spark;
 public abstract class AServer {
   public static Logger LOG = LogManager.getLogger(AServer.class);
 
-  public static final String CFG_KEY_POOL_SIZE = "server.poolSize";
-  public final static String KEY_DEMO = "server.demo";
-  public final static String KEY_API = "server.api";
-  public final static String KEY_FEEDBACK = "server.feedback";
-  public final static String KEY_CACHE = "server.staticFileCache";
-  public final static String KEY_LISTENER_NAME = "server.listenerName";
-  public final static String KEY_PORT = "server.port";
-  public final static String KEY_DEFAULT_NETWORK_HOST = "server.host";
-  public static final String CFG_KEY_FOX_LIFETIME = "server.lifetime";
-
-  public static XMLConfiguration CFG = CfgManager.getCfg(AServer.class);
+  public AServer() {}
 
   /**
+   * Sets the folder in classpath serving static files and checks the port as well as writes a file
+   * to kill the application.
    *
-   * Constructor.
-   *
+   * @param staticLocation
+   * @param port
    * @throws IOException
-   *
    */
-  public AServer(final String staticLocation) throws IOException {
-    LOG.info("Fox web service starting ...");
-    // must be called before all other methods
-    Spark.staticFileLocation(staticLocation);
+  public AServer(final String staticLocation, final int port) throws IOException {
+    LOG.info("Fox web service ...");
 
-    final int port = CFG.getInt(KEY_PORT);
+    Spark.staticFileLocation(staticLocation); // must be called before all other methods
+
     if (!WebAppsUtil.isPortAvailable(port)) {
       throw new IOException("Port " + port + " in use.");
     }
@@ -47,7 +35,7 @@ public abstract class AServer {
   }
 
   /**
-   *
+   * Stops the service.
    */
   public void stop() {
     Spark.stop();
@@ -56,7 +44,6 @@ public abstract class AServer {
   /**
    * Starts the server and allows utf-8 requests only. Calls {@link #mapRoutes()) to initializes the
    * roots of the server.
-   *
    */
   public final void start() {
     LOG.info("Start ...");

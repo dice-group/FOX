@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.aksw.fox.Fox;
 import org.aksw.fox.tools.linking.ILinking;
 import org.aksw.fox.tools.re.RETools;
 import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
@@ -31,7 +32,8 @@ interface IToolsGenerator {
 public class ToolsGenerator implements IToolsGenerator {
 
   public static final Logger LOG = LogManager.getLogger(ToolsGenerator.class);
-  public static final XMLConfiguration CFG = CfgManager.getCfg(ToolsGenerator.class);
+  public static final XMLConfiguration CFG =
+      new CfgManager(Fox.cfgFolder).getCfg(ToolsGenerator.class);
 
   public static final String CFG_KEY_SUPPORTED_LANG = "toolsGenerator.lang";
   public static final String CFG_KEY_USED_LANG = "toolsGenerator.usedLang";

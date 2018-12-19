@@ -24,6 +24,7 @@ import org.aksw.fox.webservice.util.Pool;
 import org.aksw.fox.webservice.util.RouteConfig;
 import org.aksw.gerbil.io.nif.impl.TurtleNIFParser;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.jena.riot.Lang;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
@@ -36,40 +37,64 @@ import spark.Spark;
 
 public class FoxServer extends AServer {
 
+  public static final String KEY_POOL_SIZE = "server.poolSize";
+  public final static String KEY_DEMO = "server.demo";
+  public final static String KEY_API = "server.api";
+  public final static String KEY_FEEDBACK = "server.feedback";
+  public final static String KEY_CACHE = "server.staticFileCache";
+  public final static String KEY_LISTENER_NAME = "server.listenerName";
+  public final static String KEY_PORT = "server.port";
+  public final static String KEY_DEFAULT_NETWORK_HOST = "server.host";
+  public static final String KEY_FOX_LIFETIME = "server.lifetime";
+  public static final String KEY_FOX_STATICFOLDER = "server.staticFolder";
+
+  public static final String turtleContentType = "application/x-turtle";
+  public static final String jsonContentType = "application/json";
+
   protected final Oke oke = new Oke();
 
-  final String turtleContentType = "application/x-turtle";
-  final String jsonContentType = "application/json";
-  FoxLanguageDetector languageDetector = new FoxLanguageDetector();
+  protected final FoxLanguageDetector languageDetector = new FoxLanguageDetector();
   protected final RouteConfig routeConfig = new RouteConfig();
 
-  public static Map<String, Pool<IFox>> pool = null;
+  protected static Map<String, Pool<IFox>> pool = null;
+  protected FoxStatistics foxStatistics = new FoxStatistics();
+  protected static XMLConfiguration CFG = null;
 
-  public FoxStatistics foxStatistics = new FoxStatistics();
+  public static FoxServer instance(final XMLConfiguration xmlConfiguration) {
+    CFG = xmlConfiguration;
 
-  static {
     try {
       initPools();
     } catch (final Exception e) {
       LOG.error(e.getLocalizedMessage(), e);
     }
+
+    FoxServer foxServer = null;
+    try {
+      foxServer = new FoxServer(CFG);
+    } catch (final IOException e) {
+      LOG.error(e.getLocalizedMessage(), e);
+    }
+    return foxServer;
   }
 
   /**
    *
-   * Constructor.
-   * 
+   * Sets the folder in classpath serving static files.
+   *
    * @throws IOException
    *
+   *
    */
-  public FoxServer() throws IOException {
-    super("/public/demo");
+  private FoxServer(final XMLConfiguration xmlConfiguration) throws IOException {
+    super(xmlConfiguration.getString(KEY_FOX_STATICFOLDER),
+        xmlConfiguration.getInt(KEY_PORT, 8080));
   }
 
   protected static void initPools() throws Exception {
     pool = new ConcurrentHashMap<>();
     for (final String lang : ToolsGenerator.usedLang) {
-      int poolsize = CFG.getInt(CFG_KEY_POOL_SIZE.concat("[@").concat(lang).concat("]"));
+      int poolsize = CFG.getInt(KEY_POOL_SIZE.concat("[@").concat(lang).concat("]"));
       if (poolsize < 1) {
         LOG.error(
             "Could not find pool size for the given lang" + lang + ". We use a poolsize of 1.");
@@ -347,9 +372,9 @@ public class FoxServer extends AServer {
       // wait
       try {
 
-        latch.await(CFG.getInt(CFG_KEY_FOX_LIFETIME), TimeUnit.MINUTES);
+        latch.await(CFG.getInt(KEY_FOX_LIFETIME), TimeUnit.MINUTES);
       } catch (final InterruptedException e) {
-        LOG.error("Fox timeout after " + CFG.getInt(CFG_KEY_FOX_LIFETIME) + "min.");
+        LOG.error("Fox timeout after " + CFG.getInt(KEY_FOX_LIFETIME) + "min.");
         LOG.error("\n", e);
         LOG.error("input: " + parameter.get(FoxParameter.Parameter.INPUT.toString()));
       }

@@ -17,6 +17,8 @@
         <api>true</api>
         <feedback>false</feedback>
         <staticFileCache>false</staticFileCache>
+        <staticFolder>/public/demo</staticFolder>
+
 	<!-- in min-->
 	<lifetime>5</lifetime>
     </server>

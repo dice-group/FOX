@@ -40,6 +40,8 @@ import org.jetlang.fibers.ThreadFiber;
  */
 public class Fox extends AFox {
 
+  public static final String cfgFolder = "data/fox/cfg";
+
   protected final ToolsGenerator toolsGenerator = new ToolsGenerator();
 
   protected ILinking linking = null;
@@ -47,10 +49,11 @@ public class Fox extends AFox {
   protected IFoxJena foxJena = new FoxJena();
 
   protected FoxUtil foxUtil = new FoxUtil();
-  String startNER = "";
-  String endNER = "";
-  String startRE = "";
-  String endRE = "";
+
+  private String startNER = "";
+  private String endNER = "";
+  private String startRE = "";
+  private String endRE = "";
 
   /**
    *
@@ -59,9 +62,7 @@ public class Fox extends AFox {
    * @param lang
    */
   public Fox(final String lang) {
-
     this.lang = lang;
-
   }
 
   @Override
@@ -149,21 +150,17 @@ public class Fox extends AFox {
 
       // get results
       if (latch.getCount() == 0) {
-
         for (final IRE tool : tools) {
-
           final Set<Relation> rs = tool.getResults();
           if (rs != null && !rs.isEmpty()) {
             relations.put(tool.getToolName(), rs);
           }
         }
-
       } else {
         infoLog("Timeout after " + min + " min.");
       }
       infoLog("RE done.");
     }
-
     return relations;
   }
 

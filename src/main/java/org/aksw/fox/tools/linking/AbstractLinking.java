@@ -1,16 +1,13 @@
 package org.aksw.fox.tools.linking;
 
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 
 import org.aksw.fox.data.Entity;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.aksw.fox.tools.ATool;
 
-public abstract class AbstractLinking implements ILinking {
-  public static final Logger LOG = LogManager.getLogger(AbstractLinking.class);
+public abstract class AbstractLinking extends ATool implements ILinking {
+
   protected Set<Entity> entities = null;
-  protected CountDownLatch cdl = null;
   protected String input = null;
 
   @Override
@@ -19,12 +16,6 @@ public abstract class AbstractLinking implements ILinking {
     if (cdl != null) {
       cdl.countDown();
     }
-  }
-
-  @Override
-  public void setCountDownLatch(final CountDownLatch cdl) {
-    this.cdl = cdl;
-
   }
 
   @Override

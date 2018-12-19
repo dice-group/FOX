@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.aksw.fox.Fox;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
@@ -34,7 +35,8 @@ public abstract class AlchemyCommon extends AbstractNER {
    * 2: Posted text documents can be a maximum of 50 kilobytes. Larger documents will result in a
    * "content-exceeds-size-limit" error response.<br>
    */
-  public static final XMLConfiguration CFG = CfgManager.getCfg(AlchemyCommon.class);
+  public static final XMLConfiguration CFG =
+      new CfgManager(Fox.cfgFolder).getCfg(AlchemyCommon.class);
 
   private final String api_key = CFG.getString("apikey");
   private final String url = CFG.getString("url");

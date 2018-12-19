@@ -15,7 +15,6 @@ import org.aksw.fox.data.Relation;
 import org.aksw.fox.tools.re.AbstractRE;
 import org.aksw.ocelot.application.Application;
 import org.aksw.ocelot.application.IOcelot;
-import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpedia;
 import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipeExtended;
 
@@ -26,11 +25,8 @@ import org.aksw.simba.knowledgeextraction.commons.nlp.StanfordPipeExtended;
  */
 public class OcelotEN extends AbstractRE {
 
-  static {
-    CfgManager.cfgFolder = "data/ocelot/config";
-  }
-
-  IOcelot ocelot = new Application(CfgManager.cfgFolder);
+  String cfg = "data/ocelot/config";
+  IOcelot ocelot = Application.instance(cfg);
 
   public OcelotEN() {}
 

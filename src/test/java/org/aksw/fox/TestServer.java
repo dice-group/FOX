@@ -2,12 +2,13 @@ package org.aksw.fox;
 
 import java.io.IOException;
 
+import org.aksw.fox.ui.FoxRESTful;
 import org.aksw.fox.webservice.FoxServer;
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 public class TestServer {
 
@@ -16,7 +17,7 @@ public class TestServer {
   FoxServer server = null;
 
   public TestServer() throws IOException {
-    server = new FoxServer();
+    server = FoxServer.instance(new CfgManager(Fox.cfgFolder).getCfg(FoxRESTful.class));
   }
 
   @Test

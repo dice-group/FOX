@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
+import org.aksw.fox.Fox;
+import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -16,6 +18,7 @@ import org.apache.log4j.Logger;
 abstract public class ATool implements ITool {
 
   public static final Logger LOG = LogManager.getLogger(ATool.class);
+  protected final CfgManager cfgManager = new CfgManager(Fox.cfgFolder);
 
   protected static Properties versions = new Properties();
   static {

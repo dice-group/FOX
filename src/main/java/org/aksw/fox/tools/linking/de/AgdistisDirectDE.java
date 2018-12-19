@@ -26,17 +26,17 @@ public class AgdistisDirectDE extends Agdistis {
   /**
    * <code>
     public static void main(final String[] a) throws IOException {
-
+  
       final String file = "agdistisDE.properties";
       final NEDAlgo_HITS agdistis = new NEDAlgo_HITS(file);
       final String preAnnotatedText =
           "<entity>Angela Dorothea Merkel</entity> ist eine deutsche Politikerin (CDU) in der <entity>Bundesrepublik Deutschland</entity>.";
-
+  
       String result = "";
       final String text = preAnnotatedText;
-
+  
       result = standardAG(text, agdistis);
-
+  
       LOG.info(result);
     }</code>
    */

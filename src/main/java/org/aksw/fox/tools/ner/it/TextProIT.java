@@ -20,19 +20,18 @@ import java.util.regex.Pattern;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.apache.commons.configuration.XMLConfiguration;
 
 public class TextProIT extends AbstractNER {
 
-  public static final XMLConfiguration CFG = CfgManager.getCfg(TextProIT.class);
+  public final XMLConfiguration CFG = cfgManager.getCfg(TextProIT.class);
   public static final Charset UTF_8 = Charset.forName("UTF-8");
 
   public static final String CFG_KEY_TEXTPRO_PATH = "textPro.path";
   public static final String CFG_KEY_TMP_FOLDER = "textPro.tmpFolder";
 
-  public static final String TEXTPRO_PATH = CFG.getString(CFG_KEY_TEXTPRO_PATH);
-  public static final String TMP_FOLDER = CFG.getString(CFG_KEY_TMP_FOLDER);
+  public final String TEXTPRO_PATH = CFG.getString(CFG_KEY_TEXTPRO_PATH);
+  public final String TMP_FOLDER = CFG.getString(CFG_KEY_TMP_FOLDER);
 
   public static final Map<String, String> ENTITY_MAP = new HashMap<>();
   static {

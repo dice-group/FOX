@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.aksw.fox.Fox;
 import org.aksw.fox.data.Entity;
 import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.aksw.simba.knowledgeextraction.commons.io.Requests;
@@ -23,7 +24,8 @@ import org.json.JSONObject;
 class TagMeCall implements Callable<List<Entity>> {
   public static final Logger LOG = LogManager.getLogger(TagMeCall.class);
 
-  public static final XMLConfiguration CFG = CfgManager.getCfg(TagMeCommon.class);
+  public static final XMLConfiguration CFG =
+      new CfgManager(Fox.cfgFolder).getCfg(TagMeCommon.class);
 
   public static final String CFG_KEY_TAGME_KEY = "tagMe.key";
   public static final String CFG_KEY_SPARQL_ENDPOINT = "tagMe.sparqlEndpoint";

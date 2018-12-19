@@ -2,6 +2,7 @@ package org.aksw.fox.ui;
 
 import java.io.IOException;
 
+import org.aksw.fox.Fox;
 import org.aksw.fox.webservice.FoxServer;
 import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
@@ -26,11 +27,10 @@ public class FoxRESTful {
    */
   public static void main(final String[] args) throws IOException {
 
-
     PropertiesLoader.setPropertiesFile("fox.properties");
-    CfgManager.cfgFolder = "data/fox/cfg";
 
-    final FoxServer server = new FoxServer();
+    final CfgManager cfgManager = new CfgManager(Fox.cfgFolder);
+    final FoxServer server = FoxServer.instance(cfgManager.getCfg(FoxRESTful.class));
     try {
       server.start();
     } catch (final Exception e) {

@@ -7,7 +7,6 @@ import java.util.Locale;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
-import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.aksw.simba.knowledgeextraction.commons.io.Requests;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.http.client.fluent.Form;
@@ -32,7 +31,7 @@ public abstract class SpotlightCommon extends AbstractNER {
   Locale lang;
 
   public SpotlightCommon(final Locale lang) {
-    CFG = CfgManager.getCfg(this.getClass());
+    CFG = cfgManager.getCfg(this.getClass());
 
     final String CFG_KEY_SPOTLIGHT_URL = "spotlight.url";
     final String CFG_KEY_SPOTLIGHT_CONFIDENCE = "spotlight.confidence";
