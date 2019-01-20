@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.aksw.fox.Fox;
 import org.aksw.fox.webservice.FoxServer;
 import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
-import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -15,7 +14,7 @@ import org.apache.log4j.Logger;
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
-public class FoxRESTful {
+public class FoxRESTful extends AUI {
   public static Logger LOG = LogManager.getLogger(FoxRESTful.class);
 
   /**
@@ -26,8 +25,6 @@ public class FoxRESTful {
    * @throws PortInUseException
    */
   public static void main(final String[] args) throws IOException {
-
-    PropertiesLoader.setPropertiesFile("fox.properties");
 
     final CfgManager cfgManager = new CfgManager(Fox.cfgFolder);
     final FoxServer server = FoxServer.instance(cfgManager.getCfg(FoxRESTful.class));

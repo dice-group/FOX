@@ -27,7 +27,7 @@ import weka.classifiers.Classifier;
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
-public class FoxCLI {
+public class FoxCLI extends AUI {
   public static Logger LOG = LogManager.getLogger(FoxCLI.class);
 
   /**
@@ -38,10 +38,10 @@ public class FoxCLI {
    *        included),<br>
    *        -a for an action {train | validate}
    *        </p>
+   * @throws IOException
    *
-   * @exception Exception if something wrong
    */
-  public static void main(final String[] args) throws Exception {
+  public static void main(final String[] args) throws IOException {
     LOG.info("Fox cl service starting ...");
     final Getopt getopt = new Getopt("Fox", args, "l:x i:x a:x");
     int arg;
@@ -61,9 +61,10 @@ public class FoxCLI {
             a = "train";
             if (PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER_TRAINING).toLowerCase()
                 .startsWith("false")) {
-              throw new Exception("You need to change the fox.properties file and set "
-                  + FoxClassifier.CFG_KEY_LEARNER_TRAINING + " to true. "
-                  + "Also you should set an output file for the new model.");
+              throw new UnsupportedOperationException(
+                  "You need to change the fox.properties file and set "
+                      + FoxClassifier.CFG_KEY_LEARNER_TRAINING + " to true. "
+                      + "Also you should set an output file for the new model.");
             }
             /*
              * } else if (a.toLowerCase().startsWith("re")) { a = "retrieve"; if
@@ -77,11 +78,12 @@ public class FoxCLI {
             a = "validate";
             if (PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER_TRAINING).toLowerCase()
                 .startsWith("true")) {
-              throw new Exception("You need to change the fox.properties file and set "
-                  + FoxClassifier.CFG_KEY_LEARNER_TRAINING + " to false.");
+              throw new UnsupportedOperationException(
+                  "You need to change the fox.properties file and set "
+                      + FoxClassifier.CFG_KEY_LEARNER_TRAINING + " to false.");
             }
           } else {
-            throw new Exception("Wrong action value.");
+            throw new UnsupportedOperationException("Wrong action value.");
           }
           break;
       }
@@ -90,7 +92,7 @@ public class FoxCLI {
 
     final File file = new File(in);
     if (!file.exists()) {
-      throw new IOException("Can't find file or directory: " + in);
+      throw new UnsupportedOperationException("Can't find file or directory: " + in);
     } else {
       if (file.isDirectory()) {
         // read all files in a directory
@@ -102,7 +104,7 @@ public class FoxCLI {
       } else if (file.isFile()) {
         files.add(file.getAbsolutePath());
       } else {
-        throw new IOException("Input isn't a valid file or directory.");
+        throw new UnsupportedOperationException("Input isn't a valid file or directory.");
       }
     }
 
@@ -122,7 +124,8 @@ public class FoxCLI {
         break;
       }
       default:
-        throw new IOException("Don't know what to do. Please set the action parameter.");
+        throw new UnsupportedOperationException(
+            "Don't know what to do. Please set the action parameter.");
     }
 
     LOG.info("Fox cl service ended.");

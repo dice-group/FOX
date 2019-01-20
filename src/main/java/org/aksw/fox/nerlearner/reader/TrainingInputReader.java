@@ -64,6 +64,11 @@ public class TrainingInputReader extends ANERReader {
   protected HashMap<String, String> entities = new HashMap<>();
 
   /**
+   * Empty constructor to create class with Reflections.
+   */
+  public TrainingInputReader() {}
+
+  /**
    * http://www-nlpir.nist.gov/related_projects/muc/proceedings/ne_task.html
    *
    * @param inputPaths
