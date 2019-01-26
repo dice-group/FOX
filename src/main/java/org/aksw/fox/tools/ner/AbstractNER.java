@@ -9,8 +9,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.tools.ATool;
 import org.aksw.fox.utils.FoxTextUtil;
 
@@ -131,7 +132,7 @@ public abstract class AbstractNER extends ATool implements INER {
     }
     String t = entityClasses.get(toolType);
     if (t == null) {
-      t = EntityClassMap.N;
+      t = BILOUEncoding.O;
     }
     return t;
   }
@@ -150,13 +151,13 @@ public abstract class AbstractNER extends ATool implements INER {
     final List<String> list = new ArrayList<>();
     for (final Entity e : entityList) {
       if (!list.contains(e.getText())) {
-        if (e.getType().equals(EntityClassMap.L)) {
+        if (e.getType().equals(EntityTypes.L)) {
           l++;
         }
-        if (e.getType().equals(EntityClassMap.O)) {
+        if (e.getType().equals(EntityTypes.O)) {
           o++;
         }
-        if (e.getType().equals(EntityClassMap.P)) {
+        if (e.getType().equals(EntityTypes.P)) {
           p++;
         }
         list.add(e.getText());
@@ -171,13 +172,13 @@ public abstract class AbstractNER extends ATool implements INER {
     o = 0;
     p = 0;
     for (final Entity e : entityList) {
-      if (e.getType().equals(EntityClassMap.L)) {
+      if (e.getType().equals(EntityTypes.L)) {
         l += e.getText().split(" ").length;
       }
-      if (e.getType().equals(EntityClassMap.O)) {
+      if (e.getType().equals(EntityTypes.O)) {
         o += e.getText().split(" ").length;
       }
-      if (e.getType().equals(EntityClassMap.P)) {
+      if (e.getType().equals(EntityTypes.P)) {
         p += e.getText().split(" ").length;
       }
     }

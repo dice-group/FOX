@@ -1,8 +1,6 @@
 package org.aksw.fox.data;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,43 +13,18 @@ import java.util.Map;
  */
 public class EntityClassMap {
 
-  public static final String L = "LOCATION";
-  public static final String N = "NULL";
-  public static final String O = "ORGANIZATION";
-  public static final String P = "PERSON";
-
-  public static final List<String> entityClasses = Arrays.asList(L, O, P, N);
-
-  protected static final Map<String, String> entityClassesOracel = new HashMap<>();
-  static {
-    entityClassesOracel.put("ORGANIZATION", O);
-    entityClassesOracel.put("LOCATION", L);
-    entityClassesOracel.put("PERSON", P);
-  }
-
   protected static final Map<String, String> entityClassesNEEL = new HashMap<>();
   static {
-    entityClassesNEEL.put("Organization", O);
-    entityClassesNEEL.put("Location", L);
-    entityClassesNEEL.put("Person", P);
+    entityClassesNEEL.put("Organization", EntityTypes.O);
+    entityClassesNEEL.put("Location", EntityTypes.L);
+    entityClassesNEEL.put("Person", EntityTypes.P);
   }
 
   protected static final Map<String, String> entityClassesILLINOIS = new HashMap<>();
   static {
-    entityClassesILLINOIS.put("LOC", L);
-    entityClassesILLINOIS.put("ORG", O);
-    entityClassesILLINOIS.put("PER", P);
-  }
-
-  /**
-   * Gets the entity class for a oracel entity type/class.
-   */
-  public static String oracel(final String tag) {
-    String t = entityClassesOracel.get(tag);
-    if (t == null) {
-      t = getNullCategory();
-    }
-    return t;
+    entityClassesILLINOIS.put("LOC", EntityTypes.L);
+    entityClassesILLINOIS.put("ORG", EntityTypes.O);
+    entityClassesILLINOIS.put("PER", EntityTypes.P);
   }
 
   /**
@@ -60,7 +33,7 @@ public class EntityClassMap {
   public static String neel(final String tag) {
     String t = entityClassesNEEL.get(tag);
     if (t == null) {
-      t = getNullCategory();
+      t = BILOUEncoding.O;
     }
     return t;
   }
@@ -71,15 +44,8 @@ public class EntityClassMap {
   public static String illinois(final String illinoisTag) {
     String t = entityClassesILLINOIS.get(illinoisTag);
     if (t == null) {
-      t = getNullCategory();
+      t = BILOUEncoding.O;
     }
     return t;
-  }
-
-  /**
-   * Gets the null type/class.
-   */
-  public static String getNullCategory() {
-    return N;
   }
 }

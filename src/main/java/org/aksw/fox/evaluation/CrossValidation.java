@@ -3,12 +3,11 @@ package org.aksw.fox.evaluation;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.nerlearner.IPostProcessing;
 import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.nerlearner.TokenManager;
@@ -173,9 +172,11 @@ public class CrossValidation {
             .append("c,").append("d").append('\n');
       }
       final double[][] cmMatrix = evalAll.confusionMatrix();
-      for (int k = 0; k < EntityClassMap.entityClasses.size(); k++) {
-        outTotal.append(i + 1).append(',').append(classifierName).append(',')
-            .append(EntityClassMap.entityClasses.get(k)).append(',')
+
+      for (int k = 0; k < EntityTypes.AllTypesSet.size(); k++) {
+        outTotal//
+            .append(i + 1).append(',').append(classifierName).append(',')
+            .append(EntityTypes.AllTypesList.get(k)).append(',')
             .append(new Double(cmMatrix[k][0]).intValue()).append(',')
             .append(new Double(cmMatrix[k][1]).intValue()).append(',')
             .append(new Double(cmMatrix[k][2]).intValue()).append(',')
@@ -207,7 +208,7 @@ public class CrossValidation {
 
     // header
     final StringBuffer cm = new StringBuffer();
-    for (final String cl : EntityClassMap.entityClasses) {
+    for (final String cl : EntityTypes.AllTypesSet) {
       cm.append(cl + "\t");
     }
     cm.append("\n");
@@ -221,8 +222,8 @@ public class CrossValidation {
     }
 
     // write buffer for file
-    for (int i = 0; i < EntityClassMap.entityClasses.size(); i++) {
-      writeBuffer(run, fold, classifierName, EntityClassMap.entityClasses.get(i),
+    for (int i = 0; i < EntityTypes.AllTypesList.size(); i++) {
+      writeBuffer(run, fold, classifierName, EntityTypes.AllTypesList.get(i),
           String.valueOf(new Double(cmMatrix[i][0]).intValue()),
           String.valueOf(new Double(cmMatrix[i][1]).intValue()),
           String.valueOf(new Double(cmMatrix[i][2]).intValue()),
@@ -232,12 +233,11 @@ public class CrossValidation {
 
   public static void printMeasures(final Evaluation eval) {
 
-    final List<String> cat = EntityClassMap.entityClasses;
-    for (final String cl : EntityClassMap.entityClasses) {
+    for (final String cl : EntityTypes.AllTypesList) {
 
-      final double f1 = eval.fMeasure(cat.indexOf(cl));
-      final double p = eval.precision(cat.indexOf(cl));
-      final double r = eval.recall(cat.indexOf(cl));
+      final double f1 = eval.fMeasure(EntityTypes.AllTypesList.indexOf(cl));
+      final double p = eval.precision(EntityTypes.AllTypesList.indexOf(cl));
+      final double r = eval.recall(EntityTypes.AllTypesList.indexOf(cl));
 
       LOG.info("=== classes ===");
       LOG.info("class: " + cl);

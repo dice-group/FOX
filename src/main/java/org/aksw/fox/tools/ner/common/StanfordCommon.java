@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.tools.ner.AbstractNER;
 
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
@@ -51,7 +51,7 @@ public abstract class StanfordCommon extends AbstractNER {
         if (contains && equalTypes) {
           lastEntity.addText(currentToken);
         } else {
-          if (type != EntityClassMap.getNullCategory()) {
+          if (type != BILOUEncoding.O) {
             final float p = Entity.DEFAULT_RELEVANCE;
             list.add(getEntity(currentToken, type, p, getToolName()));
           }

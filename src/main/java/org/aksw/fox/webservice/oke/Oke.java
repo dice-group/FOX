@@ -14,7 +14,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.output.FoxJena;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -64,11 +64,11 @@ public class Oke {
             .collect(Collectors.toSet());
 
         if (types.contains("location") || types.contains("place")) {
-          type = EntityClassMap.L;
+          type = EntityTypes.L;
         } else if (types.contains("organization") || types.contains("organisation")) {
-          type = EntityClassMap.O;
+          type = EntityTypes.O;
         } else if (types.contains("person")) {
-          type = EntityClassMap.P;
+          type = EntityTypes.P;
         } else {
           LOG.warn("Somthing went wrong!");
           LOG.warn(ee.toString());
@@ -124,9 +124,9 @@ public class Oke {
         //
         final List<Entity> entities = getEntities(doc);
         final Map<Integer, Entity> index = Entity.indexToEntity(entities);
-        final List<Integer> sorted = new ArrayList<>(new TreeSet<Integer>(index.keySet()));
+        final List<Integer> sorted = new ArrayList<>(new TreeSet<>(index.keySet()));
 
-        for (int i = 0; i < (sorted.size() - 1); i++) {
+        for (int i = 0; i < sorted.size() - 1; i++) {
           final Entity s = index.get(sorted.get(i));
           final Entity o = index.get(sorted.get(i + 1));
 

@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.tools.ner.AbstractNER;
 import org.apache.commons.configuration.XMLConfiguration;
 
@@ -35,10 +35,10 @@ public class TextProIT extends AbstractNER {
 
   public static final Map<String, String> ENTITY_MAP = new HashMap<>();
   static {
-    ENTITY_MAP.put("ORG", EntityClassMap.O);
-    ENTITY_MAP.put("LOC", EntityClassMap.L);
-    ENTITY_MAP.put("PER", EntityClassMap.P);
-    ENTITY_MAP.put("GPE", EntityClassMap.L);
+    ENTITY_MAP.put("ORG", EntityTypes.O);
+    ENTITY_MAP.put("LOC", EntityTypes.L);
+    ENTITY_MAP.put("PER", EntityTypes.P);
+    ENTITY_MAP.put("GPE", EntityTypes.L);
   };
 
   /**

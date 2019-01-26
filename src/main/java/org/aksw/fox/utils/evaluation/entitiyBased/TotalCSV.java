@@ -5,7 +5,8 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.BILOUEncoding;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.evaluation.CrossValidation;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 
@@ -29,10 +30,10 @@ public class TotalCSV {
   static Map<String, Integer> defaultmap = new HashMap<>();
   static Map<String, Map<String, Integer>> matrix = new HashMap<>();
   static {
-    defaultmap.put(EntityClassMap.L, 0); // a
-    defaultmap.put(EntityClassMap.O, 0); // b
-    defaultmap.put(EntityClassMap.P, 0); // c
-    defaultmap.put(EntityClassMap.N, 0); // d
+    defaultmap.put(EntityTypes.L, 0); // a
+    defaultmap.put(EntityTypes.O, 0); // b
+    defaultmap.put(EntityTypes.P, 0); // c
+    defaultmap.put(BILOUEncoding.O, 0); // d
   }
 
   // csv index
@@ -46,10 +47,10 @@ public class TotalCSV {
   static int d = 7;
 
   public static void init() {
-    matrix.put(EntityClassMap.L, new HashMap<>(defaultmap));
-    matrix.put(EntityClassMap.O, new HashMap<>(defaultmap));
-    matrix.put(EntityClassMap.P, new HashMap<>(defaultmap));
-    matrix.put(EntityClassMap.N, new HashMap<>(defaultmap));
+    matrix.put(EntityTypes.L, new HashMap<>(defaultmap));
+    matrix.put(EntityTypes.O, new HashMap<>(defaultmap));
+    matrix.put(EntityTypes.P, new HashMap<>(defaultmap));
+    matrix.put(BILOUEncoding.O, new HashMap<>(defaultmap));
   }
 
   public static void start() throws Exception {
@@ -73,68 +74,68 @@ public class TotalCSV {
       currentAlg = nextLine[classifier];
       // next run
       if (!nextLine[run].equals(currentRun)) {
-        writeBuffer(currentRun, currentAlg, EntityClassMap.L,
-            matrix.get(EntityClassMap.L).get(EntityClassMap.L).toString(),
-            matrix.get(EntityClassMap.L).get(EntityClassMap.O).toString(),
-            matrix.get(EntityClassMap.L).get(EntityClassMap.P).toString(),
-            matrix.get(EntityClassMap.L).get(EntityClassMap.N).toString());
-        writeBuffer(currentRun, currentAlg, EntityClassMap.O,
-            matrix.get(EntityClassMap.O).get(EntityClassMap.L).toString(),
-            matrix.get(EntityClassMap.O).get(EntityClassMap.O).toString(),
-            matrix.get(EntityClassMap.O).get(EntityClassMap.P).toString(),
-            matrix.get(EntityClassMap.O).get(EntityClassMap.N).toString());
-        writeBuffer(currentRun, currentAlg, EntityClassMap.P,
-            matrix.get(EntityClassMap.P).get(EntityClassMap.L).toString(),
-            matrix.get(EntityClassMap.P).get(EntityClassMap.O).toString(),
-            matrix.get(EntityClassMap.P).get(EntityClassMap.P).toString(),
-            matrix.get(EntityClassMap.P).get(EntityClassMap.N).toString());
-        writeBuffer(currentRun, currentAlg, EntityClassMap.N,
-            matrix.get(EntityClassMap.N).get(EntityClassMap.L).toString(),
-            matrix.get(EntityClassMap.N).get(EntityClassMap.O).toString(),
-            matrix.get(EntityClassMap.N).get(EntityClassMap.P).toString(),
-            matrix.get(EntityClassMap.N).get(EntityClassMap.N).toString());
+        writeBuffer(currentRun, currentAlg, EntityTypes.L,
+            matrix.get(EntityTypes.L).get(EntityTypes.L).toString(),
+            matrix.get(EntityTypes.L).get(EntityTypes.O).toString(),
+            matrix.get(EntityTypes.L).get(EntityTypes.P).toString(),
+            matrix.get(EntityTypes.L).get(BILOUEncoding.O).toString());
+        writeBuffer(currentRun, currentAlg, EntityTypes.O,
+            matrix.get(EntityTypes.O).get(EntityTypes.L).toString(),
+            matrix.get(EntityTypes.O).get(EntityTypes.O).toString(),
+            matrix.get(EntityTypes.O).get(EntityTypes.P).toString(),
+            matrix.get(EntityTypes.O).get(BILOUEncoding.O).toString());
+        writeBuffer(currentRun, currentAlg, EntityTypes.P,
+            matrix.get(EntityTypes.P).get(EntityTypes.L).toString(),
+            matrix.get(EntityTypes.P).get(EntityTypes.O).toString(),
+            matrix.get(EntityTypes.P).get(EntityTypes.P).toString(),
+            matrix.get(EntityTypes.P).get(BILOUEncoding.O).toString());
+        writeBuffer(currentRun, currentAlg, BILOUEncoding.O,
+            matrix.get(BILOUEncoding.O).get(EntityTypes.L).toString(),
+            matrix.get(BILOUEncoding.O).get(EntityTypes.O).toString(),
+            matrix.get(BILOUEncoding.O).get(EntityTypes.P).toString(),
+            matrix.get(BILOUEncoding.O).get(BILOUEncoding.O).toString());
         init();
         currentRun = nextLine[run];
         currentAlg = nextLine[classifier];
 
       }
       // a
-      Integer va = matrix.get(nextLine[classs]).get(EntityClassMap.L);
+      Integer va = matrix.get(nextLine[classs]).get(EntityTypes.L);
       va = va + Integer.valueOf(nextLine[a]);
-      matrix.get(nextLine[classs]).put(EntityClassMap.L, va);
+      matrix.get(nextLine[classs]).put(EntityTypes.L, va);
       // b
-      Integer vb = matrix.get(nextLine[classs]).get(EntityClassMap.O);
+      Integer vb = matrix.get(nextLine[classs]).get(EntityTypes.O);
       vb = vb + Integer.valueOf(nextLine[b]);
-      matrix.get(nextLine[classs]).put(EntityClassMap.O, vb);
+      matrix.get(nextLine[classs]).put(EntityTypes.O, vb);
       // c
-      Integer vc = matrix.get(nextLine[classs]).get(EntityClassMap.P);
+      Integer vc = matrix.get(nextLine[classs]).get(EntityTypes.P);
       vc = vc + Integer.valueOf(nextLine[c]);
-      matrix.get(nextLine[classs]).put(EntityClassMap.P, vc);
+      matrix.get(nextLine[classs]).put(EntityTypes.P, vc);
       // d
-      Integer vd = matrix.get(nextLine[classs]).get(EntityClassMap.N);
+      Integer vd = matrix.get(nextLine[classs]).get(BILOUEncoding.O);
       vd = vd + Integer.valueOf(nextLine[d]);
-      matrix.get(nextLine[classs]).put(EntityClassMap.N, vd);
+      matrix.get(nextLine[classs]).put(BILOUEncoding.O, vd);
     }
-    writeBuffer(currentRun, currentAlg, EntityClassMap.L,
-        matrix.get(EntityClassMap.L).get(EntityClassMap.L).toString(),
-        matrix.get(EntityClassMap.L).get(EntityClassMap.O).toString(),
-        matrix.get(EntityClassMap.L).get(EntityClassMap.P).toString(),
-        matrix.get(EntityClassMap.L).get(EntityClassMap.N).toString());
-    writeBuffer(currentRun, currentAlg, EntityClassMap.O,
-        matrix.get(EntityClassMap.O).get(EntityClassMap.L).toString(),
-        matrix.get(EntityClassMap.O).get(EntityClassMap.O).toString(),
-        matrix.get(EntityClassMap.O).get(EntityClassMap.P).toString(),
-        matrix.get(EntityClassMap.O).get(EntityClassMap.N).toString());
-    writeBuffer(currentRun, currentAlg, EntityClassMap.P,
-        matrix.get(EntityClassMap.P).get(EntityClassMap.L).toString(),
-        matrix.get(EntityClassMap.P).get(EntityClassMap.O).toString(),
-        matrix.get(EntityClassMap.P).get(EntityClassMap.P).toString(),
-        matrix.get(EntityClassMap.P).get(EntityClassMap.N).toString());
-    writeBuffer(currentRun, currentAlg, EntityClassMap.N,
-        matrix.get(EntityClassMap.N).get(EntityClassMap.L).toString(),
-        matrix.get(EntityClassMap.N).get(EntityClassMap.O).toString(),
-        matrix.get(EntityClassMap.N).get(EntityClassMap.P).toString(),
-        matrix.get(EntityClassMap.N).get(EntityClassMap.N).toString());
+    writeBuffer(currentRun, currentAlg, EntityTypes.L,
+        matrix.get(EntityTypes.L).get(EntityTypes.L).toString(),
+        matrix.get(EntityTypes.L).get(EntityTypes.O).toString(),
+        matrix.get(EntityTypes.L).get(EntityTypes.P).toString(),
+        matrix.get(EntityTypes.L).get(BILOUEncoding.O).toString());
+    writeBuffer(currentRun, currentAlg, EntityTypes.O,
+        matrix.get(EntityTypes.O).get(EntityTypes.L).toString(),
+        matrix.get(EntityTypes.O).get(EntityTypes.O).toString(),
+        matrix.get(EntityTypes.O).get(EntityTypes.P).toString(),
+        matrix.get(EntityTypes.O).get(BILOUEncoding.O).toString());
+    writeBuffer(currentRun, currentAlg, EntityTypes.P,
+        matrix.get(EntityTypes.P).get(EntityTypes.L).toString(),
+        matrix.get(EntityTypes.P).get(EntityTypes.O).toString(),
+        matrix.get(EntityTypes.P).get(EntityTypes.P).toString(),
+        matrix.get(EntityTypes.P).get(BILOUEncoding.O).toString());
+    writeBuffer(currentRun, currentAlg, BILOUEncoding.O,
+        matrix.get(BILOUEncoding.O).get(EntityTypes.L).toString(),
+        matrix.get(BILOUEncoding.O).get(EntityTypes.O).toString(),
+        matrix.get(BILOUEncoding.O).get(EntityTypes.P).toString(),
+        matrix.get(BILOUEncoding.O).get(BILOUEncoding.O).toString());
     reader.close();
     write();
   }

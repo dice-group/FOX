@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.tools.ATool;
 import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpedia;
@@ -41,7 +41,7 @@ public abstract class AbstractRE extends ATool implements IRE {
   public Set<Relation> extract() {
     relations.clear();
 
-    if ((entities != null) && !entities.isEmpty()) {
+    if (entities != null && !entities.isEmpty()) {
       watch.start();
       relations = _extract(input, Entity.breakdownAndSortEntity(entities));
       watch.stop();
@@ -97,11 +97,11 @@ public abstract class AbstractRE extends ATool implements IRE {
               "Entity with multipe index. Split the entities first.");
         }
         final int beginnIndex = Entity.getIndex(e);
-        final int endIndex = (beginnIndex + e.getText().length());
+        final int endIndex = beginnIndex + e.getText().length();
 
         if (beginnIndex >= offset) {
           // the start index of the entity is inside the current sentence
-          if (endIndex < (sentence.length() + offset)) {
+          if (endIndex < sentence.length() + offset) {
             // the end index of the entity is inside the current sentence
             e.getIndices().clear();
             e.getIndices().add(beginnIndex - offset);
@@ -149,13 +149,13 @@ public abstract class AbstractRE extends ATool implements IRE {
 
   protected String mapFoxTypesToDBpediaTypes(final String foxType) {
     switch (foxType) {
-      case EntityClassMap.P: {
+      case EntityTypes.P: {
         return DBpedia.ns_dbpedia_ontology.concat("Person");
       }
-      case EntityClassMap.L: {
+      case EntityTypes.L: {
         return DBpedia.ns_dbpedia_ontology.concat("Place");
       }
-      case EntityClassMap.O: {
+      case EntityTypes.O: {
         return DBpedia.ns_dbpedia_ontology.concat("Organisation");
       }
       default:

@@ -2,13 +2,11 @@ package org.aksw.fox.nerlearner;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.nerlearner.reader.FoxInstances;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.commons.io.FileUtils;
@@ -30,7 +28,9 @@ import weka.core.SerializationHelper;
 public class FoxClassifier {
 
   public static Logger LOG = LogManager.getLogger(FoxClassifier.class);
+
   Map<String, Classifier> cache = new HashMap<>();
+
   public static final String CFG_KEY_MODEL_PATH =
       FoxClassifier.class.getName().concat(".modelPath");
   public static final String CFG_KEY_LEARNER = FoxClassifier.class.getName().concat(".learner");
@@ -58,10 +58,6 @@ public class FoxClassifier {
    * @throws Exception
    */
   protected void buildClassifier() throws Exception {
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("buildClassifier ...");
-    }
-
     if (instances != null) {
       classifier.buildClassifier(instances);
       isTrained = true;
@@ -77,11 +73,15 @@ public class FoxClassifier {
    * @param toolResults
    * @param oracel
    */
-  protected void initInstances(final Set<String> input, final Map<String, Set<Entity>> toolResults,
+  protected void initInstances(//
+      final Set<String> input, final Map<String, Set<Entity>> toolResults,
       final Map<String, String> oracle) {
+
     LOG.info("init. instances ...");
-    instances = oracle == null ? foxInstances.getInstances(input, toolResults)
-        : foxInstances.getInstances(input, toolResults, oracle);
+
+    instances = oracle == null ? //
+        foxInstances.getInstances(input, toolResults) : //
+        foxInstances.getInstances(input, toolResults, oracle);
   }
 
   protected String getName(final String lang) {
@@ -95,8 +95,8 @@ public class FoxClassifier {
    * @param file
    */
   public void writeClassifier(final String file, final String lang) {
+
     final String name = getName(lang);
-    LOG.info("writeClassifier: " + name);
     final String path = FilenameUtils.getPath(name);
     try {
       FileUtils.forceMkdir(new File(path));
@@ -143,13 +143,8 @@ public class FoxClassifier {
       try {
         classified.instance(i).setClassValue(classifier.classifyInstance(instances.instance(i)));
       } catch (final Exception e) {
-        LOG.error("\n", e);
+        LOG.error(e.getLocalizedMessage(), e);
       }
-    }
-    // TRACE
-    if (LOG.isTraceEnabled()) {
-      LOG.trace("classified: \n" + classified);
-      // TRACE
     }
 
     final Set<Entity> set = pp.instancesToEntities(classified);
@@ -174,21 +169,6 @@ public class FoxClassifier {
     final Map<String, String> labeledOracle = pp.getLabeledMap(oracle);
     final Map<String, Set<Entity>> labledToolResults = pp.getLabeledToolResults();
 
-    // DEBUG
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("labeled entity:");
-
-      final Set<Entity> set = new LinkedHashSet<>();
-      for (final Entry<String, Set<Entity>> e : labledToolResults.entrySet()) {
-        set.addAll(e.getValue());
-      }
-
-      for (final Entity e : set) {
-        LOG.trace(e.getText());
-      }
-    }
-    // DEBUG
-
     initInstances(pp.getLabeledInput(), labledToolResults, labeledOracle);
     buildClassifier();
   }
@@ -210,7 +190,8 @@ public class FoxClassifier {
       // print the confusion matrix
       final StringBuffer cm = new StringBuffer();
       final double[][] cmMatrix = eva.confusionMatrix();
-      for (final String cl : EntityClassMap.entityClasses) {
+
+      for (final String cl : EntityTypes.AllTypesList) {
         cm.append(cl + "\t");
       }
       cm.append("\n");
@@ -224,11 +205,12 @@ public class FoxClassifier {
       LOG.info("confusion matrix\n" + cm.toString());
 
       // measure
-      for (final String cl : EntityClassMap.entityClasses) {
+      for (int i = 0; i < EntityTypes.AllTypesList.size(); i++) {
+        final String cl = EntityTypes.AllTypesList.get(i);
         LOG.info("class: " + cl);
-        LOG.info("fMeasure: " + eva.fMeasure(EntityClassMap.entityClasses.indexOf(cl)));
-        LOG.info("precision: " + eva.precision(EntityClassMap.entityClasses.indexOf(cl)));
-        LOG.info("recall: " + eva.recall(EntityClassMap.entityClasses.indexOf(cl)));
+        LOG.info("fMeasure: " + eva.fMeasure(i));
+        LOG.info("precision: " + eva.precision(i));
+        LOG.info("recall: " + eva.recall(i));
       }
 
     } else {

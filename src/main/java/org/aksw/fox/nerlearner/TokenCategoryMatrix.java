@@ -1,18 +1,13 @@
 package org.aksw.fox.nerlearner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.aksw.fox.data.Entity;
 import org.apache.log4j.Logger;
 
-/**
- *
- * @author rspeck
- *
- */
 public class TokenCategoryMatrix {
 
   public static Logger logger = Logger.getLogger(TokenCategoryMatrix.class);
@@ -24,17 +19,9 @@ public class TokenCategoryMatrix {
   public TokenCategoryMatrix(final Set<String> token, final Set<String> categories,
       final String nullCategory, final Set<Entity> foundEntities, final String splitregText) {
 
-    // LOGGER
-    if ((foundEntities != null) && foundEntities.iterator().hasNext()) {
-      logger.info("TokenCategoryMatrix : " + foundEntities.iterator().next().getToolName());
-    } else {
-      logger.warn("No entities found.");
-      // LOGGER
-    }
-
-    this.categories = new ArrayList<>();
-    this.categories.addAll(categories);
+    this.categories = new ArrayList<>(new TreeSet<>(categories));
     this.token = new ArrayList<>(token);
+
     values = new boolean[token.size()][categories.size()];
 
     for (int i = 0; i < token.size(); i++) {
@@ -46,27 +33,11 @@ public class TokenCategoryMatrix {
         setFound(e, splitregText);
       }
     }
-
-    // TRACE
-    if (logger.isTraceEnabled()) {
-      logger.trace(this);
-      // TRACE
-    }
   }
 
-  public void setFound(final Entity entity, final String splitregText) {
-    // DEBUG
-    if (logger.isDebugEnabled()) {
-      logger.debug("setFound: " + entity);
-      // DEBUG
-    }
+  private void setFound(final Entity entity, final String splitregText) {
 
     final String[] split = entity.getText().split(splitregText);
-
-    // TRACE
-    if (logger.isTraceEnabled()) {
-      logger.trace("split" + Arrays.asList(split));
-    } // TRACE
 
     for (String s : split) {
       s = s.trim();

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.data.Relation;
 import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpedia;
 import org.apache.log4j.LogManager;
@@ -36,16 +36,16 @@ public class OcelotENTest {
 
       final List<Entity> entities = new ArrayList<>();
 
-      final Entity eBob = new Entity(bob, EntityClassMap.P);
+      final Entity eBob = new Entity(bob, EntityTypes.P);
       eBob.addIndicies(text.indexOf(bob));
 
-      final Entity eAlice = new Entity(alice, EntityClassMap.P);
+      final Entity eAlice = new Entity(alice, EntityTypes.P);
       eAlice.addIndicies(text.indexOf(alice));
 
-      final Entity eKarl = new Entity(karl, EntityClassMap.P);
+      final Entity eKarl = new Entity(karl, EntityTypes.P);
       eKarl.addIndicies(text.indexOf(karl));
 
-      final Entity ePaula = new Entity(paula, EntityClassMap.P);
+      final Entity ePaula = new Entity(paula, EntityTypes.P);
       ePaula.addIndicies(text.indexOf(paula));
 
       entities.add(eBob);
@@ -107,16 +107,16 @@ public class OcelotENTest {
 
       final List<Entity> entities = new ArrayList<>();
 
-      final Entity eBob = new Entity(bob, EntityClassMap.P);
+      final Entity eBob = new Entity(bob, EntityTypes.P);
       eBob.addIndicies(text.indexOf(bob));
 
-      final Entity eAlice = new Entity(alice, EntityClassMap.P);
+      final Entity eAlice = new Entity(alice, EntityTypes.P);
       eAlice.addIndicies(text.indexOf(alice));
 
-      final Entity eKarl = new Entity(karl, EntityClassMap.P);
+      final Entity eKarl = new Entity(karl, EntityTypes.P);
       eKarl.addIndicies(text.indexOf(karl));
 
-      final Entity ePaula = new Entity(paula, EntityClassMap.P);
+      final Entity ePaula = new Entity(paula, EntityTypes.P);
       ePaula.addIndicies(text.indexOf(paula));
 
       entities.add(eBob);

@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.BILOUEncoding;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.evaluation.CrossValidation;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 
@@ -42,10 +43,10 @@ public class DetailCSV {
   static Map<String, Integer> defaultmap = new HashMap<>();
   static Map<String, Map<String, Integer>> matrix = new HashMap<>();
   static {
-    defaultmap.put(EntityClassMap.L, 0); // a
-    defaultmap.put(EntityClassMap.O, 0); // b
-    defaultmap.put(EntityClassMap.P, 0); // c
-    defaultmap.put(EntityClassMap.N, 0); // d
+    defaultmap.put(EntityTypes.L, 0); // a
+    defaultmap.put(EntityTypes.O, 0); // b
+    defaultmap.put(EntityTypes.P, 0); // c
+    defaultmap.put(BILOUEncoding.O, 0); // d
   }
 
   static List<String> classifiedClasses = new ArrayList<>();
@@ -56,10 +57,10 @@ public class DetailCSV {
                            // debugging
 
   public static void init() {
-    matrix.put(EntityClassMap.L, new HashMap<>(defaultmap));
-    matrix.put(EntityClassMap.O, new HashMap<>(defaultmap));
-    matrix.put(EntityClassMap.P, new HashMap<>(defaultmap));
-    matrix.put(EntityClassMap.N, new HashMap<>(defaultmap));
+    matrix.put(EntityTypes.L, new HashMap<>(defaultmap));
+    matrix.put(EntityTypes.O, new HashMap<>(defaultmap));
+    matrix.put(EntityTypes.P, new HashMap<>(defaultmap));
+    matrix.put(BILOUEncoding.O, new HashMap<>(defaultmap));
 
     currentRow = 0;
     nullRows = 0;
@@ -84,13 +85,13 @@ public class DetailCSV {
         for (int ii = 0; ii < part.numInstances(); ii++) {
           final String classifiedClass = part.instance(ii).stringValue(classindex);
           final String oracelclasss = oracel.instance(currentRow).stringValue(classindex);
-          if (oracelclasss.equals(EntityClassMap.N)) {
+          if (oracelclasss.equals(BILOUEncoding.O)) {
             nullRows++;
           }
           currentRow++;
 
           //
-          if (lastOracleClass.equals(oracelclasss) && !oracelclasss.equals(EntityClassMap.N)
+          if (lastOracleClass.equals(oracelclasss) && !oracelclasss.equals(BILOUEncoding.O)
               && ii < part.numInstances() - 1) {
             classifiedClasses.add(classifiedClass);
           } else {
@@ -110,9 +111,9 @@ public class DetailCSV {
               count++;
               matrix.get(oracelclasss).put(classifiedClass, count);
             } else {
-              Integer count = matrix.get(oracelclasss).get(EntityClassMap.N);
+              Integer count = matrix.get(oracelclasss).get(BILOUEncoding.O);
               count++;
-              matrix.get(oracelclasss).put(EntityClassMap.N, count);
+              matrix.get(oracelclasss).put(BILOUEncoding.O, count);
             }
             // prepare next
             lastOracleClass = oracelclasss;
@@ -127,26 +128,26 @@ public class DetailCSV {
         // ORGANIZATION
         // PERSON
         // NULL
-        writeBuffer(lastRun, lastFold, alg, EntityClassMap.L,
-            matrix.get(EntityClassMap.L).get(EntityClassMap.L).toString(),
-            matrix.get(EntityClassMap.L).get(EntityClassMap.O).toString(),
-            matrix.get(EntityClassMap.L).get(EntityClassMap.P).toString(),
-            matrix.get(EntityClassMap.L).get(EntityClassMap.N).toString());
-        writeBuffer(lastRun, lastFold, alg, EntityClassMap.O,
-            matrix.get(EntityClassMap.O).get(EntityClassMap.L).toString(),
-            matrix.get(EntityClassMap.O).get(EntityClassMap.O).toString(),
-            matrix.get(EntityClassMap.O).get(EntityClassMap.P).toString(),
-            matrix.get(EntityClassMap.O).get(EntityClassMap.N).toString());
-        writeBuffer(lastRun, lastFold, alg, EntityClassMap.P,
-            matrix.get(EntityClassMap.P).get(EntityClassMap.L).toString(),
-            matrix.get(EntityClassMap.P).get(EntityClassMap.O).toString(),
-            matrix.get(EntityClassMap.P).get(EntityClassMap.P).toString(),
-            matrix.get(EntityClassMap.P).get(EntityClassMap.N).toString());
-        writeBuffer(lastRun, lastFold, alg, EntityClassMap.N,
-            matrix.get(EntityClassMap.N).get(EntityClassMap.L).toString(),
-            matrix.get(EntityClassMap.N).get(EntityClassMap.O).toString(),
-            matrix.get(EntityClassMap.N).get(EntityClassMap.P).toString(),
-            matrix.get(EntityClassMap.N).get(EntityClassMap.N).toString());
+        writeBuffer(lastRun, lastFold, alg, EntityTypes.L,
+            matrix.get(EntityTypes.L).get(EntityTypes.L).toString(),
+            matrix.get(EntityTypes.L).get(EntityTypes.O).toString(),
+            matrix.get(EntityTypes.L).get(EntityTypes.P).toString(),
+            matrix.get(EntityTypes.L).get(BILOUEncoding.O).toString());
+        writeBuffer(lastRun, lastFold, alg, EntityTypes.O,
+            matrix.get(EntityTypes.O).get(EntityTypes.L).toString(),
+            matrix.get(EntityTypes.O).get(EntityTypes.O).toString(),
+            matrix.get(EntityTypes.O).get(EntityTypes.P).toString(),
+            matrix.get(EntityTypes.O).get(BILOUEncoding.O).toString());
+        writeBuffer(lastRun, lastFold, alg, EntityTypes.P,
+            matrix.get(EntityTypes.P).get(EntityTypes.L).toString(),
+            matrix.get(EntityTypes.P).get(EntityTypes.O).toString(),
+            matrix.get(EntityTypes.P).get(EntityTypes.P).toString(),
+            matrix.get(EntityTypes.P).get(BILOUEncoding.O).toString());
+        writeBuffer(lastRun, lastFold, alg, BILOUEncoding.O,
+            matrix.get(BILOUEncoding.O).get(EntityTypes.L).toString(),
+            matrix.get(BILOUEncoding.O).get(EntityTypes.O).toString(),
+            matrix.get(BILOUEncoding.O).get(EntityTypes.P).toString(),
+            matrix.get(BILOUEncoding.O).get(BILOUEncoding.O).toString());
       }
     }
 

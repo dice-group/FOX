@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.simba.knowledgeextraction.commons.io.Compress;
 
 public class WikinerReader extends ANERReader {
@@ -24,13 +24,13 @@ public class WikinerReader extends ANERReader {
 
     final WikinerReader r = new WikinerReader(files);
 
-    LOG.info(maxSentences);
-    LOG.info(r.getEntities().size());
-    /*
-     * for (Entry<?, ?> e : r.getEntities().entrySet()) { LOG.info(e.getValue()); }
-     * LOG.info(r.getInput());
-     */
+    LOG.info("maxSentences: " + maxSentences);
+    LOG.info("real size: " + r.getEntities().size());
 
+    for (final Entry<?, ?> e : r.getEntities().entrySet()) {
+      LOG.info(e);
+    }
+    // LOG.info(r.getInput());
   }
 
   /**
@@ -90,13 +90,13 @@ public class WikinerReader extends ANERReader {
               if (nerTag.endsWith(currentTag)) {
                 currentEntity.append(word).append(" ");
               } else {
-
+                // TODO: remove magic stuff
                 if (currentTag.endsWith("PER")) {
-                  currentTag = EntityClassMap.P;
+                  currentTag = EntityTypes.P;
                 } else if (currentTag.endsWith("LOC")) {
-                  currentTag = EntityClassMap.L;
+                  currentTag = EntityTypes.L;
                 } else if (currentTag.endsWith("ORG")) {
-                  currentTag = EntityClassMap.O;
+                  currentTag = EntityTypes.O;
                 } else {
                   currentTag = ""; // unsupported tag
                 }

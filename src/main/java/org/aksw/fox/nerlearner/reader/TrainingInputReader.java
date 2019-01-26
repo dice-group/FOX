@@ -8,60 +8,42 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.nerlearner.TokenManager;
 import org.aksw.fox.utils.FoxTextUtil;
 
 /**
- * reads input training data
+ * Reads input training data with ORGANIZATION, LOCATION and PERSON entities.
  *
  * @author rspeck
  *
  */
 public class TrainingInputReader extends ANERReader {
 
-  /**
-   *
-   */
-  public static void main(final String[] aa) throws Exception {
-
-    final List<String> files = new ArrayList<>();
-    final File file = new File("input/4");
-    if (!file.exists()) {
-      throw new IOException("Can't find file or directory.");
-    } else {
-      if (file.isDirectory()) {
-        // read all files in a directory
-        for (final File fileEntry : file.listFiles()) {
-          if (fileEntry.isFile() && !fileEntry.isHidden()) {
-            files.add(fileEntry.getAbsolutePath());
-          }
-        }
-      } else if (file.isFile()) {
-        files.add(file.getAbsolutePath());
-      } else {
-        throw new IOException("Input isn't a valid file or directory.");
-      }
-    }
-
-    final String[] a = files.toArray(new String[files.size()]);
-
-    final INERReader trainingInputReader = new TrainingInputReader(a);
-    ANERReader.LOG.info("input: ");
-    ANERReader.LOG.info(trainingInputReader.getInput());
-    ANERReader.LOG.info("oracle: ");
-    for (final Entry<String, String> e : trainingInputReader.getEntities().entrySet()) {
-      ANERReader.LOG.info(e.getValue() + "-" + e.getKey());
-    }
-  }
+  private Map<String, String> entityClassesOracel = null;
 
   protected StringBuffer taggedInput = new StringBuffer();
   protected String input = "";
   protected HashMap<String, String> entities = new HashMap<>();
+
+  /**
+  *
+  */
+  public static void main(final String[] aa) throws Exception {
+
+    final TrainingInputReader trainingInputReader = new TrainingInputReader();
+    trainingInputReader.initFiles("input/4");
+
+    LOG.info("input: \n" + trainingInputReader.getInput());
+    LOG.info("oracle: ");
+    trainingInputReader.getEntities().entrySet().forEach(LOG::info);
+  }
 
   /**
    * Empty constructor to create class with Reflections.
@@ -69,7 +51,7 @@ public class TrainingInputReader extends ANERReader {
   public TrainingInputReader() {}
 
   /**
-   * http://www-nlpir.nist.gov/related_projects/muc/proceedings/ne_task.html
+   * Calls super constructor with inputPaths.
    *
    * @param inputPaths
    * @throws IOException
@@ -77,6 +59,14 @@ public class TrainingInputReader extends ANERReader {
 
   public TrainingInputReader(final String[] inputPaths) throws IOException {
     super(inputPaths);
+  }
+
+  @Override
+  public void initFiles(final String[] initFiles) throws IOException {
+    super.initFiles(initFiles);
+
+    readInputFromFiles();
+    parse();
   }
 
   public void initFiles(final String folder) throws IOException {
@@ -101,14 +91,6 @@ public class TrainingInputReader extends ANERReader {
     initFiles(files.toArray(new String[files.size()]));
   }
 
-  @Override
-  public void initFiles(final String[] initFiles) throws IOException {
-    super.initFiles(initFiles);
-
-    readInputFromFiles();
-    parse();
-  }
-
   /**
    *
    * @return
@@ -121,65 +103,21 @@ public class TrainingInputReader extends ANERReader {
 
   @Override
   public HashMap<String, String> getEntities() {
-    {
-      // remove oracle entities aren't in input
-      final Set<Entity> set = new HashSet<>();
+    // remove oracle entities aren't in input
+    final Set<Entity> set = new HashSet<>();
 
-      for (final Entry<String, String> oracleEntry : entities.entrySet()) {
-        set.add(new Entity(oracleEntry.getKey(), oracleEntry.getValue()));
-      }
-
-      // repair entities (use fox token)
-      new TokenManager(input).repairEntities(set);
-
-      // use
-      entities.clear();
-      for (final Entity e : set) {
-        entities.put(e.getText(), e.getType());
-      }
+    for (final Entry<String, String> oracleEntry : entities.entrySet()) {
+      set.add(new Entity(oracleEntry.getKey(), oracleEntry.getValue()));
     }
 
-    {
-      // INFO
-      LOG.info("oracle cleaned size: " + entities.size());
-      int l = 0, o = 0, p = 0;
-      for (final Entry<String, String> e : entities.entrySet()) {
-        if (e.getValue().equals(EntityClassMap.L)) {
-          l++;
-        }
-        if (e.getValue().equals(EntityClassMap.O)) {
-          o++;
-        }
-        if (e.getValue().equals(EntityClassMap.P)) {
-          p++;
-        }
-      }
-      LOG.info("oracle :");
-      LOG.info(l + " LOCs found");
-      LOG.info(o + " ORGs found");
-      LOG.info(p + " PERs found");
+    // repair entities (use fox token)
+    new TokenManager(input).repairEntities(set);
 
-      l = 0;
-      o = 0;
-      p = 0;
-      for (final Entry<String, String> e : entities.entrySet()) {
-        if (e.getValue().equals(EntityClassMap.L)) {
-          l += e.getKey().split(" ").length;
-        }
-        if (e.getValue().equals(EntityClassMap.O)) {
-          o += e.getKey().split(" ").length;
-        }
-        if (e.getValue().equals(EntityClassMap.P)) {
-          p += e.getKey().split(" ").length;
-        }
-      }
-      LOG.info("oracle (token):");
-      LOG.info(l + " LOCs found");
-      LOG.info(o + " ORGs found");
-      LOG.info(p + " PERs found");
-      LOG.info(l + o + p + " total found");
+    // use
+    entities.clear();
+    for (final Entity e : set) {
+      entities.put(e.getText(), e.getType());
     }
-
     return entities;
   }
 
@@ -188,9 +126,6 @@ public class TrainingInputReader extends ANERReader {
    *
    **/
   protected void readInputFromFiles() throws IOException {
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("readInputFromFiles ...");
-    }
 
     for (final File file : inputFiles) {
       final BufferedReader br = new BufferedReader(new FileReader(file));
@@ -229,6 +164,20 @@ public class TrainingInputReader extends ANERReader {
   }
 
   /**
+   * Gets the entity class for a oracel entity type/class.
+   */
+  public String oracel(final String tag) {
+    if (entityClassesOracel == null) {
+      entityClassesOracel = new HashMap<>();
+      entityClassesOracel.put("ORGANIZATION", EntityTypes.O);
+      entityClassesOracel.put("LOCATION", EntityTypes.L);
+      entityClassesOracel.put("PERSON", EntityTypes.P);
+    }
+    final String t = entityClassesOracel.get(tag);
+    return t == null ? BILOUEncoding.O : t;
+  }
+
+  /**
    * Reads entities in taggedInput.
    *
    * @return
@@ -250,30 +199,31 @@ public class TrainingInputReader extends ANERReader {
           final String categoriesString = input.substring(
               openTagStartIndex + "<ENAMEX TYPE=\"".length(), openTagCloseIndex - "\"".length());
 
-          final String[] categories = categoriesString.split("\\|");
-          for (final String cat : categories) {
-            if (EntityClassMap.oracel(cat) != EntityClassMap.getNullCategory()) {
+          final String[] types = categoriesString.split("\\|");
+          for (final String type : types) {
 
-              final String[] token = FoxTextUtil.getSentenceToken(taggedWords + ".");
+            if (!oracel(type).equals(BILOUEncoding.O)) {
+              final String[] tokens = FoxTextUtil.getSentenceToken(taggedWords + ".");
+
               String word = "";
-              for (final String t : token) {
-
-                if (!word.isEmpty() && t.isEmpty()) {
-                  put(word, cat);
+              for (final String token : tokens) {
+                if (!word.isEmpty() && token.isEmpty()) {
+                  put(word, type);
                   word = "";
                 } else {
-                  word += t + " ";
+                  word += token + " ";
                 }
-              }
+              } // end each token
+
               if (!word.isEmpty()) {
-                put(word, cat);
+                put(word, type);
               }
             }
-          }
+          } // end categories
 
           String escapedCategoriesString = "";
-          for (final String cat : categories) {
-            escapedCategoriesString += cat + "\\|";
+          for (final String type : types) {
+            escapedCategoriesString += type + "\\|";
           }
 
           escapedCategoriesString =
@@ -314,11 +264,12 @@ public class TrainingInputReader extends ANERReader {
     word = word.trim();
     if (!word.isEmpty()) {
       if (entities.get(word) != null) {
-        if (!entities.get(word).equals(classs)
-            && !entities.get(word).equals(EntityClassMap.getNullCategory())) {
-          LOG.debug("Oracle with a token with diff. annos. No disamb. for now. Ignore token.");
-          LOG.debug(word + " : " + classs + " | " + entities.get(word));
-          entities.put(word, EntityClassMap.getNullCategory());
+        if (!entities.get(word).equals(classs) && !entities.get(word).equals(BILOUEncoding.O)) {
+
+          LOG.info("Oracle with a token with diff. annos. No disamb. for now. Ignore token.");
+          LOG.info(word + " : " + classs + " | " + entities.get(word));
+
+          entities.put(word, BILOUEncoding.O);
         }
       } else {
         entities.put(word, classs);

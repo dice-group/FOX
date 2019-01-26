@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.aksw.fox.Fox;
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
 import org.aksw.simba.knowledgeextraction.commons.io.Requests;
@@ -125,17 +125,17 @@ public abstract class AlchemyCommon extends AbstractNER {
   }
 
   protected void setTypes() {
-    entityClasses.put("Organization", EntityClassMap.O);
-    entityClasses.put("City", EntityClassMap.L);
-    entityClasses.put("Company", EntityClassMap.O);
-    entityClasses.put("Continent", EntityClassMap.L);
-    entityClasses.put("Country", EntityClassMap.L);
-    entityClasses.put("Facility", EntityClassMap.L);
-    entityClasses.put("Person", EntityClassMap.P);
-    entityClasses.put("StateOrCounty", EntityClassMap.L);
-    entityClasses.put("Region", EntityClassMap.L);
-    entityClasses.put("MusicGroup", EntityClassMap.O);
-    entityClasses.put("GeographicFeature", EntityClassMap.L);
+    entityClasses.put("Organization", EntityTypes.O);
+    entityClasses.put("City", EntityTypes.L);
+    entityClasses.put("Company", EntityTypes.O);
+    entityClasses.put("Continent", EntityTypes.L);
+    entityClasses.put("Country", EntityTypes.L);
+    entityClasses.put("Facility", EntityTypes.L);
+    entityClasses.put("Person", EntityTypes.P);
+    entityClasses.put("StateOrCounty", EntityTypes.L);
+    entityClasses.put("Region", EntityTypes.L);
+    entityClasses.put("MusicGroup", EntityTypes.O);
+    entityClasses.put("GeographicFeature", EntityTypes.L);
 
     /**
      * <code>

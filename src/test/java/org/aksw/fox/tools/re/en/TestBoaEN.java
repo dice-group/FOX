@@ -6,13 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.data.Relation;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 public class TestBoaEN {
   public final static Logger LOG = LogManager.getLogger(TestBoaEN.class);
@@ -24,10 +23,10 @@ public class TestBoaEN {
     final URI uri = new URI("http://dbpedia.org/ontology/spouse");
     final String text = "Alice who married Bob.";
 
-    final Entity s = new Entity("Alice", EntityClassMap.P);
+    final Entity s = new Entity("Alice", EntityTypes.P);
     s.addIndicies(0);
 
-    final Entity o = new Entity("Bob", EntityClassMap.P);
+    final Entity o = new Entity("Bob", EntityTypes.P);
     o.addIndicies(18);
 
     final Set<Entity> entities = new HashSet<>();

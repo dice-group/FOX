@@ -6,8 +6,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.tools.ner.common.OpenNLPCommon;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
@@ -31,9 +32,9 @@ public class NercFR extends OpenNLPCommon {
   public NercFR(final String[] modelPath) {
     super(modelPath);
 
-    entityClasses.put("location", EntityClassMap.L);
-    entityClasses.put("organization", EntityClassMap.O);
-    entityClasses.put("person", EntityClassMap.P);
+    entityClasses.put("location", EntityTypes.L);
+    entityClasses.put("organization", EntityTypes.O);
+    entityClasses.put("person", EntityTypes.P);
 
     tokenNameFinderModels = new TokenNameFinderModel[modelPath.length];
     final InputStream[] modelIn = new InputStream[modelPath.length];
@@ -98,7 +99,7 @@ public class NercFR extends OpenNLPCommon {
               p = Double.valueOf(probs[ii]).floatValue();
             }
             final String cl = mapTypeToSupportedType(span.getType());
-            if (cl != EntityClassMap.getNullCategory()) {
+            if (cl != BILOUEncoding.O) {
               list.add(getEntity(word, cl, p, getToolName()));
             }
           }

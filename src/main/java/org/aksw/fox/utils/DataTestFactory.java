@@ -9,11 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.data.Relation;
 
 public class DataTestFactory {
-
 
   // TODO:thats the default example in demo
   public static String NER_EN_EXAMPLE_1 =
@@ -85,21 +84,21 @@ public class DataTestFactory {
           + "The philosopher and mathematician Gottfried Wilhelm Leibniz was born in Leipzig in 1646, and attended the university from 1661-1666.";
 
   private Entity getE1() {
-    final Entity e = new Entity("University of Leipzig", EntityClassMap.O, 1f, "fox");
+    final Entity e = new Entity("University of Leipzig", EntityTypes.O, 1f, "fox");
     e.addIndicies(22);
     e.setUri("http://dbpedia.org/resource/Leipzig_University");
     return e;
   }
 
   private Entity getE2() {
-    final Entity ee = new Entity("Gottfried Wilhelm Leibniz", EntityClassMap.P, 1f, "fox");
+    final Entity ee = new Entity("Gottfried Wilhelm Leibniz", EntityTypes.P, 1f, "fox");
     ee.addIndicies(291);
     ee.setUri("http://dbpedia.org/resource/Gottfried_Wilhelm_Leibniz");
     return ee;
   }
 
   private Entity getE3() {
-    final Entity eee = new Entity("Leipzig", EntityClassMap.L, 1f, "fox");
+    final Entity eee = new Entity("Leipzig", EntityTypes.L, 1f, "fox");
     eee.addIndicies(329);
     eee.setUri("http://dbpedia.org/resource/Leipzig");
     return eee;

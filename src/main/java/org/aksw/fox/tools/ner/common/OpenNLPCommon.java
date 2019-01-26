@@ -6,8 +6,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.fox.utils.FoxTextUtil;
 
@@ -22,9 +23,9 @@ public abstract class OpenNLPCommon extends AbstractNER {
 
   public OpenNLPCommon(final String[] modelPath) {
 
-    entityClasses.put("location", EntityClassMap.L);
-    entityClasses.put("organization", EntityClassMap.O);
-    entityClasses.put("person", EntityClassMap.P);
+    entityClasses.put("location", EntityTypes.L);
+    entityClasses.put("organization", EntityTypes.O);
+    entityClasses.put("person", EntityTypes.P);
 
     this.modelPath = modelPath;
 
@@ -67,7 +68,7 @@ public abstract class OpenNLPCommon extends AbstractNER {
         for (final String sentence : sentences) {
           final String[] tokens = FoxTextUtil.getSentenceToken(sentence);
           LOG.debug("tokens: " + tokens.length);
-          if ((tokens.length > 0) && tokens[tokens.length - 1].trim().isEmpty()) {
+          if (tokens.length > 0 && tokens[tokens.length - 1].trim().isEmpty()) {
             tokens[tokens.length - 1] = ".";
           }
 
@@ -77,7 +78,7 @@ public abstract class OpenNLPCommon extends AbstractNER {
             final Span span = nameSpans[ii];
 
             String word = "";
-            for (int j = 0; j < (span.getEnd() - span.getStart()); j++) {
+            for (int j = 0; j < span.getEnd() - span.getStart(); j++) {
               word += tokens[span.getStart() + j] + " ";
             }
             word = word.trim();
@@ -88,7 +89,7 @@ public abstract class OpenNLPCommon extends AbstractNER {
             // p = Double.valueOf(probs[ii]).floatValue();
             // }
             final String cl = mapTypeToSupportedType(span.getType());
-            if (cl != EntityClassMap.getNullCategory()) {
+            if (cl != BILOUEncoding.O) {
               list.add(getEntity(word, cl, p, getToolName()));
             }
           }

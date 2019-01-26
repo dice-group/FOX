@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.tools.ner.AbstractNER;
 
 import edu.illinois.cs.cogcomp.LbjNer.ExpressiveFeatures.ExpressiveFeaturesAnnotator;
@@ -27,7 +29,6 @@ public class IllinoisExtendedEN extends AbstractNER {
 
   NETaggerLevel1 tagger1;
   NETaggerLevel2 tagger2;
-
 
   public IllinoisExtendedEN() {
     try {
@@ -125,7 +126,7 @@ public class IllinoisExtendedEN extends AbstractNER {
             res = new StringBuffer(str_res);
             res.append("] ");
             open = false;
-            if (EntityClassMap.illinois(tag) != EntityClassMap.getNullCategory()) {
+            if (EntityClassMap.illinois(tag) != BILOUEncoding.O) {
               // if ((FoxCfg.get("illinoisDefaultRelevance") == null)
               // || Boolean.valueOf(FoxCfg.get("illinoisDefaultRelevance"))) {
               prob = Entity.DEFAULT_RELEVANCE;
@@ -141,11 +142,11 @@ public class IllinoisExtendedEN extends AbstractNER {
 
   protected double shapePred(final NEWord w, final String tag) {
     switch (EntityClassMap.illinois(tag)) {
-      case EntityClassMap.L:
+      case EntityTypes.L:
         return w.shapePredLoc;
-      case EntityClassMap.P:
+      case EntityTypes.P:
         return w.shapePredPer;
-      case EntityClassMap.O:
+      case EntityTypes.O:
         return w.shapePredOrg;
     }
     return -1;

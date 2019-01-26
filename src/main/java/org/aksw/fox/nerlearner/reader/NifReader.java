@@ -17,7 +17,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.BILOUEncoding;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.gerbil.io.nif.impl.TurtleNIFParser;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
@@ -45,9 +46,9 @@ public class NifReader extends ANERReader {
   static Map<String, String> typeMap = new HashMap<>();
   static {
 
-    typeMap.put(dbpediaL, EntityClassMap.L);
-    typeMap.put(dbpediaO, EntityClassMap.O);
-    typeMap.put(dbpediaP, EntityClassMap.P);
+    typeMap.put(dbpediaL, EntityTypes.L);
+    typeMap.put(dbpediaO, EntityTypes.O);
+    typeMap.put(dbpediaP, EntityTypes.P);
   }
 
   /**
@@ -70,7 +71,7 @@ public class NifReader extends ANERReader {
     /**
      * <code>
     final String[] a = files.toArray(new String[files.size()]);
-    
+
     final INERReader trainingInputReader = new TrainingInputReader(a);
     ANERReader.LOG.info("input: ");
     ANERReader.LOG.info(trainingInputReader.getInput());
@@ -147,7 +148,7 @@ public class NifReader extends ANERReader {
       for (final Document doc : nifdocs) {
 
         final String text = doc.getText();
-        if ((text == null) || text.isEmpty()) {
+        if (text == null || text.isEmpty()) {
           continue;
         }
         for (final Marking marking : doc.getMarkings()) {
@@ -215,7 +216,7 @@ public class NifReader extends ANERReader {
     }
 
     LOG.info("found " + URI2Type.size() + "/"
-        + (word2URI.values().stream().collect(Collectors.toSet())).size());
+        + word2URI.values().stream().collect(Collectors.toSet()).size());
 
     // read data
     final StringBuffer in = new StringBuffer();
@@ -223,7 +224,7 @@ public class NifReader extends ANERReader {
     for (final Document doc : nifdocs) {
 
       final String text = doc.getText();
-      if ((text == null) || text.isEmpty()) {
+      if (text == null || text.isEmpty()) {
         continue;
       }
       in.append(text).append(" ");
@@ -245,18 +246,18 @@ public class NifReader extends ANERReader {
         if (types.size() == 1) {
           final String word =
               text.substring(ne.getStartPosition(), ne.getStartPosition() + ne.getLength());
-          String type = EntityClassMap.getNullCategory();
+          String type = BILOUEncoding.O;
           // find type
 
           if (types.contains(dbpediaL)) {
-            type = EntityClassMap.L;
+            type = EntityTypes.L;
           } else if (types.contains(dbpediaO)) {
-            type = EntityClassMap.O;
+            type = EntityTypes.O;
           } else if (types.contains(dbpediaP)) {
-            type = EntityClassMap.P;
+            type = EntityTypes.P;
           }
           // check and add data
-          if (type.equals(EntityClassMap.getNullCategory())) {
+          if (type.equals(BILOUEncoding.O)) {
             continue;
           }
           if (entities.get(word) == null) {
@@ -275,42 +276,42 @@ public class NifReader extends ANERReader {
   /**
    * <code>
     protected void _readData() {
-
+  
       int notfound = 0;
       final Set<String> notFoundUris = new HashSet<>();
       for (final Document doc : nifdocs) {
-
+  
         final String text = doc.getText();
         if ((text != null) && !text.isEmpty()) {
           in.append(text).append(" ");
-
+  
           final List<Marking> markings = doc.getMarkings();
-
+  
           for (final Marking m : markings) {
             if (m instanceof NamedEntity) {
               String type = "";
-
+  
               // dbpedia types
               final Set<String> uris = ((NamedEntity) m).getUris();
-
+  
               for (final String uri : uris) {
                 final Set<String> types = uriToTypes.get(uri);
                 if ((types != null) && !types.isEmpty()) {
-
+  
                   if (types.contains("http://dbpedia.org/ontology/Organisation")) {
                     type = EntityClassMap.O;
                   } else
-
+  
                   if (types.contains("http://dbpedia.org/ontology/Person")) {
                     type = EntityClassMap.P;
                   } else
-
+  
                   if (types.contains("http://dbpedia.org/ontology/Place")) {
                     type = EntityClassMap.L;
                   }
                 }
               }
-
+  
               if (type.isEmpty()) {
                 //
                 boolean found = checkType(((NamedEntity) m), person);;
@@ -324,24 +325,24 @@ public class NifReader extends ANERReader {
                 } else {
                   found = checkType(((NamedEntity) m), org);
                 }
-
+  
                 if (found) {
                   type = EntityClassMap.O;
                 } else {
-                  type = EntityClassMap.getNullCategory();
+                  type = BILOUEncoding.O;
                 }
               }
-
+  
               if (uris.isEmpty()) {
                 LOG.info(m);
               } else {
                 LOG.info(uris);
               }
-
+  
               final String word = text.substring(((NamedEntity) m).getStartPosition(),
                   ((NamedEntity) m).getStartPosition() + ((NamedEntity) m).getLength());
-
-              if (type.equals(EntityClassMap.getNullCategory())) {
+  
+              if (type.equals(BILOUEncoding.O)) {
                 if (((NamedEntity) m).getUris().size() == 0) {
                   LOG.info(doc.getDocumentURI());
                   LOG.warn(word + " not found. . . " + ((NamedEntity) m).getUris().size());
@@ -349,9 +350,9 @@ public class NifReader extends ANERReader {
                   notfound++;
                 }
               } else {
-
+  
               }
-
+  
             } else {
               LOG.error("Entity type in file has changed from `NamedEntity`.  ");
             }
@@ -359,10 +360,10 @@ public class NifReader extends ANERReader {
         }
       }
       // entities.entrySet().forEach(LOG::info);
-
+  
       LOG.info("found: " + entities.entrySet().size() + " notFound: " + notfound + " uris: "
           + notFoundUris.size());
-
+  
     }
   </code>
    */
@@ -378,7 +379,7 @@ public class NifReader extends ANERReader {
     final FileInputStream door = new FileInputStream(file);
     final ObjectInputStream reader = new ObjectInputStream(door);
     @SuppressWarnings("unchecked")
-    final Set<String> types = ((HashSet<String>) reader.readObject());
+    final Set<String> types = (HashSet<String>) reader.readObject();
     reader.close();
     return types;
   }

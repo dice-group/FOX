@@ -2,7 +2,8 @@ package org.aksw.fox.tools.ner.en;
 
 import java.util.Properties;
 
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.BILOUEncoding;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.tools.ner.common.StanfordCommon;
 
 /**
@@ -25,10 +26,10 @@ public class StanfordEN extends StanfordCommon {
   public StanfordEN() {
     super(props);
 
-    entityClasses.put("ORGANIZATION", EntityClassMap.O);
-    entityClasses.put("LOCATION", EntityClassMap.L);
-    entityClasses.put("PERSON", EntityClassMap.P);
-    entityClasses.put("PEOPLE", EntityClassMap.P);
-    entityClasses.put("O", EntityClassMap.N);
+    entityClasses.put("ORGANIZATION", EntityTypes.O);
+    entityClasses.put("LOCATION", EntityTypes.L);
+    entityClasses.put("PERSON", EntityTypes.P);
+    entityClasses.put("PEOPLE", EntityTypes.P);
+    entityClasses.put("O", BILOUEncoding.O);
   }
 }

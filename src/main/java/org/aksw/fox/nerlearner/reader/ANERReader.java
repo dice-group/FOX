@@ -5,25 +5,33 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 public abstract class ANERReader implements INERReader {
+  static {
+    PropertiesLoader.setPropertiesFile("fox.properties");
+  }
 
   protected File[] inputFiles;
   final static String key_maxsentences = ".maxSentences";
 
-  public static final String CFG_KEY_MAX_SENTENCES = INERReader.class.getName()//
-      .concat(key_maxsentences);
+  public static final String CFG_KEY_MAX_SENTENCES =
+      INERReader.class.getName().concat(key_maxsentences);
 
-  public static final Logger LOG = LogManager.getLogger(INERReader.class);
   public static final int maxSentences =
       Integer.valueOf(PropertiesLoader.get(CFG_KEY_MAX_SENTENCES));
 
+  /**
+   *
+   * @param inputPaths
+   * @throws IOException
+   */
   public ANERReader(final String[] inputPaths) throws IOException {
     initFiles(inputPaths);
   }
 
+  /**
+   * Empty constructor to create class with Reflections.
+   */
   public ANERReader() {}
 
   /**

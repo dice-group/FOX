@@ -2,7 +2,8 @@ package org.aksw.fox.tools.ner.de;
 
 import java.util.Properties;
 
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.BILOUEncoding;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.tools.ner.common.StanfordCommon;
 
 /**
@@ -38,16 +39,16 @@ public class StanfordDE extends StanfordCommon {
   public StanfordDE() {
     super(props);
 
-    entityClasses.put("I-ORG", EntityClassMap.O);
-    entityClasses.put("I-LOC", EntityClassMap.L);
-    entityClasses.put("I-PER", EntityClassMap.P);
-    entityClasses.put("O", EntityClassMap.N);
-    entityClasses.put("I-MISC", EntityClassMap.N);
+    entityClasses.put("I-ORG", EntityTypes.O);
+    entityClasses.put("I-LOC", EntityTypes.L);
+    entityClasses.put("I-PER", EntityTypes.P);
+    entityClasses.put("O", BILOUEncoding.O);
+    entityClasses.put("I-MISC", BILOUEncoding.O);
 
-    entityClasses.put("B-ORG", EntityClassMap.O);
-    entityClasses.put("B-LOC", EntityClassMap.L);
-    entityClasses.put("B-PER", EntityClassMap.P);
-    entityClasses.put("O", EntityClassMap.N);
-    entityClasses.put("B-MISC", EntityClassMap.N);
+    entityClasses.put("B-ORG", EntityTypes.O);
+    entityClasses.put("B-LOC", EntityTypes.L);
+    entityClasses.put("B-PER", EntityTypes.P);
+    entityClasses.put("O", BILOUEncoding.O);
+    entityClasses.put("B-MISC", BILOUEncoding.O);
   }
 }
