@@ -35,8 +35,6 @@ public class FoxInstances {
 
   public static Logger LOG = Logger.getLogger(FoxInstances.class);
 
-  protected Set<String> tokens = null;
-
   /**
    * Gets instances from the given toolResults and oracle.
    *
@@ -49,28 +47,15 @@ public class FoxInstances {
       final Set<String> tokens, final Map<String, Set<Entity>> toolResults,
       final Map<String, String> oracle) {
 
-    LOG.debug("getInstances...");
-
-    LOG.debug("oracle size: " + oracle.size());
-    LOG.debug("tokens size: " + tokens.size());
-
-    if (oracle != null) {
-      LOG.debug("Training data:");
-      oracle.entrySet().stream().forEach(LOG::debug);
-    }
-
     // clean oracle to token
     final Map<String, String> oracelTokens = cleanTokens(oracle);
 
-    //
-    this.tokens = tokens;
+    LOG.debug(
+        "getInstances... oracle size: " + oracelTokens.size() + " tokens size: " + tokens.size());
 
     // toolResults to make TokenCategory for each tool
     final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix;
-    toolTokenCategoryMatrix = getTokenCategoryMatrix(toolResults);
-
-    LOG.debug("TokenCategoryMatrix for each tool:");
-    toolTokenCategoryMatrix.entrySet().stream().forEach(LOG::debug);
+    toolTokenCategoryMatrix = getTokenCategoryMatrix(tokens, toolResults);
 
     // declare the feature vector
     final FastVector featureVector;
@@ -85,7 +70,6 @@ public class FoxInstances {
     }
 
     // fill values
-
     final List<String> sortedToolNames = new ArrayList<>(toolTokenCategoryMatrix.keySet());
     Collections.sort(sortedToolNames);
 
@@ -103,9 +87,7 @@ public class FoxInstances {
             + numOfTypes; index++) {
 
           final boolean isSet = tcm.getValue(token, EntityTypes.AllTypesList.get(typeIndex++));
-          final double v = isSet ? 1.0 : 0.0;
-
-          row.setValue((Attribute) featureVector.elementAt(index), v);
+          row.setValue((Attribute) featureVector.elementAt(index), isSet ? 1.0 : 0.0);
         }
         toolIndex++;
       } // end for tool name
@@ -113,10 +95,7 @@ public class FoxInstances {
       if (oracle != null) {
         final String value;
         value = oracelTokens.get(token) == null ? BILOUEncoding.O : oracelTokens.get(token);
-
-        // TODO: map from oracel to fox types
         final Attribute att = (Attribute) featureVector.elementAt(instances.numAttributes() - 1);
-
         row.setValue(att, value);
 
         if (!value.equals(BILOUEncoding.O)) {
@@ -127,10 +106,8 @@ public class FoxInstances {
     } // end for token
 
     LOG.info("# instances: " + instances.numInstances());
-
-    LOG.debug("#token with a type: " + diffNull);
-    LOG.debug("found all: " + (diffNull == oracelTokens.size()));
-    LOG.debug("\n" + instances);
+    LOG.debug("#instances with a type: " + diffNull);
+    LOG.debug("found all (should be true): " + (diffNull == oracelTokens.size()));
 
     return instances;
   }
@@ -148,8 +125,8 @@ public class FoxInstances {
   }
 
   // uses toolResults to make TokenCategoryMatrix object for each tool
-  private Map<String, TokenCategoryMatrix> getTokenCategoryMatrix(
-      final Map<String, Set<Entity>> toolResults) {
+  private Map<String, TokenCategoryMatrix> getTokenCategoryMatrix(//
+      final Set<String> tokens, final Map<String, Set<Entity>> toolResults) {
 
     final Map<String, TokenCategoryMatrix> toolTokenCategoryMatrix = new HashMap<>();
     final CountDownLatch latch = new CountDownLatch(toolResults.entrySet().size());
