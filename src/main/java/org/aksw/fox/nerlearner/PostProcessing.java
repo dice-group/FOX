@@ -1,7 +1,6 @@
 package org.aksw.fox.nerlearner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,8 +11,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.fox.data.BILOUEncoding;
+// import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityTypes;
+// import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -53,10 +54,6 @@ public class PostProcessing implements IPostProcessing {
     }
 
     this.toolResults = toolResults;
-
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(toolResults);
-    }
   }
 
   /**
@@ -82,13 +79,7 @@ public class PostProcessing implements IPostProcessing {
     final List<Entry<String, String>> tokenEntities = new ArrayList<>();
     for (final Entry<String, String> mapEntry : map.entrySet()) {
       if (mapEntry.getKey().contains(" ")) {
-        if (LOG.isDebugEnabled()) {
-          LOG.debug(rtn);
-        }
         rtn = labeledEntry(mapEntry, rtn);
-        if (LOG.isDebugEnabled()) {
-          LOG.debug(rtn);
-        }
       } else {
         tokenEntities.add(mapEntry);
       }
@@ -97,25 +88,12 @@ public class PostProcessing implements IPostProcessing {
     // 2. remember used labels of MWU
     final Set<String> usedLabels = new HashSet<>();
     for (final String label : rtn.keySet()) {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug(label);
-      }
       Collections.addAll(usedLabels, FoxTextUtil.getSentencesToken(label));
-      if (LOG.isDebugEnabled()) {
-        LOG.debug(usedLabels);
-      }
-
     }
 
     // 3. label token (non MWU)
     for (final Entry<String, String> mapEntry : tokenEntities) {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug(rtn);
-      }
       rtn = labeledEntry(mapEntry, rtn);
-      if (LOG.isDebugEnabled()) {
-        LOG.debug(rtn);
-      }
     }
 
     // 4. remove labels used in mwu
@@ -125,12 +103,9 @@ public class PostProcessing implements IPostProcessing {
         remove.add(labeledtoken);
       }
     }
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(remove);
-    }
-    for (final String r : remove) {
-      rtn.remove(r);
-    }
+
+    // remove elements
+    remove.stream().forEach(rtn::remove);
 
     return rtn;
   }
@@ -141,43 +116,31 @@ public class PostProcessing implements IPostProcessing {
    */
   @Override
   public Map<String, Set<Entity>> getLabeledToolResults() {
-    final Map<String, Set<Entity>> rtn = new HashMap<>();
 
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(toolResults);
-    }
+    final Map<String, Set<Entity>> rtn = new HashMap<>();
 
     // for each tool
     for (final Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
-
       // entities to map
       Map<String, String> resutlsMap = new HashMap<>();
       for (final Entity entity : entry.getValue()) {
         resutlsMap.put(entity.getText(), entity.getType());
       }
 
-      if (LOG.isTraceEnabled()) {
-        LOG.trace(resutlsMap);
-      }
-
       // label map
       resutlsMap = getLabeledMap(resutlsMap);
-
-      if (LOG.isTraceEnabled()) {
-        LOG.trace(resutlsMap);
-      }
 
       // label to entity
       final Set<Entity> labeledEntities = new HashSet<>();
       for (final Entry<String, String> e : resutlsMap.entrySet()) {
-        labeledEntities
-            .add(new Entity(e.getKey(), e.getValue(), Entity.DEFAULT_RELEVANCE, entry.getKey()));
+        labeledEntities.add(//
+            new Entity(e.getKey(), e.getValue(), Entity.DEFAULT_RELEVANCE, entry.getKey())//
+        );
       }
 
       // add to labeled result map
       final String toolName = entry.getKey();
       rtn.put(toolName, labeledEntities);
-
     }
     return rtn;
   }
@@ -206,8 +169,8 @@ public class PostProcessing implements IPostProcessing {
     final Map<String, String> labeledEntityToken = new LinkedHashMap<>();
     int i = 0;
     for (final String label : labeledToken) {
-      final String category = instances.classAttribute()
-          .value(Double.valueOf(instances.instance(i).classValue()).intValue());
+      final String category = instances//
+          .classAttribute().value(Double.valueOf(instances.instance(i).classValue()).intValue());
 
       if (EntityTypes.AllTypesList.contains(category) && category != BILOUEncoding.O) {
         labeledEntityToken.put(label, category);
@@ -256,13 +219,9 @@ public class PostProcessing implements IPostProcessing {
       // remember last label
       previousLabel = label;
     }
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("result: " + results.toString());
-    }
     LOG.info("result size: " + results.size());
 
     // result set
-    // Set<Entity> set = new HashSet<>(results);
     final Set<Entity> set = new HashSet<>(results);
     for (final Entity e : set) {
       for (final Entity ee : results) {
@@ -271,34 +230,25 @@ public class PostProcessing implements IPostProcessing {
         if (e.getText().equals(ee.getText()) && e.getType().equals(ee.getType())) {
           e.addAllIndicies(ee.getIndices());
         } else if (e.getText().equals(ee.getText()) && !e.getType().equals(ee.getType())) {
-          if (LOG.isDebugEnabled()) {
-            LOG.debug("one word 2 classes: " + e.getText());
-          }
+          LOG.debug("one word 2 classes: " + e.getText());
         }
 
       }
-    }
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("set: " + set.toString());
     }
     LOG.info("result set size: " + set.size());
     return set;
   }
 
   // label an entity
-  protected Map<String, String> labeledEntry(final Entry<String, String> entity,
-      final Map<String, String> labeledMap) {
+  protected Map<String, String> labeledEntry(//
+      final Entry<String, String> entity, final Map<String, String> labeledMap) {
 
     // token of an entity
     final String[] entityToken = FoxTextUtil.getToken(entity.getKey());
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(entity);
-      LOG.debug(Arrays.asList(entityToken));
-    }
 
     // all entity occurrence
-    final Set<Integer> occurrence =
-        FoxTextUtil.getIndices(entity.getKey(), tokenManager.getTokenInput());
+    final Set<Integer> occurrence;
+    occurrence = FoxTextUtil.getIndices(entity.getKey(), tokenManager.getTokenInput());
     if (occurrence.size() == 0) {
       LOG.error("entity not found:" + entity.getKey());
     } else {
@@ -308,9 +258,6 @@ public class PostProcessing implements IPostProcessing {
         for (int i = 0; i < entityToken.length; i++) {
 
           final String label = tokenManager.getLabel(index);
-          if (LOG.isDebugEnabled()) {
-            LOG.debug(label);
-          }
           if (label != null) {
             sb.append(label);
             if (entityToken[entityToken.length - 1] != label) {
@@ -322,9 +269,6 @@ public class PostProcessing implements IPostProcessing {
         // add labeled entity
         labeledMap.put(sb.toString().trim(), entity.getValue());
       }
-    }
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(labeledMap);
     }
     return labeledMap;
   }

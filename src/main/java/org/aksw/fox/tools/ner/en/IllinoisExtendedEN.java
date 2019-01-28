@@ -6,7 +6,6 @@ import java.util.Vector;
 
 import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
 import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.tools.ner.AbstractNER;
 
@@ -126,12 +125,12 @@ public class IllinoisExtendedEN extends AbstractNER {
             res = new StringBuffer(str_res);
             res.append("] ");
             open = false;
-            if (EntityClassMap.illinois(tag) != BILOUEncoding.O) {
+            if (illinois(tag) != BILOUEncoding.O) {
               // if ((FoxCfg.get("illinoisDefaultRelevance") == null)
               // || Boolean.valueOf(FoxCfg.get("illinoisDefaultRelevance"))) {
               prob = Entity.DEFAULT_RELEVANCE;
               // }
-              list.add(getEntity(word, EntityClassMap.illinois(tag), prob, getToolName()));
+              list.add(getEntity(word, illinois(tag), prob, getToolName()));
             }
           }
         }
@@ -141,7 +140,7 @@ public class IllinoisExtendedEN extends AbstractNER {
   }
 
   protected double shapePred(final NEWord w, final String tag) {
-    switch (EntityClassMap.illinois(tag)) {
+    switch (illinois(tag)) {
       case EntityTypes.L:
         return w.shapePredLoc;
       case EntityTypes.P:
@@ -152,4 +151,18 @@ public class IllinoisExtendedEN extends AbstractNER {
     return -1;
   }
 
+  /**
+   * Gets the entity class for a illinois entity type/class.
+   */
+  public static String illinois(final String tag) {
+    switch (tag) {
+      case "LOC":
+        return EntityTypes.L;
+      case "ORG":
+        return EntityTypes.O;
+      case "PER":
+        return EntityTypes.P;
+    }
+    return BILOUEncoding.O;
+  }
 }
