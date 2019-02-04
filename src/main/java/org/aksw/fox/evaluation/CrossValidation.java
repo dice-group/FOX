@@ -11,7 +11,7 @@ import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.nerlearner.IPostProcessing;
 import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.nerlearner.TokenManager;
-import org.aksw.fox.nerlearner.reader.FoxInstances;
+import org.aksw.fox.nerlearner.reader.EntitiesToInstances;
 import org.aksw.fox.nerlearner.reader.INERReader;
 import org.aksw.fox.nerlearner.reader.NERReaderFactory;
 import org.aksw.fox.tools.NERTools;
@@ -86,14 +86,15 @@ public class CrossValidation {
     }
 
     // init. instances
+
     Instances instances = null;
     {
-      final FoxInstances foxInstances = new FoxInstances();
       final Map<String, String> oracle = pp.getLabeledMap(reader.getEntities());
       final Map<String, Set<Entity>> toolResults = pp.getLabeledToolResults();
       final Set<String> token = pp.getLabeledInput();
 
-      instances = foxInstances.getInstances(token, toolResults, oracle);
+      final EntitiesToInstances entitiesToInstances = new EntitiesToInstances();
+      instances = entitiesToInstances.getInstances(token, toolResults, oracle);
     }
 
     // write arff file training data
@@ -173,7 +174,7 @@ public class CrossValidation {
       }
       final double[][] cmMatrix = evalAll.confusionMatrix();
 
-      for (int k = 0; k < EntityTypes.AllTypesSet.size(); k++) {
+      for (int k = 0; k < EntityTypes.AllTypesList.size(); k++) {
         outTotal//
             .append(i + 1).append(',').append(classifierName).append(',')
             .append(EntityTypes.AllTypesList.get(k)).append(',')
@@ -208,7 +209,7 @@ public class CrossValidation {
 
     // header
     final StringBuffer cm = new StringBuffer();
-    for (final String cl : EntityTypes.AllTypesSet) {
+    for (final String cl : EntityTypes.AllTypesList) {
       cm.append(cl + "\t");
     }
     cm.append("\n");

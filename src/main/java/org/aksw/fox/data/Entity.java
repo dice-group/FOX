@@ -69,18 +69,6 @@ public class Entity implements IData {
    * @param text
    * @param type
    * @param relevance
-   */
-  public Entity(final String text, final String type, final float relevance) {
-    this(text, type, relevance, "");
-  }
-
-  /**
-   *
-   * Constructor.
-   *
-   * @param text
-   * @param type
-   * @param relevance
    * @param tool
    */
   public Entity(final String text, final String type, final float relevance, final String tool) {
@@ -187,13 +175,17 @@ public class Entity implements IData {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = (prime * result) + ((text == null) ? 0 : text.hashCode());
-    result = (prime * result) + ((type == null) ? 0 : type.hashCode());
+    result = prime * result + (text == null ? 0 : text.hashCode());
+    result = prime * result + (type == null ? 0 : type.hashCode());
     return result;
   }
 
   public void setText(final String text) {
     this.text = text;
+  }
+
+  public void setType(final String type) {
+    this.type = type;
   }
 
   @Override

@@ -36,7 +36,8 @@ public class AFoxJena {
   protected UrlValidator urlValidator = new UrlValidator();
 
   /**
-   * Maps EntityClassMap types to KB types.
+   * Maps EntityC lassMap types to KB types. <br>
+   * TODO: add to config
    */
   protected static Map<String, Set<String>> typesmap = new HashMap<>();
   static {

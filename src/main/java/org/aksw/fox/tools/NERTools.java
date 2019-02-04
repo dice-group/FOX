@@ -12,9 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.nerlearner.FoxClassifier;
-import org.aksw.fox.nerlearner.IPostProcessing;
-import org.aksw.fox.nerlearner.PostProcessing;
-import org.aksw.fox.nerlearner.TokenManager;
 import org.aksw.fox.tools.ner.INER;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.log4j.LogManager;
@@ -142,12 +139,7 @@ public class NERTools {
 
     if (!doTraining) {
       foxClassifier.readClassifier(lang);
-      // post
-      final IPostProcessing pp = new PostProcessing(new TokenManager(input), toolResults);
-      // cleaned tool results
-      toolResults = pp.getToolResults();
-
-      results = foxClassifier.classify(pp);
+      results = foxClassifier.classify(input, toolResults);
     }
     LOG.info("get entities done.");
     return results;

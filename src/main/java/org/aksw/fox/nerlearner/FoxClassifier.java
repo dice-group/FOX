@@ -4,10 +4,13 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityTypes;
-import org.aksw.fox.nerlearner.reader.FoxInstances;
+import org.aksw.fox.data.decode.BILOUDecoding;
+import org.aksw.fox.data.decode.GreedyLeftToRight;
+import org.aksw.fox.data.encode.BILOUEncoding;
+import org.aksw.fox.nerlearner.reader.EntitiesToInstances;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -29,27 +32,28 @@ public class FoxClassifier {
 
   public static Logger LOG = LogManager.getLogger(FoxClassifier.class);
 
-  Map<String, Classifier> cache = new HashMap<>();
-
-  public static final String CFG_KEY_MODEL_PATH =
-      FoxClassifier.class.getName().concat(".modelPath");
-  public static final String CFG_KEY_LEARNER = FoxClassifier.class.getName().concat(".learner");
-  public static final String CFG_KEY_LEARNER_OPTIONS =
-      FoxClassifier.class.getName().concat(".learnerOptions");
-  public static final String CFG_KEY_LEARNER_TRAINING =
-      FoxClassifier.class.getName().concat(".training");
+  private static final String name = FoxClassifier.class.getName();
+  public static final String CFG_KEY_MODEL_PATH = name.concat(".modelPath");
+  public static final String CFG_KEY_LEARNER = name.concat(".learner");
+  public static final String CFG_KEY_LEARNER_OPTIONS = name.concat(".learnerOptions");
+  public static final String CFG_KEY_LEARNER_TRAINING = name.concat(".training");
 
   protected Classifier classifier = null;
   protected Instances instances = null;
-  protected FoxInstances foxInstances = null;
+
+  protected EntitiesToInstances entitiesToInstances = new EntitiesToInstances();
   private boolean isTrained = false;
+
+  /**
+   * Holds loaded classifier for a specific language.
+   */
+  private final Map<String, Classifier> cache = new HashMap<>();
 
   /**
    * FoxClassifier.
    */
   public FoxClassifier() {
     LOG.info(FoxClassifier.class + " ...");
-    foxInstances = new FoxInstances();
   }
 
   /**
@@ -62,7 +66,7 @@ public class FoxClassifier {
       classifier.buildClassifier(instances);
       isTrained = true;
     } else {
-      LOG.error("Initialize instances first.");
+      throw new NullPointerException("Initialize instances first.");
     }
   }
 
@@ -77,22 +81,31 @@ public class FoxClassifier {
       final Set<String> input, final Map<String, Set<Entity>> toolResults,
       final Map<String, String> oracle) {
 
-    LOG.info("init. instances ...");
+    LOG.info("Initializes instances ...");
 
-    instances = oracle == null ? //
-        foxInstances.getInstances(input, toolResults) : //
-        foxInstances.getInstances(input, toolResults, oracle);
-  }
-
-  protected String getName(final String lang) {
-    return PropertiesLoader.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator + lang
-        + File.separator + PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER);
+    instances = //
+        oracle == null ? //
+            entitiesToInstances.getInstances(input, toolResults, null) : //
+            entitiesToInstances.getInstances(input, toolResults, oracle);
   }
 
   /**
+   * Gets the path to the serialized classifier.
    *
-   * @param classifier
+   * @param lang
+   * @return path to the serialized classifier
+   */
+  protected String getName(final String lang) {
+    return PropertiesLoader.get(FoxClassifier.CFG_KEY_MODEL_PATH)//
+        .concat(File.separator).concat(lang)//
+        .concat(File.separator).concat(PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER));
+  }
+
+  /**
+   * Serializes the classifier.
+   *
    * @param file
+   * @param lang
    */
   public void writeClassifier(final String file, final String lang) {
 
@@ -132,26 +145,34 @@ public class FoxClassifier {
    * @param toolResults
    * @return classified token
    */
-  public Set<Entity> classify(final IPostProcessing pp) {
+  public Set<Entity> classify(final String input, final Map<String, Set<Entity>> toolResults) {
     LOG.info("classify ...");
+
+    // post
+    final TokenManager tm = new TokenManager(input);
+    final IPostProcessing pp = new PostProcessing(tm, toolResults);
+    // cleaned tool results
+    pp.getToolResults();
 
     // rewrite to use labels
     initInstances(pp.getLabeledInput(), pp.getLabeledToolResults(), null);
 
-    final Instances classified = new Instances(instances);
+    final Instances classifiedInstances = new Instances(instances);
     for (int i = 0; i < instances.numInstances(); i++) {
       try {
-        classified.instance(i).setClassValue(classifier.classifyInstance(instances.instance(i)));
+        classifiedInstances.instance(i)
+            .setClassValue(classifier.classifyInstance(instances.instance(i)));
       } catch (final Exception e) {
         LOG.error(e.getLocalizedMessage(), e);
       }
     }
 
-    final Set<Entity> set = pp.instancesToEntities(classified);
-    LOG.info("classify done, size: " + set.size());
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(classifier);
-    }
+    final GreedyLeftToRight gftr = new GreedyLeftToRight();
+    final BILOUDecoding bilouDecoding = new BILOUDecoding(gftr);
+    final Set<Entity> set =
+        bilouDecoding.instancesToEntities(tm, classifiedInstances, pp.getLabeledInput());
+
+    LOG.info("Classified  #" + set.size());
     return set;
   }
 
@@ -159,9 +180,12 @@ public class FoxClassifier {
    * Reads files, init. instances and builds a classifier.
    *
    * @param files files to read as training data
+   * @throws Exception
    */
-  public void training(final String input, final Map<String, Set<Entity>> toolResults,
+  public void training(//
+      final String input, final Map<String, Set<Entity>> toolResults,
       final Map<String, String> oracle) throws Exception {
+
     LOG.info("training ...");
 
     // init. training data
@@ -190,14 +214,16 @@ public class FoxClassifier {
       // print the confusion matrix
       final StringBuffer cm = new StringBuffer();
       final double[][] cmMatrix = eva.confusionMatrix();
+      final Set<String> sortedTypes = new TreeSet<>(BILOUEncoding.AllTypesSet);
 
-      for (final String cl : EntityTypes.AllTypesList) {
-        cm.append(cl + "\t");
+      for (final String cl : sortedTypes) {
+        cm.append(cl + "\t\t\t");
       }
       cm.append("\n");
+
       for (int i = 0; i < cmMatrix.length; i++) {
         for (int ii = 0; ii < cmMatrix[i].length; ii++) {
-          cm.append(cmMatrix[i][ii] + "\t\t");
+          cm.append(cmMatrix[i][ii] + "\t\t\t");
         }
         cm.append("\n");
       }
@@ -205,12 +231,13 @@ public class FoxClassifier {
       LOG.info("confusion matrix\n" + cm.toString());
 
       // measure
-      for (int i = 0; i < EntityTypes.AllTypesList.size(); i++) {
-        final String cl = EntityTypes.AllTypesList.get(i);
+      int i = 0;
+      for (final String cl : sortedTypes) {
         LOG.info("class: " + cl);
         LOG.info("fMeasure: " + eva.fMeasure(i));
         LOG.info("precision: " + eva.precision(i));
         LOG.info("recall: " + eva.recall(i));
+        i++;
       }
 
     } else {

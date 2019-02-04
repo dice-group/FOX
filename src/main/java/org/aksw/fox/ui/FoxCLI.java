@@ -187,10 +187,10 @@ public class FoxCLI extends AUI {
     final NERTools foxNERTools = toolsGenerator.getNERTools(lang);
     final FoxClassifier foxClassifier = new FoxClassifier();
 
-    final Set<String> toolResultKeySet = foxNERTools.getToolResult().keySet();
-    final String[] prefix = toolResultKeySet.toArray(new String[toolResultKeySet.size()]);
+    final Set<String> toolNames = foxNERTools.getToolResult().keySet();
+    final String[] prefix = toolNames.toArray(new String[toolNames.size()]);
 
-    LOG.info("tools used: " + toolResultKeySet);
+    LOG.info("tools used: " + toolNames);
     setClassifier(foxClassifier, prefix);
 
     // read training data
@@ -206,8 +206,10 @@ public class FoxCLI extends AUI {
 
     try {
       foxClassifier.training(input, foxNERTools.getToolResult(), oracle);
+
       final String file = PropertiesLoader.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator
           + PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER).trim();
+
       foxClassifier.writeClassifier(file, lang);
       foxClassifier.eva();
     } catch (final Exception e) {
