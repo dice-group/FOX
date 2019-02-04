@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.tools.ner.AbstractNER;
 
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;

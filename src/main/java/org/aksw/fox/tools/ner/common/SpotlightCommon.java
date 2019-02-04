@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.simba.knowledgeextraction.commons.io.Requests;
 import org.apache.commons.configuration.XMLConfiguration;

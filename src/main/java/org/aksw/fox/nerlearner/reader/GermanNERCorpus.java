@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 
 public class GermanNERCorpus extends ANERReader {
 

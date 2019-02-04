@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.aksw.fox.data.BILOUEncoding;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.apache.log4j.Logger;
 
 import weka.classifiers.Classifier;

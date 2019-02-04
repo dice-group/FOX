@@ -3,9 +3,9 @@ package org.aksw.fox.tools.ner.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.tools.ner.AbstractNER;
 
 import ca.uottawa.balie.Balie;

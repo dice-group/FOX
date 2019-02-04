@@ -17,8 +17,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.gerbil.io.nif.impl.TurtleNIFParser;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;

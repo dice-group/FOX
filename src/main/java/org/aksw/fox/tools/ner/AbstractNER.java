@@ -9,9 +9,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.tools.ATool;
 import org.aksw.fox.utils.FoxTextUtil;
 

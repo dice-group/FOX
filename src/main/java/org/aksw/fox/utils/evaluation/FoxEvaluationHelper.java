@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.evaluation.CrossValidation;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 

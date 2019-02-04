@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.simba.knowledgeextraction.commons.io.Compress;
 
 public class Conll2002 extends ANERReader {

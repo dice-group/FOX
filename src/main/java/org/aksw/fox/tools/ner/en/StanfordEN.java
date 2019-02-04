@@ -2,8 +2,8 @@ package org.aksw.fox.tools.ner.en;
 
 import java.util.Properties;
 
-import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.tools.ner.common.StanfordCommon;
 
 /**

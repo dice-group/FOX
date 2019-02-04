@@ -9,11 +9,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.data.Voc;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.tools.re.AbstractRE;
 
 import edu.stanford.nlp.ie.machinereading.structure.EntityMention;

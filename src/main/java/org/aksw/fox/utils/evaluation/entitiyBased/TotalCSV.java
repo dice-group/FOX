@@ -5,8 +5,8 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.aksw.fox.data.BILOUEncoding;
 import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.evaluation.CrossValidation;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 

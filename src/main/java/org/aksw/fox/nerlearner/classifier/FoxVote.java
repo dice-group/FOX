@@ -1,6 +1,6 @@
 package org.aksw.fox.nerlearner.classifier;
 
-import org.aksw.fox.data.BILOUEncoding;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.apache.log4j.Logger;
 
 import weka.classifiers.meta.Vote;
@@ -29,17 +29,17 @@ public class FoxVote extends Vote {
    * logger.info("classifyInstance ..."); final int nullIndexInt =
    * instance.classAttribute().indexOfValue(BILOUEncoding.O); double result =
    * Double.valueOf(nullIndexInt);
-   * 
+   *
    * double[] results = distributionForInstance(instance); switch (m_CombinationRule) { case CLASS:
    * { int founds = 0; for (int i = 0; i < instance.numClasses(); i++) { if (results[i] > 0 && i !=
    * nullIndexInt) { founds++; result = i; } } if (founds > 1) result =
    * Double.valueOf(nullIndexInt);
-   * 
+   *
    * break; } case RESULT: { logger.info("restult:"); double max = 0; for (int i = 0; i <
    * instance.numClasses(); i++) { logger.info(results[i] + " "); if (results[i] >= max && i !=
    * nullIndexInt) { max = results[i]; result = Double.valueOf(i); } } if (max > 0) { int founds =
    * 0; for (int i = 0; i < instance.numClasses(); i++) if (results[i] == max) founds++;
-   * 
+   *
    * if (founds > 1) { result = Double.valueOf(nullIndexInt); } } break; } default: result =
    * super.classifyInstance(instance); } return result; }
    */
