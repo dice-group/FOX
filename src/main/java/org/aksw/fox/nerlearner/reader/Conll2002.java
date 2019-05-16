@@ -42,7 +42,7 @@ public class Conll2002 extends ANERReader {
 
     final INERReader r = new Conll2002(files);
 
-    LOG.info("input:\n" + r.getInput());
+    LOG.info("input:\n" + r.input());
 
     LOG.info("entities:");
     r.getEntities().entrySet().forEach(LOG::info);
@@ -162,7 +162,7 @@ public class Conll2002 extends ANERReader {
   }
 
   @Override
-  public String getInput() {
+  public String input() {
     return input.toString().trim();
   }
 

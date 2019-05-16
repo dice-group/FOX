@@ -3,11 +3,9 @@ package org.aksw.fox.tools.ner;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityTypes;
@@ -25,22 +23,20 @@ public abstract class AbstractNER extends ATool implements INER {
   @Override
   abstract public List<Entity> retrieve(String input);
 
-  public List<Entity> _retrieve(final String input) {
-    LOG.info("retrieve ...");
-
-    final List<Entity> list = new ArrayList<>();
-    final Set<Entity> set = new HashSet<>(retrieve(input));
-    list.addAll(set);
-    entityList = clean(list);
-
-    LOG.info("retrieve done");
+  protected List<Entity> _retrieve(final String input) {
+    entityList = clean(retrieve(input));
     return entityList;
   }
 
   @Override
   public void run() {
     if (input != null) {
+      LOG.info(this.getClass().getSimpleName().concat(" retrieving ..."));
+
       _retrieve(input);
+
+      LOG.info("retrieve done");
+
     } else {
       LOG.error("Input not set!");
     }

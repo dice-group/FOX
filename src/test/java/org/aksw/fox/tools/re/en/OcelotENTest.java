@@ -22,143 +22,108 @@ public class OcelotENTest {
 
   @Test
   public void testA() throws URISyntaxException {
-    {
 
-      final String bob = "Bob Right";
-      final String alice = "Alice Right";
-      final String karl = "Karl Mueller";
-      final String paula = "Paula Petersen";
+    final String bob = "Bob Right";
+    final String alice = "Alice Right";
 
-      final String sentenceA = bob.concat(" married ").concat(alice).concat(".");
+    final String text = bob.concat(" married ").concat(alice).concat(".");
 
-      final String sentenceB = karl.concat(" and ").concat(paula).concat(" are married.");
-      final String text = sentenceA.concat(" ").concat(sentenceB);
+    final List<Entity> entities = new ArrayList<>();
 
-      final List<Entity> entities = new ArrayList<>();
+    final Entity eBob = new Entity(bob, EntityTypes.P, text.indexOf(bob));
+    final Entity eAlice = new Entity(alice, EntityTypes.P, text.indexOf(alice));
 
-      final Entity eBob = new Entity(bob, EntityTypes.P);
-      eBob.addIndicies(text.indexOf(bob));
+    entities.add(eBob);
+    entities.add(eAlice);
 
-      final Entity eAlice = new Entity(alice, EntityTypes.P);
-      eAlice.addIndicies(text.indexOf(alice));
+    final Set<Relation> relations = ocelot._extract(text, entities);
 
-      final Entity eKarl = new Entity(karl, EntityTypes.P);
-      eKarl.addIndicies(text.indexOf(karl));
-
-      final Entity ePaula = new Entity(paula, EntityTypes.P);
-      ePaula.addIndicies(text.indexOf(paula));
-
-      entities.add(eBob);
-      entities.add(eAlice);
-      entities.add(eKarl);
-      entities.add(ePaula);
-
-      final Set<Relation> relations = ocelot._extract(text, entities);
-      relations.forEach(LOG::info);
-
-      // checks one relation
-      // bob married/spouse alice
-      {
-        boolean found = false;
-        for (final Relation relation : relations) {
-          final boolean sub = relation.getSubjectEntity().equals(eBob);
-          final boolean obj = relation.getObjectEntity().equals(eAlice);
-          final boolean spouse = relation.getRelation().contains(//
-              new URI(DBpedia.ns_dbpedia_ontology.concat("spouse"))//
-          );
-
-          if (sub && obj && spouse) {
-            found = true;
-          }
-        }
-        Assert.assertTrue(found);
-      }
-      {
-        boolean found = false;
-        for (final Relation relation : relations) {
-          final boolean sub = relation.getSubjectEntity().equals(eKarl);
-          final boolean obj = relation.getObjectEntity().equals(ePaula);
-          final boolean spouse = relation.getRelation().contains(//
-              new URI(DBpedia.ns_dbpedia_ontology.concat("spouse"))//
-          );
-
-          if (sub && obj && spouse) {
-            found = true;
-          }
-        }
-        Assert.assertTrue(found);
-      }
+    for (final Relation relation : relations) {
+      Assert.assertTrue(relation.getSubjectEntity().equals(eBob));
+      Assert.assertTrue(relation.getObjectEntity().equals(eAlice));
+      Assert.assertTrue(relation.getRelation().contains(//
+          new URI(DBpedia.ns_dbpedia_ontology.concat("spouse"))//
+      ));
     }
   }
 
   @Test
   public void testB() throws URISyntaxException {
-    {
 
-      final String bob = "Bob";
-      final String alice = "Alice";
-      final String karl = "Karl";
-      final String paula = "Paula";
+    final String karl = "Karl Mueller";
+    final String paula = "Paula Petersen";
 
-      final String sentenceA = bob.concat(" married ").concat(alice).concat(".");
+    final String text = karl.concat(" and ").concat(paula).concat(" are married.");
 
-      final String sentenceB = karl.concat(" and ").concat(paula).concat(" are married.");
-      final String text = sentenceA.concat(" ").concat(sentenceB);
+    final List<Entity> entities = new ArrayList<>();
 
-      final List<Entity> entities = new ArrayList<>();
+    final Entity eKarl = new Entity(karl, EntityTypes.P, text.indexOf(karl));
+    final Entity ePaula = new Entity(paula, EntityTypes.P, text.indexOf(paula));
 
-      final Entity eBob = new Entity(bob, EntityTypes.P);
-      eBob.addIndicies(text.indexOf(bob));
+    entities.add(eKarl);
+    entities.add(ePaula);
 
-      final Entity eAlice = new Entity(alice, EntityTypes.P);
-      eAlice.addIndicies(text.indexOf(alice));
+    final Set<Relation> relations = ocelot._extract(text, entities);
 
-      final Entity eKarl = new Entity(karl, EntityTypes.P);
-      eKarl.addIndicies(text.indexOf(karl));
+    for (final Relation relation : relations) {
+      Assert.assertTrue(relation.getSubjectEntity().equals(eKarl));
+      Assert.assertTrue(relation.getObjectEntity().equals(ePaula));
+      Assert.assertTrue(relation.getRelation().contains(//
+          new URI(DBpedia.ns_dbpedia_ontology.concat("spouse"))//
+      ));
+    }
+  }
 
-      final Entity ePaula = new Entity(paula, EntityTypes.P);
-      ePaula.addIndicies(text.indexOf(paula));
+  @Test
+  public void testC() throws URISyntaxException {
+    final String bob = "Bob Right";
+    final String alice = "Alice Right";
 
-      entities.add(eBob);
-      entities.add(eAlice);
-      entities.add(eKarl);
-      entities.add(ePaula);
+    final String sentenceA = bob.concat(" married ").concat(alice).concat(".");
 
-      final Set<Relation> relations = ocelot._extract(text, entities);
-      relations.forEach(LOG::info);
+    final String karl = "Karl Mueller";
+    final String paula = "Paula Petersen";
 
-      // checks one relation
-      // bob married/spouse alice
-      {
-        boolean found = false;
-        for (final Relation relation : relations) {
-          final boolean sub = relation.getSubjectEntity().equals(eBob);
-          final boolean obj = relation.getObjectEntity().equals(eAlice);
-          final boolean spouse = relation.getRelation().contains(//
-              new URI(DBpedia.ns_dbpedia_ontology.concat("spouse"))//
-          );
+    final String sentenceB = karl.concat(" and ").concat(paula).concat(" are married.");
 
-          if (sub && obj && spouse) {
-            found = true;
-          }
-        }
-        Assert.assertTrue(found);
-      }
-      {
-        boolean found = false;
-        for (final Relation relation : relations) {
-          final boolean sub = relation.getSubjectEntity().equals(eKarl);
-          final boolean obj = relation.getObjectEntity().equals(ePaula);
-          final boolean spouse = relation.getRelation().contains(//
-              new URI(DBpedia.ns_dbpedia_ontology.concat("spouse"))//
-          );
+    final String text = sentenceA.concat(" ").concat(sentenceB);
 
-          if (sub && obj && spouse) {
-            found = true;
-          }
-        }
-        Assert.assertTrue(found);
+    final List<Entity> entities = new ArrayList<>();
+
+    final Entity eBob = new Entity(bob, EntityTypes.P, text.indexOf(bob));
+    final Entity eAlice = new Entity(alice, EntityTypes.P, text.indexOf(alice));
+
+    final Entity eKarl = new Entity(karl, EntityTypes.P, text.indexOf(karl));
+    final Entity ePaula = new Entity(paula, EntityTypes.P, text.indexOf(paula));
+
+    entities.add(eBob);
+    entities.add(eAlice);
+    entities.add(eKarl);
+    entities.add(ePaula);
+
+    final Set<Relation> relations = ocelot._extract(text, entities);
+
+    int found = 0;
+    for (final Relation relation : relations) {
+      final boolean a = relation.getSubjectEntity().equals(eBob);
+      final boolean b = relation.getObjectEntity().equals(eAlice);
+      final boolean c = relation.getRelation().contains(//
+          new URI(DBpedia.ns_dbpedia_ontology.concat("spouse"))//
+      );
+      if (a && b && c) {
+        found++;
       }
     }
+    for (final Relation relation : relations) {
+      final boolean a = relation.getSubjectEntity().equals(eKarl);
+      final boolean b = relation.getObjectEntity().equals(ePaula);
+      final boolean c = relation.getRelation().contains(//
+          new URI(DBpedia.ns_dbpedia_ontology.concat("spouse"))//
+      );
+      if (a && b && c) {
+        found++;
+      }
+    }
+    Assert.assertTrue(found == 2);
   }
 }

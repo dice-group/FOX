@@ -65,7 +65,7 @@ public class NifReader extends ANERReader {
 
     final NifReader bn = new NifReader(files);
 
-    LOG.info(bn.getInput().substring(0, 1000));
+    LOG.info(bn.input().substring(0, 1000));
     bn.getEntities().entrySet().stream().limit(10).forEach(LOG::info);
 
     /**
@@ -93,7 +93,7 @@ public class NifReader extends ANERReader {
   }
 
   @Override
-  public String getInput() {
+  public String input() {
     if (input.isEmpty()) {
       readData();
     }

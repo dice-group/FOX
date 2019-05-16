@@ -239,15 +239,8 @@ abstract public class ABoaIndex extends AbstractRE {
       final Set<String> uris = getSupportedBoaRelations(sType, oType);
       LOG.debug("uris that match the entity types: " + uris);
 
-      if (subject.getIndices().size() > 1 || object.getIndices().size() > 1) {
-        throw new UnsupportedOperationException( //
-            "The Entity list contains at least one Entity with multiple indices. "
-                + "This operation allows only entities with one index!"//
-        );
-      }
-
-      final int sIndex = subject.getIndices().iterator().next();
-      final int oIndex = object.getIndices().iterator().next();
+      final int sIndex = subject.getIndex();
+      final int oIndex = object.getIndex();
 
       final String substring = text.substring(sIndex + subject.getText().length(), oIndex).trim();
       LOG.debug("substring with possible pattern: " + substring);

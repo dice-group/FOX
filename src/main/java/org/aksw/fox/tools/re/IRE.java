@@ -1,5 +1,6 @@
 package org.aksw.fox.tools.re;
 
+import java.util.List;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
@@ -18,21 +19,21 @@ public interface IRE extends ITool {
    *
    * @return relations
    */
-  public Set<Relation> extract();
+  Set<Relation> extract();
 
   /**
    * Sets the input.
    *
-   * @param text the whole text with multiple sentences as clean as possible.
+   * @param text
    * @param entities entities in the text with types, labels and indices.
    */
-  public void setInput(String input, Set<Entity> entities);
+  void setInput(String input, List<Entity> entities);
 
   /**
    * Returns results.
    *
    * @return results
    */
-  public Set<Relation> getResults();
+  Set<Relation> getResults();
 
 }

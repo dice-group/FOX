@@ -26,7 +26,6 @@ public abstract class StanfordCommon extends AbstractNER {
 
   @Override
   public List<Entity> retrieve(final String text) {
-    LOG.info("retrieve ...");
 
     final Annotation ann = new Annotation(text);
     pipeline.annotate(ann);
@@ -62,7 +61,6 @@ public abstract class StanfordCommon extends AbstractNER {
     if (LOG.isTraceEnabled()) {
       LOG.trace(list);
     } // TRACE
-    LOG.info("retrieve done.");
     return list;
   }
 }

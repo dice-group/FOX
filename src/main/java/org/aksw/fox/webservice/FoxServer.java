@@ -18,7 +18,6 @@ import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.output.FoxJena;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.utils.FoxLanguageDetector;
-import org.aksw.fox.webservice.oke.Oke;
 import org.aksw.fox.webservice.statistics.FoxStatistics;
 import org.aksw.fox.webservice.util.Pool;
 import org.aksw.fox.webservice.util.RouteConfig;
@@ -50,8 +49,6 @@ public class FoxServer extends AServer {
 
   public static final String turtleContentType = "application/x-turtle";
   public static final String jsonContentType = "application/json";
-
-  protected final Oke oke = new Oke();
 
   protected final FoxLanguageDetector languageDetector = new FoxLanguageDetector();
   protected final RouteConfig routeConfig = new RouteConfig();
@@ -130,7 +127,7 @@ public class FoxServer extends AServer {
     return parameter;
   }
 
-  public void mapCfg() {
+  protected void cfgRoute() {
     /**
      * path: config <br>
      * method: GET <br>
@@ -141,11 +138,7 @@ public class FoxServer extends AServer {
     });
   }
 
-  @Override
-  public void mapRoutes() {
-
-    mapCfg();
-
+  protected void foxRoute() {
     /**
      * path: fox <br>
      * method: POST <br>
@@ -190,10 +183,11 @@ public class FoxServer extends AServer {
           final JSONObject jo = new JSONObject(req.body());
 
           @SuppressWarnings("unchecked")
-          final Map<String, Object> tmp =
-              new ObjectMapper().readValue(jo.toString(), HashMap.class);
+          final Map<String, Object> tmp = new ObjectMapper()//
+              .readValue(jo.toString(), HashMap.class);
           tmp.keySet().retainAll(FoxServer.allowedHeaderFields());
-          parameter = tmp.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, //
+          parameter = tmp.entrySet().stream().collect(Collectors.toMap(//
+              Map.Entry::getKey, //
               e -> String.valueOf(e.getValue())//
           ));
 
@@ -272,7 +266,7 @@ public class FoxServer extends AServer {
         // parse input
         List<Document> docs = null;
         try {
-          docs = new TurtleNIFParser()
+          docs = new TurtleNIFParser()//
               .parseNIF(parameter.get(FoxParameter.Parameter.INPUT.toString()));
         } catch (final Exception e) {
           LOG.error(e.getLocalizedMessage(), e);
@@ -302,27 +296,40 @@ public class FoxServer extends AServer {
     });
   }
 
+  @Override
+  public void mapRoutes() {
+    cfgRoute();
+    foxRoute();
+  }
+
+  /**
+   * Lang from parameter or detect.
+   *
+   * @param parameter
+   * @return e.g. "en"
+   */
+  protected String getLanguage(final Map<String, String> parameter) {
+    String lang = parameter.get(FoxParameter.Parameter.LANG.toString());
+    FoxParameter.Langs l = FoxParameter.Langs.fromString(lang);
+    if (l == null) {
+      l = languageDetector.detect(parameter.get(FoxParameter.Parameter.INPUT.toString()));
+      if (l != null) {
+        lang = l.toString();
+      }
+    }
+    if (!ToolsGenerator.usedLang.contains(lang)) {
+      lang = FoxParameter.Langs.EN.toString();
+    }
+    return lang;
+  }
+
   public String fox(final List<Document> docs, final Map<String, String> parameter) {
     LOG.info("fox");
 
     String nif = "";
-
     // annotate each doc
     if (docs != null) {
-
-      // detect the lang and choose en in worst case
-      String lang = parameter.get(FoxParameter.Parameter.LANG.toString());
-      FoxParameter.Langs l = FoxParameter.Langs.fromString(lang);
-      if (l == null) {
-        l = languageDetector.detect(parameter.get(FoxParameter.Parameter.INPUT.toString()));
-        if (l != null) {
-          lang = l.toString();
-        }
-      }
-      if (!ToolsGenerator.usedLang.contains(lang)) {
-        lang = FoxParameter.Langs.EN.toString();
-      }
-
+      final String lang = getLanguage(parameter);
       // get a fox instance
       final Pool<IFox> pool = FoxServer.pool.get(lang);
       IFox fox = null;
@@ -371,12 +378,16 @@ public class FoxServer extends AServer {
 
       // wait
       try {
-
         latch.await(CFG.getInt(KEY_FOX_LIFETIME), TimeUnit.MINUTES);
       } catch (final InterruptedException e) {
-        LOG.error("Fox timeout after " + CFG.getInt(KEY_FOX_LIFETIME) + "min.");
-        LOG.error("\n", e);
+
+        final String message = "Fox timeout after " + CFG.getInt(KEY_FOX_LIFETIME) + "min.";
+        LOG.error(message);
         LOG.error("input: " + parameter.get(FoxParameter.Parameter.INPUT.toString()));
+        LOG.error(e.getLocalizedMessage(), e);
+
+        Spark.halt(408, message);
+
       }
 
       // shutdown thread

@@ -56,7 +56,6 @@ public abstract class OpenNLPCommon extends AbstractNER {
   // TODO: do parallel for each model
   @Override
   public List<Entity> retrieve(final String input) {
-    LOG.info("retrieve ...");
 
     final List<Entity> list = new ArrayList<>();
     final String[] sentences = FoxTextUtil.getSentences(input);

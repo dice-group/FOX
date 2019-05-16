@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.data.encode.BILOUEncoding;
 import org.apache.log4j.LogManager;
@@ -42,7 +43,7 @@ public class NEEL2014Reader implements INERReader {
     final NEEL2014Reader r = new NEEL2014Reader();
     r.initFiles(files);
 
-    LOG.info(r.getInput().length());
+    LOG.info(r.input().length());
     LOG.info(r.getEntities().size());
   }
 
@@ -134,13 +135,19 @@ public class NEEL2014Reader implements INERReader {
   }
 
   @Override
-  public String getInput() {
+  public String input() {
     return input.toString();
   }
 
   @Override
   public Map<String, String> getEntities() {
     return entities;
+  }
+
+  // TODO: implement me?
+  @Override
+  public List<Entity> entities() {
+    throw new UnsupportedOperationException("Unimplemented method.");
   }
 
 }

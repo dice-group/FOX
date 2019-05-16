@@ -17,33 +17,27 @@ public interface IFox extends Runnable {
    *
    * @param cdl
    */
-  public void setCountDownLatch(CountDownLatch cdl);
+  void setCountDownLatch(CountDownLatch cdl);
 
   /**
    * Sets the parameter Map object.
    *
    * @param parameter
    */
-  public void setParameter(Map<String, String> parameter);
+  void setParameter(Map<String, String> parameter);
 
   /**
    * Returns results.
    *
    * @return results
    */
-  public String getResultsAndClean();
+  String getResultsAndClean();
 
   /**
    * Returns lang.
    *
    * @return lang
    */
-  public String getLang();
+  String getLang();
 
-  /**
-   * Returns log messages.
-   *
-   * @return log
-   */
-  public String getLog();
 }

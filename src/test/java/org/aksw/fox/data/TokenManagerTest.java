@@ -4,7 +4,7 @@ import org.aksw.fox.nerlearner.TokenManager;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TestTokenManager {
+public class TokenManagerTest {
 
     @Test
     public void emptyInputTest() {

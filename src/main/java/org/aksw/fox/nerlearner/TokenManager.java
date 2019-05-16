@@ -1,7 +1,8 @@
 package org.aksw.fox.nerlearner;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -89,12 +90,13 @@ public class TokenManager {
     }
   }
 
-  public void repairEntities(Set<Entity> entities) {
-
-    for (final Entity entity : entities) {
-      repairEntity(entity);
+  public void repairEntities(List<Entity> entities) {
+    if (entities != null) {
+      for (final Entity entity : entities) {
+        repairEntity(entity);
+      }
+      entities = new ArrayList<>(entities);
     }
-    entities = new HashSet<>(entities);
   }
 
   private void repairEntity(final Entity entity) {

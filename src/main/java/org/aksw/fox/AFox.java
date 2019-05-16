@@ -3,9 +3,7 @@ package org.aksw.fox;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import org.aksw.fox.utils.FoxWebLog;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.aksw.fox.tools.ATool;
 
 /**
  * An implementation of {@link org.aksw.fox.IFox}.
@@ -13,19 +11,11 @@ import org.apache.log4j.Logger;
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
-abstract class AFox implements IFox {
-
-  public static final Logger LOG = LogManager.getLogger(AFox.class);
+abstract class AFox extends ATool implements IFox {
 
   protected String lang = null;
-  protected FoxWebLog foxWebLog = new FoxWebLog();
   protected CountDownLatch countDownLatch = null;
   protected Map<String, String> parameter = null;
-
-  @Override
-  public void run() {
-    foxWebLog = new FoxWebLog();
-  }
 
   @Override
   public void setCountDownLatch(final CountDownLatch cdl) {
@@ -40,17 +30,5 @@ abstract class AFox implements IFox {
   @Override
   public String getLang() {
     return lang;
-  }
-
-  @Override
-  public String getLog() {
-    return foxWebLog.getConsoleOutput();
-  }
-
-  protected void infoLog(final String m) {
-    if (foxWebLog != null) {
-      foxWebLog.setMessage(m);
-    }
-    LOG.info(m);
   }
 }

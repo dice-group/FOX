@@ -17,13 +17,12 @@ import org.apache.log4j.Logger;
 abstract class AProcessing {
 
   public static Logger LOG = LogManager.getLogger(AProcessing.class);
-  protected Map<String, Set<Entity>> toolResults = null;
+  protected Map<String, List<Entity>> toolResults = null;
   protected TokenManager tokenManager = null;
 }
 
 
 /**
- * TODO: split to pre- and post- processing
  *
  * @author rspeck
  *
@@ -37,15 +36,15 @@ public class PostProcessing extends AProcessing implements IPostProcessing {
    * @param input sentences
    * @param toolResults tool name to result set
    */
-  public PostProcessing(//
-      final TokenManager tokenManager, final Map<String, Set<Entity>> toolResults) {
+  public PostProcessing(final TokenManager tokenManager,
+      final Map<String, List<Entity>> toolResults) {
 
     LOG.info("PostProcessing ...");
 
     this.tokenManager = tokenManager;
 
     // check entities and try to repair entities
-    for (final Set<Entity> entites : toolResults.values()) {
+    for (final List<Entity> entites : toolResults.values()) {
       tokenManager.repairEntities(entites);
     }
 
@@ -111,12 +110,12 @@ public class PostProcessing extends AProcessing implements IPostProcessing {
    * @return
    */
   @Override
-  public Map<String, Set<Entity>> getLabeledToolResults() {
+  public Map<String, List<Entity>> getLabeledToolResults() {
 
-    final Map<String, Set<Entity>> rtn = new HashMap<>();
+    final Map<String, List<Entity>> rtn = new HashMap<>();
 
     // for each tool
-    for (final Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
+    for (final Entry<String, List<Entity>> entry : toolResults.entrySet()) {
       // entities to map
       Map<String, String> resutlsMap = new HashMap<>();
       for (final Entity entity : entry.getValue()) {
@@ -127,7 +126,7 @@ public class PostProcessing extends AProcessing implements IPostProcessing {
       resutlsMap = getLabeledMap(resutlsMap);
 
       // label to entity
-      final Set<Entity> labeledEntities = new HashSet<>();
+      final List<Entity> labeledEntities = new ArrayList<>();
       for (final Entry<String, String> e : resutlsMap.entrySet()) {
         labeledEntities.add(//
             new Entity(e.getKey(), e.getValue(), Entity.DEFAULT_RELEVANCE, entry.getKey())//
@@ -142,7 +141,7 @@ public class PostProcessing extends AProcessing implements IPostProcessing {
   }
 
   @Override
-  public Map<String, Set<Entity>> getToolResults() {
+  public Map<String, List<Entity>> getToolResults() {
     return toolResults;
   }
 

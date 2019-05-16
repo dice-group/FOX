@@ -220,18 +220,15 @@ public class StanfordREEN extends AbstractRE {
             final EntityMention emOne = entityMention.get(0);
             final EntityMention emTwo = entityMention.get(1);
 
-            final Entity a = new Entity(emOne.getExtentString(), stanford(emOne.getType()),
-                Entity.DEFAULT_RELEVANCE, getToolName());
-            final Entity b = new Entity(emTwo.getExtentString(), stanford(emTwo.getType()),
-                Entity.DEFAULT_RELEVANCE, getToolName());
-
             final int index_a =
                 emOne.getSyntacticHeadToken().endPosition() - emOne.getExtentString().length();
             final int index_b =
                 emTwo.getSyntacticHeadToken().endPosition() - emTwo.getExtentString().length();
 
-            a.addIndicies(index_a);
-            b.addIndicies(index_b);
+            final Entity a = new Entity(emOne.getExtentString(), stanford(emOne.getType()),
+                Entity.DEFAULT_RELEVANCE, getToolName(), index_a);
+            final Entity b = new Entity(emTwo.getExtentString(), stanford(emTwo.getType()),
+                Entity.DEFAULT_RELEVANCE, getToolName(), index_b);
 
             /*
              * int start = -1, end = -1; if (emOne.getSyntacticHeadToken().endPosition() <

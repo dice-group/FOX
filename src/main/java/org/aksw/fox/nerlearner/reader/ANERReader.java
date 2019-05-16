@@ -3,7 +3,9 @@ package org.aksw.fox.nerlearner.reader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
+import org.aksw.fox.data.Entity;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 
 public abstract class ANERReader implements INERReader {
@@ -33,6 +35,11 @@ public abstract class ANERReader implements INERReader {
    * Empty constructor to create class with Reflections.
    */
   public ANERReader() {}
+
+  @Override
+  public List<Entity> entities() {
+    throw new UnsupportedOperationException("Unimplemented method.");
+  }
 
   /**
    * String to File.

@@ -10,13 +10,13 @@ import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TestServer {
+public class ServerTest {
 
-  public final static Logger LOG = LogManager.getLogger(TestServer.class);
+  public final static Logger LOG = LogManager.getLogger(ServerTest.class);
 
   FoxServer server = null;
 
-  public TestServer() throws IOException {
+  public ServerTest() throws IOException {
     server = FoxServer.instance(new CfgManager(Fox.cfgFolder).getCfg(FoxRESTful.class));
   }
 

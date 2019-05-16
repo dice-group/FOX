@@ -69,19 +69,23 @@ public class EntitiesToInstances {
 
   // not implemented yet
   protected Map<String, Map<String, String>> mapResultsToBILOU(//
-      final Map<String, Set<Entity>> toolResults, final String splitregText) {
+      final Map<String, List<Entity>> toolResults, final String splitregText) {
 
     final Map<String, Map<String, String>> toolResultsBILOU = new HashMap<>();
     if (toolResults == null) {
       return null;
     } else {
-      for (final Entry<String, Set<Entity>> entry : toolResults.entrySet()) {
+      for (final Entry<String, List<Entity>> entry : toolResults.entrySet()) {
         final String toolname = entry.getKey();
+
         toolResultsBILOU.put(toolname, new HashMap<>());
-        final Set<Entity> entities = entry.getValue();
+        final List<Entity> entities = entry.getValue();
+
         for (final Entity entity : entities) {
+
           final String mention = entity.getText();
           final String type = entity.getType();
+
           toolResultsBILOU.get(toolname).put(mention, type);
         }
         toolResultsBILOU.put(//
@@ -94,7 +98,7 @@ public class EntitiesToInstances {
   }
 
   public Instances getInstances(//
-      final Set<String> tokens, final Map<String, Set<Entity>> toolResults,
+      final Set<String> tokens, final Map<String, List<Entity>> toolResults,
       final Map<String, String> oracle) {
 
     final Map<String, String> oracleBILOU = mapOracleToBILOU(oracle, FoxTextUtil.tokenSpliter);

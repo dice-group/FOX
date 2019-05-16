@@ -3,7 +3,7 @@ package org.aksw.fox.utils.tweets;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TestPreprocessor {
+public class PreprocessorTest {
 
     @Test
     public void preprocessTest() {

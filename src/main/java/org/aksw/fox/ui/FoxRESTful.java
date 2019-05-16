@@ -5,8 +5,6 @@ import java.io.IOException;
 import org.aksw.fox.Fox;
 import org.aksw.fox.webservice.FoxServer;
 import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 /**
  * Starts FOX web service.
@@ -15,8 +13,6 @@ import org.apache.log4j.Logger;
  *
  */
 public class FoxRESTful extends AUI {
-  public static Logger LOG = LogManager.getLogger(FoxRESTful.class);
-
   /**
    * Starts FOX web service.
    *

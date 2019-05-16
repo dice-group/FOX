@@ -15,8 +15,6 @@ import org.aksw.fox.nerlearner.reader.NERReaderFactory;
 import org.aksw.fox.tools.NERTools;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 import gnu.getopt.Getopt;
 import weka.classifiers.Classifier;
@@ -28,7 +26,6 @@ import weka.classifiers.Classifier;
  *
  */
 public class FoxCLI extends AUI {
-  public static Logger LOG = LogManager.getLogger(FoxCLI.class);
 
   /**
    *
@@ -42,6 +39,10 @@ public class FoxCLI extends AUI {
    *
    */
   public static void main(final String[] args) throws IOException {
+    // Example
+    // String[] args = new String[] {"-l", "en", "-i", "input/2", "-a", "train"};
+    // FoxCLI.main(args);
+
     LOG.info("Fox cl service starting ...");
     final Getopt getopt = new Getopt("Fox", args, "l:x i:x a:x");
     int arg;
@@ -185,11 +186,11 @@ public class FoxCLI extends AUI {
     final ToolsGenerator toolsGenerator = new ToolsGenerator();
 
     final NERTools foxNERTools = toolsGenerator.getNERTools(lang);
+
     final FoxClassifier foxClassifier = new FoxClassifier();
 
     final Set<String> toolNames = foxNERTools.getToolResult().keySet();
     final String[] prefix = toolNames.toArray(new String[toolNames.size()]);
-
     LOG.info("tools used: " + toolNames);
     setClassifier(foxClassifier, prefix);
 
@@ -197,7 +198,7 @@ public class FoxCLI extends AUI {
     final INERReader reader = NERReaderFactory.getINERReader();
     reader.initFiles(inputFiles);
 
-    final String input = reader.getInput();
+    final String input = reader.input();
     final Map<String, String> oracle = reader.getEntities();
 
     // retrieve entities (tool results)
@@ -207,18 +208,31 @@ public class FoxCLI extends AUI {
     try {
       foxClassifier.training(input, foxNERTools.getToolResult(), oracle);
 
-      final String file = PropertiesLoader.get(FoxClassifier.CFG_KEY_MODEL_PATH) + File.separator
-          + PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER).trim();
+      final String name = getName(lang);
 
-      foxClassifier.writeClassifier(file, lang);
+      foxClassifier.writeClassifier(name);
       foxClassifier.eva();
     } catch (final Exception e) {
       e.printStackTrace();
     }
   }
 
+  /**
+   * Gets the path to the serialized classifier.
+   *
+   * @param lang
+   * @return path to the serialized classifier
+   */
+  public static String getName(final String lang) {
+    return PropertiesLoader.get(FoxClassifier.CFG_KEY_MODEL_PATH)//
+        .concat(File.separator).concat(lang)//
+        .concat(File.separator).concat(PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER));
+  }
+
   private static void setClassifier(final FoxClassifier foxClassifier, final String[] prefix)
       throws IOException {
+    LOG.debug("prefix: " + prefix);
+
     switch (PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER).trim()) {
       case "result_vote": {
         foxClassifier.setIsTrained(true);

@@ -37,7 +37,7 @@ public class GermanNERCorpus extends ANERReader {
     final INERReader r = new GermanNERCorpus(files);
 
     LOG.info("input:");
-    for (final String line : r.getInput().split("\n")) {
+    for (final String line : r.input().split("\n")) {
       LOG.info(line);
     }
 
@@ -148,7 +148,7 @@ public class GermanNERCorpus extends ANERReader {
   }
 
   @Override
-  public String getInput() {
+  public String input() {
     return input.toString();
   }
 

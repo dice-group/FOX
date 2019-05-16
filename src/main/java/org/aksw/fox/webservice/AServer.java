@@ -49,12 +49,10 @@ public abstract class AServer {
     LOG.info("Start ...");
 
     Runtime.getRuntime().addShutdownHook(new Thread((Runnable) () -> {
-      //
+      addShutdownHook();
       stop();
     }, "shutdown hook"));
-
     Spark.before((req, res) -> {
-
       // for all POST requests, utf-8 only
       if (req.requestMethod().toLowerCase().equals("post")) {
         // utf-8 only

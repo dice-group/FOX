@@ -1,4 +1,4 @@
-package org.aksw.fox.utils;
+package org.aksw.fox;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,7 +14,6 @@ import org.aksw.fox.data.Relation;
 
 public class DataTestFactory {
 
-  // TODO:thats the default example in demo
   public static String NER_EN_EXAMPLE_1 =
       "The foundation of the University of Leipzig in 1409 initiated the city's development into a "
           + "centre of German law and the publishing industry, and towards being a location of the "
@@ -84,22 +83,19 @@ public class DataTestFactory {
           + "The philosopher and mathematician Gottfried Wilhelm Leibniz was born in Leipzig in 1646, and attended the university from 1661-1666.";
 
   private Entity getE1() {
-    final Entity e = new Entity("University of Leipzig", EntityTypes.O, 1f, "fox");
-    e.addIndicies(22);
+    final Entity e = new Entity("University of Leipzig", EntityTypes.O, 1f, "fox", 22);
     e.setUri("http://dbpedia.org/resource/Leipzig_University");
     return e;
   }
 
   private Entity getE2() {
-    final Entity ee = new Entity("Gottfried Wilhelm Leibniz", EntityTypes.P, 1f, "fox");
-    ee.addIndicies(291);
+    final Entity ee = new Entity("Gottfried Wilhelm Leibniz", EntityTypes.P, 1f, "fox", 291);
     ee.setUri("http://dbpedia.org/resource/Gottfried_Wilhelm_Leibniz");
     return ee;
   }
 
   private Entity getE3() {
-    final Entity eee = new Entity("Leipzig", EntityTypes.L, 1f, "fox");
-    eee.addIndicies(329);
+    final Entity eee = new Entity("Leipzig", EntityTypes.L, 1f, "fox", 329);
     eee.setUri("http://dbpedia.org/resource/Leipzig");
     return eee;
   }
@@ -110,8 +106,10 @@ public class DataTestFactory {
    * @return map with input text as key and a set of entities as value.
    */
   public Map<String, Set<Entity>> getTestEntities() {
+
     final Map<String, Set<Entity>> map = new HashMap<>();
     map.put(input, new HashSet<>());
+
     map.get(input).add(getE1());
     map.get(input).add(getE2());
     map.get(input).add(getE3());

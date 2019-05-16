@@ -1,8 +1,7 @@
 package org.aksw.fox.data.decode;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 
@@ -16,13 +15,13 @@ public class GreedyLeftToRight extends ADecoding implements IDecoding {
    * @return decoded entities with merged mentions and indicies.
    */
   @Override
-  public Set<Entity> decode(final List<Entity> tokenBasedBILOU) {
+  public List<Entity> decode(final List<Entity> tokenBasedBILOU) {
 
     if (!isTokenbasedBILOU(tokenBasedBILOU)) {
       throw new IllegalStateException("Not BILOU-encoded!");
     }
 
-    final Set<Entity> set = new HashSet<>();
+    final List<Entity> set = new ArrayList<>();
 
     Entity begin = null;
 

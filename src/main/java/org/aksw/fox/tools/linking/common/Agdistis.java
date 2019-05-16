@@ -8,9 +8,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.aksw.agdistis.algorithm.NEDAlgo_HITS;
 import org.aksw.agdistis.datatypes.Document;
@@ -39,7 +39,7 @@ public class Agdistis extends AbstractLinking {
   }
 
   @Override
-  public void setUris(final Set<Entity> entities, final String input) {
+  public void setUris(final List<Entity> entities, final String input) {
     LOG.info("AGDISTISLookup ...");
 
     String agdistis_input = makeInput(entities, input);
@@ -80,29 +80,18 @@ public class Agdistis extends AbstractLinking {
     this.entities = entities;
   }
 
-  private String makeInput(final Set<Entity> entities, final String input) {
+  private String makeInput(final List<Entity> entities, final String input) {
 
-    final Map<Integer, Entity> indexEntityMap = new HashMap<>();
-    entities.forEach(entity -> entity.getIndices().forEach(i -> indexEntityMap.put(i, entity)));
-
-    final Set<Integer> startIndices = new TreeSet<>(indexEntityMap.keySet());
     String agdistis_input = "";
     int last = 0;
-    for (final Integer index : startIndices) {
-      final Entity entity = indexEntityMap.get(index);
 
-      agdistis_input += input.substring(last, index);
-      // int fakeindex = agdistis_input.length() + "<entity>".length();
-
+    // sorted by entity index
+    for (final Entity entity : entities.stream().sorted().collect(Collectors.toList())) {
+      agdistis_input += input.substring(last, entity.getIndex());
       agdistis_input += "<entity>" + entity.getText() + "</entity>";
-
-      last = index + entity.getText().length();
-      // indexMap.put(fakeindex + indexOffset, entity);
-      indexMap.put(index, entity);
+      last = entity.getIndex() + entity.getText().length();
     }
-    agdistis_input += input.substring(last);
-
-    return agdistis_input;
+    return agdistis_input.concat(input.substring(last));
   }
 
   protected String send(final String agdistis_input) throws Exception {
@@ -130,7 +119,7 @@ public class Agdistis extends AbstractLinking {
     return IOUtils.toString(http.getInputStream(), "UTF-8");
   }
 
-  protected void addURItoEntities(final String json, final Set<Entity> entities) {
+  protected void addURItoEntities(final String json, final List<Entity> entities) {
     if (LOG.isDebugEnabled()) {
       LOG.debug("addURItoEntities ...");
     }

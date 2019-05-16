@@ -37,17 +37,6 @@ public class FoxLanguageDetector {
 
   protected LanguageDetector languageDetector = null;
 
-  /**
-   * Test
-   *
-   * @param a
-   */
-  public static void main(final String[] a) {
-    final FoxLanguageDetector ld = new FoxLanguageDetector();
-    final FoxParameter.Langs lang = ld.detect(DataTestFactory.NER_NL_EXAMPLE_1);
-    LOG.info(lang.toString() + " text.");
-  }
-
   /*
    *
    */

@@ -16,43 +16,66 @@ import org.apache.log4j.Logger;
 import weka.core.Instances;
 
 /**
+ * BILOUDecoding decodes {@link Entity} instances.
  *
  * @author rspeck
  *
  */
 public class BILOUDecoding {
 
+  protected Logger LOG = LogManager.getLogger(BILOUDecoding.class);
+
   protected IDecoding decoding = null;
 
+  /**
+   *
+   * @param decoding
+   */
   public BILOUDecoding(final IDecoding decoding) {
     this.decoding = decoding;
   }
 
-  public static Logger LOG = LogManager.getLogger(BILOUDecoding.class);
+  /**
+   *
+   * @param instances
+   * @param i
+   * @return
+   */
+  private String getCategory(final Instances instances, final int i) {
+    return instances.classAttribute()
+        .value(Double.valueOf(instances.instance(i).classValue()).intValue());
+  }
 
-  public Set<Entity> instancesToEntities(//
+  /**
+   *
+   * @param tokenManager
+   * @param instances
+   * @param labeledToken
+   * @return
+   */
+  public List<Entity> instancesToEntities(//
       final TokenManager tokenManager, final Instances instances, final Set<String> labeledToken) {
-    LOG.info("instancesToEntities ...");
 
-    // get token in input order
+    LOG.debug("instancesToEntities ... with " + instances.numInstances() + " instances");
 
-    // check size
     if (labeledToken.size() != instances.numInstances()) {
-      LOG.error("\ntoken size != instance data");
+      throw new UnsupportedOperationException("token size != instance size");
     }
 
-    // fill labeledEntityToken
     final Map<String, String> labeledEntityToken = new LinkedHashMap<>();
+
     int i = 0;
     for (final String label : labeledToken) {
-      final String category = instances//
-          .classAttribute().value(Double.valueOf(instances.instance(i).classValue()).intValue());
 
+      final String category = getCategory(instances, i);
+      LOG.info(label + " : " + category);
       if (BILOUEncoding.AllTypesSet.contains(category) && category != BILOUEncoding.O) {
         labeledEntityToken.put(label, category);
       }
       i++;
     }
+
+    LOG.info("labeledEntityToken: " + labeledEntityToken);
 
     // labeledEntityToken to mwu
     final List<Entity> results = new ArrayList<>();
@@ -77,8 +100,11 @@ public class BILOUDecoding {
 
       // check previous index and entity category
       if (testIndex && results.get(results.size() - 1).getType().equals(category)) {
+
         results.get(results.size() - 1).addText(token);
+
       } else {
+
         int index = -1;
         try {
           index = Integer.valueOf(label.split(TokenManager.SEP)[1]);
@@ -86,9 +112,9 @@ public class BILOUDecoding {
           LOG.error("\n label: " + label, e);
         }
         if (index > -1) {
-          final Entity entity = new Entity(token, category, Entity.DEFAULT_RELEVANCE, "fox");
-          entity.addIndicies(index);
-          results.add(entity);
+          results.add(//
+              new Entity(token, category, Entity.DEFAULT_RELEVANCE, "fox", index)//
+          );
         }
       }
 
@@ -99,5 +125,4 @@ public class BILOUDecoding {
 
     return decoding.decode(results);
   }
-
 }

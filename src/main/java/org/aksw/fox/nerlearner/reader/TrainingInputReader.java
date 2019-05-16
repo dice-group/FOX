@@ -6,11 +6,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.EntityTypes;
@@ -40,7 +38,7 @@ public class TrainingInputReader extends ANERReader {
     final TrainingInputReader trainingInputReader = new TrainingInputReader();
     trainingInputReader.initFiles("input/4");
 
-    LOG.info("input: \n" + trainingInputReader.getInput());
+    LOG.info("input: \n" + trainingInputReader.input());
     LOG.info("oracle: ");
     trainingInputReader.getEntities().entrySet().forEach(LOG::info);
   }
@@ -97,17 +95,17 @@ public class TrainingInputReader extends ANERReader {
    * @throws IOException
    */
   @Override
-  public String getInput() {
+  public String input() {
     return input;
   }
 
   @Override
   public HashMap<String, String> getEntities() {
     // remove oracle entities aren't in input
-    final Set<Entity> set = new HashSet<>();
+    final List<Entity> set = new ArrayList<>();
 
     for (final Entry<String, String> oracleEntry : entities.entrySet()) {
-      set.add(new Entity(oracleEntry.getKey(), oracleEntry.getValue()));
+      set.add(new Entity(oracleEntry.getKey(), oracleEntry.getValue(), "oracel"));
     }
 
     // repair entities (use fox token)

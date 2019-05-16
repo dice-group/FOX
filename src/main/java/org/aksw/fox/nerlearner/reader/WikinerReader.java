@@ -158,7 +158,7 @@ public class WikinerReader extends ANERReader {
   }
 
   @Override
-  public String getInput() {
+  public String input() {
     return input.toString().trim();
   }
 

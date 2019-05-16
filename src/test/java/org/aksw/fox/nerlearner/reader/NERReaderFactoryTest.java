@@ -6,7 +6,7 @@ import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TestNERReaderFactory {
+public class NERReaderFactoryTest {
   @Test
   public void testInstanceofINERReader() throws IOException {
     Assert.assertTrue(PropertiesLoader.loadFile("fox.properties-dist"));

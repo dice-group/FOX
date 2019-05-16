@@ -8,7 +8,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
 
 import org.aksw.fox.data.Entity;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -38,7 +38,7 @@ public class DirectLinking extends AbstractLinking {
   public static Logger logger = Logger.getLogger(DirectLinking.class);
 
   @Override
-  public void setUris(final Set<Entity> entities, final String input) {
+  public void setUris(final List<Entity> entities, final String input) {
     for (final Entity e : entities) {
       e.setUri(lookup(e.getText(), e.getType(), ""));
     }
@@ -203,7 +203,7 @@ public class DirectLinking extends AbstractLinking {
       logger.debug("Looking for <" + label + ", " + type + ">");
     }
     final HashMap<String, Double> result = new HashMap<>();
-    if ((label.length() == 0) || (label == null)) {
+    if (label.length() == 0 || label == null) {
       return result;
     } else {
       label = label.replaceAll(" ", "+");
@@ -229,7 +229,7 @@ public class DirectLinking extends AbstractLinking {
         if (line.startsWith(uriTag)) {
           uri = line.substring(16, line.indexOf("</str>"));
         } else if (line.startsWith(scoreTag)) {
-          score = (Double.parseDouble(line.substring(scoreTag.length(), line.indexOf("</int>"))));
+          score = Double.parseDouble(line.substring(scoreTag.length(), line.indexOf("</int>")));
         } else if (line.contains("http://dbpedia.org/ontology/")) {
           if (logger.isDebugEnabled()) {
             logger.debug("Type line " + line);
@@ -241,7 +241,7 @@ public class DirectLinking extends AbstractLinking {
             typeCheck = true;
           }
         } else if (line.contains(docTag)) {
-          if ((uri != null) && typeCheck) {
+          if (uri != null && typeCheck) {
             if (logger.isDebugEnabled()) {
               logger.debug("->Putting " + uri + " -> " + score);
             }
@@ -282,7 +282,7 @@ public class DirectLinking extends AbstractLinking {
       String label2 = "";
       final String split[] = label.split(" ");
 
-      for (int i = 0; i < (split.length - 1); i++) {
+      for (int i = 0; i < split.length - 1; i++) {
         label2 = label2 + split[i].substring(0, 1).toUpperCase() + split[i].substring(1) + "_";
       }
       result.add(label2 + split[split.length - 1].substring(0, 1).toUpperCase()

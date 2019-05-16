@@ -3,6 +3,7 @@ package org.aksw.fox.evaluation;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -75,7 +76,7 @@ public class CrossValidation {
     final INERReader reader = NERReaderFactory.getINERReader();
     reader.initFiles(inputFiles);
 
-    final TokenManager tokenManager = new TokenManager(reader.getInput());
+    final TokenManager tokenManager = new TokenManager(reader.input());
 
     // prepare data
     IPostProcessing pp = null;
@@ -90,7 +91,7 @@ public class CrossValidation {
     Instances instances = null;
     {
       final Map<String, String> oracle = pp.getLabeledMap(reader.getEntities());
-      final Map<String, Set<Entity>> toolResults = pp.getLabeledToolResults();
+      final Map<String, List<Entity>> toolResults = pp.getLabeledToolResults();
       final Set<String> token = pp.getLabeledInput();
 
       final EntitiesToInstances entitiesToInstances = new EntitiesToInstances();

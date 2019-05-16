@@ -2,6 +2,7 @@ package org.aksw.fox.nerlearner;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -9,9 +10,9 @@ import java.util.TreeSet;
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.decode.BILOUDecoding;
 import org.aksw.fox.data.decode.GreedyLeftToRight;
+import org.aksw.fox.data.decode.IDecoding;
 import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.nerlearner.reader.EntitiesToInstances;
-import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.LogManager;
@@ -77,28 +78,14 @@ public class FoxClassifier {
    * @param toolResults
    * @param oracel
    */
-  protected void initInstances(//
-      final Set<String> input, final Map<String, Set<Entity>> toolResults,
+  protected void initInstances(final Set<String> input, final Map<String, List<Entity>> toolResults,
       final Map<String, String> oracle) {
 
     LOG.info("Initializes instances ...");
 
-    instances = //
-        oracle == null ? //
-            entitiesToInstances.getInstances(input, toolResults, null) : //
-            entitiesToInstances.getInstances(input, toolResults, oracle);
-  }
-
-  /**
-   * Gets the path to the serialized classifier.
-   *
-   * @param lang
-   * @return path to the serialized classifier
-   */
-  protected String getName(final String lang) {
-    return PropertiesLoader.get(FoxClassifier.CFG_KEY_MODEL_PATH)//
-        .concat(File.separator).concat(lang)//
-        .concat(File.separator).concat(PropertiesLoader.get(FoxClassifier.CFG_KEY_LEARNER));
+    instances = oracle == null ? //
+        entitiesToInstances.getInstances(input, toolResults, null) : //
+        entitiesToInstances.getInstances(input, toolResults, oracle);
   }
 
   /**
@@ -107,13 +94,14 @@ public class FoxClassifier {
    * @param file
    * @param lang
    */
-  public void writeClassifier(final String file, final String lang) {
+  public void writeClassifier(final String file) {
 
-    final String name = getName(lang);
-    final String path = FilenameUtils.getPath(name);
+    final String name = FilenameUtils.getName(file);
+    final String path = FilenameUtils.getFullPath(file);
+
     try {
       FileUtils.forceMkdir(new File(path));
-      SerializationHelper.write(name, classifier);
+      SerializationHelper.write(path.concat(name), classifier);
     } catch (final Exception e) {
       LOG.error(e.getLocalizedMessage(), e);
     }
@@ -122,18 +110,23 @@ public class FoxClassifier {
   /**
    * Reads a serialized Classifier from file that is specified in the fox properties.
    */
-  public void readClassifier(final String lang) {
-    classifier = cache.get(lang);
+  public void readClassifier(String file) {
+    final String name = FilenameUtils.getName(file);
+    final String path = FilenameUtils.getFullPath(file);
+    file = path.concat(name);
+
+    classifier = cache.get(file);
+
     if (classifier == null) {
-      final String name = getName(lang);
-      LOG.info("readClassifier: " + name);
+      LOG.info("readClassifier: " + file);
       try {
-        classifier = (Classifier) SerializationHelper.read(name.trim());
+        classifier = (Classifier) SerializationHelper.read(file);
       } catch (final Exception e) {
         LOG.error(e.getLocalizedMessage(), e);
       }
       LOG.info("readClassifier done.");
-      cache.put(lang, classifier);
+
+      cache.put(file, classifier);
     }
   }
 
@@ -145,7 +138,7 @@ public class FoxClassifier {
    * @param toolResults
    * @return classified token
    */
-  public Set<Entity> classify(final String input, final Map<String, Set<Entity>> toolResults) {
+  public List<Entity> classify(final String input, final Map<String, List<Entity>> toolResults) {
     LOG.info("classify ...");
 
     // post
@@ -167,13 +160,14 @@ public class FoxClassifier {
       }
     }
 
-    final GreedyLeftToRight gftr = new GreedyLeftToRight();
+    final IDecoding gftr = new GreedyLeftToRight();
     final BILOUDecoding bilouDecoding = new BILOUDecoding(gftr);
-    final Set<Entity> set =
-        bilouDecoding.instancesToEntities(tm, classifiedInstances, pp.getLabeledInput());
 
-    LOG.info("Classified  #" + set.size());
-    return set;
+    final List<Entity> entities = bilouDecoding//
+        .instancesToEntities(tm, classifiedInstances, pp.getLabeledInput());
+
+    LOG.info("Classified  #" + entities.size());
+    return entities;
   }
 
   /**
@@ -182,8 +176,7 @@ public class FoxClassifier {
    * @param files files to read as training data
    * @throws Exception
    */
-  public void training(//
-      final String input, final Map<String, Set<Entity>> toolResults,
+  public void training(final String input, final Map<String, List<Entity>> toolResults,
       final Map<String, String> oracle) throws Exception {
 
     LOG.info("training ...");
@@ -191,7 +184,7 @@ public class FoxClassifier {
     // init. training data
     final IPostProcessing pp = new PostProcessing(new TokenManager(input), toolResults);
     final Map<String, String> labeledOracle = pp.getLabeledMap(oracle);
-    final Map<String, Set<Entity>> labledToolResults = pp.getLabeledToolResults();
+    final Map<String, List<Entity>> labledToolResults = pp.getLabeledToolResults();
 
     initInstances(pp.getLabeledInput(), labledToolResults, labeledOracle);
     buildClassifier();

@@ -14,8 +14,13 @@ public class FoxVote extends Vote {
 
   public static Logger logger = Logger.getLogger(FoxVote.class);
 
+  // TODO: Remove magic numbers
+  /** Tag ID */
   public static final int CLASS = 7;
+
+  /** Tag ID */
   public static final int RESULT = 8;
+
   public static final Tag[] FOXTAGS_RULES =
       {new Tag(CLASS, "CLASS", "CLASS"), new Tag(RESULT, "RESULT", "RESULT")};
 
@@ -55,17 +60,19 @@ public class FoxVote extends Vote {
       result[i] = 0D;
     }
 
-    final double nullIndex =
-        Double.valueOf(instance.classAttribute().indexOfValue(BILOUEncoding.O));
-    double resultIndex = nullIndex;
+    double resultIndex = Double.valueOf(nullIndexInt);
 
     switch (m_CombinationRule) {
+
+      // class vote
       case CLASS: {
         for (int i = 0; i < m_Classifiers.length; i++) {
           resultIndex = m_Classifiers[i].classifyInstance(instance);
           result[Double.valueOf(resultIndex).intValue()] = 1;
         }
       }
+
+      // result vote
       case RESULT: {
         final int[] votes = new int[instance.numClasses()];
         for (int i = 0; i < instance.numClasses(); i++) {

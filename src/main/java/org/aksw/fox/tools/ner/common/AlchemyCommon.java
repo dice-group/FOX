@@ -117,7 +117,7 @@ public abstract class AlchemyCommon extends AbstractNER {
         final JSONObject entity = entities.getJSONObject(i);
         final String type = entityClasses.get(entity.getString("type"));
         if (type != null) {
-          list.add(new Entity(entity.getString("text"), type));
+          list.add(new Entity(entity.getString("text"), type, TagMeCall.class.getName()));
         }
       }
     }

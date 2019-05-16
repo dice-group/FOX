@@ -1,5 +1,6 @@
 package org.aksw.fox.nerlearner;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,14 +19,14 @@ public interface IPostProcessing {
    *
    * @return tool results
    */
-  Map<String, Set<Entity>> getToolResults();
+  Map<String, List<Entity>> getToolResults();
 
   /**
    * Gets labeled tool results.
    *
    * @return labeled tool results
    */
-  Map<String, Set<Entity>> getLabeledToolResults();
+  Map<String, List<Entity>> getLabeledToolResults();
 
   /**
    * Map of label to class that is used as oracle.

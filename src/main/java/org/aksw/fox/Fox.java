@@ -1,15 +1,12 @@
 package org.aksw.fox;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +25,6 @@ import org.aksw.fox.tools.linking.ILinking;
 import org.aksw.fox.tools.linking.NoLinking;
 import org.aksw.fox.tools.ner.INER;
 import org.aksw.fox.tools.re.IRE;
-import org.aksw.fox.utils.FoxTextUtil;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
@@ -76,29 +72,36 @@ public class Fox extends AFox {
    *
    * @return
    */
-  protected Set<Entity> doNER() {
-    infoLog("Start NER (" + lang + ")...");
+  protected List<Entity> doNER() {
+    LOG.info("Start NER (" + lang + ")...");
 
-    final Set<Entity> entities;
-    entities = toolsGenerator.getNERTools(lang)
-        .getEntities(parameter.get(FoxParameter.Parameter.INPUT.toString()));
+    final List<Entity> entities = toolsGenerator//
+        .getNERTools(lang)//
+        .getEntities(//
+            parameter.get(FoxParameter.Parameter.INPUT.toString())//
+        );
 
-    // remove duplicate annotations
-    final Map<String, Entity> wordEntityMap = new HashMap<>();
-    for (final Entity entity : entities) {
-      if (wordEntityMap.get(entity.getText()) == null) {
-        wordEntityMap.put(entity.getText(), entity);
-      } else {
-        if (LOG.isDebugEnabled()) {
-          LOG.debug("We have a duplicate annotation and removing those: " + entity.getText() + " "
-              + entity.getType() + " " + wordEntityMap.get(entity.getText()).getType());
-        }
-        wordEntityMap.remove(entity.getText());
-      }
-    }
-    // remove
-    entities.retainAll(wordEntityMap.values());
-    infoLog("NER done.");
+    // TODO: remove me
+    /**
+     * <code>
+     // remove duplicate annotations
+     final Map<String, Entity> wordEntityMap = new HashMap<>();
+     for (final Entity entity : entities) {
+       if (wordEntityMap.get(entity.getText()) == null) {
+         wordEntityMap.put(entity.getText(), entity);
+       } else {
+         if (LOG.isDebugEnabled()) {
+           LOG.debug("We have a duplicate annotation and removing those: " + entity.getText() + " "
+               + entity.getType() + " " + wordEntityMap.get(entity.getText()).getType());
+         }
+         wordEntityMap.remove(entity.getText());
+       }
+     }
+     // remove
+     entities.retainAll(wordEntityMap.values());
+    </code>
+     */
+    LOG.info("NER done.");
     return entities;
   }
 
@@ -108,15 +111,15 @@ public class Fox extends AFox {
    * @param entities
    * @return toolname to relations
    */
-  protected Map<String, Set<Relation>> doRE(final Set<Entity> entities) {
+  protected Map<String, Set<Relation>> doRE(final List<Entity> entities) {
     final Map<String, Set<Relation>> relations = new HashMap<>();
 
     final List<IRE> tools = toolsGenerator.getRETools(lang).getRETool(lang);
 
     if (tools == null || tools.size() == 0) {
-      infoLog("Relation tool for " + lang.toUpperCase() + " not supported yet.");
+      LOG.info("Relation tool for " + lang.toUpperCase() + " not supported yet.");
     } else {
-      infoLog("Start RE with " + tools.size() + " tools ...");
+      LOG.info("Start RE with " + tools.size() + " tools ...");
 
       // use all tools to retrieve entities
       // start all threads
@@ -157,9 +160,9 @@ public class Fox extends AFox {
           }
         }
       } else {
-        infoLog("Timeout after " + min + " min.");
+        LOG.info("Timeout after " + min + " min.");
       }
-      infoLog("RE done.");
+      LOG.info("RE done.");
     }
     return relations;
   }
@@ -169,9 +172,9 @@ public class Fox extends AFox {
    * @param name
    * @return
    */
-  protected Set<Entity> doNERLight(final String name) {
-    infoLog("Starting light NER version ...");
-    Set<Entity> entities = new HashSet<>();
+  protected List<Entity> doNERLight(final String name) {
+    LOG.info("Starting light NER version ...");
+    List<Entity> entities = new ArrayList<>();
     if (name == null || name.isEmpty()) {
       return entities;
     }
@@ -188,7 +191,7 @@ public class Fox extends AFox {
       return entities;
     }
 
-    infoLog("NER tool(" + lang + ") is: " + nerLight.getToolName());
+    LOG.info("NER tool(" + lang + ") is: " + nerLight.getToolName());
 
     // clean input
     String input = parameter.get(FoxParameter.Parameter.INPUT.toString());
@@ -210,68 +213,68 @@ public class Fox extends AFox {
         latch.await(min, TimeUnit.MINUTES);
       } catch (final InterruptedException e) {
         LOG.error("Timeout after " + min + " min.");
-        LOG.error("\n", e);
         LOG.error("input:\n" + parameter.get(FoxParameter.Parameter.INPUT.toString()));
+        LOG.error(e.getLocalizedMessage(), e);
       }
 
       // shutdown threads
       fiber.dispose();
       // get results
       if (latch.getCount() == 0) {
-        entities = new HashSet<>(nerLight.getResults());
+        entities = new ArrayList<>(nerLight.getResults());
 
       } else {
-        if (LOG.isDebugEnabled()) {
-          LOG.debug("timeout after " + min + "min.");
-          // TODO: handle timeout
-        }
+        // TODO: handle ner light timeout.
+        LOG.debug("timeout after " + min + "min.");
       }
     }
 
     tokenManager.repairEntities(entities);
 
+    /**
+     * <code>
     // make an index for each entity
     final Map<Integer, Entity> indexMap = new HashMap<>();
+    
     for (final Entity entity : entities) {
-      for (final Integer i : FoxTextUtil.getIndices(entity.getText(),
-          tokenManager.getTokenInput())) {
+      for (final Integer i : FoxTextUtil//
+          .getIndices(entity.getText(), tokenManager.getTokenInput())) {
         indexMap.put(i, entity);
       }
     }
-
-    // sort
-    final List<Integer> sortedIndices = new ArrayList<>(indexMap.keySet());
-    Collections.sort(sortedIndices);
-
+    
     // loop index in sorted order
-    int offset = -1;
-    for (final Integer i : sortedIndices) {
-      final Entity e = indexMap.get(i);
-      if (offset < i) {
-        offset = i + e.getText().length();
-        e.addIndicies(i);
-      }
-    }
-
-    // remove entity without an index
-    {
-      final Set<Entity> cleanEntity = new HashSet<>();
-      for (final Entity e : entities) {
-        if (e.getIndices() != null && e.getIndices().size() > 0) {
-          cleanEntity.add(e);
-        }
-      }
-      entities = cleanEntity;
-    }
-
+    
+     int offset = -1;
+     for (final Integer i : indexMap.keySet().stream().sorted().collect(Collectors.toList())) {
+       final Entity e = indexMap.get(i);
+       if (offset < i) {
+         offset = i + e.getText().length();
+         e.addIndicies(i);
+       }
+     }
+    
+     // remove entity without an index
+     {
+       final List<Entity> cleanEntity = new ArrayList<>();
+       for (final Entity e : entities) {
+         if (e.index > -1) {
+           cleanEntity.add(e);
+         }
+       }
+       entities = cleanEntity;
+     }
+      </code>
+     */
     nerLight = null;
-    infoLog("Light version done.");
+    LOG.info("Light version done.");
+
     return entities;
   }
 
-  protected void setURIs(Set<Entity> entities) {
+  protected void setURIs(List<Entity> entities) {
     if (entities != null && !entities.isEmpty()) {
-      infoLog("Start NE linking ...");
+      LOG.info("Start NE linking ...");
 
       final CountDownLatch latch = new CountDownLatch(1);
 
@@ -279,7 +282,7 @@ public class Fox extends AFox {
         try {
           linking = toolsGenerator.getDisambiguationTool(lang);
         } catch (final Exception e1) {
-          infoLog(e1.getLocalizedMessage());
+          LOG.info(e1.getLocalizedMessage());
           linking = new NoLinking();
         }
       }
@@ -303,85 +306,46 @@ public class Fox extends AFox {
       fiber.dispose();
       // get results
       if (latch.getCount() == 0) {
-        entities = new HashSet<>(linking.getResults());
+        entities = new ArrayList<>(linking.getResults());
       } else {
-        infoLog("Timeout after " + min + " min (" + linking.getClass().getName() + ").");
+        LOG.info("Timeout after " + min + " min (" + linking.getClass().getName() + ").");
         // use dev lookup after timeout
         new NoLinking().setUris(entities, parameter.get(FoxParameter.Parameter.INPUT.toString()));
       }
       linking = null;
     }
-    infoLog("Start NE linking done.");
+    LOG.info("Start NE linking done.");
   }
 
-  protected void setOutput(final Set<Entity> entities, final Map<String, Set<Relation>> relations) {
-    if (entities == null || relations == null) {
-      LOG.warn("Parameter NULL");
-    }
+  protected void setOutput(final List<Entity> entities,
+      final Map<String, Set<Relation>> relations) {
 
-    final String input = parameter.get(FoxParameter.Parameter.INPUT.toString());
-    final String output = parameter.get(FoxParameter.Parameter.OUTPUT.toString());
-    final String docuri = parameter.get("docuri");
+    // checks parameters
+    if (entities != null && relations != null) {
 
-    infoLog("Preparing output format ...");
+      final String input = parameter.get(FoxParameter.Parameter.INPUT.toString());
+      final String output = parameter.get(FoxParameter.Parameter.OUTPUT.toString());
+      final String docuri = parameter.get("docuri");
 
-    foxJena.setLang(output);
-    foxJena.addInput(input, docuri);
+      LOG.info("Preparing output format ...");
 
-    String light = parameter.get(FoxParameter.Parameter.FOXLIGHT.toString());
-    if (light == null || light.equalsIgnoreCase(FoxParameter.FoxLight.OFF.toString())) {
-      light = this.getClass().getName();
-    }
+      foxJena.setLang(output);
+      foxJena.addInput(input, docuri);
 
-    foxJena.addEntities(entities, startNER, endNER, light, ATool.getToolVersion(light));
-    for (final Entry<String, Set<Relation>> e : relations.entrySet()) {
-      final Set<Relation> r = e.getValue();
-      foxJena.addRelations(r, startRE, endRE, e.getKey(), ATool.getToolVersion(e.getKey()));
-      infoLog("Found " + relations.size() + " relations.");
-    }
-    infoLog("Preparing output format done.");
-
-    if (parameter.get("returnHtml") != null
-        && parameter.get("returnHtml").toLowerCase().endsWith("true")) {
-      html(entities, input);
-    }
-    infoLog("Found " + entities.size() + " entities.");
-  }
-
-  protected void html(final Set<Entity> entities, final String input) {
-
-    final Map<Integer, Entity> indexEntityMap = new HashMap<>();
-    for (final Entity entity : entities) {
-      for (final Integer startIndex : entity.getIndices()) {
-        // TODO : check contains
-        indexEntityMap.put(startIndex, entity);
+      String light = parameter.get(FoxParameter.Parameter.FOXLIGHT.toString());
+      if (light == null || light.equalsIgnoreCase(FoxParameter.FoxLight.OFF.toString())) {
+        light = this.getClass().getName();
       }
-    }
 
-    final Set<Integer> startIndices = new TreeSet<>(indexEntityMap.keySet());
-
-    String html = "";
-
-    int last = 0;
-    for (final Integer index : startIndices) {
-      final Entity entity = indexEntityMap.get(index);
-      if (entity.getUri() != null && !entity.getUri().trim().isEmpty()) {
-        html += input.substring(last, index);
-        html += "<a class=\"" + entity.getType().toLowerCase() + "\" href=\"" + entity.getUri()
-            + "\"  target=\"_blank\"  title=\"" + entity.getType().toLowerCase() + "\" >"
-            + entity.getText() + "</a>";
-        last = index + entity.getText().length();
-      } else {
-        LOG.error("Entity has no URI: " + entity.getText());
+      foxJena.addEntities(entities, startNER, endNER, light, ATool.getToolVersion(light));
+      for (final Entry<String, Set<Relation>> e : relations.entrySet()) {
+        final Set<Relation> r = e.getValue();
+        foxJena.addRelations(r, startRE, endRE, e.getKey(), ATool.getToolVersion(e.getKey()));
+        LOG.info("Found " + relations.size() + " relations.");
       }
-    }
+      LOG.info("Preparing output format done.");
 
-    html += input.substring(last);
-    parameter.put(FoxParameter.Parameter.INPUT.toString(), html);
-
-    if (LOG.isTraceEnabled()) {
-
-      foxUtil.infotrace(toolsGenerator.getNERTools(lang), entities);
+      LOG.info("Found " + entities.size() + " entities.");
     }
   }
 
@@ -390,8 +354,6 @@ public class Fox extends AFox {
    */
   @Override
   public void run() {
-    super.run();
-    infoLog("Running Fox...");
 
     if (parameter == null) {
       LOG.error("Parameter not set.");
@@ -401,7 +363,7 @@ public class Fox extends AFox {
       final String light = parameter.get(FoxParameter.Parameter.FOXLIGHT.toString());
       LOG.info("task: " + task + " light: " + light);
 
-      Set<Entity> entities = new HashSet<>();
+      List<Entity> entities = new ArrayList<>();
       Map<String, Set<Relation>> relations = new HashMap<>();
 
       if (input == null || task == null) {
@@ -440,7 +402,6 @@ public class Fox extends AFox {
     }
 
     // done
-    infoLog("Running Fox done.");
     if (countDownLatch != null) {
       countDownLatch.countDown();
     }

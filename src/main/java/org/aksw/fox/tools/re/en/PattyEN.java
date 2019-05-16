@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +34,7 @@ import edu.stanford.nlp.ling.CoreLabel;
 public class PattyEN extends AbstractRE {
 
   protected Map<String, Set<String>> paraphrases = null;
+
   // pattern to relation,e.g. married; -> spouse,birthplace
   protected Map<String, Set<String>> paraphrasesIndex = null;
 
@@ -143,72 +143,71 @@ public class PattyEN extends AbstractRE {
   @Override
   protected Set<Relation> _extract(final String text, final List<Entity> entities) {
 
-    final StanfordPipeExtended stanford = StanfordPipeExtended.instance();
+    // text to sentences
+    final Map<Integer, String> sentences = StanfordPipeExtended.instance().getSentenceIndex(text);
 
-    // keep the original entities with IDs
-    final Map<Integer, Entity> idMap = setEntityIDs(entities);
+    for (final Integer n : new TreeSet<>(sentences.keySet())) {
+      final String sentence = sentences.get(n);
 
-    // copies all entities since we change the index of those
-    final List<Entity> copiedEntities = new ArrayList<>();
-    entities.forEach(entity -> copiedEntities.add(new Entity(entity)));
+      final Map<Integer, Integer> textIndexToSentenceIndex;
+      textIndexToSentenceIndex = textIndexToSentenceIndex(n, sentences, entities);
 
-    // sentences in the text
-    final Map<Integer, String> sentences = stanford.getSentenceIndex(text);
-    // find entities for sentence
+      final List<CoreLabel> stanfordCoreLabels =
+          StanfordPipeExtended.instance().getLabels(sentence);
+      LOG.info(stanfordCoreLabels);
 
-    final Map<Integer, List<Entity>> sentenceToEntities;
-    sentenceToEntities = sentenceToEntities(sentences, copiedEntities);
+      for (int i = 0; i + 1 < entities.size(); i++) {
+        final Entity subject = entities.get(i);
+        final Entity object = entities.get(i + 1);
 
-    // each sentence
-    for (final Entry<Integer, String> entry : sentences.entrySet()) {
-      final int sentenceID = entry.getKey();
-      final String stentence = entry.getValue();
+        final Integer si = textIndexToSentenceIndex.get(subject.getIndex());
+        final Integer oi = textIndexToSentenceIndex.get(object.getIndex());
 
-      final Map<Integer, Entity> index = Entity.indexToEntity(sentenceToEntities.get(sentenceID));
-      final List<Integer> sorted = new ArrayList<>(new TreeSet<>(index.keySet()));
-
-      final List<CoreLabel> labels = stanford.getLabels(stentence);
-      // for all words between two entities
-      for (int i = 0; i + 1 < sorted.size(); i++) {
-        final Entity s = index.get(sorted.get(i));
-        final Entity o = index.get(sorted.get(i + 1));
-
-        final int sStart = Entity.getIndex(s);
-        final int oStart = Entity.getIndex(o);
+        if (si == null || oi == null) {
+          continue;
+        }
 
         boolean found = false;
+
+        // tokens between entities might match RE patterns
         final List<CoreLabel> pattern = new ArrayList<>();
-        for (final CoreLabel coreLabel : labels) {
-          if (found && coreLabel.beginPosition() == oStart) {
+        for (final CoreLabel coreLabel : stanfordCoreLabels) {
+          // match entity index and token index of stanford
+
+          if (found && coreLabel.beginPosition() == oi) {
+            // found token that match the object begin
             found = false;
           }
           if (found) {
             pattern.add(coreLabel);
           }
-          if (coreLabel.endPosition() == sStart + s.getText().length()) {
+          if (coreLabel.endPosition() == si + subject.getText().length()) {
+            // found token that match the subject end
             found = true;
           }
         } // end for
 
+        // check patty
         final Set<String> relationLabel = new HashSet<>(checkPattern(pattern));
+
+        // adds found relations
         for (final String label : relationLabel) {
 
           // check if domain and range match the relation
-          final Entity sEntity = idMap.get(s.id);
-          final Entity oEntity = idMap.get(o.id);
 
-          final String sType = mapFoxTypesToDBpediaTypes(sEntity.getType());
+          final String sType = mapFoxTypesToDBpediaTypes(subject.getType());
           final String p = DBpedia.ns_dbpedia_ontology.concat(label);
-          final String oType = mapFoxTypesToDBpediaTypes(oEntity.getType());
+          final String oType = mapFoxTypesToDBpediaTypes(object.getType());
 
           if (checkDomainRange(sType, p, oType)) {
             try {
-              final Relation relation = addRelation(//
-                  sEntity, oEntity, label, Arrays.asList(new URI(p))//
-              );
 
-              relations.add(relation);
+              relations.add(addRelation(//
+                  subject, object, label, Arrays.asList(new URI(p))//
+              ));
+
             } catch (final URISyntaxException e) {
+              LOG.error(e.getLocalizedMessage(), e);
             }
           }
         }
@@ -298,18 +297,18 @@ public class PattyEN extends AbstractRE {
            .filter(line -> !line.startsWith("TrueORFalse"))//
            // .filter(line->line.isEmpty())//
            .collect(Collectors.toList());
-  
+
        final Set<String> patternBlock = new TreeSet<>();
        boolean newBlock = false;
        for (final String pattern : list) {
-  
+
          // read block
          if (!pattern.trim().isEmpty()) {
            patternBlock.add(pattern);
          } else {
            newBlock = true;
          }
-  
+
          // process block
          if (newBlock) {
            String p = "";
@@ -327,7 +326,7 @@ public class PattyEN extends AbstractRE {
            if (p.isEmpty()) {
              LOG.error("not found " + patternBlock);
            }
-  
+
            newBlock = false;
            patternBlock.clear();
          } // end block

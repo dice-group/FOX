@@ -43,7 +43,6 @@ public class IllinoisExtendedEN extends AbstractNER {
 
   @Override
   public List<Entity> retrieve(final String input) {
-    LOG.info("retrieve ...");
 
     // parse input
     final Vector<LinkedVector> sentences = PlainTextReader.parseText(input);
@@ -130,7 +129,7 @@ public class IllinoisExtendedEN extends AbstractNER {
               // || Boolean.valueOf(FoxCfg.get("illinoisDefaultRelevance"))) {
               prob = Entity.DEFAULT_RELEVANCE;
               // }
-              list.add(getEntity(word, illinois(tag), prob, getToolName()));
+              list.add(getEntity(word.trim(), illinois(tag), prob, getToolName()));
             }
           }
         }

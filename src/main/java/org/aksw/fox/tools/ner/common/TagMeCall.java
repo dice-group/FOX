@@ -76,7 +76,7 @@ class TagMeCall implements Callable<List<Entity>> {
             final String tmpType = entityClassMap.get(ja.getString(ii).replace(" ", "_"));
 
             if (tmpType != null) {
-              entities.add(new Entity(anno.getString("spot"), tmpType));
+              entities.add(new Entity(anno.getString("spot"), tmpType, TagMeCall.class.getName()));
               break;
             }
           }

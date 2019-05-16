@@ -56,6 +56,8 @@ public class ToolsGenerator implements IToolsGenerator {
   static {
     init();
   }
+  Map<String, NERTools> nercache = new HashMap<>();
+  Map<String, RETools> recache = new HashMap<>();
 
   /**
    * Read xml cfg.
@@ -108,18 +110,29 @@ public class ToolsGenerator implements IToolsGenerator {
    * @throws LoadingNotPossibleException
    */
   public NERTools getNERTools(final String lang) {
+    NERTools nertools = nercache.get(lang);
+    if (nertools != null) {
+      return nertools;
+    }
+
     if (usedLang.contains(lang) && nerTools.get(lang) != null && !nerTools.get(lang).isEmpty()) {
-      final NERTools tools = new NERTools(nerTools.get(lang), lang);
-      return tools;
+      nertools = new NERTools(nerTools.get(lang), lang);
+      nercache.put(lang, nertools);
+      return nertools;
     } else {
       return new NERTools(new ArrayList<>(), lang);
     }
   }
 
   public RETools getRETools(final String lang) {
+    RETools retools = recache.get(lang);
+    if (retools != null) {
+      return retools;
+    }
     if (usedLang.contains(lang) && reTools.get(lang) != null && !reTools.get(lang).isEmpty()) {
-      final RETools tools = new RETools(reTools.get(lang), lang);
-      return tools;
+      retools = new RETools(reTools.get(lang), lang);
+      recache.put(lang, retools);
+      return retools;
     } else {
       return new RETools(new ArrayList<>(), lang);
     }
@@ -132,6 +145,7 @@ public class ToolsGenerator implements IToolsGenerator {
    * @throws IOException
    */
   public ILinking getDisambiguationTool(final String lang) throws IOException {
+    // TODO: add chach here too as in getRETools and getNERTools
     if (usedLang.contains(lang)) {
       if (disambiguationTools.get(lang) != null) {
         return (ILinking) PropertiesLoader.getClass(disambiguationTools.get(lang));

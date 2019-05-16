@@ -2,7 +2,7 @@ package org.aksw.fox.tools.linking;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Set;
+import java.util.List;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.Voc;
@@ -10,7 +10,7 @@ import org.aksw.fox.data.Voc;
 public class NoLinking extends AbstractLinking {
 
   @Override
-  public void setUris(final Set<Entity> entities, final String input) {
+  public void setUris(final List<Entity> entities, final String input) {
     for (final Entity entity : entities) {
       try {
         entity.setUri(new URI(//
