@@ -19,7 +19,7 @@ import opennlp.tools.util.Span;
 public abstract class OpenNLPCommon extends AbstractNER {
 
   protected String[] modelPath;
-  protected TokenNameFinderModel[] tokenNameFinderModels;
+  protected TokenNameFinderModel[] models;
 
   public OpenNLPCommon(final String[] modelPath) {
 
@@ -29,78 +29,69 @@ public abstract class OpenNLPCommon extends AbstractNER {
 
     this.modelPath = modelPath;
 
-    tokenNameFinderModels = new TokenNameFinderModel[modelPath.length];
+    models = new TokenNameFinderModel[modelPath.length];
     final InputStream[] modelIn = new InputStream[modelPath.length];
 
-    for (int i = 0; i < tokenNameFinderModels.length; i++) {
+    for (int i = 0; i < models.length; i++) {
       try {
         modelIn[i] = new FileInputStream(modelPath[i]);
-        if (modelIn[i] != null) {
-          tokenNameFinderModels[i] = new TokenNameFinderModel(modelIn[i]);
-        }
+        models[i] = new TokenNameFinderModel(modelIn[i]);
 
       } catch (final IOException e) {
-        LOG.error("\n", e);
+        LOG.error(e.getLocalizedMessage(), e);
       } finally {
         try {
           if (modelIn[i] != null) {
             modelIn[i].close();
           }
         } catch (final IOException e) {
-          LOG.error("\n", e);
+          LOG.error(e.getLocalizedMessage(), e);
         }
       }
     }
   }
 
-  // TODO: do parallel for each model
+  // TODO: do parallel for each model, add index.
   @Override
   public List<Entity> retrieve(final String input) {
 
-    final List<Entity> list = new ArrayList<>();
+    final List<Entity> entityList = new ArrayList<>();
+
     final String[] sentences = FoxTextUtil.getSentences(input);
-    LOG.debug("sentences: " + sentences.length);
 
-    for (int i = 0; i < tokenNameFinderModels.length; i++) {
-      if (tokenNameFinderModels[i] != null) {
-        final NameFinderME nameFinder = new NameFinderME(tokenNameFinderModels[i]);
-        for (final String sentence : sentences) {
-          final String[] tokens = FoxTextUtil.getSentenceToken(sentence);
-          LOG.debug("tokens: " + tokens.length);
-          if (tokens.length > 0 && tokens[tokens.length - 1].trim().isEmpty()) {
-            tokens[tokens.length - 1] = ".";
-          }
+    for (int i = 0; i < models.length; i++) {
+      final NameFinderME nameFinder = new NameFinderME(models[i]);
 
-          final Span[] nameSpans = nameFinder.find(tokens);
-          nameFinder.probs(nameSpans);
-          for (int ii = 0; ii < nameSpans.length; ii++) {
-            final Span span = nameSpans[ii];
+      int offset = 0;
+      for (final String sentence : sentences) {
+        final String[] tokens = FoxTextUtil.getSentenceToken(sentence);
 
-            String word = "";
-            for (int j = 0; j < span.getEnd() - span.getStart(); j++) {
-              word += tokens[span.getStart() + j] + " ";
-            }
-            word = word.trim();
-
-            final float p = Entity.DEFAULT_RELEVANCE;
-            // if ((FoxCfg.get("openNLPDefaultRelevance") != null)
-            // && !Boolean.valueOf(FoxCfg.get("openNLPDefaultRelevance"))) {
-            // p = Double.valueOf(probs[ii]).floatValue();
-            // }
-            final String cl = mapTypeToSupportedType(span.getType());
-            if (cl != BILOUEncoding.O) {
-              list.add(getEntity(word, cl, p, getToolName()));
-            }
-          }
+        if (tokens.length > 0 && tokens[tokens.length - 1].trim().isEmpty()) {
+          tokens[tokens.length - 1] = ".";
         }
-        nameFinder.clearAdaptiveData();
-      }
-    }
-    // TRACE
-    if (LOG.isTraceEnabled()) {
-      LOG.trace(list);
-    } // TRACE
-    return list;
-  }
 
+        final Span[] nameSpans = nameFinder.find(tokens);
+        nameFinder.probs(nameSpans);
+        for (int ii = 0; ii < nameSpans.length; ii++) {
+          final Span span = nameSpans[ii];
+
+          String word = "";
+          for (int j = 0; j < span.getEnd() - span.getStart(); j++) {
+            word += tokens[span.getStart() + j] + " ";
+          }
+          word = word.trim();
+
+          final int index = input.substring(offset, input.length()).indexOf(word) + offset;
+          final String cl = mapTypeToSupportedType(span.getType());
+          if (!cl.equals(BILOUEncoding.O)) {
+            entityList.add(new Entity(word, cl, Entity.DEFAULT_RELEVANCE, getToolName(), index));
+          }
+        } // end nameSpans
+        offset += sentence.length() + 1;
+      } // end sentences
+
+      nameFinder.clearAdaptiveData();
+    }
+    return entityList;
+  }
 }

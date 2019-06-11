@@ -104,7 +104,8 @@ public abstract class BalieCommon extends AbstractNER {
 
       } else {
         if (mapTypeToSupportedType(type) != BILOUEncoding.O) {
-          list.add(getEntity(token.Raw(), mapTypeToSupportedType(type), re, getToolName()));
+          list.add(new Entity(token.Raw(), mapTypeToSupportedType(type), re, getToolName(),
+              token.StartPos()));
         }
         lastType = type;
       }

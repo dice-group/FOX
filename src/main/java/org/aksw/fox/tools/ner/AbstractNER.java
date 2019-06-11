@@ -50,11 +50,17 @@ public abstract class AbstractNER extends ATool implements INER {
     logMsg();
   }
 
+  /**
+   * Gets {{@link #getResults()}.
+   */
   @Override
   public List<Entity> getResults() {
     return entityList;
   }
 
+  /**
+   * Sets {{@link #input}.
+   */
   @Override
   public void setInput(final String input) {
     this.input = input;
@@ -62,6 +68,7 @@ public abstract class AbstractNER extends ATool implements INER {
 
   /**
    * Creates a new Entity object.
+   *
    *
    * @param text
    * @param type

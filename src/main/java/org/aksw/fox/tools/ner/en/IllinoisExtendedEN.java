@@ -33,7 +33,7 @@ public class IllinoisExtendedEN extends AbstractNER {
     try {
       Parameters.readConfigAndLoadExternalData(file, areWeTraining);
     } catch (final Exception e) {
-      LOG.error("\n", e);
+      LOG.error(e.getLocalizedMessage(), e);
     }
     tagger1 = new NETaggerLevel1(ParametersForLbjCode.currentParameters.pathToModelFile + ".level1",
         ParametersForLbjCode.currentParameters.pathToModelFile + ".level1.lex");
@@ -53,51 +53,59 @@ public class IllinoisExtendedEN extends AbstractNER {
     try {
       ExpressiveFeaturesAnnotator.annotate(data);
     } catch (final Exception e) {
-      LOG.error("\n", e);
+      LOG.error(e.getLocalizedMessage(), e);
     }
 
     // annotate input
     List<Entity> list = null;
     try {
       Decoder.annotateDataBIO(data, tagger1, tagger2);
-      list = getEntities(sentences);
+      list = getEntities(sentences, input);
     } catch (final Exception e) {
-      LOG.error("\n", e);
+      LOG.error(e.getLocalizedMessage(), e);
     }
 
     return list;
   }
 
-  public List<Entity> getEntities(final Vector<LinkedVector> sentences) throws Exception {
+  public List<Entity> getEntities(final Vector<LinkedVector> sentences, final String input)
+      throws Exception {
     final List<Entity> list = new ArrayList<>();
-    StringBuffer res = new StringBuffer();
+    int offset = 0;
+
     for (int i = 0; i < sentences.size(); i++) {
       final LinkedVector vector = sentences.elementAt(i);
+
+      int sentenceSize = 0;
+
       boolean open = false;
       final String[] predictions = new String[vector.size()];
       final String[] words = new String[vector.size()];
       for (int j = 0; j < vector.size(); j++) {
         predictions[j] = ((NEWord) vector.get(j)).neTypeLevel2;
         words[j] = ((NEWord) vector.get(j)).form;
+        sentenceSize += words[j].length();
       }
 
       String word = "";
       String tag = "";
       float prob = 0f;
       int probcount = 0;
-      NEWord w = null;
+
+      int sumlength = 0;
+      // each token
       for (int j = 0; j < vector.size(); j++) {
-        w = (NEWord) vector.get(j);
+        final NEWord w = (NEWord) vector.get(j);
+
         if (predictions[j].startsWith("B-") || j > 0 && predictions[j].startsWith("I-")
             && !predictions[j - 1].endsWith(predictions[j].substring(2))) {
-          res.append("[" + predictions[j].substring(2) + " ");
+
           tag = predictions[j].substring(2);
           prob = 0f;
           word = new String();
           open = true;
         }
 
-        res.append(words[j] + " ");
         if (open) {
           boolean close = false;
           word += words[j] + " ";
@@ -117,23 +125,23 @@ public class IllinoisExtendedEN extends AbstractNER {
               close = true;
             }
           }
+
           if (close) {
             prob = prob / probcount;
-            // SWM: makes the output a little cleaner
-            final String str_res = res.toString().trim();
-            res = new StringBuffer(str_res);
-            res.append("] ");
             open = false;
-            if (illinois(tag) != BILOUEncoding.O) {
-              // if ((FoxCfg.get("illinoisDefaultRelevance") == null)
-              // || Boolean.valueOf(FoxCfg.get("illinoisDefaultRelevance"))) {
-              prob = Entity.DEFAULT_RELEVANCE;
-              // }
-              list.add(getEntity(word.trim(), illinois(tag), prob, getToolName()));
+            final String mention = word.trim();
+            if (!illinois(tag).equals(BILOUEncoding.O)) {
+              final int index = input.substring(offset + sumlength, input.length()).indexOf(mention)
+                  + sumlength + offset;
+
+              list.add(new Entity(mention, illinois(tag), Entity.DEFAULT_RELEVANCE, getToolName(),
+                  index));
             }
+            sumlength += mention.length();
           }
         }
       }
+      offset += sentenceSize + 1;
     }
     return list;
   }

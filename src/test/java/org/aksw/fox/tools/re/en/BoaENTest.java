@@ -20,6 +20,10 @@ public class BoaENTest {
 
   protected BoaEN boaen = new BoaEN();
 
+  private Entity newEntity(final String text, final String type, final int index) {
+    return new Entity(text, type, 0, "tool", index);
+  }
+
   @Test
   public void test() throws URISyntaxException {
 
@@ -37,11 +41,11 @@ public class BoaENTest {
 
     final List<Entity> entities = new ArrayList<>();
 
-    final Entity eBob = new Entity(bob, EntityTypes.P, text.indexOf(bob));
-    final Entity eAlice = new Entity(alice, EntityTypes.P, text.indexOf(alice));
+    final Entity eBob = newEntity(bob, EntityTypes.P, text.indexOf(bob));
+    final Entity eAlice = newEntity(alice, EntityTypes.P, text.indexOf(alice));
 
-    final Entity eKarl = new Entity(karl, EntityTypes.P, text.indexOf(karl));
-    final Entity eLeipzig = new Entity(leipzig, EntityTypes.L, text.indexOf(leipzig));
+    final Entity eKarl = newEntity(karl, EntityTypes.P, text.indexOf(karl));
+    final Entity eLeipzig = newEntity(leipzig, EntityTypes.L, text.indexOf(leipzig));
 
     entities.add(eBob);
     entities.add(eAlice);
@@ -78,8 +82,8 @@ public class BoaENTest {
   public void test2() throws URISyntaxException {
     final URI uri = new URI(DBpedia.ns_dbpedia_ontology.concat("spouse"));
     final String text = "Alice who married Bob.";
-    final Entity s = new Entity("Alice", EntityTypes.P, 0);
-    final Entity o = new Entity("Bob", EntityTypes.P, 18);
+    final Entity s = newEntity("Alice", EntityTypes.P, 0);
+    final Entity o = newEntity("Bob", EntityTypes.P, 18);
 
     final List<Entity> entities = new ArrayList<>();
     entities.add(s);

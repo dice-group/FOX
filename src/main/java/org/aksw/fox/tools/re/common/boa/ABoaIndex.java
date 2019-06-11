@@ -239,8 +239,8 @@ abstract public class ABoaIndex extends AbstractRE {
       final Set<String> uris = getSupportedBoaRelations(sType, oType);
       LOG.debug("uris that match the entity types: " + uris);
 
-      final int sIndex = subject.getIndex();
-      final int oIndex = object.getIndex();
+      final int sIndex = subject.getBeginIndex();
+      final int oIndex = object.getBeginIndex();
 
       final String substring = text.substring(sIndex + subject.getText().length(), oIndex).trim();
       LOG.debug("substring with possible pattern: " + substring);

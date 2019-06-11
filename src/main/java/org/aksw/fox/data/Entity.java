@@ -9,15 +9,15 @@ public class Entity implements IData, Comparable<Entity> {
 
   public static final float DEFAULT_RELEVANCE = -1;
 
-  protected String text = "";
+  protected String text;
 
-  protected String type = "";
+  protected String type;
 
   protected String uri = "";
 
-  protected float relevance = DEFAULT_RELEVANCE;
+  protected float relevance;
 
-  protected String tool = "";
+  protected String tool;
 
   protected int index = -1;
 
@@ -28,21 +28,19 @@ public class Entity implements IData, Comparable<Entity> {
    * @param entity
    */
   public Entity(final Entity entity) {
-    this(entity.text, entity.type, entity.index);
+    this(entity.text, entity.type, entity.relevance, entity.tool, entity.index);
 
     uri = entity.uri;
-    tool = entity.tool;
-    relevance = entity.relevance;
   }
 
   /**
-   *
    * Constructor.
    *
    * @param text
    * @param type
    * @param relevance
    * @param tool
+   * @param index
    */
   public Entity(final String text, final String type, final float relevance, final String tool,
       final int index) {
@@ -55,23 +53,6 @@ public class Entity implements IData, Comparable<Entity> {
   }
 
   /**
-   *
-   * Constructor.
-   *
-   * @param text
-   * @param type
-   * @param relevance
-   * @param tool
-   */
-  public Entity(final String text, final String type, final String tool) {
-
-    this.text = text;
-    this.type = type;
-    this.tool = tool;
-  }
-
-  /**
-   *
    * Constructor.
    *
    * @param text
@@ -80,22 +61,18 @@ public class Entity implements IData, Comparable<Entity> {
    * @param tool
    */
   public Entity(final String text, final String type, final float relevance, final String tool) {
-
-    this.text = text;
-    this.type = type;
-    this.relevance = relevance;
-    this.tool = tool;
+    this(text, type, relevance, tool, -1);
   }
 
   /**
-   *
    * Constructor.
    *
    * @param text
    * @param type
+   * @param tool
    */
-  public Entity(final String text, final String type, final int index) {
-    this(text, type, DEFAULT_RELEVANCE, "", index);
+  public Entity(final String text, final String type, final String tool) {
+    this(text, type, DEFAULT_RELEVANCE, tool, -1);
   }
 
   /**
@@ -147,11 +124,7 @@ public class Entity implements IData, Comparable<Entity> {
     return true;
   }
 
-  public void setIndex(final int index) {
-    this.index = index;
-  }
-
-  public int getIndex() {
+  public int getBeginIndex() {
     return index;
   }
 

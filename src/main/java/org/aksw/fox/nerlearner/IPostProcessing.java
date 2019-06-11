@@ -15,13 +15,6 @@ public interface IPostProcessing {
   Set<String> getLabeledInput();
 
   /**
-   * Gets cleaned tool results.
-   *
-   * @return tool results
-   */
-  Map<String, List<Entity>> getToolResults();
-
-  /**
    * Gets labeled tool results.
    *
    * @return labeled tool results

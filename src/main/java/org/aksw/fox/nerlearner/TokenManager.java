@@ -40,9 +40,7 @@ public class TokenManager {
   public TokenManager(String sentences) {
 
     LOG.info("TokenManager ...");
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(sentences);
-    }
+    LOG.debug(sentences);
 
     // clean sentences
     input = StringUtils.join(FoxTextUtil.getSentences(sentences), " ").trim();

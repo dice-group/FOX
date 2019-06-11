@@ -87,9 +87,9 @@ public class Agdistis extends AbstractLinking {
 
     // sorted by entity index
     for (final Entity entity : entities.stream().sorted().collect(Collectors.toList())) {
-      agdistis_input += input.substring(last, entity.getIndex());
+      agdistis_input += input.substring(last, entity.getBeginIndex());
       agdistis_input += "<entity>" + entity.getText() + "</entity>";
-      last = entity.getIndex() + entity.getText().length();
+      last = entity.getBeginIndex() + entity.getText().length();
     }
     return agdistis_input.concat(input.substring(last));
   }

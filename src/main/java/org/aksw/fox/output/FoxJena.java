@@ -130,7 +130,7 @@ public class FoxJena extends AFoxJena implements IFoxJena {
 
     for (final Entity entity : entities) {
       if (check(entity)) {
-        final int index = entity.getIndex();
+        final int index = entity.getBeginIndex();
 
         final String docuri = createDocUri(baseuri, index, index + entity.getText().length());
         final Resource resource = graph.createResource(docuri)//
@@ -184,9 +184,9 @@ public class FoxJena extends AFoxJena implements IFoxJena {
 
         for (final Statement indicies : entity.listProperties(Voc.pNifBegin).toSet()) {
           final int index = indicies.getInt();
-          if (oe.getIndex() == index) {
+          if (oe.getBeginIndex() == index) {
             roe = entity;
-          } else if (se.getIndex() == index) {
+          } else if (se.getBeginIndex() == index) {
             rse = entity;
           }
 

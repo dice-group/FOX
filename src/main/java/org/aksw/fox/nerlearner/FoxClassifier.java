@@ -144,8 +144,6 @@ public class FoxClassifier {
     // post
     final TokenManager tm = new TokenManager(input);
     final IPostProcessing pp = new PostProcessing(tm, toolResults);
-    // cleaned tool results
-    pp.getToolResults();
 
     // rewrite to use labels
     initInstances(pp.getLabeledInput(), pp.getLabeledToolResults(), null);

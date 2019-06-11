@@ -1,14 +1,11 @@
 package org.aksw.fox.tools.re;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -83,8 +80,8 @@ public abstract class AbstractRE extends ATool implements IRE {
 
       for (final Entity entity : entities) {
 
-        final int beginIndex = entity.getIndex();
-        final int endIndex = entity.getIndex() + entity.getText().length();
+        final int beginIndex = entity.getBeginIndex();
+        final int endIndex = entity.getBeginIndex() + entity.getText().length();
 
         final boolean a = beginIndex >= offset;
         final boolean b = endIndex < offset + sentenceLength;
@@ -103,28 +100,27 @@ public abstract class AbstractRE extends ATool implements IRE {
    *
    * @param sentences an index to sentence
    * @param the entities in all sentences
-   * @return LinkedHashMap with the input index to a list of entities in a sentence.
-   */
-  @Deprecated
+   * @return LinkedHashMap with the input index to a list of entities in a sentence. <code>
+  &#64;Deprecated
   protected Map<Integer, List<Entity>> sentenceToEntities(final Map<Integer, String> sentences,
       final List<Entity> entities) {
-
+  
     final Map<Integer, List<Entity>> sentenceToEntities = new LinkedHashMap<>();
-
+  
     // each sentence
     for (final Entry<Integer, String> entry : sentences.entrySet()) {
       final int sentencesId = entry.getKey();
       final int sentenceLength = entry.getValue().length();
-
+  
       sentenceToEntities.put(sentencesId, new ArrayList<>());
-
+  
       // all entities
       int offset = 0;
       for (final Entity entity : entities) {
-
+  
         final int beginnIndex = entity.getIndex();
         final int endIndex = entity.getIndex() + entity.getText().length();
-
+  
         if (beginnIndex >= offset && endIndex < sentenceLength + offset) {
           entity.setIndex(beginnIndex - offset);
           sentenceToEntities.get(sentencesId).add(entity);
@@ -134,21 +130,22 @@ public abstract class AbstractRE extends ATool implements IRE {
     } // end for sentences
     return sentenceToEntities;
   }
-
+  
   /**
    * Adds an id to each entity.
    *
-   * @param entities
-   * @return map with id to entity
-   */
-  @Deprecated
+   * &#64;param entities
+   * &#64;return map with id to entity
+
+  &#64;Deprecated
   protected Map<Integer, Entity> setEntityIDs(final List<Entity> entities) {
     final Map<Integer, Entity> idMap = new HashMap<>();
     for (final Entity entity : entities) {
       idMap.put(entity.getIndex(), entity);
     }
     return idMap;
-  }
+  }  </code>
+   */
 
   /**
    * Checks domain and range of the given predicate.

@@ -167,13 +167,10 @@ public class Fox extends AFox {
     return relations;
   }
 
-  /**
-   *
-   * @param name
-   * @return
-   */
   protected List<Entity> doNERLight(final String name) {
-    LOG.info("Starting light NER version ...");
+
+    LOG.debug("Starting light NER version ...");
+
     List<Entity> entities = new ArrayList<>();
     if (name == null || name.isEmpty()) {
       return entities;
@@ -232,39 +229,18 @@ public class Fox extends AFox {
     tokenManager.repairEntities(entities);
 
     /**
-     * <code>
-    // make an index for each entity
-    final Map<Integer, Entity> indexMap = new HashMap<>();
-    
-    for (final Entity entity : entities) {
-      for (final Integer i : FoxTextUtil//
-          .getIndices(entity.getText(), tokenManager.getTokenInput())) {
-        indexMap.put(i, entity);
-      }
-    }
-    
-    // loop index in sorted order
-    
-     int offset = -1;
-     for (final Integer i : indexMap.keySet().stream().sorted().collect(Collectors.toList())) {
-       final Entity e = indexMap.get(i);
-       if (offset < i) {
-         offset = i + e.getText().length();
-         e.addIndicies(i);
-       }
-     }
-    
-     // remove entity without an index
-     {
-       final List<Entity> cleanEntity = new ArrayList<>();
-       for (final Entity e : entities) {
-         if (e.index > -1) {
-           cleanEntity.add(e);
-         }
-       }
-       entities = cleanEntity;
-     }
-      </code>
+     * 
+     * // make an index for each entity final Map<Integer, Entity> indexMap = new HashMap<>();
+     * 
+     * for (final Entity entity : entities) { for (final Integer i : FoxTextUtil//
+     * .getIndices(entity.getText(), tokenManager.getTokenInput())) { indexMap.put(i, entity); } }
+     * 
+     * // loop index in sorted order
+     * 
+     * int offset = -1; for (final Integer i :
+     * indexMap.keySet().stream().sorted().collect(Collectors.toList())) { final Entity e =
+     * indexMap.get(i); if (offset < i) { offset = i + e.getText().length(); e.addIndicies(i); } }
+     * 
      */
     nerLight = null;
     LOG.info("Light version done.");

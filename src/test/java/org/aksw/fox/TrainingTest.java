@@ -45,15 +45,19 @@ class TrainingTestReader implements INERReader {
     return text;
   }
 
+  private Entity newEntity(final String text, final String type, final int index) {
+    return new Entity(text, type, 0, "tool", index);
+  }
+
   @Override
   public Map<String, String> getEntities() {
     if (entities.isEmpty()) {
 
-      final Entity eBob = new Entity(bob, EntityTypes.P, text.indexOf(bob));
-      final Entity eAlice = new Entity(alice, EntityTypes.P, text.indexOf(alice));
+      final Entity eBob = newEntity(bob, EntityTypes.P, text.indexOf(bob));
+      final Entity eAlice = newEntity(alice, EntityTypes.P, text.indexOf(alice));
 
-      final Entity eKarl = new Entity(karl, EntityTypes.P, text.indexOf(karl));
-      final Entity ePaula = new Entity(paula, EntityTypes.P, text.indexOf(paula));
+      final Entity eKarl = newEntity(karl, EntityTypes.P, text.indexOf(karl));
+      final Entity ePaula = newEntity(paula, EntityTypes.P, text.indexOf(paula));
 
       final List<Entity> e = new ArrayList<>();
       e.add(eBob);

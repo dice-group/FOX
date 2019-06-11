@@ -47,14 +47,15 @@ public class BILOUDecoding {
   }
 
   /**
+   * Transforms instances of {@link Instances} to instances of {@link Entity}.
    *
    * @param tokenManager
    * @param instances
    * @param labeledToken
-   * @return
+   * @return instances of {@link Entity}
    */
-  public List<Entity> instancesToEntities(//
-      final TokenManager tokenManager, final Instances instances, final Set<String> labeledToken) {
+  public List<Entity> instancesToEntities(final TokenManager tokenManager,
+      final Instances instances, final Set<String> labeledToken) {
 
     LOG.debug("instancesToEntities ... with " + instances.numInstances() + " instances");
 
@@ -69,7 +70,8 @@ public class BILOUDecoding {
 
       final String category = getCategory(instances, i);
       LOG.info(label + " : " + category);
-      if (BILOUEncoding.AllTypesSet.contains(category) && category != BILOUEncoding.O) {
+
+      if (BILOUEncoding.AllTypesSet.contains(category) && !category.equals(BILOUEncoding.O)) {
         labeledEntityToken.put(label, category);
       }
       i++;

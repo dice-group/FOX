@@ -14,9 +14,17 @@ import org.aksw.fox.utils.FoxTextUtil;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+/**
+ *
+ * TODO: Split PostProcessing in a pre and post class
+ *
+ * @author rspeck
+ *
+ */
 abstract class AProcessing {
 
-  public static Logger LOG = LogManager.getLogger(AProcessing.class);
+  protected static Logger LOG = LogManager.getLogger(AProcessing.class);
+
   protected Map<String, List<Entity>> toolResults = null;
   protected TokenManager tokenManager = null;
 }
@@ -128,9 +136,7 @@ public class PostProcessing extends AProcessing implements IPostProcessing {
       // label to entity
       final List<Entity> labeledEntities = new ArrayList<>();
       for (final Entry<String, String> e : resutlsMap.entrySet()) {
-        labeledEntities.add(//
-            new Entity(e.getKey(), e.getValue(), Entity.DEFAULT_RELEVANCE, entry.getKey())//
-        );
+        labeledEntities.add(new Entity(e.getKey(), e.getValue(), entry.getKey()));
       }
 
       // add to labeled result map
@@ -140,14 +146,9 @@ public class PostProcessing extends AProcessing implements IPostProcessing {
     return rtn;
   }
 
-  @Override
-  public Map<String, List<Entity>> getToolResults() {
-    return toolResults;
-  }
-
   // label an entity
-  protected Map<String, String> labeledEntry(//
-      final Entry<String, String> entity, final Map<String, String> labeledMap) {
+  protected Map<String, String> labeledEntry(final Entry<String, String> entity,
+      final Map<String, String> labeledMap) {
 
     // token of an entity
     final String[] entityToken = FoxTextUtil.getToken(entity.getKey());

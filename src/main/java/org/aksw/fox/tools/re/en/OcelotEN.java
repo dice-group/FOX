@@ -63,8 +63,8 @@ public class OcelotEN extends AbstractRE {
         final Entity subject = entities.get(i);
         final Entity object = entities.get(i + 1);
 
-        final Integer si = textIndexToSentenceIndex.get(subject.getIndex());
-        final Integer oi = textIndexToSentenceIndex.get(object.getIndex());
+        final Integer si = textIndexToSentenceIndex.get(subject.getBeginIndex());
+        final Integer oi = textIndexToSentenceIndex.get(object.getBeginIndex());
 
         if (si == null || oi == null) {
           continue;
