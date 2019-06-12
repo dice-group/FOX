@@ -29,7 +29,7 @@ public class Agdistis extends AbstractLinking {
   public static final String CFG_KEY_AGDISTIS_ENDPOINT = "agdistis.endpoint";
 
   // maps AGDISTIS index to real index
-  protected Map<Integer, Entity> indexMap = new HashMap<>();
+  protected Map<Integer, Entity> indexToEntities = new HashMap<>();
   protected String endpoint;
 
   public Agdistis() {}
@@ -44,42 +44,33 @@ public class Agdistis extends AbstractLinking {
 
     String agdistis_input = makeInput(entities, input);
 
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(indexMap);
-    }
-
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("send ...");
-    }
     LOG.info("AGDISTISLookup sending...");
     String agdistis_output = "";
     try {
       agdistis_output = send(agdistis_input);
       agdistis_input = null;
     } catch (final Exception e) {
-      LOG.error("\n", e);
+      LOG.error(e.getLocalizedMessage(), e);
     }
     LOG.info("AGDISTISLookup sending done.");
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(agdistis_output);
-    }
-
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("addURItoEntities ...");
-    }
 
     addURItoEntities(agdistis_output, entities);
 
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("done.");
-    }
-
     LOG.info("AGDISTISLookup done..");
-    indexMap.clear();
+    indexToEntities.clear();
 
     this.entities = entities;
   }
 
+  /**
+   * Iterates over ordered entities to change the input text for Agdistis with meta tags. Later, to
+   * map entities from Agdistis output to the entities, we store the index of an entity to itself in
+   * {@link #indexToEntities}.
+   *
+   * @param entities
+   * @param input
+   * @return Agdistis input
+   */
   private String makeInput(final List<Entity> entities, final String input) {
 
     String agdistis_input = "";
@@ -87,9 +78,13 @@ public class Agdistis extends AbstractLinking {
 
     // sorted by entity index
     for (final Entity entity : entities.stream().sorted().collect(Collectors.toList())) {
+
       agdistis_input += input.substring(last, entity.getBeginIndex());
+
       agdistis_input += "<entity>" + entity.getText() + "</entity>";
+
       last = entity.getBeginIndex() + entity.getText().length();
+      indexToEntities.put(entity.getBeginIndex(), entity);
     }
     return agdistis_input.concat(input.substring(last));
   }
@@ -119,39 +114,39 @@ public class Agdistis extends AbstractLinking {
     return IOUtils.toString(http.getInputStream(), "UTF-8");
   }
 
+  /**
+   *
+   * @param json agdistis output
+   * @param entities
+   */
   protected void addURItoEntities(final String json, final List<Entity> entities) {
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("addURItoEntities ...");
-    }
 
     if (json != null && json.length() > 0) {
       final JSONArray array = new JSONArray(json);
 
-      // final JSONArray array = (JSONArray) JSONValue.parse(json);
-      if (array != null) {
-        for (int i = 0; i < array.length(); i++) {
+      for (int i = 0; i < array.length(); i++) {
 
-          final Integer start = array.getJSONObject(i).getInt("start");
-          final String disambiguatedURL = (String) array.getJSONObject(i).get("disambiguatedURL");
+        final Integer agdistisindex = array.getJSONObject(i).getInt("start");
+        final String disambiguatedURL = (String) array.getJSONObject(i).get("disambiguatedURL");
 
-          if (start != null && start > -1) {
-            final Entity entity = indexMap.get(start);
+        if (agdistisindex != null && agdistisindex > -1) {
 
-            if (disambiguatedURL == null) {
-              URI uri;
-              try {
+          final Entity entity = indexToEntities.get(agdistisindex);
 
-                uri = new URI(Voc.ns_fox_resource + entity.getText().replaceAll(" ", "_"));
-                entity.setUri(uri.toASCIIString());
-              } catch (final URISyntaxException e) {
-                entity.setUri(Voc.ns_fox_resource + entity.getText());
-                LOG.error(entity.getUri() + "\n", e);
-              }
-            } else {
-              entity.setUri(urlencode(disambiguatedURL));
+          if (disambiguatedURL == null) {
+            URI uri;
+            try {
+              uri = new URI(Voc.ns_fox_resource + entity.getText().replaceAll(" ", "_"));
+              entity.setUri(uri.toASCIIString());
+            } catch (final URISyntaxException e) {
+              entity.setUri(Voc.ns_fox_resource + entity.getText());
+              LOG.error(entity.getUri() + "\n", e);
             }
+          } else {
+            entity.setUri(urlencode(disambiguatedURL));
           }
         }
+
       }
     }
   }
