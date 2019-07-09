@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.fox.data.Entity;
+import org.aksw.fox.data.encode.BILOUEncoding;
 
 public class GreedyLeftToRight extends ADecoding implements IDecoding {
 
@@ -21,34 +22,37 @@ public class GreedyLeftToRight extends ADecoding implements IDecoding {
       throw new IllegalStateException("Not BILOU-encoded!");
     }
 
-    final List<Entity> set = new ArrayList<>();
+    final List<Entity> decoded = new ArrayList<>();
 
-    Entity begin = null;
+    String startType = BILOUEncoding.O;
+    int index = -1;
+    String text = "";
 
-    // for each entity
     for (final Entity entity : tokenBasedBILOU) {
-      final String type = entity.getType();
+      if (BILOUEncodingToEntityTypes.isUnit(entity.getType())) {
+        text = entity.getText();
+        startType = BILOUEncodingToEntityTypes.toEntiyType(entity.getType());
+        index = entity.getBeginIndex();
+        final Entity e = new Entity(text, startType, -1, "", index);
+        decoded.add(e);
+        text = "";
+        index = -1;
+        startType = BILOUEncoding.O;
+      } else if (BILOUEncodingToEntityTypes.isBegin(entity.getType())) {
+        text = entity.getText();
+        startType = BILOUEncodingToEntityTypes.toEntiyType(entity.getType());
 
-      if (begin == null) {
-        if (BILOUEncodingToEntityTypes.isUnit(type)) {
-          entity.setType(BILOUEncodingToEntityTypes.toEntiyType(type));
-          set.add(entity);
-        } else if (BILOUEncodingToEntityTypes.isBegin(type)) {
-          begin = entity;
-          begin.setType(BILOUEncodingToEntityTypes.toEntiyType(type));
-        }
-      } else {
-
-        if (BILOUEncodingToEntityTypes.isLast(type)) {
-          begin.addText(entity.getText());
-          set.add(begin);
-          begin = null;
-        } else if (BILOUEncodingToEntityTypes.isInside(type)) {
-          begin.addText(entity.getText());
-        }
+        index = entity.getBeginIndex();
+      } else if (BILOUEncodingToEntityTypes.isInside(entity.getType())) {
+        text = " " + entity.getText();
+      } else if (BILOUEncodingToEntityTypes.isLast(entity.getType())) {
+        final Entity e = new Entity(text, startType, -1, "", index);
+        decoded.add(e);
+        text = "";
+        index = -1;
+        startType = BILOUEncoding.O;
       }
     }
-    LOG.info("Decoded entity size: " + set.size());
-    return set;
+    return decoded;
   }
 }
