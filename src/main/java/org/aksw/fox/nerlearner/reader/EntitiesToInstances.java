@@ -106,9 +106,11 @@ public class EntitiesToInstances {
         mapResultsToBILOU(toolResults, FoxTextUtil.tokenSpliter);
 
     if (oracleBILOU != null) {
-      oracleBILOU.entrySet().stream().forEach(LOG::info);
+      LOG.info("oracle results (only the first 100):");
+      oracleBILOU.entrySet().stream().limit(100).forEach(LOG::info);
     }
-    toolResultsBILOU.entrySet().stream().forEach(LOG::info);
+    LOG.info("tool results (only the first 100):");
+    toolResultsBILOU.entrySet().stream().limit(100).forEach(LOG::info);
 
     final Set<String> sortedToolNames = new TreeSet<>(toolResults.keySet());
     final Set<String> sortedTypes = new TreeSet<>(BILOUEncoding.AllTypesSet);
@@ -162,8 +164,8 @@ public class EntitiesToInstances {
       instances.add(row);
     }
     LOG.info("# instances: " + instances.numInstances());
-    LOG.debug("#instances with a type: " + diffNull);
     if (oracleBILOU != null) {
+      LOG.debug("# instances with a type: " + diffNull);
       LOG.debug("found all (should be true): " + (diffNull == oracleBILOU.size()));
     }
 
