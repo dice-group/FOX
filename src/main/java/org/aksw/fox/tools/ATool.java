@@ -6,8 +6,6 @@ import java.util.concurrent.CountDownLatch;
 
 import org.aksw.fox.Fox;
 import org.aksw.simba.knowledgeextraction.commons.config.CfgManager;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 /**
  * The tool version it set in the maven pom.xml file.
@@ -17,7 +15,6 @@ import org.apache.log4j.Logger;
  */
 abstract public class ATool implements ITool {
 
-  public static final Logger LOG = LogManager.getLogger(ATool.class);
   protected final CfgManager cfgManager = new CfgManager(Fox.cfgFolder);
 
   protected static Properties versions = new Properties();
@@ -25,7 +22,7 @@ abstract public class ATool implements ITool {
     try {
       versions.load(ITool.class.getResourceAsStream("/versions.properties"));
     } catch (final IOException e) {
-      e.printStackTrace();
+      LOG.error(e.getLocalizedMessage(), e);
     }
   }
 

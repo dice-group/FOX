@@ -1,5 +1,6 @@
 package org.aksw.fox.output;
 
+import java.util.List;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
@@ -15,14 +16,14 @@ public interface IFoxJena {
   /**
    * Resets the underlying model.
    */
-  public void reset();
+  void reset();
 
   /**
    *
    * @param input
    * @param name
    */
-  public void addInput(String input, String name);
+  void addInput(String input, String name);
 
   /**
    *
@@ -32,8 +33,7 @@ public interface IFoxJena {
    * @param tool
    * @param version
    */
-  public void addEntities(Set<Entity> entities, String start, String end, String tool,
-      String version);
+  void addEntities(List<Entity> entities, String start, String end, String tool, String version);
 
   /**
    *
@@ -43,18 +43,17 @@ public interface IFoxJena {
    * @param tool
    * @param version
    */
-  public void addRelations(Set<Relation> relations, String start, String end, String tool,
-      String version);
+  void addRelations(Set<Relation> relations, String start, String end, String tool, String version);
 
   /**
    *
    * @param lang
    */
-  public void setLang(final String lang);
+  void setLang(final String lang);
 
   /**
    *
    * @return
    */
-  public String print();
+  String print();
 }

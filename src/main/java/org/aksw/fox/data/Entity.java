@@ -1,50 +1,25 @@
 package org.aksw.fox.data;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 /**
  *
  * @author Ren&eacute; Speck <speck@informatik.uni-leipzig.de>
  *
  */
-public class Entity implements IData {
+public class Entity implements IData, Comparable<Entity> {
 
   public static final float DEFAULT_RELEVANCE = -1;
 
-  public int id = -1;
+  protected String text;
 
-  protected String text = "";
-
-  protected String type = "";
+  protected String type;
 
   protected String uri = "";
 
-  protected float relevance = DEFAULT_RELEVANCE;
+  protected float relevance;
 
-  protected String tool = "";
+  protected String tool;
 
-  /**
-   * Start indices.
-   */
-  protected Set<Integer> indicies = null;
-
-  /**
-   *
-   * Constructor.
-   *
-   * @param text
-   * @param type
-   */
-  public Entity(final String text, final String type) {
-    this(text, type, DEFAULT_RELEVANCE, "");
-  }
+  protected int index = -1;
 
   /**
    *
@@ -53,29 +28,31 @@ public class Entity implements IData {
    * @param entity
    */
   public Entity(final Entity entity) {
-    this(entity.text, entity.type);
-    id = entity.id;
+    this(entity.text, entity.type, entity.relevance, entity.tool, entity.index);
+
     uri = entity.uri;
-    tool = entity.tool;
-    indicies = new HashSet<>();
-    indicies.addAll(entity.getIndices());
-    relevance = entity.relevance;
   }
 
   /**
-   *
    * Constructor.
    *
    * @param text
    * @param type
    * @param relevance
+   * @param tool
+   * @param index
    */
-  public Entity(final String text, final String type, final float relevance) {
-    this(text, type, relevance, "");
+  public Entity(final String text, final String type, final float relevance, final String tool,
+      final int index) {
+
+    this.text = text;
+    this.type = type;
+    this.relevance = relevance;
+    this.tool = tool;
+    this.index = index;
   }
 
   /**
-   *
    * Constructor.
    *
    * @param text
@@ -84,16 +61,40 @@ public class Entity implements IData {
    * @param tool
    */
   public Entity(final String text, final String type, final float relevance, final String tool) {
-    this.text = text;
-    this.type = type;
-    this.relevance = relevance;
-    this.tool = tool;
+    this(text, type, relevance, tool, -1);
   }
 
+  /**
+   * Constructor.
+   *
+   * @param text
+   * @param type
+   * @param tool
+   */
+  public Entity(final String text, final String type, final String tool) {
+    this(text, type, DEFAULT_RELEVANCE, tool, -1);
+  }
+
+  /**
+   * Adds a space and the parameter text to the entities text;
+   *
+   * @param text
+   */
   public void addText(final String text) {
     this.text += " " + text;
   }
 
+  /**
+   * Compares index
+   */
+  @Override
+  public int compareTo(final Entity o) {
+    return index - o.index;
+  }
+
+  /**
+   * Takes entity text and type into account.
+   */
   @Override
   public boolean equals(final Object obj) {
     if (this == obj) {
@@ -123,39 +124,24 @@ public class Entity implements IData {
     return true;
   }
 
-  /**
-   * Gets all start indices.
-   */
-  public Set<Integer> getIndices() {
-    return indicies;
+  public int getBeginIndex() {
+    return index;
   }
 
-  /**
-   * Adds start indices
-   *
-   * @param index
-   * @return self
-   */
-  public Entity addIndicies(final int index) {
-    if (indicies == null) {
-      indicies = new TreeSet<>();
-    }
-    indicies.add(index);
-    return this;
+  public int getEndIndex() {
+    return index > -1 ? index + getText().length() : -1;
   }
 
-  /**
-   * Adds start indices.
-   *
-   * @param indices
-   * @return self
-   */
-  public Entity addAllIndicies(final Set<Integer> indices) {
-    if (indicies == null) {
-      indicies = new HashSet<>();
-    }
-    indicies.addAll(indices);
-    return this;
+  public float getRelevance() {
+    return relevance;
+  }
+
+  public String getText() {
+    return text;
+  }
+
+  public String getTool() {
+    return tool;
   }
 
   @Override
@@ -163,20 +149,40 @@ public class Entity implements IData {
     return tool;
   }
 
-  public String getText() {
-    return text;
-  }
-
   public String getType() {
     return type;
   }
 
-  public float getRelevance() {
-    return relevance;
-  }
-
   public String getUri() {
     return uri;
+  }
+
+  /**
+   * Takes entity text and type into account.
+   */
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + (text == null ? 0 : text.hashCode());
+    result = prime * result + (type == null ? 0 : type.hashCode());
+    return result;
+  }
+
+  public void setRelevance(final float relevance) {
+    this.relevance = relevance;
+  }
+
+  public void setText(final String text) {
+    this.text = text;
+  }
+
+  public void setTool(final String tool) {
+    this.tool = tool;
+  }
+
+  public void setType(final String type) {
+    this.type = type;
   }
 
   public void setUri(final String uri) {
@@ -184,83 +190,8 @@ public class Entity implements IData {
   }
 
   @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result) + ((text == null) ? 0 : text.hashCode());
-    result = (prime * result) + ((type == null) ? 0 : type.hashCode());
-    return result;
-  }
-
-  public void setText(final String text) {
-    this.text = text;
-  }
-
-  @Override
   public String toString() {
     return "Entity [text=" + text + ", type=" + type + ", uri=" + uri + ", tool=" + tool
-        + ", relevance=" + relevance + (indicies != null ? ", indicies=" + indicies : "") + "]";
-  }
-
-  /**
-   * The entity needs a single index pair.
-   *
-   * @param e
-   * @return
-   */
-  public static int getIndex(final Entity e) {
-    int index = -1;
-    if (e.getIndices().size() > 1) {
-      throw new UnsupportedOperationException("Break down entitiy indices to a single index pair.");
-    } else if (e.getIndices().size() > 0) {
-      index = e.getIndices().iterator().next();
-    }
-    return index;
-
-  }
-
-  /**
-   * Each entity with just one index and sorted.
-   *
-   * @param entities
-   * @return sorted entities with one index in the index set
-   */
-  public static List<Entity> breakdownAndSortEntity(final Set<Entity> entities) {
-
-    final Map<Integer, Entity> sorted = new HashMap<>();
-
-    for (final Entity entity : entities) {
-      if (entity.getIndices().size() > 1) {
-        final Iterator<Integer> iter = entity.getIndices().iterator();
-        while (iter.hasNext()) {
-          final Entity e = new Entity(//
-              entity.getText(), entity.getType(), entity.getRelevance(), entity.getToolName()//
-          );
-
-          final int index = iter.next();
-          e.addIndicies(index);
-          sorted.put(index, e);
-        }
-      } else {
-        sorted.put(entity.getIndices().iterator().next(), entity);
-      }
-    }
-
-    return sorted.keySet()//
-        .stream().sorted().collect(Collectors.toList())//
-        .stream().map(sorted::get).collect(Collectors.toList());
-  }
-
-  public static Map<Integer, Entity> indexToEntity(final List<Entity> entities) {
-    final Map<Integer, Entity> index = new HashMap<>();
-    final Iterator<Entity> iter = entities.iterator();
-    while (iter.hasNext()) {
-      final Entity e = iter.next();
-      final int i = getIndex(e);
-      if (i > -1) {
-        index.put(i, e);
-      }
-    }
-    return index;
+        + ", relevance=" + relevance + ", index=" + index + "]";
   }
 }

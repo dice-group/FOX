@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.tools.ner.common.TagMeCommon;
 import org.aksw.fox.tools.ner.common.WikipediaCategories;
 import org.aksw.simba.knowledgeextraction.commons.io.SerializationUtil;
@@ -20,9 +20,9 @@ public class TagMeEN extends TagMeCommon {
     super(Locale.ENGLISH, "http://dbpedia.org/sparql", "http://dbpedia.org");
 
     final Map<String, String> fileToType = new HashMap<>();
-    fileToType.put("catsOrganisationEN.bin", EntityClassMap.O);
-    fileToType.put("catsLocationEN.bin", EntityClassMap.L);
-    fileToType.put("catsPersonEN.bin", EntityClassMap.P);
+    fileToType.put("catsOrganisationEN.bin", EntityTypes.O);
+    fileToType.put("catsLocationEN.bin", EntityTypes.L);
+    fileToType.put("catsPersonEN.bin", EntityTypes.P);
 
     createEnWikipediaCategories().forEach((k, set) -> //
     set.forEach(v -> entityClasses.put(v.replace("http://dbpedia.org/resource/Category:", ""),

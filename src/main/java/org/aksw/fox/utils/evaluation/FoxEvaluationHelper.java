@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.evaluation.CrossValidation;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 
@@ -187,7 +188,7 @@ public class FoxEvaluationHelper {
         row.add(value.get(col_classs));
 
         // ignore NULL category
-        if (!value.get(col_classs).equals(EntityClassMap.N)) {
+        if (!value.get(col_classs).equals(BILOUEncoding.O)) {
 
           for (int i = row_a; i < value.size(); i++) {
             final Double v = Double.valueOf(value.get(i));
@@ -261,16 +262,16 @@ public class FoxEvaluationHelper {
           }
         }
         List<String> current = null;
-        if (value.get(col_classs).equals(EntityClassMap.L)) {
+        if (value.get(col_classs).equals(EntityTypes.L)) {
           current = loc;
         }
-        if (value.get(col_classs).equals(EntityClassMap.O)) {
+        if (value.get(col_classs).equals(EntityTypes.O)) {
           current = org;
         }
-        if (value.get(col_classs).equals(EntityClassMap.P)) {
+        if (value.get(col_classs).equals(EntityTypes.P)) {
           current = per;
         }
-        if (value.get(col_classs).equals(EntityClassMap.N)) {
+        if (value.get(col_classs).equals(BILOUEncoding.O)) {
           current = no;
         }
 
@@ -310,22 +311,22 @@ public class FoxEvaluationHelper {
 
   protected double getFP(final List<String> row) {
     final int i = values.indexOf(row);
-    if (row.get(col_classs).equals(EntityClassMap.L)) {
+    if (row.get(col_classs).equals(EntityTypes.L)) {
       return Double.valueOf(values.get(i + 1).get(row_a))
           + Double.valueOf(values.get(i + 2).get(row_a))
           + Double.valueOf(values.get(i + 3).get(row_a));
     }
-    if (row.get(col_classs).equals(EntityClassMap.O)) {
+    if (row.get(col_classs).equals(EntityTypes.O)) {
       return Double.valueOf(values.get(i - 1).get(row_b))
           + Double.valueOf(values.get(i + 1).get(row_b))
           + Double.valueOf(values.get(i + 2).get(row_b));
     }
-    if (row.get(col_classs).equals(EntityClassMap.P)) {
+    if (row.get(col_classs).equals(EntityTypes.P)) {
       return Double.valueOf(values.get(i - 2).get(row_c))
           + Double.valueOf(values.get(i - 1).get(row_c))
           + Double.valueOf(values.get(i + 1).get(row_c));
     }
-    if (row.get(col_classs).equals(EntityClassMap.N)) {
+    if (row.get(col_classs).equals(BILOUEncoding.O)) {
       return Double.valueOf(values.get(i - 3).get(row_d))
           + Double.valueOf(values.get(i - 2).get(row_d))
           + Double.valueOf(values.get(i - 1).get(row_d));
@@ -334,37 +335,37 @@ public class FoxEvaluationHelper {
   }
 
   protected double getTP(final List<String> row) {
-    if (row.get(col_classs).equals(EntityClassMap.L)) {
+    if (row.get(col_classs).equals(EntityTypes.L)) {
       return Double.valueOf(row.get(row_a));
     }
-    if (row.get(col_classs).equals(EntityClassMap.O)) {
+    if (row.get(col_classs).equals(EntityTypes.O)) {
       return Double.valueOf(row.get(row_b));
     }
-    if (row.get(col_classs).equals(EntityClassMap.P)) {
+    if (row.get(col_classs).equals(EntityTypes.P)) {
       return Double.valueOf(row.get(row_c));
     }
-    if (row.get(col_classs).equals(EntityClassMap.N)) {
+    if (row.get(col_classs).equals(BILOUEncoding.O)) {
       return Double.valueOf(row.get(row_d));
     }
     return 0;
   }
 
   protected double getFN(final List<String> row) {
-    if (row.get(col_classs).equals(EntityClassMap.L)) {
+    if (row.get(col_classs).equals(EntityTypes.L)) {
       return Double.valueOf(row.get(row_b)) + Double.valueOf(row.get(row_c))
           + Double.valueOf(row.get(row_d));
     }
-    if (row.get(col_classs).equals(EntityClassMap.O)) {
+    if (row.get(col_classs).equals(EntityTypes.O)) {
       return Double.valueOf(row.get(row_a)) + Double.valueOf(row.get(row_c))
           + Double.valueOf(row.get(row_d));
 
     }
-    if (row.get(col_classs).equals(EntityClassMap.P)) {
+    if (row.get(col_classs).equals(EntityTypes.P)) {
       return Double.valueOf(row.get(row_a)) + Double.valueOf(row.get(row_b))
           + Double.valueOf(row.get(row_d));
 
     }
-    if (row.get(col_classs).equals(EntityClassMap.N)) {
+    if (row.get(col_classs).equals(BILOUEncoding.O)) {
       return Double.valueOf(row.get(row_a)) + Double.valueOf(row.get(row_b))
           + Double.valueOf(row.get(row_c));
     }
@@ -373,7 +374,7 @@ public class FoxEvaluationHelper {
 
   protected double getTN(final List<String> row) {
     final int i = values.indexOf(row);
-    if (row.get(col_classs).equals(EntityClassMap.L)) {
+    if (row.get(col_classs).equals(EntityTypes.L)) {
       return Double.valueOf(values.get(i + 1).get(row_b))
           + Double.valueOf(values.get(i + 1).get(row_c))
           + Double.valueOf(values.get(i + 1).get(row_d))
@@ -384,7 +385,7 @@ public class FoxEvaluationHelper {
           + Double.valueOf(values.get(i + 3).get(row_c))
           + Double.valueOf(values.get(i + 3).get(row_d));
     }
-    if (row.get(col_classs).equals(EntityClassMap.O)) {
+    if (row.get(col_classs).equals(EntityTypes.O)) {
       return Double.valueOf(values.get(i - 1).get(row_a))
           + Double.valueOf(values.get(i - 1).get(row_c))
           + Double.valueOf(values.get(i - 1).get(row_d))
@@ -395,7 +396,7 @@ public class FoxEvaluationHelper {
           + Double.valueOf(values.get(i + 2).get(row_c))
           + Double.valueOf(values.get(i + 2).get(row_d));
     }
-    if (row.get(col_classs).equals(EntityClassMap.P)) {
+    if (row.get(col_classs).equals(EntityTypes.P)) {
       return Double.valueOf(values.get(i - 2).get(row_a))
           + Double.valueOf(values.get(i - 2).get(row_b))
           + Double.valueOf(values.get(i - 2).get(row_d))
@@ -406,7 +407,7 @@ public class FoxEvaluationHelper {
           + Double.valueOf(values.get(i + 1).get(row_b))
           + Double.valueOf(values.get(i + 1).get(row_d));
     }
-    if (row.get(col_classs).equals(EntityClassMap.N)) {
+    if (row.get(col_classs).equals(BILOUEncoding.O)) {
       return Double.valueOf(values.get(i - 3).get(row_a))
           + Double.valueOf(values.get(i - 3).get(row_b))
           + Double.valueOf(values.get(i - 3).get(row_c))

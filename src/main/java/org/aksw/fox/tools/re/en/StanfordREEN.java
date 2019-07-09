@@ -10,10 +10,10 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.data.Voc;
-import org.aksw.fox.tools.ner.en.StanfordENOldVersion;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.tools.re.AbstractRE;
 
 import edu.stanford.nlp.ie.machinereading.structure.EntityMention;
@@ -102,6 +102,22 @@ public class StanfordREEN extends AbstractRE {
     }
   }
 
+  public static String stanford(final String stanfordTag) {
+    switch (stanfordTag) {
+      case "ORGANIZATION":
+        return EntityTypes.O;
+      case "LOCATION":
+        return EntityTypes.L;
+      case "PERSON":
+        return EntityTypes.P;
+      case "PEOPLE":
+        return EntityTypes.P;
+      default:
+      case "O":
+        return BILOUEncoding.O;
+    }
+  }
+
   /*
    * Stanford relations (http://www.cnts.ua.ac.be/conll2004/pdf/00108rot.pdf)
    *
@@ -130,27 +146,27 @@ public class StanfordREEN extends AbstractRE {
 
         switch (stanfordRelation) {
           case Live_In:
-            if (EntityClassMap.P.equals(StanfordENOldVersion.stanford(emOne.getType()))
-                && EntityClassMap.L.equals(StanfordENOldVersion.stanford(emTwo.getType()))) {
+            if (EntityTypes.P.equals(stanford(emOne.getType()))
+                && EntityTypes.L.equals(stanford(emTwo.getType()))) {
               valid = true;
             }
             break;
 
           case Work_For:
-            if (EntityClassMap.P.equals(StanfordENOldVersion.stanford(emOne.getType()))
-                && EntityClassMap.O.equals(StanfordENOldVersion.stanford(emTwo.getType()))) {
+            if (EntityTypes.P.equals(stanford(emOne.getType()))
+                && EntityTypes.O.equals(stanford(emTwo.getType()))) {
               valid = true;
             }
             break;
           case OrgBased_In:
-            if (EntityClassMap.O.equals(StanfordENOldVersion.stanford(emOne.getType()))
-                && EntityClassMap.L.equals(StanfordENOldVersion.stanford(emTwo.getType()))) {
+            if (EntityTypes.O.equals(stanford(emOne.getType()))
+                && EntityTypes.L.equals(stanford(emTwo.getType()))) {
               valid = true;
             }
             break;
           case Located_In:
-            if (EntityClassMap.L.equals(StanfordENOldVersion.stanford(emOne.getType()))
-                && EntityClassMap.L.equals(StanfordENOldVersion.stanford(emTwo.getType()))) {
+            if (EntityTypes.L.equals(stanford(emOne.getType()))
+                && EntityTypes.L.equals(stanford(emTwo.getType()))) {
               valid = true;
             }
             break;
@@ -204,20 +220,15 @@ public class StanfordREEN extends AbstractRE {
             final EntityMention emOne = entityMention.get(0);
             final EntityMention emTwo = entityMention.get(1);
 
-            final Entity a =
-                new Entity(emOne.getExtentString(), StanfordENOldVersion.stanford(emOne.getType()),
-                    Entity.DEFAULT_RELEVANCE, getToolName());
-            final Entity b =
-                new Entity(emTwo.getExtentString(), StanfordENOldVersion.stanford(emTwo.getType()),
-                    Entity.DEFAULT_RELEVANCE, getToolName());
-
             final int index_a =
                 emOne.getSyntacticHeadToken().endPosition() - emOne.getExtentString().length();
             final int index_b =
                 emTwo.getSyntacticHeadToken().endPosition() - emTwo.getExtentString().length();
 
-            a.addIndicies(index_a);
-            b.addIndicies(index_b);
+            final Entity a = new Entity(emOne.getExtentString(), stanford(emOne.getType()),
+                Entity.DEFAULT_RELEVANCE, getToolName(), index_a);
+            final Entity b = new Entity(emTwo.getExtentString(), stanford(emTwo.getType()),
+                Entity.DEFAULT_RELEVANCE, getToolName(), index_b);
 
             /*
              * int start = -1, end = -1; if (emOne.getSyntacticHeadToken().endPosition() <

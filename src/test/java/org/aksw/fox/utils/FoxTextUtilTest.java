@@ -3,7 +3,7 @@ package org.aksw.fox.utils;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TestFoxTextUtil {
+public class FoxTextUtilTest {
   String text =
       "Das <a href=\"/wiki/Augusteum_(Universit%C3%A4t_Leipzig)\" title=\"Augusteum (Universität Leipzig)\">"
           + "Neue Augusteum</a> am <a href=\"/wiki/Augustusplatz_(Leipzig)\" title=\"Augustusplatz (Leipzig)\">Augustusplatz</a> "

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.data.Relation;
 import org.aksw.simba.knowledgeextraction.commons.dbpedia.DBpedia;
 import org.junit.Assert;
@@ -33,11 +33,11 @@ public class AbstractRETest extends AbstractRE {
 
   @Test
   public void testC() {
-    Assert.assertEquals(mapFoxTypesToDBpediaTypes(EntityClassMap.L),
+    Assert.assertEquals(mapFoxTypesToDBpediaTypes(EntityTypes.L),
         DBpedia.ns_dbpedia_ontology.concat("Place"));
-    Assert.assertEquals(mapFoxTypesToDBpediaTypes(EntityClassMap.P),
+    Assert.assertEquals(mapFoxTypesToDBpediaTypes(EntityTypes.P),
         DBpedia.ns_dbpedia_ontology.concat("Person"));
-    Assert.assertEquals(mapFoxTypesToDBpediaTypes(EntityClassMap.O),
+    Assert.assertEquals(mapFoxTypesToDBpediaTypes(EntityTypes.O),
         DBpedia.ns_dbpedia_ontology.concat("Organisation"));
   }
 

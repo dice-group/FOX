@@ -1,13 +1,13 @@
 package org.aksw.fox.tools.linking;
 
-import java.util.Set;
+import java.util.List;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.tools.ATool;
 
 public abstract class AbstractLinking extends ATool implements ILinking {
 
-  protected Set<Entity> entities = null;
+  protected List<Entity> entities = null;
   protected String input = null;
 
   @Override
@@ -19,13 +19,13 @@ public abstract class AbstractLinking extends ATool implements ILinking {
   }
 
   @Override
-  public void setInput(final Set<Entity> entities, final String input) {
+  public void setInput(final List<Entity> entities, final String input) {
     this.input = input;
     this.entities = entities;
   }
 
   @Override
-  public Set<Entity> getResults() {
+  public List<Entity> getResults() {
     return entities;
   }
 }

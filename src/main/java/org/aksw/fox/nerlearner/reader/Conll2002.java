@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.simba.knowledgeextraction.commons.io.Compress;
 
 public class Conll2002 extends ANERReader {
@@ -41,7 +42,7 @@ public class Conll2002 extends ANERReader {
 
     final INERReader r = new Conll2002(files);
 
-    LOG.info("input:\n" + r.getInput());
+    LOG.info("input:\n" + r.input());
 
     LOG.info("entities:");
     r.getEntities().entrySet().forEach(LOG::info);
@@ -52,17 +53,17 @@ public class Conll2002 extends ANERReader {
    */
   public Conll2002() {
     // [I-MISC, B-LOC, I-PER, B-PER, I-LOC, B-MISC, I-ORG, B-ORG, O]
-    tagsMap.put("B-PER", EntityClassMap.P);
-    tagsMap.put("B-LOC", EntityClassMap.L);
-    tagsMap.put("B-ORG", EntityClassMap.O);
+    tagsMap.put("B-PER", EntityTypes.P);
+    tagsMap.put("B-LOC", EntityTypes.L);
+    tagsMap.put("B-ORG", EntityTypes.O);
 
-    tagsMap.put("I-PER", EntityClassMap.P);
-    tagsMap.put("I-LOC", EntityClassMap.L);
-    tagsMap.put("I-ORG", EntityClassMap.O);
+    tagsMap.put("I-PER", EntityTypes.P);
+    tagsMap.put("I-LOC", EntityTypes.L);
+    tagsMap.put("I-ORG", EntityTypes.O);
 
-    tagsMap.put("O", EntityClassMap.getNullCategory());
-    tagsMap.put("I-MISC", EntityClassMap.getNullCategory());
-    tagsMap.put("B-MISC", EntityClassMap.getNullCategory());
+    tagsMap.put("O", BILOUEncoding.O);
+    tagsMap.put("I-MISC", BILOUEncoding.O);
+    tagsMap.put("B-MISC", BILOUEncoding.O);
 
   }
 
@@ -130,7 +131,7 @@ public class Conll2002 extends ANERReader {
           }
           word.append(currentToken);
         } else {
-          if (!lastClass.equals(EntityClassMap.getNullCategory())) {
+          if (!lastClass.equals(BILOUEncoding.O)) {
             addE(word.toString().trim(), lastClass);
           }
 
@@ -161,7 +162,7 @@ public class Conll2002 extends ANERReader {
   }
 
   @Override
-  public String getInput() {
+  public String input() {
     return input.toString().trim();
   }
 

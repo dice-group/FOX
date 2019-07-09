@@ -2,21 +2,26 @@ package org.aksw.fox.tools;
 
 import java.util.concurrent.CountDownLatch;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 public interface ITool extends Runnable {
+
+  Logger LOG = LogManager.getLogger(ITool.class);
 
   /**
    * Returns the tools name.
    *
    * @return name
    */
-  public String getToolName();
+  String getToolName();
 
-  public String getToolVersion();
+  String getToolVersion();
 
   /**
    * Sets a CountDownLatch object.
    *
    * @param cdl
    */
-  public void setCountDownLatch(CountDownLatch cdl);
+  void setCountDownLatch(CountDownLatch cdl);
 }

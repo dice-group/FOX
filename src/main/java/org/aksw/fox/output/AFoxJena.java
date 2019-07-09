@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.data.Voc;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.jena.rdf.model.Model;
@@ -36,28 +36,26 @@ public class AFoxJena {
   protected UrlValidator urlValidator = new UrlValidator();
 
   /**
-   * Maps EntityClassMap types to KB types.
+   * Maps EntityC lassMap types to KB types. <br>
+   * TODO: add to config
    */
   protected static Map<String, Set<String>> typesmap = new HashMap<>();
   static {
-    typesmap.put(EntityClassMap.P.toString(),
-        new HashSet<String>(Arrays.asList(//
-            "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person", //
-            "http://schema.org/Person", //
-            "http://dbpedia.org/ontology/Person")));
+    typesmap.put(EntityTypes.P.toString(), new HashSet<>(Arrays.asList(//
+        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person", //
+        "http://schema.org/Person", //
+        "http://dbpedia.org/ontology/Person")));
 
-    typesmap.put(EntityClassMap.L.toString(),
-        new HashSet<String>(Arrays.asList(//
-            "http://www.ontologydesignpatterns.org/ont/d0.owl#Location", //
-            "http://schema.org/Place", //
-            "http://schema.org/Location", //
-            "http://dbpedia.org/ontology/Place")));
+    typesmap.put(EntityTypes.L.toString(), new HashSet<>(Arrays.asList(//
+        "http://www.ontologydesignpatterns.org/ont/d0.owl#Location", //
+        "http://schema.org/Place", //
+        "http://schema.org/Location", //
+        "http://dbpedia.org/ontology/Place")));
 
-    typesmap.put(EntityClassMap.O.toString(),
-        new HashSet<String>(Arrays.asList(//
-            "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization", //
-            "http://schema.org/Organisation", //
-            "http://dbpedia.org/ontology/Organisation")));
+    typesmap.put(EntityTypes.O.toString(), new HashSet<>(Arrays.asList(//
+        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization", //
+        "http://schema.org/Organisation", //
+        "http://dbpedia.org/ontology/Organisation")));
   }
 
   /**

@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.data.Relation;
 import org.aksw.fox.tools.re.AbstractRE;
 import org.apache.lucene.document.Document;
@@ -155,7 +155,7 @@ abstract public class ABoaIndex extends AbstractRE {
    */
   public Map<String, BoaPattern> processSearch(final String p, final int maxPatterns)
       throws IOException {
-    final Map<String, BoaPattern> patterns = new HashMap<String, BoaPattern>();
+    final Map<String, BoaPattern> patterns = new HashMap<>();
 
     final IndexSearcher searcher = openIndexSearcher();
 
@@ -194,7 +194,7 @@ abstract public class ABoaIndex extends AbstractRE {
 
       if (!pattern.getNormalized().trim().isEmpty()
           && !patterns.containsKey(pattern.getNormalized().trim())
-          && (patterns.size() < maxPatterns)) {
+          && patterns.size() < maxPatterns) {
         patterns.put(pattern.getNormalized().trim(), pattern);
       }
     }
@@ -229,7 +229,7 @@ abstract public class ABoaIndex extends AbstractRE {
   @Override
   protected Set<Relation> _extract(final String text, final List<Entity> entities) {
 
-    for (int i = 0; (i + 1) < entities.size(); i++) {
+    for (int i = 0; i + 1 < entities.size(); i++) {
       final Entity subject = entities.get(i);
       final Entity object = entities.get(i + 1);
 
@@ -239,15 +239,8 @@ abstract public class ABoaIndex extends AbstractRE {
       final Set<String> uris = getSupportedBoaRelations(sType, oType);
       LOG.debug("uris that match the entity types: " + uris);
 
-      if ((subject.getIndices().size() > 1) || (object.getIndices().size() > 1)) {
-        throw new UnsupportedOperationException( //
-            "The Entity list contains at least one Entity with multiple indices. "
-                + "This operation allows only entities with one index!"//
-        );
-      }
-
-      final int sIndex = subject.getIndices().iterator().next();
-      final int oIndex = object.getIndices().iterator().next();
+      final int sIndex = subject.getBeginIndex();
+      final int oIndex = object.getBeginIndex();
 
       final String substring = text.substring(sIndex + subject.getText().length(), oIndex).trim();
       LOG.debug("substring with possible pattern: " + substring);
@@ -304,41 +297,41 @@ abstract public class ABoaIndex extends AbstractRE {
 
   protected void createSupportedBoaRelations() {
     // FIXME: use in config?
-    supportedRelations.put(EntityClassMap.L, new HashMap<>());
-    supportedRelations.put(EntityClassMap.P, new HashMap<>());
-    supportedRelations.put(EntityClassMap.O, new HashMap<>());
+    supportedRelations.put(EntityTypes.L, new HashMap<>());
+    supportedRelations.put(EntityTypes.P, new HashMap<>());
+    supportedRelations.put(EntityTypes.O, new HashMap<>());
 
-    supportedRelations.get(EntityClassMap.L).put(EntityClassMap.L, new HashSet<String>());
-    supportedRelations.get(EntityClassMap.L).put(EntityClassMap.P, new HashSet<String>());
-    supportedRelations.get(EntityClassMap.L).put(EntityClassMap.O, new HashSet<String>());
+    supportedRelations.get(EntityTypes.L).put(EntityTypes.L, new HashSet<String>());
+    supportedRelations.get(EntityTypes.L).put(EntityTypes.P, new HashSet<String>());
+    supportedRelations.get(EntityTypes.L).put(EntityTypes.O, new HashSet<String>());
 
-    supportedRelations.get(EntityClassMap.P).put(EntityClassMap.L, new HashSet<String>());
-    supportedRelations.get(EntityClassMap.P).put(EntityClassMap.P, new HashSet<String>());
-    supportedRelations.get(EntityClassMap.P).put(EntityClassMap.O, new HashSet<String>());
+    supportedRelations.get(EntityTypes.P).put(EntityTypes.L, new HashSet<String>());
+    supportedRelations.get(EntityTypes.P).put(EntityTypes.P, new HashSet<String>());
+    supportedRelations.get(EntityTypes.P).put(EntityTypes.O, new HashSet<String>());
 
-    supportedRelations.get(EntityClassMap.O).put(EntityClassMap.L, new HashSet<String>());
-    supportedRelations.get(EntityClassMap.O).put(EntityClassMap.P, new HashSet<String>());
-    supportedRelations.get(EntityClassMap.O).put(EntityClassMap.O, new HashSet<String>());
+    supportedRelations.get(EntityTypes.O).put(EntityTypes.L, new HashSet<String>());
+    supportedRelations.get(EntityTypes.O).put(EntityTypes.P, new HashSet<String>());
+    supportedRelations.get(EntityTypes.O).put(EntityTypes.O, new HashSet<String>());
 
-    supportedRelations.get(EntityClassMap.L).get(EntityClassMap.P)
+    supportedRelations.get(EntityTypes.L).get(EntityTypes.P)
         .add("http://dbpedia.org/ontology/leaderName");
-    supportedRelations.get(EntityClassMap.L).get(EntityClassMap.O)
+    supportedRelations.get(EntityTypes.L).get(EntityTypes.O)
         .add("http://dbpedia.org/ontology/team");
 
-    supportedRelations.get(EntityClassMap.P).get(EntityClassMap.L)
+    supportedRelations.get(EntityTypes.P).get(EntityTypes.L)
         .add("http://dbpedia.org/ontology/deathPlace");
-    supportedRelations.get(EntityClassMap.P).get(EntityClassMap.L)
+    supportedRelations.get(EntityTypes.P).get(EntityTypes.L)
         .add("http://dbpedia.org/ontology/birthPlace");
-    supportedRelations.get(EntityClassMap.P).get(EntityClassMap.P)
+    supportedRelations.get(EntityTypes.P).get(EntityTypes.P)
         .add("http://dbpedia.org/ontology/spouse");
-    supportedRelations.get(EntityClassMap.P).get(EntityClassMap.O)
+    supportedRelations.get(EntityTypes.P).get(EntityTypes.O)
         .add("http://dbpedia.org/ontology/team");
 
-    supportedRelations.get(EntityClassMap.O).get(EntityClassMap.L)
+    supportedRelations.get(EntityTypes.O).get(EntityTypes.L)
         .add("http://dbpedia.org/ontology/foundationPlace");
-    supportedRelations.get(EntityClassMap.O).get(EntityClassMap.O)
+    supportedRelations.get(EntityTypes.O).get(EntityTypes.O)
         .add("http://dbpedia.org/ontology/team");
-    supportedRelations.get(EntityClassMap.O).get(EntityClassMap.O)
+    supportedRelations.get(EntityTypes.O).get(EntityTypes.O)
         .add("http://dbpedia.org/ontology/subsidiary");
   }
 

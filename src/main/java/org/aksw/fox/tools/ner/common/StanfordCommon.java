@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.tools.ner.AbstractNER;
 
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
@@ -26,43 +26,43 @@ public abstract class StanfordCommon extends AbstractNER {
 
   @Override
   public List<Entity> retrieve(final String text) {
-    LOG.info("retrieve ...");
 
     final Annotation ann = new Annotation(text);
     pipeline.annotate(ann);
 
-    final List<Entity> list = new ArrayList<>();
+    final List<Entity> entities = new ArrayList<>();
 
     for (final CoreMap sentence : ann.get(SentencesAnnotation.class)) {
       String tokensentence = "";
       for (final CoreLabel token : sentence.get(TokensAnnotation.class)) {
         tokensentence += token.word() + " ";
+
         final String type = mapTypeToSupportedType(token.get(NamedEntityTagAnnotation.class));
-        final String currentToken = token.originalText();
+        final String originalText = token.originalText();
+        final int index = token.beginPosition();
         // check for multiword entities
         boolean contains = false;
         boolean equalTypes = false;
         Entity lastEntity = null;
-        if (!list.isEmpty()) {
-          lastEntity = list.get(list.size() - 1);
-          contains = tokensentence.contains(lastEntity.getText() + " " + currentToken + " ");
+
+        // checks if the current and previous entities have the
+        // same type and occur with a space in the sentence
+        if (!entities.isEmpty()) {
+          lastEntity = entities.get(entities.size() - 1);
+          contains = tokensentence.contains(lastEntity.getText() + " " + originalText + " ");
           equalTypes = type.equals(lastEntity.getType());
         }
+
         if (contains && equalTypes) {
-          lastEntity.addText(currentToken);
+          lastEntity.addText(originalText);
         } else {
-          if (type != EntityClassMap.getNullCategory()) {
-            final float p = Entity.DEFAULT_RELEVANCE;
-            list.add(getEntity(currentToken, type, p, getToolName()));
+          if (!type.equals(BILOUEncoding.O)) {
+            entities.add(
+                new Entity(originalText, type, Entity.DEFAULT_RELEVANCE, getToolName(), index));
           }
         }
       }
     }
-    // TRACE
-    if (LOG.isTraceEnabled()) {
-      LOG.trace(list);
-    } // TRACE
-    LOG.info("retrieve done.");
-    return list;
+    return entities;
   }
 }

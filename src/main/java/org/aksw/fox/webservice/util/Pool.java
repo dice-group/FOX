@@ -30,7 +30,7 @@ public class Pool<T> {
   protected int max = 0;
 
   /**
-   * 
+   *
    */
   protected String className = "";
   protected String lang = "";
@@ -40,7 +40,7 @@ public class Pool<T> {
   }
 
   /**
-   * 
+   *
    * @param className
    * @param count
    * @throws SecurityException
@@ -68,14 +68,15 @@ public class Pool<T> {
    * @throws NoSuchMethodException
    * @throws InvocationTargetException
    * @throws IllegalArgumentException
-   * 
+   *
    */
   public synchronized void add() {
+    LOG.warn("NEW instance starting and will be added to the pool.");
     push(getInstance());
   }
 
   /**
-   * 
+   *
    * @param t
    */
   public synchronized void push(final T t) {
@@ -91,7 +92,7 @@ public class Pool<T> {
   }
 
   /**
-   * 
+   *
    * @return
    */
   public T poll() {
@@ -109,7 +110,7 @@ public class Pool<T> {
 
   /**
    * Creates a new instance of the given className.
-   * 
+   *
    * @param className
    * @return new instance
    * @throws SecurityException

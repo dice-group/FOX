@@ -1,13 +1,12 @@
 package org.aksw.fox;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.data.FoxParameter;
 import org.aksw.fox.tools.ToolsGenerator;
 import org.aksw.fox.tools.ner.en.StanfordEN;
-import org.aksw.fox.utils.DataTestFactory;
 import org.aksw.simba.knowledgeextraction.commons.io.Requests;
 import org.apache.http.entity.ContentType;
 import org.apache.jena.riot.Lang;
@@ -44,12 +43,12 @@ public class Example {
       defaults.put(FoxParameter.Parameter.TYPE.toString(), FoxParameter.Type.TEXT.toString());
       defaults.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString());
       defaults.put(FoxParameter.Parameter.OUTPUT.toString(), Lang.TURTLE.getName());
-      defaults.put(FoxParameter.Parameter.INPUT.toString(), DataTestFactory.NER_EN_EXAMPLE_1);
+      defaults.put(FoxParameter.Parameter.INPUT.toString(), "Obama was born in Hawaii.");
       fox.setParameter(defaults);
 
       // fox light version
       final String tool = StanfordEN.class.getName();
-      Set<Entity> e;
+      List<Entity> e;
       if (!ToolsGenerator.nerTools.get(lang).contains(tool)) {
         LOG.warn("can't find the given tool " + tool);
       }
@@ -81,7 +80,7 @@ public class Example {
                */
               .put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString())
               .put(FoxParameter.Parameter.OUTPUT.toString(), Lang.TURTLE.getName())
-              .put(FoxParameter.Parameter.INPUT.toString(), DataTestFactory.NER_EN_EXAMPLE_1),
+              .put(FoxParameter.Parameter.INPUT.toString(), "Obama was born in Hawaii."),
           ContentType.APPLICATION_JSON);
       LOG.info(r);
 

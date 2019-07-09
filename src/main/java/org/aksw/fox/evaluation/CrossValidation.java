@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.fox.nerlearner.IPostProcessing;
 import org.aksw.fox.nerlearner.PostProcessing;
 import org.aksw.fox.nerlearner.TokenManager;
-import org.aksw.fox.nerlearner.reader.FoxInstances;
+import org.aksw.fox.nerlearner.reader.EntitiesToInstances;
 import org.aksw.fox.nerlearner.reader.INERReader;
 import org.aksw.fox.nerlearner.reader.NERReaderFactory;
 import org.aksw.fox.tools.NERTools;
@@ -76,7 +76,7 @@ public class CrossValidation {
     final INERReader reader = NERReaderFactory.getINERReader();
     reader.initFiles(inputFiles);
 
-    final TokenManager tokenManager = new TokenManager(reader.getInput());
+    final TokenManager tokenManager = new TokenManager(reader.input());
 
     // prepare data
     IPostProcessing pp = null;
@@ -87,14 +87,15 @@ public class CrossValidation {
     }
 
     // init. instances
+
     Instances instances = null;
     {
-      final FoxInstances foxInstances = new FoxInstances();
       final Map<String, String> oracle = pp.getLabeledMap(reader.getEntities());
-      final Map<String, Set<Entity>> toolResults = pp.getLabeledToolResults();
+      final Map<String, List<Entity>> toolResults = pp.getLabeledToolResults();
       final Set<String> token = pp.getLabeledInput();
 
-      instances = foxInstances.getInstances(token, toolResults, oracle);
+      final EntitiesToInstances entitiesToInstances = new EntitiesToInstances();
+      instances = entitiesToInstances.getInstances(token, toolResults, oracle);
     }
 
     // write arff file training data
@@ -173,9 +174,11 @@ public class CrossValidation {
             .append("c,").append("d").append('\n');
       }
       final double[][] cmMatrix = evalAll.confusionMatrix();
-      for (int k = 0; k < EntityClassMap.entityClasses.size(); k++) {
-        outTotal.append(i + 1).append(',').append(classifierName).append(',')
-            .append(EntityClassMap.entityClasses.get(k)).append(',')
+
+      for (int k = 0; k < EntityTypes.AllTypesList.size(); k++) {
+        outTotal//
+            .append(i + 1).append(',').append(classifierName).append(',')
+            .append(EntityTypes.AllTypesList.get(k)).append(',')
             .append(new Double(cmMatrix[k][0]).intValue()).append(',')
             .append(new Double(cmMatrix[k][1]).intValue()).append(',')
             .append(new Double(cmMatrix[k][2]).intValue()).append(',')
@@ -207,7 +210,7 @@ public class CrossValidation {
 
     // header
     final StringBuffer cm = new StringBuffer();
-    for (final String cl : EntityClassMap.entityClasses) {
+    for (final String cl : EntityTypes.AllTypesList) {
       cm.append(cl + "\t");
     }
     cm.append("\n");
@@ -221,8 +224,8 @@ public class CrossValidation {
     }
 
     // write buffer for file
-    for (int i = 0; i < EntityClassMap.entityClasses.size(); i++) {
-      writeBuffer(run, fold, classifierName, EntityClassMap.entityClasses.get(i),
+    for (int i = 0; i < EntityTypes.AllTypesList.size(); i++) {
+      writeBuffer(run, fold, classifierName, EntityTypes.AllTypesList.get(i),
           String.valueOf(new Double(cmMatrix[i][0]).intValue()),
           String.valueOf(new Double(cmMatrix[i][1]).intValue()),
           String.valueOf(new Double(cmMatrix[i][2]).intValue()),
@@ -232,12 +235,11 @@ public class CrossValidation {
 
   public static void printMeasures(final Evaluation eval) {
 
-    final List<String> cat = EntityClassMap.entityClasses;
-    for (final String cl : EntityClassMap.entityClasses) {
+    for (final String cl : EntityTypes.AllTypesList) {
 
-      final double f1 = eval.fMeasure(cat.indexOf(cl));
-      final double p = eval.precision(cat.indexOf(cl));
-      final double r = eval.recall(cat.indexOf(cl));
+      final double f1 = eval.fMeasure(EntityTypes.AllTypesList.indexOf(cl));
+      final double p = eval.precision(EntityTypes.AllTypesList.indexOf(cl));
+      final double r = eval.recall(EntityTypes.AllTypesList.indexOf(cl));
 
       LOG.info("=== classes ===");
       LOG.info("class: " + cl);

@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.tools.ner.AbstractNER;
 import org.aksw.simba.knowledgeextraction.commons.io.Requests;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -108,7 +109,7 @@ public abstract class SpotlightCommon extends AbstractNER {
             final JSONObject entity = entities.getJSONObject(i);
             LOG.debug(entity.toString(2));
             final String type = spotlight(entity.getString("@types"));
-            if (!type.equals(EntityClassMap.getNullCategory())) {
+            if (!type.equals(BILOUEncoding.O)) {
               entityList.add(getEntity(entity.getString("@surfaceForm"), type,
                   Entity.DEFAULT_RELEVANCE, getToolName()));
             }
@@ -131,30 +132,30 @@ public abstract class SpotlightCommon extends AbstractNER {
    * Gets the entity class for a spotlight entity type/class.
    */
   protected String spotlight(final String spotlightTag) {
-    String t = EntityClassMap.getNullCategory();
+    String t = BILOUEncoding.O;
     if (spotlightTag == null || spotlightTag.trim().isEmpty()) {
       return t;
     }
 
     if (spotlightTag.toLowerCase().contains("dbpedia:organisation")) {
-      t = EntityClassMap.O;
+      t = EntityTypes.O;
     } else if (spotlightTag.toLowerCase().contains("dbpedia:person")) {
-      t = EntityClassMap.P;
+      t = EntityTypes.P;
     } else if (spotlightTag.toLowerCase().contains("dbpedia:place")) {
-      t = EntityClassMap.L;
+      t = EntityTypes.L;
     } else if (spotlightTag.toLowerCase().contains("dbpedia:location")) {
-      t = EntityClassMap.L;
+      t = EntityTypes.L;
     }
 
-    if (t.equals(EntityClassMap.getNullCategory())) {
+    if (t.equals(BILOUEncoding.O)) {
       if (spotlightTag.toLowerCase().contains("organisation")) {
-        t = EntityClassMap.O;
+        t = EntityTypes.O;
       } else if (spotlightTag.toLowerCase().contains("person")) {
-        t = EntityClassMap.P;
+        t = EntityTypes.P;
       } else if (spotlightTag.toLowerCase().contains("place")) {
-        t = EntityClassMap.L;
+        t = EntityTypes.L;
       } else if (spotlightTag.toLowerCase().contains("location")) {
-        t = EntityClassMap.L;
+        t = EntityTypes.L;
       }
     }
     return t;

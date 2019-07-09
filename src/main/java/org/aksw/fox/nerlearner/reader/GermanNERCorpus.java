@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 
 public class GermanNERCorpus extends ANERReader {
 
@@ -36,7 +37,7 @@ public class GermanNERCorpus extends ANERReader {
     final INERReader r = new GermanNERCorpus(files);
 
     LOG.info("input:");
-    for (final String line : r.getInput().split("\n")) {
+    for (final String line : r.input().split("\n")) {
       LOG.info(line);
     }
 
@@ -64,17 +65,17 @@ public class GermanNERCorpus extends ANERReader {
   public void initFiles(final String[] initFiles) throws IOException {
     super.initFiles(initFiles);
 
-    tagsMap.put("B-PER", EntityClassMap.P);
-    tagsMap.put("B-LOC", EntityClassMap.L);
-    tagsMap.put("B-ORG", EntityClassMap.O);
+    tagsMap.put("B-PER", EntityTypes.P);
+    tagsMap.put("B-LOC", EntityTypes.L);
+    tagsMap.put("B-ORG", EntityTypes.O);
 
-    tagsMap.put("I-PER", EntityClassMap.P);
-    tagsMap.put("I-LOC", EntityClassMap.L);
-    tagsMap.put("I-ORG", EntityClassMap.O);
+    tagsMap.put("I-PER", EntityTypes.P);
+    tagsMap.put("I-LOC", EntityTypes.L);
+    tagsMap.put("I-ORG", EntityTypes.O);
 
-    tagsMap.put("B-OTH", EntityClassMap.N);
-    tagsMap.put("I-OTH", EntityClassMap.N);
-    tagsMap.put("O", EntityClassMap.N);
+    tagsMap.put("B-OTH", EntityTypes.O);
+    tagsMap.put("I-OTH", EntityTypes.O);
+    tagsMap.put("O", EntityTypes.O);
 
     // all files
     for (int i = 0; i < inputFiles.length; i++) {
@@ -113,7 +114,7 @@ public class GermanNERCorpus extends ANERReader {
               }
               entity.append(currentToken);
             } else {
-              if (!(lastClass).equals(EntityClassMap.getNullCategory())) {
+              if (!lastClass.equals(BILOUEncoding.O)) {
                 addE(entity.toString().trim(), lastClass);
               }
 
@@ -135,7 +136,7 @@ public class GermanNERCorpus extends ANERReader {
     // disambEntities.entrySet().forEach(LOG::info);
 
     disambEntities.entrySet()
-        .forEach(e -> entities.put(e.getKey(), (e.getValue().iterator().next())));
+        .forEach(e -> entities.put(e.getKey(), e.getValue().iterator().next()));
 
   }
 
@@ -147,7 +148,7 @@ public class GermanNERCorpus extends ANERReader {
   }
 
   @Override
-  public String getInput() {
+  public String input() {
     return input.toString();
   }
 

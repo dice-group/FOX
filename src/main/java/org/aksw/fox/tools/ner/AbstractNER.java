@@ -3,14 +3,13 @@ package org.aksw.fox.tools.ner;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.aksw.fox.data.Entity;
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
+import org.aksw.fox.data.encode.BILOUEncoding;
 import org.aksw.fox.tools.ATool;
 import org.aksw.fox.utils.FoxTextUtil;
 
@@ -24,22 +23,20 @@ public abstract class AbstractNER extends ATool implements INER {
   @Override
   abstract public List<Entity> retrieve(String input);
 
-  public List<Entity> _retrieve(final String input) {
-    LOG.info("retrieve ...");
-
-    final List<Entity> list = new ArrayList<>();
-    final Set<Entity> set = new HashSet<>(retrieve(input));
-    list.addAll(set);
-    entityList = clean(list);
-
-    LOG.info("retrieve done");
+  protected List<Entity> _retrieve(final String input) {
+    entityList = clean(retrieve(input));
     return entityList;
   }
 
   @Override
   public void run() {
     if (input != null) {
+      LOG.info(this.getClass().getSimpleName().concat(" retrieving ..."));
+
       _retrieve(input);
+
+      LOG.info("retrieve done");
+
     } else {
       LOG.error("Input not set!");
     }
@@ -53,11 +50,17 @@ public abstract class AbstractNER extends ATool implements INER {
     logMsg();
   }
 
+  /**
+   * Gets {{@link #getResults()}.
+   */
   @Override
   public List<Entity> getResults() {
     return entityList;
   }
 
+  /**
+   * Sets {{@link #input}.
+   */
   @Override
   public void setInput(final String input) {
     this.input = input;
@@ -65,6 +68,7 @@ public abstract class AbstractNER extends ATool implements INER {
 
   /**
    * Creates a new Entity object.
+   *
    *
    * @param text
    * @param type
@@ -131,7 +135,7 @@ public abstract class AbstractNER extends ATool implements INER {
     }
     String t = entityClasses.get(toolType);
     if (t == null) {
-      t = EntityClassMap.N;
+      t = BILOUEncoding.O;
     }
     return t;
   }
@@ -150,13 +154,13 @@ public abstract class AbstractNER extends ATool implements INER {
     final List<String> list = new ArrayList<>();
     for (final Entity e : entityList) {
       if (!list.contains(e.getText())) {
-        if (e.getType().equals(EntityClassMap.L)) {
+        if (e.getType().equals(EntityTypes.L)) {
           l++;
         }
-        if (e.getType().equals(EntityClassMap.O)) {
+        if (e.getType().equals(EntityTypes.O)) {
           o++;
         }
-        if (e.getType().equals(EntityClassMap.P)) {
+        if (e.getType().equals(EntityTypes.P)) {
           p++;
         }
         list.add(e.getText());
@@ -171,13 +175,13 @@ public abstract class AbstractNER extends ATool implements INER {
     o = 0;
     p = 0;
     for (final Entity e : entityList) {
-      if (e.getType().equals(EntityClassMap.L)) {
+      if (e.getType().equals(EntityTypes.L)) {
         l += e.getText().split(" ").length;
       }
-      if (e.getType().equals(EntityClassMap.O)) {
+      if (e.getType().equals(EntityTypes.O)) {
         o += e.getText().split(" ").length;
       }
-      if (e.getType().equals(EntityClassMap.P)) {
+      if (e.getType().equals(EntityTypes.P)) {
         p += e.getText().split(" ").length;
       }
     }

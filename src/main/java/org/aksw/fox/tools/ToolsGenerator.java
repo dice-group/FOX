@@ -145,6 +145,7 @@ public class ToolsGenerator implements IToolsGenerator {
    * @throws IOException
    */
   public ILinking getDisambiguationTool(final String lang) throws IOException {
+    // TODO: add chach here too as in getRETools and getNERTools
     if (usedLang.contains(lang)) {
       if (disambiguationTools.get(lang) != null) {
         return (ILinking) PropertiesLoader.getClass(disambiguationTools.get(lang));

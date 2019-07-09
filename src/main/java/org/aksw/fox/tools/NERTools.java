@@ -3,26 +3,20 @@ package org.aksw.fox.tools;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.aksw.fox.data.Entity;
 import org.aksw.fox.nerlearner.FoxClassifier;
-import org.aksw.fox.nerlearner.IPostProcessing;
-import org.aksw.fox.nerlearner.PostProcessing;
-import org.aksw.fox.nerlearner.TokenManager;
 import org.aksw.fox.tools.ner.INER;
+import org.aksw.fox.ui.FoxCLI;
 import org.aksw.simba.knowledgeextraction.commons.config.PropertiesLoader;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
-
-// FIXME: move to ner package
 
 /**
  *
@@ -34,6 +28,7 @@ import org.jetlang.fibers.ThreadFiber;
 public class NERTools {
 
   public static final Logger LOG = LogManager.getLogger(NERTools.class);
+
   public final static String CFG_KEY_LIFETIME = NERTools.class.getName().concat(".lifeTime");
 
   /*
@@ -43,7 +38,7 @@ public class NERTools {
   /*
    * Contains all entities.
    */
-  protected Map<String, Set<Entity>> toolResults = new HashMap<>();
+  protected Map<String, List<Entity>> toolResults = new HashMap<>();
 
   /*
    * ML model.
@@ -82,28 +77,30 @@ public class NERTools {
   }
 
   /**
+   * Starts a thread for each tool to request entities.
    *
    * @param input
    * @return entities
    */
-  public Set<Entity> getEntities(final String input) {
+  public List<Entity> getEntities(final String input) {
     LOG.info("get entities ...");
 
-    Set<Entity> results = null;
+    List<Entity> results = null;
 
     // use all tools to retrieve entities
     // start all threads
     final List<Fiber> fibers = new ArrayList<>();
     final CountDownLatch latch = new CountDownLatch(tools.size());
-    for (final INER nerTool : tools) {
+    for (final INER tool : tools) {
 
-      nerTool.setCountDownLatch(latch);
-      nerTool.setInput(input);
+      tool.setCountDownLatch(latch);
+      tool.setInput(input);
 
       final Fiber fiber = new ThreadFiber();
-      fiber.start();
-      fiber.execute(nerTool);
-      fibers.add(fiber);
+      if (fibers.add(fiber)) {
+        fiber.start();
+        fiber.execute(tool);
+      }
     }
 
     // wait till finished
@@ -117,37 +114,25 @@ public class NERTools {
     }
 
     // shutdown threads
-    for (final Fiber fiber : fibers) {
-      fiber.dispose();
-    }
+    fibers.forEach(Fiber::dispose);
 
     // get results
     if (latch.getCount() == 0) {
-      // TODO: relevance list
-      for (final INER nerTool : tools) {
-        toolResults.put(nerTool.getToolName(), new HashSet<>(nerTool.getResults()));
-      }
 
-      if (LOG.isTraceEnabled()) {
-        LOG.trace(toolResults);
+      for (final INER tool : tools) {
+        toolResults.put(tool.getToolName(), tool.getResults());
       }
 
     } else {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("timeout after " + min + "min.");
-      }
-
       // TODO: handle timeout
+      LOG.debug("timeout after " + min + "min.");
     }
 
     if (!doTraining) {
-      foxClassifier.readClassifier(lang);
-      // post
-      final IPostProcessing pp = new PostProcessing(new TokenManager(input), toolResults);
-      // cleaned tool results
-      toolResults = pp.getToolResults();
-
-      results = foxClassifier.classify(pp);
+      final String classifier = FoxCLI.getName(lang);
+      LOG.info("Reads classifier " + classifier + "...");
+      foxClassifier.readClassifier(classifier);
+      results = foxClassifier.classify(input, toolResults);
     }
     LOG.info("get entities done.");
     return results;
@@ -165,7 +150,7 @@ public class NERTools {
    *
    * @return results
    */
-  public Map<String, Set<Entity>> getToolResult() {
+  public Map<String, List<Entity>> getToolResult() {
     return toolResults;
   }
 

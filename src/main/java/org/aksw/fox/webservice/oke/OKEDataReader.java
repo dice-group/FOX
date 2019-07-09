@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aksw.fox.data.EntityClassMap;
+import org.aksw.fox.data.EntityTypes;
 import org.aksw.gerbil.io.nif.impl.TurtleNIFParser;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.apache.log4j.LogManager;
@@ -26,21 +26,21 @@ public class OKEDataReader {
    *
    */
   public OKEDataReader() {
-    domainRangeRelation.put(EntityClassMap.L, new HashMap<>());
-    domainRangeRelation.put(EntityClassMap.P, new HashMap<>());
-    domainRangeRelation.put(EntityClassMap.O, new HashMap<>());
+    domainRangeRelation.put(EntityTypes.L, new HashMap<>());
+    domainRangeRelation.put(EntityTypes.P, new HashMap<>());
+    domainRangeRelation.put(EntityTypes.O, new HashMap<>());
 
-    domainRangeRelation.get(EntityClassMap.L).put(EntityClassMap.L, new HashSet<>());
-    domainRangeRelation.get(EntityClassMap.L).put(EntityClassMap.P, new HashSet<>());
-    domainRangeRelation.get(EntityClassMap.L).put(EntityClassMap.O, new HashSet<>());
+    domainRangeRelation.get(EntityTypes.L).put(EntityTypes.L, new HashSet<>());
+    domainRangeRelation.get(EntityTypes.L).put(EntityTypes.P, new HashSet<>());
+    domainRangeRelation.get(EntityTypes.L).put(EntityTypes.O, new HashSet<>());
 
-    domainRangeRelation.get(EntityClassMap.P).put(EntityClassMap.L, new HashSet<>());
-    domainRangeRelation.get(EntityClassMap.P).put(EntityClassMap.P, new HashSet<>());
-    domainRangeRelation.get(EntityClassMap.P).put(EntityClassMap.O, new HashSet<>());
+    domainRangeRelation.get(EntityTypes.P).put(EntityTypes.L, new HashSet<>());
+    domainRangeRelation.get(EntityTypes.P).put(EntityTypes.P, new HashSet<>());
+    domainRangeRelation.get(EntityTypes.P).put(EntityTypes.O, new HashSet<>());
 
-    domainRangeRelation.get(EntityClassMap.O).put(EntityClassMap.L, new HashSet<>());
-    domainRangeRelation.get(EntityClassMap.O).put(EntityClassMap.P, new HashSet<>());
-    domainRangeRelation.get(EntityClassMap.O).put(EntityClassMap.O, new HashSet<>());
+    domainRangeRelation.get(EntityTypes.O).put(EntityTypes.L, new HashSet<>());
+    domainRangeRelation.get(EntityTypes.O).put(EntityTypes.P, new HashSet<>());
+    domainRangeRelation.get(EntityTypes.O).put(EntityTypes.O, new HashSet<>());
 
     addRelations();
   }
@@ -60,25 +60,25 @@ public class OKEDataReader {
 
   public void addRelations() {
     //
-    _addRelations(EntityClassMap.L, EntityClassMap.L, "country", "department", "district",
+    _addRelations(EntityTypes.L, EntityTypes.L, "country", "department", "district",
         "locatedInArea", "location");
-    _addRelations(EntityClassMap.L, EntityClassMap.P, "leaderName");
-    _addRelations(EntityClassMap.L, EntityClassMap.O, "tenant");
+    _addRelations(EntityTypes.L, EntityTypes.P, "leaderName");
+    _addRelations(EntityTypes.L, EntityTypes.O, "tenant");
 
     //
-    _addRelations(EntityClassMap.P, EntityClassMap.L, "country", "deathPlace", "birthPlace",
-        "hometown", "location", "nationality");
-    _addRelations(EntityClassMap.P, EntityClassMap.P, "child", "doctoralAdvisor", "doctoralStudent",
+    _addRelations(EntityTypes.P, EntityTypes.L, "country", "deathPlace", "birthPlace", "hometown",
+        "location", "nationality");
+    _addRelations(EntityTypes.P, EntityTypes.P, "child", "doctoralAdvisor", "doctoralStudent",
         "parent", "relative", "spouse", "trainer");
-    _addRelations(EntityClassMap.P, EntityClassMap.O, "almaMater", "club", "debutTeam", "employer",
+    _addRelations(EntityTypes.P, EntityTypes.O, "almaMater", "club", "debutTeam", "employer",
         "formerTeam");
 
     //
-    _addRelations(EntityClassMap.O, EntityClassMap.L, "country", "foundationPlace", "headquarter",
+    _addRelations(EntityTypes.O, EntityTypes.L, "country", "foundationPlace", "headquarter",
         "hometown", "location");
-    _addRelations(EntityClassMap.O, EntityClassMap.P, "bandMember", "ceo", "formerBandMember",
+    _addRelations(EntityTypes.O, EntityTypes.P, "bandMember", "ceo", "formerBandMember",
         "president");
-    _addRelations(EntityClassMap.O, EntityClassMap.O, "affiliation", "subsidiary");
+    _addRelations(EntityTypes.O, EntityTypes.O, "affiliation", "subsidiary");
   }
 
   public List<Document> parseInput(final String in) {
