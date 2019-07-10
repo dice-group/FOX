@@ -25,7 +25,7 @@ This version supports multiple languages for NER, NED and RE.
 
 Live Demo: [http://fox-demo.aksw.org][6]
 
-Release: [(Version 2.5.1) ][9]
+Release: [(Version 2.6.0) ][9]
 
 ## How to cite
 
