@@ -132,26 +132,31 @@ public class FoxJena extends AFoxJena implements IFoxJena {
       if (check(entity)) {
         final int index = entity.getBeginIndex();
 
-        final String docuri = createDocUri(baseuri, index, index + entity.getText().length());
-        final Resource resource = graph.createResource(docuri)//
-            .addProperty(RDF.type, Voc.pNifPhrase)//
-            .addLiteral(Voc.pNifBegin, //
-                graph.createTypedLiteral(new Integer(index), XSD.nonNegativeInteger.getURI()))//
-            .addLiteral(Voc.pNifEnd, //
-                graph.createTypedLiteral(new Integer(index + entity.getText().length()),
-                    XSD.nonNegativeInteger.getURI()))//
-            .addProperty(Voc.pItsrdfTaIdentRef, //
-                graph.createResource(entity.getUri()))//
-            .addProperty(Voc.pItsrdfTaClassRef, //
-                graph.createResource(Voc.ns_fox_ontology + entity.getType()))//
-            .addLiteral(Voc.pNifAnchorOf, //
-                graph.createTypedLiteral(new String(entity.getText()), XSD.xstring.getURI()))//
-            .addProperty(Voc.pNifreferenceContext, inputResource);
+        final String type = entity.getType();
+        // FIXME: should not be null here, but sometimes is.
+        if (typesmap.get(type) != null) {
 
-        for (final String s : typesmap.get(entity.getType())) {
-          resource.addProperty(Voc.pItsrdfTaClassRef, graph.createResource(s));
+          final String docuri = createDocUri(baseuri, index, index + entity.getText().length());
+          final Resource resource = graph.createResource(docuri)//
+              .addProperty(RDF.type, Voc.pNifPhrase)//
+              .addLiteral(Voc.pNifBegin, //
+                  graph.createTypedLiteral(new Integer(index), XSD.nonNegativeInteger.getURI()))//
+              .addLiteral(Voc.pNifEnd, //
+                  graph.createTypedLiteral(new Integer(index + entity.getText().length()),
+                      XSD.nonNegativeInteger.getURI()))//
+              .addProperty(Voc.pItsrdfTaIdentRef, //
+                  graph.createResource(entity.getUri()))//
+              .addProperty(Voc.pItsrdfTaClassRef, //
+                  graph.createResource(Voc.ns_fox_ontology + entity.getType()))//
+              .addLiteral(Voc.pNifAnchorOf, //
+                  graph.createTypedLiteral(new String(entity.getText()), XSD.xstring.getURI()))//
+              .addProperty(Voc.pNifreferenceContext, inputResource);
+
+          for (final String s : typesmap.get(type)) {
+            resource.addProperty(Voc.pItsrdfTaClassRef, graph.createResource(s));
+          }
+          uris.add(resource.getURI());
         }
-        uris.add(resource.getURI());
       }
     }
     return uris;

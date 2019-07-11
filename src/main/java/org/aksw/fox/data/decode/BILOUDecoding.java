@@ -69,7 +69,7 @@ public class BILOUDecoding {
     for (final String label : labeledToken) {
 
       final String category = getCategory(instances, i);
-      LOG.info(label + " : " + category);
+      LOG.debug(label + " : " + category);
 
       if (BILOUEncoding.AllTypesSet.contains(category) && !category.equals(BILOUEncoding.O)) {
         labeledEntityToken.put(label, category);
@@ -124,7 +124,7 @@ public class BILOUDecoding {
       previousLabel = label;
     }
     LOG.info("result size: " + results.size());
-
+    results.forEach(LOG::debug);
     return decoding.decode(results);
   }
 }

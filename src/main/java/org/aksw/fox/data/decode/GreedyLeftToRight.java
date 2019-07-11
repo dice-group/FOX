@@ -30,29 +30,35 @@ public class GreedyLeftToRight extends ADecoding implements IDecoding {
 
     for (final Entity entity : tokenBasedBILOU) {
       if (BILOUEncodingToEntityTypes.isUnit(entity.getType())) {
+
         text = entity.getText();
         startType = BILOUEncodingToEntityTypes.toEntiyType(entity.getType());
         index = entity.getBeginIndex();
-        final Entity e = new Entity(text, startType, -1, "", index);
-        decoded.add(e);
+
+        decoded.add(entity(text, startType, index));
+
         text = "";
         index = -1;
         startType = BILOUEncoding.O;
+
       } else if (BILOUEncodingToEntityTypes.isBegin(entity.getType())) {
         text = entity.getText();
         startType = BILOUEncodingToEntityTypes.toEntiyType(entity.getType());
-
         index = entity.getBeginIndex();
       } else if (BILOUEncodingToEntityTypes.isInside(entity.getType())) {
-        text = " " + entity.getText();
+        text += " " + entity.getText();
       } else if (BILOUEncodingToEntityTypes.isLast(entity.getType())) {
-        final Entity e = new Entity(text, startType, -1, "", index);
-        decoded.add(e);
+        decoded.add(entity(text + " " + entity.getText(), startType, index));
+
         text = "";
         index = -1;
         startType = BILOUEncoding.O;
       }
     }
     return decoded;
+  }
+
+  private Entity entity(final String text, final String startType, final int index) {
+    return new Entity(text, startType, Entity.DEFAULT_RELEVANCE, "fox", index);
   }
 }

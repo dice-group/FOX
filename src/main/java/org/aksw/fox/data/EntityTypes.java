@@ -17,8 +17,9 @@ public class EntityTypes {
   public static final String L = "LOCATION";
   public static final String O = "ORGANIZATION";
   public static final String P = "PERSON";
+  public static final String NA = BILOUEncoding.O;
 
   public static final List<String> AllTypesList = new ArrayList<>(//
-      new TreeSet<>(Arrays.asList(L, O, P, BILOUEncoding.O))//
+      new TreeSet<>(Arrays.asList(L, O, P, NA))//
   );
 }

@@ -1,5 +1,6 @@
 package org.aksw.fox.data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -41,8 +42,12 @@ public class EntityTest {
     final Entity leipzig_b = new Entity("Leipzig", EntityTypes.L, 0, "tool", -1);
 
     Assert.assertTrue(leipzig_a.equals(leipzig_b));
-
     final Entity leipzig_c = new Entity("Leipzig", EntityTypes.O, 0, "tool", -1);
+
+    final List<Entity> list = new ArrayList<>();
+    list.add(leipzig_a);
+    Assert.assertTrue(list.contains(leipzig_b));
+    Assert.assertFalse(list.contains(leipzig_c));
 
     Assert.assertFalse(leipzig_a.equals(leipzig_c));
 
