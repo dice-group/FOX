@@ -26,7 +26,7 @@ public class StanfordDE extends StanfordCommon {
     props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
     props.setProperty("tokenize.language", "de");
     props.setProperty("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger");
-    props.setProperty("ner.model", "edu/stanford/nlp/models/ner/german.hgc_175m_600.crf.ser.gz");
+    props.setProperty("ner.model", "edu/stanford/nlp/models/ner/german.conll.hgc_175m_600.crf.ser.gz");
     props.setProperty("ner.applyNumericClassifiers", "false");
     props.setProperty("ner.useSUTime", "false");
 
