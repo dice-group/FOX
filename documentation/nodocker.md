@@ -6,11 +6,9 @@ Copy `fox.properties-dist` to `fox.properties`.
 ### build
 Run `ScriptBuild.sh`  to build fox.
 
-Run `downloadAgdistis.sh` and  `downloadSpotlight.sh`.
-
 ### run
 
-Run `ScriptRunSpotlight.sh` to start spotlight services.
+Run the spotlight scripts of the versions you need the in the `spotlight` folder .
 
 Run `ScriptRun.sh` to start FOX.
 
