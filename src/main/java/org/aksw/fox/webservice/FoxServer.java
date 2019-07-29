@@ -1,9 +1,7 @@
 package org.aksw.fox.webservice;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +23,6 @@ import org.aksw.fox.webservice.util.RouteConfig;
 import org.aksw.gerbil.io.nif.impl.TurtleNIFParser;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.jena.riot.Lang;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.ThreadFiber;
 import org.json.JSONObject;
@@ -109,27 +106,6 @@ public class FoxServer extends AServer {
     // TODO: at least wait until all requests have finished.
   }
 
-  public static Set<String> allowedHeaderFields() {
-    return new HashSet<>(Arrays.asList(//
-        FoxParameter.Parameter.TYPE.toString(), //
-        FoxParameter.Parameter.INPUT.toString(), //
-        FoxParameter.Parameter.LANG.toString(), //
-        FoxParameter.Parameter.LINKING.toString(), //
-        FoxParameter.Parameter.FOXLIGHT.toString(), //
-        FoxParameter.Parameter.TASK.toString(), //
-        FoxParameter.Parameter.OUTPUT.toString()//
-    ));
-  }
-
-  public static Map<String, String> defaultParameter() {
-    final Map<String, String> parameter = new HashMap<>();
-    parameter.put(FoxParameter.Parameter.TYPE.toString(), FoxParameter.Type.TEXT.toString());
-    // parameter.put(FoxParameter.Parameter.LANG.toString(), FoxParameter.Langs.EN.toString());
-    parameter.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString());
-    parameter.put(FoxParameter.Parameter.OUTPUT.toString(), Lang.TURTLE.getName());
-    return parameter;
-  }
-
   public void mapCfg() {
     /**
      * path: config <br>
@@ -152,30 +128,30 @@ public class FoxServer extends AServer {
      * Content-Type: application/json <br>
      */
     Spark.post("/fox", (req, res) -> {
-
+      /**
+       * <code>
       try {
-        /**
-         * <code>
+      
          final String ip = req.ip();
          if (ip.startsWith(blockedIP)) {
            // block this IP
            Spark.halt(406, "you are blocked");
-        
+      
          } else if (ip.startsWith("139.18.118.17")) {
            // OKE switch
            final String foxResponse = oke.reTask(req, res);
            res.body(foxResponse);
            res.type(turtleContentType.concat(";charset=utf-8"));
-        
+      
            final String body = res.body();
            LOG.info(body);
            return body;
          }
-         </code>
-         */
+      
       } catch (final Exception e) {
         LOG.error(e.getLocalizedMessage(), e);
-      }
+      }   </code>
+       */
 
       try {
         String errorMessage = "";
@@ -183,16 +159,17 @@ public class FoxServer extends AServer {
         // checks content type
         final String ct = req.contentType();
         LOG.info("ContentType: " + ct);
-        Map<String, String> parameter = defaultParameter();
+        Map<String, String> parameter = FoxParameter.defaultParameter();
 
         // JSON
         if (ct != null && ct.indexOf(jsonContentType) != -1) {
           final JSONObject jo = new JSONObject(req.body());
 
           @SuppressWarnings("unchecked")
-          final Map<String, Object> tmp =
-              new ObjectMapper().readValue(jo.toString(), HashMap.class);
-          tmp.keySet().retainAll(FoxServer.allowedHeaderFields());
+          final Map<String, Object> tmp;
+          tmp = new ObjectMapper().readValue(jo.toString(), HashMap.class);
+          tmp.keySet().retainAll(FoxParameter.allowedHeaderFields());
+
           parameter = tmp.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, //
               e -> String.valueOf(e.getValue())//
           ));
@@ -210,7 +187,7 @@ public class FoxServer extends AServer {
           // read query parameter if any
           final QueryParamsMap map = req.queryMap();
           final Map<String, String[]> para = map.toMap();
-          para.keySet().retainAll(FoxServer.allowedHeaderFields());
+          para.keySet().retainAll(FoxParameter.allowedHeaderFields());
           // read header fields if any
           final Set<String> headerfields = req.headers();
 
@@ -265,9 +242,23 @@ public class FoxServer extends AServer {
         } // ESLE
         else {
           errorMessage = "Use a supported Content-Type please.";
-          Spark.halt(415, errorMessage);
+          // Spark.halt(415, errorMessage);
+          res.status(415);
+          return errorMessage;
         }
         ////////// end if
+
+        foxStatistics.client(req.ip(), parameter);
+
+        // check parameter
+        final String error = FoxParameter.allowedParameterValues(parameter);
+        if (!error.isEmpty()) {
+          errorMessage = "The request could not be understood by the server "
+              + "due to malformed parameter syntax,".concat(error);
+          // Spark.halt(400, errorMessage);
+          res.status(400);
+          return errorMessage;
+        }
 
         // parse input
         List<Document> docs = null;
@@ -293,7 +284,6 @@ public class FoxServer extends AServer {
           res.body(foxResponse);
           res.type(turtleContentType.concat(";charset=utf-8"));
 
-          foxStatistics.client(req.ip(), parameter);
         }
       } catch (final Exception e) {
         LOG.error(e.getLocalizedMessage(), e);

@@ -1,7 +1,10 @@
 package org.aksw.fox.data;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.jena.riot.Lang;
 
@@ -39,6 +42,7 @@ public class FoxParameter {
       return null;
     }
   }
+
   public enum Linking {
 
     OFF("off");
@@ -253,5 +257,65 @@ public class FoxParameter {
     map.put(FoxParameter.Parameter.NIF.toString(), FoxParameter.NIF.OFF.toString());
     map.put(FoxParameter.Parameter.FOXLIGHT.toString(), FoxParameter.FoxLight.OFF.toString());
     return map;
+  }
+
+  /**
+   * Checks the given parameter. In case something is missing or wrong it returns an error message,
+   * otherwise the return will be empty.
+   *
+   * @param parameter
+   * @return error message or empty
+   */
+  public static String allowedParameterValues(final Map<String, String> parameter) {
+
+    {// checks types
+      final FoxParameter.Type value;
+      value = FoxParameter.Type.fromString(parameter.get(FoxParameter.Parameter.TYPE.toString()));
+      if (value == null) {
+        return "Value of parameter type is wrong.";
+      }
+    }
+    {
+      // checks task
+      final FoxParameter.Task value;
+      value = FoxParameter.Task.fromString(parameter.get(FoxParameter.Parameter.TASK.toString()));
+      if (value == null) {
+        return "Value of parameter task is wrong.";
+      }
+    }
+    {
+      // checks output
+      final FoxParameter.Output value;
+      value =
+          FoxParameter.Output.fromString(parameter.get(FoxParameter.Parameter.OUTPUT.toString()));
+      if (value == null) {
+        return "Value of parameter output is wrong.";
+      }
+    }
+    {
+      // TODO: check more!?
+    }
+    return "";
+  }
+
+  public static Set<String> allowedHeaderFields() {
+    return new HashSet<>(Arrays.asList(//
+        FoxParameter.Parameter.TYPE.toString(), //
+        FoxParameter.Parameter.INPUT.toString(), //
+        FoxParameter.Parameter.LANG.toString(), //
+        FoxParameter.Parameter.LINKING.toString(), //
+        FoxParameter.Parameter.FOXLIGHT.toString(), //
+        FoxParameter.Parameter.TASK.toString(), //
+        FoxParameter.Parameter.OUTPUT.toString()//
+    ));
+  }
+
+  public static Map<String, String> defaultParameter() {
+    final Map<String, String> parameter = new HashMap<>();
+    parameter.put(FoxParameter.Parameter.TYPE.toString(), FoxParameter.Type.TEXT.toString());
+    // parameter.put(FoxParameter.Parameter.LANG.toString(), FoxParameter.Langs.EN.toString());
+    parameter.put(FoxParameter.Parameter.TASK.toString(), FoxParameter.Task.NER.toString());
+    parameter.put(FoxParameter.Parameter.OUTPUT.toString(), Lang.TURTLE.getName());
+    return parameter;
   }
 }
