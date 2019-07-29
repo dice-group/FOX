@@ -6,6 +6,7 @@ echo "Checking dependencies..."
 if yesno "# Maven install of https://github.com/renespeck/knowledgeextraction.git (yes/no): "; then
     git clone https://github.com/renespeck/knowledgeextraction.git xyz    
     cd xyz
+    git checkout v0.0.2
     mvn compile install
     cd ..
     rm -rf xyz
@@ -15,7 +16,7 @@ fi
 if yesno "# Maven install of https://github.com/dice-group/Ocelot.git (yes/no): "; then
     git clone https://github.com/dice-group/Ocelot.git xyz    
     cd xyz
-    #git checkout dev
+    git checkout v0.0.1
     mvn -Dmaven.test.skip=true compile install
     cd ..
     rm -rf xyz
