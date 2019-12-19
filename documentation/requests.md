@@ -94,7 +94,7 @@ example input file [`example.json`][2]:
 "input" : "The philosopher and mathematician Leibniz was born in Leipzig in 1646 and attended the University of Leipzig from 1661-1666.",
 "type": "text",
 "task": "ner",
-"output": "jsonld",
+"output": "JSON-LD",
 "lang": "en",
 "foxlight":"org.aksw.fox.tools.ner.en.IllinoisExtendedEN"
 }
