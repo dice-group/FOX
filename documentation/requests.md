@@ -32,7 +32,7 @@ to find supported parameters for HTTP requests of the current instance, call  ht
     "de",
     "en"
   ],
-  out: [
+  output: [
     "RDF/XML",
     "Turtle",
     "RDF/JSON",
