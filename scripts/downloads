@@ -45,7 +45,7 @@ fi
 # Download spotlight
 DIRECTORY="./spotlight"
 if [ ! -d "$DIRECTORY" ]; then
-    if yesno --timeout 10 --default yes"# Download spotlight files (yes/no): "; then
+    if yesno --timeout 10 --default yes "# Download spotlight files (yes/no): "; then
         . ./scripts/downloadSpotlight.sh 
     fi
 fi 
