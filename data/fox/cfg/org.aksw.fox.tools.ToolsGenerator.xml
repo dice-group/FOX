@@ -5,7 +5,7 @@
         <!--
         <usedLang>de, en, es, fr, nl</usedLang>
          -->
-         <usedLang>en</usedLang>
+         <usedLang>de, en, es, fr, nl</usedLang>
         <disambiguationTool
             de="org.aksw.fox.tools.linking.de.AgdistisDE"
             en="org.aksw.fox.tools.linking.en.AgdistisEN"
@@ -76,7 +76,6 @@
             en="org.aksw.fox.tools.ner.en.StanfordEN"
             es="org.aksw.fox.tools.ner.es.StanfordES"
             fr="org.aksw.fox.tools.ner.fr.OpenNLPFR"
-            it="org.aksw.fox.tools.ner.it.TagMeIT"
             nl="org.aksw.fox.tools.ner.nl.OpenNLPNL"
         ></lightTool>
     </toolsGenerator>
