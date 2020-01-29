@@ -3,7 +3,7 @@ echo "##########################################################################
 echo "Checking dependencies..."
 
 #########################################################################################
-if yesno "# Maven install of https://github.com/renespeck/knowledgeextraction.git (yes/no): "; then
+if yesno --timeout 10 --default yes "# Maven install of https://github.com/renespeck/knowledgeextraction.git (yes/no): "; then
     git clone https://github.com/renespeck/knowledgeextraction.git xyz    
     cd xyz
     git checkout v0.0.2
@@ -13,7 +13,7 @@ if yesno "# Maven install of https://github.com/renespeck/knowledgeextraction.gi
 fi
 
 #########################################################################################
-if yesno "# Maven install of https://github.com/dice-group/Ocelot.git (yes/no): "; then
+if yesno --timeout 10 --default yes "# Maven install of https://github.com/dice-group/Ocelot.git (yes/no): "; then
     git clone https://github.com/dice-group/Ocelot.git xyz    
     cd xyz
     git checkout v0.0.1
@@ -36,7 +36,7 @@ fi
 # Download agdistis
 DIRECTORY="./agdistis"
 if [ ! -d "$DIRECTORY" ]; then
-    if yesno "# Download agdistis files (yes/no): "; then
+    if yesno --timeout 10 --default yes "# Download agdistis files (yes/no): "; then
         . ./scripts/downloadAgdistis.sh 
     fi
 fi
@@ -45,7 +45,7 @@ fi
 # Download spotlight
 DIRECTORY="./spotlight"
 if [ ! -d "$DIRECTORY" ]; then
-    if yesno "# Download spotlight files (yes/no): "; then
+    if yesno --timeout 10 --default yes"# Download spotlight files (yes/no): "; then
         . ./scripts/downloadSpotlight.sh 
     fi
 fi 

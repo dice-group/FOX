@@ -1,4 +1,5 @@
-# This script reuses functions from Mitch Frazier (http://www.linuxjournal.com/content/asking-yesno-question-bash-script)
+#!/bin/bash
+## This script reuses functions from Mitch Frazier (http://www.linuxjournal.com/content/asking-yesno-question-bash-script)
 #####################################################################
 # Print warning message.
 
