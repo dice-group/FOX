@@ -16,7 +16,7 @@ fi
 if yesno --timeout 10 --default yes "# Maven install of https://github.com/dice-group/Ocelot.git (yes/no): "; then
     git clone https://github.com/dice-group/Ocelot.git xyz    
     cd xyz
-    git checkout v0.0.1
+    git checkout v0.0.2
     mvn -Dmaven.test.skip=true compile install
     cd ..
     rm -rf xyz
