@@ -4,7 +4,10 @@
 <!-- -->
 <ocelot>
   <dataFolder>../ocelot-data</dataFolder>
+   <tmpFolder>tmp</tmpFolder>
+  <!-- 
   <tmpFolder>/home/rspeck/Data/Ocelot_data/tmp</tmpFolder>
+   -->
 </ocelot>
 
 <!-- -->
