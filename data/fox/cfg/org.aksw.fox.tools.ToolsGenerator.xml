@@ -5,7 +5,7 @@
         <!--
         <usedLang>de, en, es, fr, nl</usedLang>
          -->
-         <usedLang>de, en, es, fr, nl</usedLang>
+         <usedLang>en</usedLang>
         <disambiguationTool
             de="org.aksw.fox.tools.linking.de.AgdistisDE"
             en="org.aksw.fox.tools.linking.en.AgdistisEN"
@@ -30,8 +30,8 @@
             " 
 
             es="
-            org.aksw.fox.tools.ner.es.OpenNLPES, 
-	        org.aksw.fox.tools.ner.es.SpotlightES,
+            org.aksw.fox.tools.ner.es.OpenNLPES,
+            org.aksw.fox.tools.ner.es.SpotlightES,
             org.aksw.fox.tools.ner.es.StanfordES, 
             org.aksw.fox.tools.ner.es.BalieES
             " 
