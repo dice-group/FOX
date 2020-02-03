@@ -28,7 +28,7 @@ $scope.embed = function(){
 };
 
 // get cfg
-$http({method: 'GET', url: 'http://' + $scope.host + '/config'}).
+$http({method: 'GET', url: $scope.protocol + '://'+ $scope.host + '/config'}).
   success(function(data, status, headers, config) {
     $scope.config = data;
     Util.embed('annotations', collData, docData, webFontURLs);
@@ -345,7 +345,7 @@ $scope.send = function() {
   // send request
   $http({
       method: 'POST',
-      url: 'http://' + $scope.host + '/fox',
+      url: $scope.protocol + '://'+ $scope.host + '/fox',
       data: request
   }).
   success(function(data, status, headers, config) {

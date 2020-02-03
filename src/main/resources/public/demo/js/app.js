@@ -19,6 +19,7 @@ Fox.run(function($rootScope,$window) {
 
     $rootScope.pages = Fox.pages;
 
-    $rootScope.host  = $window.location.host;
+    $rootScope.protocol = $window.location.protocol
+    $rootScope.host = $window.location.host;
     $rootScope.port = $window.location.port;
 });
