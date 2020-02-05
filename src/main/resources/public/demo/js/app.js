@@ -18,8 +18,6 @@ Fox.config(['$routeProvider', '$locationProvider', function($routeProvider,$loca
 Fox.run(function($rootScope,$window) {
 
     $rootScope.pages = Fox.pages;
-
-    $rootScope.protocol = $window.location.protocol
     $rootScope.host = $window.location.host;
     $rootScope.port = $window.location.port;
 });
