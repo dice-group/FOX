@@ -2,8 +2,8 @@
 <config>
     <toolsGenerator>
         <lang>de, en, es, fr, nl</lang>
-				<usedLang>de, en, es, fr, nl</usedLang>
-        <disambiguationTool
+           <usedLang>de, en, es, fr, nl</usedLang>
+           <disambiguationTool
             de="org.aksw.fox.tools.linking.de.AgdistisDE"
             en="org.aksw.fox.tools.linking.en.AgdistisEN"
             es="org.aksw.fox.tools.linking.es.AgdistisES"
@@ -27,7 +27,7 @@
             " 
 
             es="
-            org.aksw.fox.tools.ner.es.OpenNLPES, 
+            org.aksw.fox.tools.ner.es.OpenNLPES,
             org.aksw.fox.tools.ner.es.SpotlightES,
             org.aksw.fox.tools.ner.es.StanfordES, 
             org.aksw.fox.tools.ner.es.BalieES
@@ -51,12 +51,28 @@
             "
 
         ></nerTools>
+        
+        <reTools
+            en="
+            org.aksw.fox.tools.re.en.StanfordREEN,
+            org.aksw.fox.tools.re.en.BoaEN,
+            org.aksw.fox.tools.re.en.OcelotEN,
+            org.aksw.fox.tools.re.en.PattyEN" 
+            
+            de="
+            org.aksw.fox.tools.re.de.BoaDE
+            "
+            
+            fr="
+            org.aksw.fox.tools.re.fr.BoaFR
+            "
+           
+        ></reTools>        
         <lightTool
             de="org.aksw.fox.tools.ner.de.StanfordDE"
             en="org.aksw.fox.tools.ner.en.StanfordEN"
             es="org.aksw.fox.tools.ner.es.StanfordES"
             fr="org.aksw.fox.tools.ner.fr.OpenNLPFR"
-            it="org.aksw.fox.tools.ner.it.TagMeIT"
             nl="org.aksw.fox.tools.ner.nl.OpenNLPNL"
         ></lightTool>
     </toolsGenerator>
