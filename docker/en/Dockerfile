@@ -35,7 +35,7 @@ RUN rm -R foxtmp
 
 RUN cp ./fox.properties-dist ./fox.properties
 # COPY org.aksw.fox.tools.ToolsGenerator.xml ./data/fox/cfg/
-RUN mvn clean compile -Dmaven.test.skip=true javadoc:javadoc
+RUN mvn clean javadoc:javadoc compile -Dmaven.test.skip=true 
 
 RUN unzip serial.zip -d tmp/ocelot
 # FOX port

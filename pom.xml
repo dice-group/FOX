@@ -23,7 +23,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<system.libs>${project.basedir}/lib</system.libs>
 		<system.data>${project.basedir}/data</system.data>
-		<project.javadocdir>/src/main/resources/public/demo/doc</project.javadocdir>
+		<project.javadocdir>./src/main/resources/public/demo/doc</project.javadocdir>
 		<!-- Java DOC -->
 		<maven.javadoc.skip>false</maven.javadoc.skip>
 

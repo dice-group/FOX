@@ -35,7 +35,7 @@ RUN cp ./data/fox/cfg/org.aksw.fox.tools.ToolsGenerator.xml_default ./data/fox/c
 
 RUN ./scripts/downloadSpotlight.sh
 
-RUN mvn clean compile -Dmaven.test.skip=true javadoc:javadoc
+RUN mvn clean javadoc:javadoc compile -Dmaven.test.skip=true 
 
 RUN unzip serial.zip -d tmp/ocelot
 
