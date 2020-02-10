@@ -22,7 +22,7 @@ public class Example {
   public static void main(final String[] args) {
     programmatic();
     // webAPI();
-    // _webAPI("http://fox-demo.aksw.org");
+    // _webAPI("https://fox.demos.dice-research.org/");
   }
 
   /**
