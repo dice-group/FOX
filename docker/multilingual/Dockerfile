@@ -24,7 +24,6 @@ RUN git clone --branch master https://github.com/dice-group/Ocelot.git oc
 RUN cd oc && git checkout v0.0.2 && mvn -Dmaven.test.skip=true compile install
 RUN rm -fr oc
 
-RUN echo "test"
 RUN git clone --branch master https://github.com/dice-group/FOX foxtmp
 RUN cp -r foxtmp/* ./
 RUN rm -R foxtmp
