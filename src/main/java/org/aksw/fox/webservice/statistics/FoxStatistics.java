@@ -16,8 +16,8 @@ public class FoxStatistics {
    * @param ip
    * @param parameterMap
    */
-  public void client(final String ip, final Map<String, String> parameterMap) {
-
+  public void client(final String _ip, final Map<String, String> parameterMap) {
+    String ip = _ip;
     // remove data we do not want in the log
     final Map<String, String> copy = new HashMap<>(parameterMap);
     copy.keySet().retainAll(FoxParameter.allowedHeaderFields());
@@ -25,6 +25,10 @@ public class FoxStatistics {
     copy.remove(FoxParameter.Parameter.NIF.toString().toLowerCase());
 
     // add data to the log file
+    if (ip != null && ip.length() > 1) {
+      ip = ip.substring(0, ip.length() / 2);
+    }
+
     LOG.info("Client IP: ".concat(ip).concat("; parameter: ").concat(copy.toString()));
   }
 }
