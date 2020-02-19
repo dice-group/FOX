@@ -1,6 +1,5 @@
 [4]: https://dice-research.org/FOX
 [6]: https://fox.demos.dice-research.org/
-[9]: https://github.com/dice-group/FOX
 
 [![Build Status](https://travis-ci.org/dice-group/FOX.svg?branch=master)](https://travis-ci.org/dice-group/FOX)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/348e14317ea140cbb98a110c40718d88)](https://www.codacy.com/app/renespeck/FOX?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dice-group/FOX&amp;utm_campaign=Badge_Grade)
@@ -25,7 +24,7 @@ This version supports multiple languages for NER, NED and RE.
 
 Live Demo: [https://fox.demos.dice-research.org/][6]
 
-Release: [(Version 2.5.1) ][9]
+
 
 ## How to cite
 
