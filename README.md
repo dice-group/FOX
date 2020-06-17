@@ -18,13 +18,10 @@ Java 8, Maven 3, graphviz (for JavaDoc only)
 ## Documentation:
 [documentation](documentation/readme.md).
 
-
 ## Demo
 This version supports multiple languages for NER, NED and RE.
 
 Live Demo: [https://fox.demos.dice-research.org/][6]
-
-
 
 ## How to cite
 
