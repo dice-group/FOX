@@ -34,7 +34,7 @@
 		<commons.lang3.version>3.7</commons.lang3.version>
 		<dl4j.version>0.0.3.2.7</dl4j.version>
 		<illinoisner.version>2.8.1</illinoisner.version>
-		<jena.version>3.1.0</jena.version>
+		<jena.version>4.2.0</jena.version>
 		<lucene.version>4.10.0</lucene.version>
 		<nd4j.version>0.0.3.5.5</nd4j.version>
 		<ocelot.version>0.0.2</ocelot.version>
