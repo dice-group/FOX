@@ -38,6 +38,7 @@ RUN cp ./fox.properties-dist ./fox.properties
 RUN mvn clean javadoc:javadoc compile -Dmaven.test.skip=true 
 
 RUN unzip serial.zip -d tmp/ocelot
+
 # FOX port
 EXPOSE 4444
 
