@@ -2,10 +2,11 @@
 [6]: https://fox.demos.dice-research.org/
 
 [![Build Status](https://travis-ci.org/dice-group/FOX.svg?branch=master)](https://travis-ci.org/dice-group/FOX)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/348e14317ea140cbb98a110c40718d88)](https://www.codacy.com/app/renespeck/FOX?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dice-group/FOX&amp;utm_campaign=Badge_Grade)
 [![BCH compliance](https://bettercodehub.com/edge/badge/dice-group/FOX?branch=master)](https://bettercodehub.com/)
 [![Project Stats](https://www.openhub.net/p/FOX-Framework/widgets/project_thin_badge.gif)](https://www.openhub.net/p/FOX-Framework)
-
+<!---
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/348e14317ea140cbb98a110c40718d88)](https://www.codacy.com/app/renespeck/FOX?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dice-group/FOX&amp;utm_campaign=Badge_Grade)
+-->
 
 ## FOX - Federated Knowledge Extraction Framework
 FOX ([https://dice-research.org/FOX][4]) is a framework that integrates the Linked Data Cloud and makes use of the diversity of NLP algorithms to extract RDF triples of high accuracy out of NL.
