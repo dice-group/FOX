@@ -43,7 +43,7 @@
 		<stanford.version>3.8.0</stanford.version>
 		<!-- the patty version for Maven Java src resources -->
 		<patty.version>0.0.1</patty.version>
-		<junit.version>4.12</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<log4j.version>2.15.0</log4j.version>
 	</properties>
 
