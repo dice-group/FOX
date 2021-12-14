@@ -44,7 +44,7 @@
 		<!-- the patty version for Maven Java src resources -->
 		<patty.version>0.0.1</patty.version>
 		<junit.version>4.13.1</junit.version>
-		<log4j.version>2.15.0</log4j.version>
+		<log4j.version>2.16.0</log4j.version>
 	</properties>
 
 	<repositories>
