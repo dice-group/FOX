@@ -40,7 +40,7 @@
 		<ocelot.version>0.0.2</ocelot.version>
 		<opennlp.version>1.5.3</opennlp.version>
 		<spotlight.version>0.7.1</spotlight.version>
-		<stanford.version>3.8.0</stanford.version>
+		<stanford.version>4.4.0</stanford.version>
 		<!-- the patty version for Maven Java src resources -->
 		<patty.version>0.0.1</patty.version>
 		<junit.version>4.13.1</junit.version>
