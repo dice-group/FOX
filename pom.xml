@@ -38,7 +38,7 @@
 		<lucene.version>4.10.0</lucene.version>
 		<nd4j.version>0.0.3.5.5</nd4j.version>
 		<ocelot.version>0.0.2</ocelot.version>
-		<opennlp.version>1.5.3</opennlp.version>
+		<opennlp.version>1.8.2</opennlp.version>
 		<spotlight.version>0.7.1</spotlight.version>
 		<stanford.version>3.8.0</stanford.version>
 		<!-- the patty version for Maven Java src resources -->
