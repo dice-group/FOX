@@ -1,0 +1,25 @@
+services:
+  fox:
+    build:
+      context: fox
+    image: fox:latest
+    ports:
+      - "4444:4444"
+    environment:
+        NAME: fox
+    network_mode: host
+    depends_on:
+       - spotlight
+
+  spotlight:
+    build:
+      context: spotlight
+    image: spotlight:latest
+    ports:
+      - "4445:4445"
+      - "4446:4446"
+      - "4447:4447"
+      - "4448:4448"
+      - "4449:4449"
+    environment:
+        NAME: spotlight

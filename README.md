@@ -14,7 +14,10 @@ FOX ([https://dice-research.org/FOX][4]) is a framework that integrates the Link
 In its current version, it integrates and merges the results of Named Entity Recognition tools as well as it integrates several Relation Extraction tools.
 
 ## Requirements
-Java 8, Maven 3, graphviz (for JavaDoc only)
+Docker, Java 8, Maven 3, graphviz (for JavaDoc only)
+
+## Build and Run
+[Docker](docker/readme.md).
 
 ## Documentation:
 [documentation](documentation/readme.md).

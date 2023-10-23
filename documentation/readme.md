@@ -3,7 +3,7 @@
 [2]: ./extendfox.md
 [5]: ./requests.md
 [6]: ./requirements.md
-[7]: ./docker.md
+[7]: ../docker/readme.md
 [10]: ../evaluation
 [11]: ../input
 [12]: ./nodocker.md
@@ -20,7 +20,9 @@
 
 ## [Docker][7]
 
+<!--
 ## [Without Docker][12]
+-->
 
 ## [Bindings][13]
 
