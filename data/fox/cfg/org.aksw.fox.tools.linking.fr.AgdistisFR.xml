@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <agdistis>
-        <endpoint>http://akswnc9.informatik.uni-leipzig.de:8116/AGDISTIS</endpoint>
+        <endpoint>https://agdistis.demos.dice-research.org/api/fr</endpoint>
     </agdistis>
 </config>
