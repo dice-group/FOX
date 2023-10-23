@@ -26,7 +26,6 @@
 		<project.javadocdir>./src/main/resources/public/demo/doc</project.javadocdir>
 		<!-- Java DOC -->
 		<maven.javadoc.skip>false</maven.javadoc.skip>
-
 		<!-- versions -->
 		<agdistis.version>0.4.0</agdistis.version>
 		<balie.version>1.81</balie.version>
@@ -67,14 +66,14 @@
 	</repositories>
 
 	<dependencies>
-<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
-<!-- <dependency>
+<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+ <dependency>
     <groupId>javax.servlet</groupId>
     <artifactId>javax.servlet-api</artifactId>
     <version>4.0.1</version>
     <scope>provided</scope>
 </dependency>
--->
+
 		<!-- sparkjava -->
 		<dependency>
 			<groupId>com.sparkjava</groupId>
@@ -104,18 +103,11 @@
 			<artifactId>log4j-core</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
-
-		<!-- org.aksw.simba.knowledgeextraction -->
 		<dependency>
 			<groupId>org.aksw.simba.knowledgeextraction</groupId>
 			<artifactId>commons</artifactId>
 			<version>0.0.2</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.aksw.simba.knowledgeextraction</groupId> 
-			<artifactId>ocelot</artifactId> <version>0.0.1</version> </dependency> -->
-		<!-- <dependency> <groupId>org.aksw.simba.knowledgeextraction</groupId> 
-			<artifactId>fox</artifactId> <version>0.0.1</version> </dependency> -->
-
 		<!-- -->
 		<dependency>
 			<groupId>org.aksw</groupId>
@@ -233,20 +225,19 @@
 			<artifactId>stanford-corenlp</artifactId>
 			<version>${stanford.version}</version>
 			<classifier>models</classifier>
-	<exclusions>	
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>javax.servlet-api</artifactId>
-        </exclusion>
-      </exclusions>
-
-</dependency>
+			<exclusions>
+				<exclusion>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
+	</dependency>
 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-parser</artifactId>
 			<version>${stanford.version}</version>
 			<classifier>models</classifier>
-		</dependency>
+	</dependency>
 
 		<!-- stanford for Spanish -->
 		<dependency>
@@ -385,7 +376,7 @@
 			<version>1.3.0</version>
 		</dependency>
 
-		<!-- http://sourceforge.net/projects/balie -->
+		<!-- https://sourceforge.net/projects/balie -->
 		<dependency>
 			<groupId>ca.uottawa</groupId>
 			<artifactId>balie</artifactId>
@@ -396,6 +387,8 @@
 			<groupId>org.aksw</groupId>
 			<artifactId>AGDISTIS</artifactId>
 			<version>${agdistis.version}</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/repository/org/aksw/AGDISTIS/0.4.0/AGDISTIS-0.4.0.jar</systemPath>
 		</dependency>
 		<!-- ant -->
 		<dependency>
@@ -443,7 +436,6 @@
 			<artifactId>owlapi-distribution</artifactId>
 			<version>5.1.0</version>
 		</dependency>
-
 	</dependencies>
 
 	<!-- build -->
@@ -557,7 +549,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9</version>
+				<version>3.6.0</version>
 				<configuration>
 					<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
 					<docletArtifact>
